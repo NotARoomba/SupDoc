@@ -1,0 +1,48 @@
+import express, { Request, Response } from "express";
+import cors, { CorsOptions } from "cors";
+import { connectToDatabase } from "./services/database.service";
+import encryption from "./services/encryption.service";
+import { verifyRouter } from "./routers/verify.router";
+import { patientsRouter } from "./routers/patients.router";
+import { Server, Socket } from "socket.io";
+import { createServer } from "http";
+
+const app = express();
+const httpServer = createServer(app);
+const port = 3001;
+
+const corsOptions: CorsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "http://localhost",
+    // "https://localhost:5173",
+    // "https://localhost",
+    // "http://172.20.10.5:5173",
+    // "http://172.20.10.5"
+  ],
+};
+
+// const io = new Server(httpServer, {cors: corsOptions});
+
+connectToDatabase()
+  .then(() => {
+    app.use(cors(corsOptions));
+    app.use(express.json({ limit: "50mb" }));
+    app.use(encryption);
+    // app.use("/users", usersRouter);
+    // app.use("/verify", verifyRouter);
+
+    app.use("/", async (_req: Request, res: Response) => {
+      res.status(200).send("You arent supposed to be here");
+    });
+
+    app.listen(port);
+    console.log("Server started!");
+    // app.listen(port, () => {
+    //   console.log(`Server started at http://localhost:${port}`);
+    // });
+  })
+  .catch((error: Error) => {
+    console.error("Database connection failed", error);
+    process.exit();
+  });

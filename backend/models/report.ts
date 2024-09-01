@@ -1,0 +1,12 @@
+enum REPORT_REASONS {
+  INNAPROPRIATE_BEHAVIOUR,
+  UNPROFESSIONAL_CONDUCT,
+  FRADULENT_ACTIVITY,
+  SPAM,
+  IMPERSONATION,
+}
+
+export default interface Report {
+  reason: REPORT_REASONS;
+  proof: string;
+}
