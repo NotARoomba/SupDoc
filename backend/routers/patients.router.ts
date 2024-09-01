@@ -8,8 +8,6 @@ export const patientsRouter = express.Router();
 
 patientsRouter.use(express.json());
 
-// Users should be able to be fetched through their number, always have 2 step verification on
-
 patientsRouter.get("/:numberid", async (req: Request, res: Response) => {
   const numberid = req?.params?.numberid;
   console.log(`Getting data for: ${numberid}`);
@@ -69,8 +67,8 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
 });
 
 patientsRouter.post("/check", async (req: Request, res: Response) => {
-  const id: string = req.body.username;
-  const number: string = req.body.email;
+  const id: string = req.body.id;
+  const number: string = req.body.number;
   try {
     let idUsers: Patient[] = [];
     let numberUsers: Patient[] = [];
