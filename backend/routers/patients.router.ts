@@ -1,29 +1,23 @@
 import express, { Request, Response } from "express";
-import { collections } from "../services/database.service";
+import { collections, createKey, encryption } from "../services/database.service";
 import STATUS_CODES from "../models/status";
-import { MongoClient, ObjectId } from "mongodb";
+import { Binary, Document, MongoClient, ObjectId } from "mongodb";
 import Patient from "../models/patient";
 
 export const patientsRouter = express.Router();
 
 patientsRouter.use(express.json());
 
-patientsRouter.get("/:numberid", async (req: Request, res: Response) => {
-  const numberid = req?.params?.numberid;
-  console.log(`Getting data for: ${numberid}`);
+patientsRouter.get("/:id", async (req: Request, res: Response) => {
+  const id = req?.params?.id;
+  console.log(`Getting data for: ${id}`);
   try {
     let user: Patient | null = null;
     if (collections.patients) {
       //check if is a number
-      if (numberid.includes("+")) {
-        user = (await collections.patients.findOne({
-          number: numberid,
-        })) as unknown as Patient;
-      } else {
-        user = (await collections.patients.findOne({
-          _id: new ObjectId(numberid),
-        })) as unknown as Patient;
-      }
+      user = (await collections.patients.findOne({
+        $or: [{identification: {number: !isNaN(parseFloat(id)) ? id : 0}}, { _id: new ObjectId(id)}]
+      })) as unknown as Patient;
     }
     if (user) {
       res.status(200).send({ user, status: STATUS_CODES.SUCCESS });
@@ -39,45 +33,110 @@ patientsRouter.get("/:numberid", async (req: Request, res: Response) => {
   }
 });
 
-patientsRouter.post("/update", async (req: Request, res: Response) => {
+patientsRouter.post("/create", async (req: Request, res: Response) => {
   const data: Patient = req.body;
-  let id: ObjectId | null = null;
+  const keyAltName = data.identification.number.toString(2)
   try {
-    if (collections.patients) {
-      if (data._id) {
-        id = new ObjectId(data._id);
-        const { _id, ...updateData } = data;
-        await collections.patients.updateOne({ _id: id }, { $set: updateData });
-      } else {
-        const res = await collections.patients.updateOne(
-          { number: data.number },
-          { $set: data },
-          {
-            upsert: true,
-          },
-        );
-        id = res.upsertedId;
-      }
-    }
-    res.send({ id, status: STATUS_CODES.SUCCESS });
-  } catch (error) {
-    console.log(error);
-    res.send({ status: STATUS_CODES.GENERIC_ERROR });
-  }
+  await createKey(keyAltName);
+  if (collections.patients) {
+    const ins = await collections.patients.insertOne({
+      // UserBase fields
+      number: await encryption.encrypt(data.number, {
+          keyAltName,
+          algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'
+      }),
+      dateJoined: await encryption.encrypt(data.dateJoined, {
+          keyAltName,
+          algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'
+      }),
+      publicKey: await encryption.encrypt(data.publicKey, {
+          keyAltName,
+          algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+      }),
+      privateKey: await encryption.encrypt(data.privateKey, {
+          keyAltName,
+          algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+      }),
+  
+      // Identification fields
+      identification: {
+          type: await encryption.encrypt(data.identification.type, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'
+          }),
+          number: await encryption.encrypt(data.identification.number, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'
+          }),
+          image: await encryption.encrypt(data.identification.image, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+          })
+      },
+  
+      // Metrics (info) fields
+      info: {
+          age: await encryption.encrypt(data.info.age, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+          }),
+          height: await encryption.encrypt(data.info.height, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+          }),
+          weight: await encryption.encrypt(data.info.weight, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+          }),
+          dob: await encryption.encrypt(data.info.dob, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+          }),
+          sex: await encryption.encrypt(data.info.sex, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+          }),
+          blood: await encryption.encrypt(data.info.blood, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+          }),
+          pregnant: await encryption.encrypt(data.info.pregnant, {
+              keyAltName,
+              algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+          })
+      },
+      // Posts field
+      posts: await encryption.encrypt(data.posts, {
+          keyAltName,
+          algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'
+      })
+  });
+  res.send({id: ins.insertedId, status: STATUS_CODES.SUCCESS });
+  } 
+} catch (error) {
+  console.log(error);
+  res.send({ status: STATUS_CODES.GENERIC_ERROR });
+}
 });
 
 patientsRouter.post("/check", async (req: Request, res: Response) => {
-  const id: string = req.body.id;
+  const id: number = req.body.id;
   const number: string = req.body.number;
   try {
     let idUsers: Patient[] = [];
     let numberUsers: Patient[] = [];
     if (collections.patients) {
       idUsers = (await collections.patients
-        .find({ identification: { number: id } })
+        .find({ identification: { number: await encryption.encrypt(id, {
+          algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic',
+          keyAltName: id.toString(2)
+        }) } })
         .toArray()) as unknown as Patient[];
       numberUsers = (await collections.patients
-        .find({ number })
+        .find({ number: await encryption.encrypt(number, {
+          algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic',
+          keyAltName: id.toString(2)
+        }) })
         .toArray()) as unknown as Patient[];
     }
     if (idUsers.length !== 0)

@@ -22,27 +22,33 @@ export const collections: {
 } = {};
 
 export let encryption: mongoDB.ClientEncryption;
+const masterKey = {
+  projectId: env.GCP_ID,
+  location: env.GCP_LOCATION,
+  keyRing: env.GCP_KEYRING,
+  keyName: env.GCP_KEYNAME,
+};
+export async function createKey(altName?: string) {
+  return await encryption.createDataKey("gcp", {
+    masterKey,
+    keyAltNames: altName? [altName] : undefined
+});
+}
+const keyAliases = env.KEY_ALIASES.split(",");
 
 export async function connectToDatabase() {
-  const keyAliases = env.KEY_ALIASES.split(",");
   const kmsProviders = {
     gcp: {
       email: env.GCP_EMAIL,
       privateKey: env.GCP_PRIVATE_KEY,
     },
   };
-
-  const masterKey = {
-    projectId: env.GCP_ID,
-    location: env.GCP_LOCATION,
-    keyRing: env.GCP_KEYRING,
-    keyName: env.GCP_KEYNAME,
-  };
-  const client: mongoDB.MongoClient = new mongoDB.MongoClient(env.MONGODB, {
+  const client = new mongoDB.MongoClient(env.MONGODB, {
     autoEncryption: {
       keyVaultNamespace: env.KEYVAULT_NAMESPACE,
       kmsProviders,
       bypassAutoEncryption: true,
+      // bypassQueryAnalysis: true,
     },
   });
   await client.connect();
@@ -64,19 +70,19 @@ export async function connectToDatabase() {
     try {
       const key = await encryption.createDataKey("gcp", {
         masterKey,
-        keyAltNames: [alias],
+        keyAltNames: [alias]
       });
       console.log(`New Key Created ${key} with alias ${alias}`);
     } catch {}
   }
   // need to encrypt certain types of data to go to mongodb
-  const userDB: mongoDB.Db = client.db(env.USER_DB_NAME);
-  const patientsCollection: mongoDB.Collection = userDB.collection(
-    env.PATIENT_COLLECTION,
-  );
+  const userDB = client.db(env.USER_DB_NAME);
+
+  const patientsCollection =  userDB.collection(env.PATIENT_COLLECTION)
+
   collections.patients = patientsCollection;
-  const doctorsCollection: mongoDB.Collection = userDB.collection(
-    env.PATIENT_COLLECTION,
+  const doctorsCollection = userDB.collection(
+    env.DOCTOR_COLLECTION,
   );
   collections.doctors = doctorsCollection;
 

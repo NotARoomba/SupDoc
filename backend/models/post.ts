@@ -1,12 +1,12 @@
+import { Binary } from "mongodb";
 import Comment from "./comment";
-import Patient from "./patient";
 
 export default interface Post {
   _id: string;
-  title: string;
-  images: string[];
+  title: string; // D
+  images: string[]; // R
   description: string;
-  patient: Patient;
-  timestamp: number;
-  comments: Comment[];
+  patient: string; // D
+  timestamp: number; // D
+  comments: Comment[]; // M
 }
