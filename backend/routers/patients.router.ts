@@ -5,7 +5,7 @@ import {
   encryption,
 } from "../services/database.service";
 import { STATUS_CODES } from "../models/util";
-import { Binary, Document, MongoClient, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import Patient from "../models/patient";
 import { createWorker } from "tesseract.js";
 
