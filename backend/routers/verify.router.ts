@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { Twilio } from "twilio";
 import { load } from "ts-dotenv";
-import STATUS_CODES from "../models/status";
+import { STATUS_CODES } from "../models/util";
 
 const env = load({
   TW_SID: String,
@@ -14,8 +14,8 @@ const twilio: Twilio = new Twilio(env.TW_SID, env.TW_TOKEN);
 export const verifyRouter = express.Router();
 
 verifyRouter.use(express.json());
-
-verifyRouter.post("/send", async (req: Request, res: Response) => {
+// NEED VERIFY FOR ID AND DOCTOR
+verifyRouter.post("/code/send", async (req: Request, res: Response) => {
   const number: string = req?.body?.number;
   if (req?.body?.number === "") {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
@@ -50,7 +50,7 @@ verifyRouter.post("/send", async (req: Request, res: Response) => {
   }
 });
 
-verifyRouter.post("/check", async (req: Request, res: Response) => {
+verifyRouter.post("/code/check", async (req: Request, res: Response) => {
   const number: string = req?.body?.number;
   const code: string = req?.body?.code as string;
   let verification;

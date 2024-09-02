@@ -1,0 +1,206 @@
+import express, { Request, Response } from "express";
+import Post from "../models/post";
+import { collections, encryption } from "../services/database.service";
+import { Binary, ObjectId } from "mongodb";
+import { STATUS_CODES } from "../models/util";
+import Comment from "../models/comment";
+
+export const postsRouter = express.Router();
+
+postsRouter.use(express.json());
+// GETS POST FROM POST ID
+postsRouter.get("/:id", async (req: Request, res: Response) => {
+  const id = req?.params?.id;
+  try {
+    let post: Post | null = null;
+    if (collections.posts) {
+      post = (await collections.posts.findOne({
+        _id: new ObjectId(id),
+      })) as unknown as Post;
+    }
+    if (post) {
+      res.status(200).send({ post, status: STATUS_CODES.SUCCESS });
+    } else {
+      res.status(404).send({
+        post: null,
+        status: STATUS_CODES.USER_NOT_FOUND,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+});
+
+postsRouter.post("/create", async (req: Request, res: Response) => {
+  const data: Post<null> = req.body;
+  const keyAltName = data.patient.toString(2);
+  try {
+    if (collections.posts) {
+      const postInsert = await collections.posts.insertOne({
+        // Post fields
+        title: await encryption.encrypt(data.title, {
+          keyAltName,
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+        }),
+        images: [],
+        description: await encryption.encrypt(data.description, {
+          keyAltName,
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+        }),
+        patient: await encryption.encrypt(data.patient, {
+          keyAltName,
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+        }),
+        timestamp: await encryption.encrypt(data.timestamp, {
+          keyAltName,
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+        }),
+
+        // Include empty arrays for comments and reports
+        comments: [],
+        reports: [],
+      });
+      if (postInsert.acknowledged) {
+        res.status(200).send({ status: STATUS_CODES.SUCCESS });
+      } else {
+        res.status(404).send({
+          post: null,
+          status: STATUS_CODES.USER_NOT_FOUND,
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+});
+
+postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
+  const comment: Comment<null> = req.body;
+  // if comment has a parent then get the parent and add the id as a child
+  // if the comment does not have a parent then get the postID and run checks if the comment is able to be placed, if not then throw an error, else add the comment ID to the array of comments
+  // DOCTOR IS DOCTOR ID NOT IDENTIFICATION
+  const keyAltName = comment.doctor.toString(2);
+  if (comment.parent) {
+    const parentComment = (await collections.comments?.findOne({
+      _id: new ObjectId(comment.parent),
+    })) as unknown as Comment<null>;
+    if (!parentComment)
+      return res.status(200).send({ status: STATUS_CODES.DOES_NOT_EXIST });
+    const insComment = await collections.comments?.insertOne({
+      // Comment fields
+      postId: await encryption.encrypt(comment.postId, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      }),
+
+      parent: await encryption.encrypt(comment.parent, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      }),
+
+      doctor: await encryption.encrypt(comment.doctor, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      }),
+
+      text: await encryption.encrypt(comment.text, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+      }),
+
+      likes: [],
+
+      reports: [],
+
+      children: [],
+
+      timestamp: await encryption.encrypt(comment.timestamp, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      }),
+    });
+    const updated = await collections.comments?.updateOne(
+      { _id: new ObjectId(parentComment._id) },
+      {
+        $set: {
+          children: [
+            ...parentComment.children,
+            await encryption.encrypt(insComment?.insertedId.toString(), {
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+              keyAltName: comment.doctor.toString(2),
+            }),
+          ],
+        },
+      },
+    );
+    if (updated?.acknowledged) {
+      return res.status(200).send({ status: STATUS_CODES.SUCCESS });
+    } else {
+      return res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+    }
+  } else {
+    const parentPost = (await collections.posts?.findOne({
+      _id: new ObjectId(comment.postId),
+    })) as unknown as Post<null>;
+    if (!parentPost)
+      return res.status(200).send({ status: STATUS_CODES.DOES_NOT_EXIST });
+    if (parentPost.comments.length > 2)
+      return res
+        .status(200)
+        .send({ status: STATUS_CODES.COMMENT_LIMIT_REACHED });
+    const insComment = await collections.comments?.insertOne({
+      // Comment fields
+      postId: await encryption.encrypt(comment.postId, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      }),
+
+      parent: await encryption.encrypt(null, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      }),
+
+      doctor: await encryption.encrypt(comment.doctor, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      }),
+
+      text: await encryption.encrypt(comment.text, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+      }),
+
+      likes: [],
+
+      reports: [],
+
+      children: [],
+
+      timestamp: await encryption.encrypt(comment.timestamp, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      }),
+    });
+    const updated = await collections.posts?.updateOne(
+      { _id: new ObjectId(parentPost._id) },
+      {
+        $set: {
+          comments: [
+            ...parentPost.comments,
+            await encryption.encrypt(insComment?.insertedId, {
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+              keyAltName: comment.doctor.toString(2),
+            }),
+          ],
+        },
+      },
+    );
+    if (updated?.acknowledged) {
+      return res.status(200).send({ status: STATUS_CODES.SUCCESS });
+    } else {
+      return res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+    }
+  }
+});

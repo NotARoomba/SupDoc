@@ -1,5 +1,9 @@
 import * as mongoDB from "mongodb";
 import * as dotenv from "ts-dotenv";
+import Patient from "../models/patient";
+import { Doctor } from "../models/doctor";
+import Post from "../models/post";
+import Comment from "../models/comment";
 
 const env = dotenv.load({
   MONGODB: String,
@@ -14,11 +18,18 @@ const env = dotenv.load({
   USER_DB_NAME: String,
   PATIENT_COLLECTION: String,
   DOCTOR_COLLECTION: String,
+  INTERACTION_DB_NAME: String,
+  POST_COLLECTION: String,
+  COMMENT_COLLECTION: String,
+  REPORT_COLLECTION: String,
 });
 
 export const collections: {
-  patients?: mongoDB.Collection;
-  doctors?: mongoDB.Collection;
+  patients?: mongoDB.Collection<Patient<mongoDB.Binary>>;
+  doctors?: mongoDB.Collection<Doctor>;
+  posts?: mongoDB.Collection<Post>;
+  comments?: mongoDB.Collection<Comment>;
+  reports?: mongoDB.Collection<Report>;
 } = {};
 
 export let encryption: mongoDB.ClientEncryption;
@@ -31,8 +42,8 @@ const masterKey = {
 export async function createKey(altName?: string) {
   return await encryption.createDataKey("gcp", {
     masterKey,
-    keyAltNames: altName? [altName] : undefined
-});
+    keyAltNames: altName ? [altName] : undefined,
+  });
 }
 const keyAliases = env.KEY_ALIASES.split(",");
 
@@ -70,21 +81,20 @@ export async function connectToDatabase() {
     try {
       const key = await encryption.createDataKey("gcp", {
         masterKey,
-        keyAltNames: [alias]
+        keyAltNames: [alias],
       });
       console.log(`New Key Created ${key} with alias ${alias}`);
     } catch {}
   }
-  // need to encrypt certain types of data to go to mongodb
+
   const userDB = client.db(env.USER_DB_NAME);
+  const interactionDB = client.db(env.INTERACTION_DB_NAME);
 
-  const patientsCollection =  userDB.collection(env.PATIENT_COLLECTION)
-
-  collections.patients = patientsCollection;
-  const doctorsCollection = userDB.collection(
-    env.DOCTOR_COLLECTION,
-  );
-  collections.doctors = doctorsCollection;
+  collections.patients = userDB.collection(env.PATIENT_COLLECTION);
+  collections.doctors = userDB.collection(env.DOCTOR_COLLECTION);
+  collections.posts = interactionDB.collection(env.POST_COLLECTION);
+  collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
+  collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
 
   console.log("Successfully connected to database!");
 }

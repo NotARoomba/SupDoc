@@ -1,16 +1,26 @@
 import { Binary } from "mongodb";
+import { ApplyConditionalType } from "./util";
 
 enum IdentificationType {
   TI,
   CEDULA,
 }
-export interface Identification {
-  type: IdentificationType; // D
-  number: number; // D
-  image: string; // R
-}
+export interface Identification<T = Binary | null>
+  extends ApplyConditionalType<
+    {
+      type: number; // D
+      number: number; // D
+      image: string; // R
+    },
+    T
+  > {}
 
-export interface DoctorIdentification extends Identification {
-  license: string; // R
-  isVerified: boolean; // D
-}
+export interface DoctorIdentification<T = Binary | null>
+  extends Identification<T>,
+    ApplyConditionalType<
+      {
+        license: string; // R
+        isVerified: boolean; // D
+      },
+      T
+    > {}

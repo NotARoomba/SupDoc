@@ -1,3 +1,6 @@
+import { Binary, ObjectId } from "mongodb";
+import { ApplyConditionalType } from "./util";
+
 enum REPORT_REASONS {
   INNAPROPRIATE_BEHAVIOUR,
   UNPROFESSIONAL_CONDUCT,
@@ -6,7 +9,13 @@ enum REPORT_REASONS {
   IMPERSONATION,
 }
 
-export default interface Report {
-  reason: REPORT_REASONS;
-  proof: string;
-}
+export default interface Report<T = Binary | null>
+  extends ApplyConditionalType<
+    {
+      _id: ObjectId;
+      reporter: number;
+      reason: REPORT_REASONS;
+      proof: string;
+    },
+    T
+  > {}
