@@ -6,6 +6,7 @@ import { verifyRouter } from "./routers/verify.router";
 import { patientsRouter } from "./routers/patients.router";
 import { Server, Socket } from "socket.io";
 import { createServer } from "http";
+import { postsRouter } from "./routers/posts.router";
 
 const app = express();
 const httpServer = createServer(app);
@@ -29,8 +30,9 @@ connectToDatabase()
     app.use(cors(corsOptions));
     app.use(express.json({ limit: "50mb" }));
     app.use(encryption);
-    // app.use("/users", usersRouter);
-    // app.use("/verify", verifyRouter);
+    app.use("/patients", patientsRouter);
+    app.use("/posts", postsRouter);
+    app.use("/verify", verifyRouter);
 
     app.use("/", async (_req: Request, res: Response) => {
       res.status(200).send("You arent supposed to be here");
