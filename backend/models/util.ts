@@ -29,7 +29,7 @@ export type ApplyConditionalType<T, U> = {
     : T[K] extends Array<infer R> // Check if T[K] is an array
       ? Array<ConditionalType<U, R>> // Apply ConditionalType to the array's elements, but keep the array itself
       : T[K] extends object
-        // ? ApplyConditionalType<T[K], U> // Recursively apply the conditional type to nested objects
-        ? T[K] // Recursively apply the conditional type to nested objects
+        ? // ? ApplyConditionalType<T[K], U> // Recursively apply the conditional type to nested objects
+          T[K] // Recursively apply the conditional type to nested objects
         : ConditionalType<U, T[K]>; // Apply the conditional type to the field if it's a primitive
 };

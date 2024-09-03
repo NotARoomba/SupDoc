@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "../../TuneIO/backend",
+    },
+    {
+      "path": "../../NivelesDeNiveles/backend",
+    },
+  ],
+  "settings": {},
+}
