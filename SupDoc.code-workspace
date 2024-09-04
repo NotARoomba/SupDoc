@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../ForoPEC/web"
+		},
+		{
+			"path": "../NivelesDeNiveles"
+		},
+		{
+			"path": "../TuneIO"
+		}
+	],
+	"settings": {}
+}

@@ -1,6 +1,7 @@
 import { Alert, Text, View } from "react-native";
 import { SignupProps, UserType } from "../components/utils/Types";
 import { useEffect, useState } from "react";
+import { callAPI } from "../components/utils/Functions";
 
 export default function Signup({
   info,
@@ -22,7 +23,7 @@ export default function Signup({
     <View className="h-full ">
       {index == 2 ? (
         <View>
-          {/* needs to show a text box to input a phoen number and ti */}
+        {/* needs to show a text box to input a phone number and ti */}
           <Text className="text-ivory">JASDJAJSD</Text>
         </View>
       ) : index == 3 ? (

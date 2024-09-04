@@ -1,6 +1,7 @@
 import { STATUS_CODES } from "@/backend/models/util";
 import CryptoJS from "crypto-es";
-import { RSA } from "react-native-rsa-native";
+import Forge from "node-forge";
+// import { RSA } from "react-native-rsa-native";
 import * as SecureStore from "expo-secure-store";
 
 export async function callAPI(
@@ -10,6 +11,7 @@ export async function callAPI(
 ) {
   const data = JSON.stringify(body);
   const key = CryptoJS.SHA256(data).toString();
+  Forge.pki.rsa.setPrivateKey(process.env.EXPO_PUBLIC_SERVER_PUBLIC)
   const encryptedKey = await RSA.encrypt(
     key,
     process.env.EXPO_PUBLIC_SERVER_PUBLIC,
