@@ -19,9 +19,10 @@
       }
     },
     "android": {
+      "package": "com.notaroomba.supdoc",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#041225"
       }
     },
     "web": {
