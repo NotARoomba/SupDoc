@@ -5,7 +5,7 @@ import { Doctor } from "../models/doctor";
 import Post from "../models/post";
 import Comment from "../models/comment";
 
-const env = dotenv.load({
+export const env = dotenv.load({
   MONGODB: String,
   GCP_EMAIL: String,
   GCP_PRIVATE_KEY: String,
@@ -13,7 +13,7 @@ const env = dotenv.load({
   GCP_LOCATION: String,
   GCP_KEYRING: String,
   GCP_KEYNAME: String,
-  KEY_ALIASES: String,
+  KEY_ALIAS: String,
   KEYVAULT_NAMESPACE: String,
   USER_DB_NAME: String,
   PATIENT_COLLECTION: String,
@@ -22,6 +22,9 @@ const env = dotenv.load({
   POST_COLLECTION: String,
   COMMENT_COLLECTION: String,
   REPORT_COLLECTION: String,
+  SERVER_PUBLIC: String,
+  SERVER_PRIVATE: String,
+  LIMITED_AUTH: String,
 });
 
 export const collections: {
@@ -45,7 +48,6 @@ export async function createKey(altName?: string) {
     keyAltNames: altName ? [altName] : undefined,
   });
 }
-const keyAliases = env.KEY_ALIASES.split(",");
 
 export async function connectToDatabase() {
   const kmsProviders = {
@@ -77,15 +79,14 @@ export async function connectToDatabase() {
         partialFilterExpression: { keyAltNames: { $exists: true } },
       },
     );
-  for (const alias of keyAliases) {
-    try {
-      const key = await encryption.createDataKey("gcp", {
-        masterKey,
-        keyAltNames: [alias],
-      });
-      console.log(`New Key Created ${key} with alias ${alias}`);
-    } catch {}
-  }
+
+  try {
+    const key = await encryption.createDataKey("gcp", {
+      masterKey,
+      keyAltNames: [env.KEY_ALIAS],
+    });
+    console.log(`New Key Created ${key} with alias ${env.KEY_ALIAS}`);
+  } catch {}
 
   const userDB = client.db(env.USER_DB_NAME);
   const interactionDB = client.db(env.INTERACTION_DB_NAME);

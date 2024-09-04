@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import cors, { CorsOptions } from "cors";
 import { connectToDatabase } from "./services/database.service";
-import encryption from "./services/encryption.service";
+import encryptionMiddleware from "./services/encryption.service";
 import { verifyRouter } from "./routers/verify.router";
 import { patientsRouter } from "./routers/patients.router";
 import { Server, Socket } from "socket.io";
@@ -29,7 +29,7 @@ connectToDatabase()
   .then(() => {
     app.use(cors(corsOptions));
     app.use(express.json({ limit: "50mb" }));
-    app.use(encryption);
+    app.use(encryptionMiddleware);
     app.use("/patients", patientsRouter);
     app.use("/posts", postsRouter);
     app.use("/verify", verifyRouter);
