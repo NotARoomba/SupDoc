@@ -41,7 +41,14 @@ export async function callAPI(
       process.env.EXPO_PUBLIC_SERVER_PUBLIC,
     )
   ).toString();
-      
+      console.log("ASDASD", await fetch(process.env.EXPO_PUBLIC_API_URL + endpoint, {
+        method: method,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: authorization,
+        },
+      }))
   try {
     return method === "POST"
       ? await (
@@ -56,7 +63,7 @@ export async function callAPI(
           })
         ).json()
       : await (
-          await fetch(process.env.EXPO_PUBLIC_API_URL + endpoint, {
+          await fetch("http://192.168.1.66:3001" + endpoint, {
             method: method,
             headers: {
               Accept: "application/json",
