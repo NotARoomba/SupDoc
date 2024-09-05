@@ -14,6 +14,7 @@ const port = 3001;
 
 const corsOptions: CorsOptions = {
   origin: [
+    "*",
     "http://localhost:5173",
     "http://localhost",
     // "https://localhost:5173",
