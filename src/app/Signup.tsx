@@ -15,7 +15,9 @@ export default function Signup({
     if (index == 3) {
       if (!(info.number && info.identification)) {
         setIndex(index - 1);
-        callAPI("/", "GET")
+        callAPI("/", "GET").then((res: any) => {
+          console.log(res, "RES")
+        })
         Alert.alert("Missing Info", "Please fill out the information!");
       } else {
         //checks if the information isnt duplocate
