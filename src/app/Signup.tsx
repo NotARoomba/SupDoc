@@ -7,12 +7,15 @@ export default function Signup({
   info,
   index,
   setIndex,
+  setInfo,
   setIsLogged,
 }: SignupProps) {
+  /// setInfo({...info, info.(PROPIEDAD Q QUIERES CAMBIAR)})
   useEffect(() => {
     if (index == 3) {
       if (!(info.number && info.identification)) {
         setIndex(index - 1);
+        callAPI("/", "GET")
         Alert.alert("Missing Info", "Please fill out the information!");
       } else {
         //checks if the information isnt duplocate
@@ -23,7 +26,7 @@ export default function Signup({
     <View className="h-full ">
       {index == 2 ? (
         <View>
-        {/* needs to show a text box to input a phone number and ti */}
+        {/* needs to show a text box to input a phone number and identificatio number */}
           <Text className="text-ivory">JASDJAJSD</Text>
         </View>
       ) : index == 3 ? (

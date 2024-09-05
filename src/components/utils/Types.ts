@@ -55,6 +55,7 @@ export interface SliderProps {
 
 export interface SignupProps {
   info: SignupInfo;
+  setInfo: (v: SignupInfo) => void;
   index: number;
   setIndex: (v: number) => void;
   setIsLogged: (v: boolean) => void;
@@ -62,6 +63,7 @@ export interface SignupProps {
 
 export interface LoginProps {
   info: LoginInfo;
+  setInfo: (v: LoginInfo) => void;
   index: number;
   setIndex: (v: number) => void;
   setIsLogged: (v: boolean) => void;

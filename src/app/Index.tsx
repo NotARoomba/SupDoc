@@ -71,6 +71,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               setIsLogged={setIsLogged}
               setIndex={setIndex}
               index={pageIndex}
+              setInfo={setInfo}
               info={info as LoginInfo}
             />
           ) : (
@@ -78,6 +79,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               setIndex={setIndex}
               setIsLogged={setIsLogged}
               index={pageIndex}
+              setInfo={setInfo}
               info={info as SignupInfo}
             />
           )}
