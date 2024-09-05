@@ -8,7 +8,7 @@ import Index from "./Index";
 export default function RootLayout() {
   const [isLogged, setIsLogged] = useState(false);
   return (
-    <View className="text-ivory h-[100vh]">
+    <View className="text-ivory h-full">
       <SafeAreaView className="bg-richer_black" />
       {isLogged ? (
         <Stack>

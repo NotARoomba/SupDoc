@@ -3,7 +3,19 @@ import CryptoJS from "crypto-es";
 //import Forge from "node-forge";
 import { RSA } from "react-native-rsa-native";
 import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
+function formatRSAKey(key: string): string {
+  // Add newline after '-----BEGIN PUBLIC KEY-----'
+  key = key.replace(/(-----BEGIN PUBLIC KEY-----)/, '$1\n');
 
+  // Add newline before '-----END PUBLIC KEY-----'
+  key = key.replace(/(-----END PUBLIC KEY-----)/, '\n$1');
+
+  // Insert newline after every 64 characters (non-whitespace sequence)
+  key = key.replace(/(\S{64})/g, '$1\n');
+
+  return key;
+}
 export async function callAPI(
   endpoint: string,
   method: string,
@@ -13,13 +25,11 @@ export async function callAPI(
     
   const data = JSON.stringify(body);
   const key = CryptoJS.SHA256(data).toString();
-  //Forge.pki.rsa.setPrivateKey(process.env.EXPO_PUBLIC_SERVER_PUBLIC)
-  console.log(process.env.EXPO_PUBLIC_SERVER_PUBLIC)
+  const keys = await RSA.generateKeys(2048);
   const encryptedKey = await RSA.encrypt(
     key,
-    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAswOh8NJMFTZf7qb/9AxSnFic23PL6UWHrsr+RTMYG+L3LjfbajPkzNb52oJIPlvbS/EogwkkJmWLiP27wOFvK9+I7YjHWnU9zISsCF6l9aZCXG6np3BZFIwlUiM4LM1wVQY1Gt8HRYLnKm0ogMVjvsW8cc+oVfXI1QR9VIn9IPJFeraYQX3tEaK2wHabb0lXKB0GL8H5nZrABl30vK+qjpkGTuJwr3Gf3Y0daEpWxM1bIC5LVYPNgh2QLJAqm86p1jdwziGV3cphpsgIFfLN2F2rJz3jLTQ0iRSdyzeqrPY7uH+RQLbGHc8PsdG5allvfXUar2e2oaW7M68NERW24wIDAQAB",
+    Platform.OS === 'android' ? process.env.EXPO_PUBLIC_SERVER_PUBLIC : ('-----BEGIN PUBLIC KEY-----'+process.env.EXPO_PUBLIC_SERVER_PUBLIC+'-----END PUBLIC KEY-----'),
   );
-  console.log("ASDASD")
   const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
   const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
   //private key should be encrypted with password

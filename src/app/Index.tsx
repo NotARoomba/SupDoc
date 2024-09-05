@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   SafeAreaView,
   Text,
@@ -45,7 +46,6 @@ export default function Index({ setIsLogged }: IndexProps) {
     };
     onLoad();
   }, []);
-  // const [state, ]
   return (
     <View className="flex flex-col  h-full bg-richer_black ">
       <Image
@@ -56,7 +56,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         <Slider
           options={["Login", "Signup"]}
           setOption={(v) => setIsLogin(v == "Login")}
-          selected={isLogin ? "Login" : "Signup"}
+          selected={!isLogin ? "Login" : "Signup"}
         />
       ) : pageIndex == 1 ? (
         <Slider
@@ -85,7 +85,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           )}
         </>
       )}
-      <View className="flex flex-col absolute bottom-48 gap-y-4 w-full ">
+      <View className="flex flex-col absolute bottom-12 gap-y-4 w-full ">
         {pageIndex > 0 && (
           <TouchableOpacity
             onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
@@ -100,7 +100,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          onPress={() => setIndex(pageIndex + 1)}
+          onPress={() => (pageIndex == 1 && !info?.type) ? Alert.alert("Missing Info", "Please fill out the information!") : setIndex(pageIndex+1)}
           className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
         >
           <Text className="text-xl text-ivory font-bold text-center">Next</Text>
