@@ -37,7 +37,8 @@ export enum BirthSex {
 export interface SignupInfo {
   type?: UserType;
   number?: string;
-  identification?: number;
+  countryCode?: string;
+  identification?: string;
   assignedSex?: BirthSex;
   preferedSex?: string;
 }
@@ -45,6 +46,7 @@ export interface SignupInfo {
 export interface LoginInfo {
   type?: UserType;
   number?: string;
+  identification?: string;
 }
 
 export interface SliderProps {
@@ -67,4 +69,8 @@ export interface LoginProps {
   index: number;
   setIndex: (v: number) => void;
   setIsLogged: (v: boolean) => void;
+}
+export interface LoadingScreenProps {
+  show: boolean;
+  text: string;
 }

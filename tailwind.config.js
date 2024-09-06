@@ -103,10 +103,30 @@ module.exports = {
         "0%": { opacity: "100" },
         "100%": { opacity: "0", display: "none", zIndex: "-50" },
       },
+      travelFade: {
+        '0%': {
+          opacity: 0,
+          'stroke-dashoffset': 100
+        },
+        '20%': {
+          opacity: 1
+        },
+        '55%': {
+          opacity: 1
+        },
+    
+        '75%': {
+          'stroke-dashoffset': 0
+        },
+        '100%': {
+          opacity: 0
+        }
+      },
       animation: {
         show: "show 500ms ease forwards",
         hide: "hide 500ms ease forwards",
         animatedLetters: "lettersAnimation 25s linear infinite",
+        travelFade: 'travelFade 1 ease-in-out infinite',
       },
     },
   },

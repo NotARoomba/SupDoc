@@ -47,7 +47,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     onLoad();
   }, []);
   return (
-    <View className="flex flex-col  h-full bg-richer_black ">
+    <View className="flex flex-col relative  h-full bg-richer_black ">
       <Image
         source={require("assets/images/icon.png")}
         className="h-44 mt-16 mb-8 mx-auto aspect-square rounded-xl"
@@ -85,7 +85,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           )}
         </>
       )}
-      <View className="flex flex-col absolute bottom-12 gap-y-4 w-full ">
+      <View className="flex flex-col absolute bottom-4 gap-y-4 w-full ">
         {pageIndex > 0 && (
           <TouchableOpacity
             onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
@@ -100,7 +100,12 @@ export default function Index({ setIsLogged }: IndexProps) {
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          onPress={() => (pageIndex == 1 && !info?.type) ? Alert.alert("Missing Info", "Please fill out the information!") : setIndex(pageIndex+1)}
+          onPress={() =>
+            (pageIndex == 1 && !info?.type) ||
+            (pageIndex == 2 && (!info?.number || !info?.identification))
+              ? Alert.alert("Missing Info", "Please fill out the information!")
+              : setIndex(pageIndex + 1)
+          }
           className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
         >
           <Text className="text-xl text-ivory font-bold text-center">Next</Text>
