@@ -20,9 +20,9 @@ const corsOptions: CorsOptions = {
 
 connectToDatabase()
   .then(() => {
-    app.use(cors(corsOptions));
     app.use(express.json({ limit: "50mb" }));
     app.use(encryptionMiddleware);
+    app.use(cors(corsOptions));
     app.use("/patients", patientsRouter);
     app.use("/posts", postsRouter);
     app.use("/verify", verifyRouter);

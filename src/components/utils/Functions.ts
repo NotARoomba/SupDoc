@@ -44,7 +44,7 @@ export async function callAPI(
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                // Authorization: `Basic ${authorization}`,
+                Authorization: `Bearer ${authorization}`,
               },
               body: magic,
             })
