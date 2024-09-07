@@ -1,9 +1,15 @@
 import { NextFunction, Request, Response, Send } from "express";
 import * as dotenv from "ts-dotenv";
 import NodeRSA from "node-rsa";
+import Crypto from 'crypto'
 import { collections, encryption, env } from "./database.service";
 
-const nodeRSA = new NodeRSA(env.SERVER_PRIVATE.replace(/\\n/g,"\n"), 'pkcs8');
+// const nodeRSA = new NodeRSA(env.SERVER_PRIVATE.replace(/\\n/g,"\n"), 'pkcs8');
+
+const privKey = Crypto.createPrivateKey(env.SERVER_PRIVATE.replace(/\\n/g,""))
+privKey.asymmetricKeySize = 2048
+privKey.asymmetricKeyType = 'rsa'
+
 
 export default async function encryptionMiddleware(
   req: Request,
@@ -13,9 +19,8 @@ export default async function encryptionMiddleware(
   //check authorization and see if limited auth
   console.log(req.body);
   console.log(req.headers.authorization)
-
   if (!req.headers.authorization) return res.sendStatus(401);
-  const auth = nodeRSA.decrypt(req.headers.authorization, 'utf8');
+  const auth = Crypto.privateDecrypt(privKey, Buffer.from(req.headers.authorization)).toString();
   console.log(auth)
   if (
     auth == env.LIMITED_AUTH &&
@@ -46,14 +51,15 @@ export default async function encryptionMiddleware(
 
   if (req.method == "POST") {
     if (!req.body.key || !req.body.data) return res.sendStatus(401);
-    const key = nodeRSA.decrypt(req.body.key, 'utf8');
+    const key = Crypto.privateDecrypt(privKey, Buffer.from(req.body.key)).toString();
     const data = CryptoJS.AES.decrypt(req.body.data, key);
     req.body = data;
     res.send = function (body: any) {
       const key = CryptoJS.lib.WordArray.random(256 / 8).toString();
       const encrypted = CryptoJS.AES.encrypt(body, key).toString();
+      // NEEDS TO BE FIXED
       return this.send({
-        key: nodeRSA.encrypt(key, 'utf8'),
+        key: key,
         body: encrypted,
       });
     };
