@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response, Send } from "express";
 import * as dotenv from "ts-dotenv";
-import NodeRSA from "encrypt-rsa";
+import NodeRSA from "node-rsa";
 import { collections, encryption, env } from "./database.service";
 
-const nodeRSA = new NodeRSA(env.SERVER_PUBLIC.replace(/\\n/g,"\n"), env.SERVER_PRIVATE.replace(/\\n/g,"\n"), 2048);
+const nodeRSA = new NodeRSA(env.SERVER_PRIVATE.replace(/\\n/g,"\n"), 'pkcs8');
 
 export default async function encryptionMiddleware(
   req: Request,
@@ -14,7 +14,7 @@ export default async function encryptionMiddleware(
   console.log(req.body, req.headers.authorization);
 
   if (!req.headers.authorization) return res.sendStatus(401);
-  const auth = nodeRSA.decrypt({ text: req.headers.authorization });
+  const auth = nodeRSA.decrypt(req.headers.authorization, 'utf8');
   console.log(auth)
   if (
     auth == env.LIMITED_AUTH &&
@@ -45,17 +45,14 @@ export default async function encryptionMiddleware(
 
   if (req.method == "POST") {
     if (!req.body.key || !req.body.data) return res.sendStatus(401);
-    const key = nodeRSA.decrypt({ text: req.body.key });
+    const key = nodeRSA.decrypt(req.body.key, 'utf8');
     const data = CryptoJS.AES.decrypt(req.body.data, key);
     req.body = data;
     res.send = function (body: any) {
       const key = CryptoJS.lib.WordArray.random(256 / 8).toString();
       const encrypted = CryptoJS.AES.encrypt(body, key).toString();
       return this.send({
-        key: nodeRSA.encryptStringWithRsaPublicKey({
-          publicKey: body.publicKey,
-          text: key,
-        }),
+        key: nodeRSA.encrypt(key, 'utf8'),
         body: encrypted,
       });
     };
