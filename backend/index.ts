@@ -13,16 +13,6 @@ const httpServer = createServer(app);
 const port = 3001;
 
 const corsOptions: CorsOptions = {
-  origin: [
-    "https://supdoc-production.up.railway.app/",
-    "http://supdoc-production.up.railway.app/",
-    "http://localhost:5173",
-    "http://localhost",
-    // "https://localhost:5173",
-    // "https://localhost",
-    // "http://172.20.10.5:5173",
-    // "http://172.20.10.5"
-  ],
   allowedHeaders: 'Authorization'
 };
 

@@ -56,7 +56,7 @@ export async function callAPI(
               },
             })).data
     } catch (error: any) {
-      console.log(error);
+      console.log(error.request);
       if (!error.response) return { status: STATUS_CODES.NO_CONNECTION };
       // Alert.alert('Error!', 'No podemos conectar a nuestro servidor! Revisa tu conexion al internet.')
       return {
