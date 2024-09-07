@@ -38,6 +38,7 @@ export async function callAPI(
         //     "-----END PUBLIC KEY-----",
       )
     ).replace(/\s+/g, '').replace('\n', '')
+    console.log(authorization)
     try {
       return method === "POST"
         ? (await axios.post("https://supdoc-production.up.railway.app" + endpoint, magic, {
