@@ -4,6 +4,7 @@ import CryptoJS from "crypto-es";
 import { RSA } from "react-native-rsa-native";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
+import axios from 'axios'
 
 export async function callAPI(
   endpoint: string,
@@ -35,30 +36,24 @@ export async function callAPI(
             process.env.EXPO_PUBLIC_SERVER_PUBLIC +
             "-----END PUBLIC KEY-----",
       )
-    ).toString();
+    ).replace(/\s+/g, '').replace('\n', '')
     try {
       return method === "POST"
-        ? await (
-            await fetch("https://supdoc-production.up.railway.app" + endpoint, {
+        ? (await axios.post("https://supdoc-production.up.railway.app" + endpoint, magic, {
               method: method,
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${authorization}`,
-              },
-              body: magic,
-            })
-          ).json()
-        : await (
-            await fetch("http://192.168.1.66:3001" + endpoint, {
+                Authorization: authorization,
+              }})).data
+        : (await axios.get("http://192.168.1.66:3001" + endpoint, {
               method: method,
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
                 Authorization: authorization,
               },
-            })
-          ).json();
+            })).data
     } catch (error: any) {
       console.log(error);
       if (!error.response) return { status: STATUS_CODES.NO_CONNECTION };

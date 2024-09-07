@@ -17,6 +17,7 @@
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.11.0",
+    "axios": "^1.7.7",
     "crypto-es": "^2.1.0",
     "crypto-js": "^4.2.0",
     "expo": "~51.0.28",

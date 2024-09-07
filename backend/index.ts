@@ -20,9 +20,9 @@ const port = 3001;
 
 connectToDatabase()
   .then(() => {
+    app.use(cors());
     app.use(express.json({ limit: "50mb" }));
     app.use(encryptionMiddleware);
-    app.use(cors());
     app.use("/patients", patientsRouter);
     app.use("/posts", postsRouter);
     app.use("/verify", verifyRouter);
