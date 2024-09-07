@@ -4,18 +4,8 @@ import CryptoJS from "crypto-es";
 import { RSA } from "react-native-rsa-native";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-function formatRSAKey(key: string): string {
-  // Add newline after '-----BEGIN PUBLIC KEY-----'
-  key = key.replace(/(-----BEGIN PUBLIC KEY-----)/, "$1\n");
+import axios from 'axios';
 
-  // Add newline before '-----END PUBLIC KEY-----'
-  key = key.replace(/(-----END PUBLIC KEY-----)/, "\n$1");
-
-  // Insert newline after every 64 characters (non-whitespace sequence)
-  key = key.replace(/(\S{64})/g, "$1\n");
-
-  return key;
-}
 export async function callAPI(
   endpoint: string,
   method: string,
@@ -49,8 +39,7 @@ export async function callAPI(
     ).toString();
     try {
       return method === "POST"
-        ? await (
-            await fetch(process.env.EXPO_PUBLIC_API_URL + endpoint, {
+        ? await axios.post("https://supdoc-production.up.railway.app" + endpoint, {
               method: method,
               headers: {
                 Accept: "application/json",
@@ -59,9 +48,7 @@ export async function callAPI(
               },
               body: magic,
             })
-          ).json()
-        : await (
-            await fetch("http://192.168.1.66:3001" + endpoint, {
+        : await fetch("http://192.168.1.66:3001" + endpoint, {
               method: method,
               headers: {
                 Accept: "application/json",
@@ -69,7 +56,6 @@ export async function callAPI(
                 Authorization: authorization,
               },
             })
-          ).json();
     } catch (error: any) {
       console.log(error);
       if (!error.response) return { status: STATUS_CODES.NO_CONNECTION };

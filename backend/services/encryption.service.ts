@@ -11,8 +11,9 @@ export default async function encryptionMiddleware(
   next: NextFunction,
 ) {
   //check authorization and see if limited auth
-  console.log(req.headers.host);
+  console.log(req.url,req.headers.authorization);
   if (!req.headers.authorization) return res.sendStatus(401);
+  console.log("Passed AUTH")
   const auth = nodeRSA.decrypt({ text: req.headers.authorization });
   console.log(auth)
   if (

@@ -24,8 +24,8 @@ export default function Signup({
         // setInfo({...info, countryCode: countryCode})
         // check if number and id dont exist
         setIsLoading(true);
-        const res = await callAPI("/", "GET");
-        console.log(res)
+        const res = await callAPI("/verify/code/send", "POST", {number: info.number});
+        console.log(res, "asd")
       }
 
     }
