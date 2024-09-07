@@ -5,6 +5,7 @@ import { CountryPicker } from "react-native-country-codes-picker";
 import { callAPI } from "../components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 import Loader from "components/misc/Loader";
+import { STATUS_CODES } from "@/backend/models/util";
 
 export default function Signup({
   info,
@@ -25,6 +26,12 @@ export default function Signup({
         // check if number and id dont exist
         setIsLoading(true);
         const res = await callAPI("/verify/code/send", "POST", {number: info.number});
+
+        if (res.status != STATUS_CODES.SUCCESS) {
+          console.log("Res: ", res)
+          setIsLoading(false);
+          setIndex(index-1);
+        }
         console.log(res, "asd")
       }
 

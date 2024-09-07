@@ -39,7 +39,7 @@ export async function callAPI(
     ).toString();
     try {
       return method === "POST"
-        ? await axios.post("https://supdoc-production.up.railway.app" + endpoint, {
+        ? (await axios.post("https://supdoc-production.up.railway.app" + endpoint, {
               method: method,
               headers: {
                 Accept: "application/json",
@@ -47,15 +47,15 @@ export async function callAPI(
                 Authorization: authorization,
               },
               body: magic,
-            })
-        : await fetch("http://192.168.1.66:3001" + endpoint, {
+            })).data
+        :(await axios.get("http://192.168.1.66:3001" + endpoint, {
               method: method,
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
                 Authorization: authorization,
               },
-            })
+            })).data
     } catch (error: any) {
       console.log(error);
       if (!error.response) return { status: STATUS_CODES.NO_CONNECTION };
