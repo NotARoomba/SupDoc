@@ -7,7 +7,8 @@ import { collections, encryption, env } from "./database.service";
 // const nodeRSA = new NodeRSA(env.SERVER_PRIVATE.replace(/\\n/g,"\n"), 'pkcs8');
 
 const privKey = Crypto.createPrivateKey(env.SERVER_PRIVATE.replace(/\\n/g,"\n"))
-// privKey.asymmetricKeySize = 2048
+
+privKey.asymmetricKeySize = 2048
 // privKey.asymmetricKeyType = 'rsa'
 
 
@@ -20,7 +21,7 @@ export default async function encryptionMiddleware(
   console.log(req.body);
   console.log(req.headers.authorization)
   if (!req.headers.authorization) return res.sendStatus(401);
-  const auth = Crypto.privateDecrypt(privKey, Buffer.from(req.headers.authorization)).toString();
+  const auth = Crypto.privateDecrypt({key: privKey, padding: Crypto.constants.RSA_PKCS1_PADDING, oaepHash: 'sha256'}, Buffer.from(req.headers.authorization)).toString();
   console.log(auth)
   if (
     auth == env.LIMITED_AUTH &&
