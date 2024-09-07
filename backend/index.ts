@@ -29,7 +29,7 @@ const corsOptions: CorsOptions = {
 
 connectToDatabase()
   .then(() => {
-    app.use(cors(corsOptions));
+    app.use(cors());
     app.use(express.json({ limit: "50mb" }));
     app.use(encryptionMiddleware);
     app.use("/patients", patientsRouter);
@@ -37,10 +37,6 @@ connectToDatabase()
     app.use("/verify", verifyRouter);
 
     app.use("/", async (_req: Request, res: Response) => {
-      res.status(200).send("You arent supposed to be here");
-    });
-
-    app.get("/", async (_req: Request, res: Response) => {
       res.status(200).send("You arent supposed to be here");
     });
 
