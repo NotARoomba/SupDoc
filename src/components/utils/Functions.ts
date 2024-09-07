@@ -44,7 +44,7 @@ export async function callAPI(
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: authorization,
+                Authorization: "Bearer " + authorization,
               },
               body: magic,
             })).data
@@ -53,7 +53,7 @@ export async function callAPI(
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: authorization,
+                Authorization: "Bearer " + authorization,
               },
             })).data
     } catch (error: any) {
