@@ -48,7 +48,7 @@ export async function callAPI(
               },
               body: magic,
             })).data
-        :(await axios.get("http://192.168.1.66:3001" + endpoint, {
+        :(await axios.get("https://supdoc-production.up.railway.app" + endpoint, {
               method: method,
               headers: {
                 Accept: "application/json",

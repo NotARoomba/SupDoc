@@ -13,16 +13,7 @@ const httpServer = createServer(app);
 const port = 3001;
 
 const corsOptions: CorsOptions = {
-  origin: [
-    "https://supdoc-production.up.railway.app/",
-    "http://supdoc-production.up.railway.app/",
-    "http://localhost:5173",
-    "http://localhost",
-    // "https://localhost:5173",
-    // "https://localhost",
-    // "http://172.20.10.5:5173",
-    // "http://172.20.10.5"
-  ],
+  origin: ["*"],
   allowedHeaders: 'Authorization'
 };
 
@@ -30,7 +21,7 @@ const corsOptions: CorsOptions = {
 
 connectToDatabase()
   .then(() => {
-    // app.use(cors(corsOptions));
+    app.use(cors(corsOptions));
     app.use(express.json({ limit: "50mb" }));
     app.use(encryptionMiddleware);
     app.use("/patients", patientsRouter);
