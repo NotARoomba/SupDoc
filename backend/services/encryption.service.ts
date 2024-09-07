@@ -11,6 +11,7 @@ export default async function encryptionMiddleware(
   next: NextFunction,
 ) {
   //check authorization and see if limited auth
+  console.log(req)
   console.log(req.body, req.headers.authorization);
 
   if (!req.headers.authorization) return res.sendStatus(401);
