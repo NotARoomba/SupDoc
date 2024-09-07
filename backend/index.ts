@@ -13,7 +13,7 @@ const httpServer = createServer(app);
 const port = 3001;
 
 const corsOptions: CorsOptions = {
-  allowedHeaders: 'Authorization'
+  // allowedHeaders: 'Authorization'
 };
 
 // const io = new Server(httpServer, {cors: corsOptions});

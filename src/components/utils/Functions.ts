@@ -4,7 +4,6 @@ import CryptoJS from "crypto-es";
 import { RSA } from "react-native-rsa-native";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-import axios from 'axios';
 
 export async function callAPI(
   endpoint: string,
@@ -39,24 +38,29 @@ export async function callAPI(
     ).toString();
     try {
       return method === "POST"
-        ? (await axios.post("https://supdoc-production.up.railway.app" + endpoint, magic, {
-          method: method,
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authorization}`
-          }
-        })).data
-        :(await axios.get("https://supdoc-production.up.railway.app" + endpoint, {
+        ? await (
+            await fetch("https://supdoc-production.up.railway.app" + endpoint, {
               method: method,
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authorization,
+                // Authorization: `Basic ${authorization}`,
               },
-            })).data
+              body: magic,
+            })
+          ).json()
+        : await (
+            await fetch("http://192.168.1.66:3001" + endpoint, {
+              method: method,
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: authorization,
+              },
+            })
+          ).json();
     } catch (error: any) {
-      console.log(error.request);
+      console.log(error);
       if (!error.response) return { status: STATUS_CODES.NO_CONNECTION };
       // Alert.alert('Error!', 'No podemos conectar a nuestro servidor! Revisa tu conexion al internet.')
       return {
