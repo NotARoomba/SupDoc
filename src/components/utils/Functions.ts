@@ -39,16 +39,14 @@ export async function callAPI(
     ).toString();
     try {
       return method === "POST"
-        ? (await axios.post("https://supdoc-production.up.railway.app" + endpoint, {
-              method: method,
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Bearer: authorization,
-                Authorization: `Bearer ${authorization}`
-              },
-              body: magic,
-            })).data
+        ? (await axios.post("https://supdoc-production.up.railway.app" + endpoint, magic, {
+          method: method,
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authorization}`
+          }
+        })).data
         :(await axios.get("https://supdoc-production.up.railway.app" + endpoint, {
               method: method,
               headers: {
