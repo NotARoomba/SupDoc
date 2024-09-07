@@ -2,8 +2,8 @@ import { NextFunction, Request, Response, Send } from "express";
 import * as dotenv from "ts-dotenv";
 import NodeRSA from "node-rsa";
 import { collections, encryption, env } from "./database.service";
-
-const nodeRSA = new NodeRSA(env.SERVER_PRIVATE.replace(/\\n/g,"\n"));
+console.log(env.SERVER_PRIVATE)
+const nodeRSA = new NodeRSA(env.SERVER_PRIVATE);
 
 export default async function encryptionMiddleware(
   req: Request,
