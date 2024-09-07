@@ -21,7 +21,7 @@ export default async function encryptionMiddleware(
   console.log(req.body);
   console.log(req.headers.authorization)
   if (!req.headers.authorization) return res.sendStatus(401);
-  const auth = Crypto.privateDecrypt({key: privKey, padding: Crypto.constants.RSA_PKCS1_PADDING, oaepHash: 'sha256'}, Buffer.from(req.headers.authorization)).toString();
+  const auth = Crypto.privateDecrypt({key: privKey, padding: Crypto.constants.RSA_PKCS1_OAEP_PADDING, oaepHash: 'sha256'}, Buffer.from(req.headers.authorization)).toString();
   console.log(auth)
   if (
     auth == env.LIMITED_AUTH &&
