@@ -40,6 +40,10 @@ connectToDatabase()
       res.status(200).send("You arent supposed to be here");
     });
 
+    app.get("/", async (_req: Request, res: Response) => {
+      res.status(200).send("You arent supposed to be here");
+    });
+
     app.listen(port);
     console.log("Server started!");
     // app.listen(port, () => {

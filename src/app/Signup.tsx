@@ -5,7 +5,6 @@ import { CountryPicker } from "react-native-country-codes-picker";
 import { callAPI } from "../components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 import Loader from "components/misc/Loader";
-import LoadingScreen from "components/misc/LoadingScreen";
 
 export default function Signup({
   info,
@@ -20,11 +19,17 @@ export default function Signup({
   const [loading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (index == 3) {
-      // setInfo({...info, countryCode: countryCode})
-      // check if number and id dont exist
-      setIsLoading(true);
+    const doChecks = async () => {
+      if (index == 3) {
+        // setInfo({...info, countryCode: countryCode})
+        // check if number and id dont exist
+        setIsLoading(true);
+        const res = await callAPI("/", "GET");
+        console.log(res)
+      }
+
     }
+    doChecks()
   }, [index]);
   return (
     <View className="h-full ">
@@ -102,15 +107,15 @@ export default function Signup({
           line: { backgroundColor: "rgba(180, 197, 228, 0.2)" },
         }}
       />
-      <LoadingScreen text="Loading" show={loading} />
-      {/* <Spinner
+      {/* <LoadingScreen text="Loading" show={loading} /> */}
+      <Spinner
           visible={loading}
           overlayColor="#00000099"
           textContent={"Loading"}
           customIndicator={<Loader />}
-          textStyle={{color: '#fff', marginTop: -50}}
+          textStyle={{color: '#fff', marginTop: -25}}
           animation="fade"
-        /> */}
+        />
     </View>
   );
 }

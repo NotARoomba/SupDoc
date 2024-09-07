@@ -46,7 +46,7 @@ export default function Loader() {
   }));
 
   return (
-    <View className={`flex justify-center items-center`}>
+    <View className={`flex justify-center items-center w-24`}>
       <Svg
         scale={100}
         width="100%"

@@ -24,7 +24,6 @@ export async function callAPI(
   try {
     const data = JSON.stringify(body);
     const key = CryptoJS.SHA256(data).toString();
-    const keys = await RSA.generateKeys(2048);
     const encryptedKey = await RSA.encrypt(
       key,
       Platform.OS === "android"
@@ -41,10 +40,13 @@ export async function callAPI(
         (await SecureStore.getItemAsync(
           process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
         )) ?? process.env.EXPO_PUBLIC_LIMITED_AUTH,
-        process.env.EXPO_PUBLIC_SERVER_PUBLIC,
+        Platform.OS === "android"
+        ? process.env.EXPO_PUBLIC_SERVER_PUBLIC
+        : "-----BEGIN PUBLIC KEY-----" +
+            process.env.EXPO_PUBLIC_SERVER_PUBLIC +
+            "-----END PUBLIC KEY-----",
       )
     ).toString();
-    console.log("ASDASD", process.env.EXPO_PUBLIC_API_URL);
     try {
       return method === "POST"
         ? await (
