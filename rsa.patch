@@ -1,29 +1,15 @@
-diff --git a/node_modules/react-native-rsa-native/android/src/main/java/com/RNRSA/RSA.java b/node_modules/react-native-rsa-native/android/src/main/java/com/RNRSA/RSA.java
-index 7079d28..50ecba1 100644
---- a/node_modules/react-native-rsa-native/android/src/main/java/com/RNRSA/RSA.java
-+++ b/node_modules/react-native-rsa-native/android/src/main/java/com/RNRSA/RSA.java
-@@ -235,17 +235,17 @@ public class RSA {
-     }
- 
-     private PublicKey pkcs1ToPublicKey(String publicKey) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
--        Reader keyReader = null;
-+        // Reader keyReader = null;
-         try {
--            keyReader = new StringReader(publicKey);
--            PEMParser pemParser = new PEMParser(keyReader);
--            SubjectPublicKeyInfo subjectPublicKeyInfo = (SubjectPublicKeyInfo) pemParser.readObject();
--            X509EncodedKeySpec spec = new X509EncodedKeySpec(subjectPublicKeyInfo.getEncoded());
-+            // keyReader = new StringReader(publicKey);
-+            // PEMParser pemParser = new PEMParser(keyReader);
-+            // SubjectPublicKeyInfo subjectPublicKeyInfo = (SubjectPublicKeyInfo) pemParser.readObject();
-+            X509EncodedKeySpec spec = new X509EncodedKeySpec(Base64.decode(publicKey, Base64.DEFAULT));
-             return KeyFactory.getInstance("RSA").generatePublic(spec);
-                } finally {
--            if (keyReader != null) {
--                keyReader.close();
--            }
-+            // if (keyReader != null) {
-+            //     keyReader.close();
-+            // }
-         }
-     }
+  private PublicKey pkcs1ToPublicKey(String publicKey) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+//        Reader keyReader = null;
+        try {
+//            keyReader = new StringReader(publicKey);
+//            PEMParser pemParser = new PEMParser(keyReader);
+//            SubjectPublicKeyInfo subjectPublicKeyInfo = (SubjectPublicKeyInfo) pemParser.readObject();
+//            X509EncodedKeySpec spec = new X509EncodedKeySpec(subjectPublicKeyInfo.getEncoded());
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(Base64.decode(publicKey, Base64.DEFAULT));
+            return KeyFactory.getInstance("RSA").generatePublic(spec);
+               } finally {
+//            if (keyReader != null) {
+//                keyReader.close();
+//            }
+        }
+    }

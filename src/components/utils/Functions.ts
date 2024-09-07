@@ -1,6 +1,5 @@
 import { STATUS_CODES } from "@/backend/models/util";
 import CryptoJS from "crypto-es";
-//import Forge from "node-forge";
 import { RSA } from "react-native-rsa-native";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
@@ -16,11 +15,12 @@ export async function callAPI(
     const key = CryptoJS.SHA256(data).toString();
     const encryptedKey = await RSA.encrypt(
       key,
-      Platform.OS === "android"
-        ? process.env.EXPO_PUBLIC_SERVER_PUBLIC
-        : "-----BEGIN PUBLIC KEY-----" +
-            process.env.EXPO_PUBLIC_SERVER_PUBLIC +
-            "-----END PUBLIC KEY-----",
+      process.env.EXPO_PUBLIC_SERVER_PUBLIC
+      // Platform.OS === "android"
+      //   ? process.env.EXPO_PUBLIC_SERVER_PUBLIC
+      //   : "-----BEGIN PUBLIC KEY-----" +
+      //       process.env.EXPO_PUBLIC_SERVER_PUBLIC +
+      //       "-----END PUBLIC KEY-----",
     );
     const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
     const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
@@ -30,11 +30,12 @@ export async function callAPI(
         (await SecureStore.getItemAsync(
           process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
         )) ?? process.env.EXPO_PUBLIC_LIMITED_AUTH,
-        Platform.OS === "android"
-        ? process.env.EXPO_PUBLIC_SERVER_PUBLIC
-        : "-----BEGIN PUBLIC KEY-----" +
-            process.env.EXPO_PUBLIC_SERVER_PUBLIC +
-            "-----END PUBLIC KEY-----",
+        process.env.EXPO_PUBLIC_SERVER_PUBLIC
+        // Platform.OS === "android"
+        // ? process.env.EXPO_PUBLIC_SERVER_PUBLIC
+        // : "-----BEGIN PUBLIC KEY-----" +
+        //     process.env.EXPO_PUBLIC_SERVER_PUBLIC +
+        //     "-----END PUBLIC KEY-----",
       )
     ).replace(/\s+/g, '').replace('\n', '')
     try {
