@@ -12,9 +12,9 @@ const app = express();
 const httpServer = createServer(app);
 const port = 3001;
 
-const corsOptions: CorsOptions = {
-  // allowedHeaders: 'Authorization'
-};
+// const corsOptions: CorsOptions = {
+//   // allowedHeaders: 'Authorization'
+// };
 
 // const io = new Server(httpServer, {cors: corsOptions});
 
@@ -22,7 +22,7 @@ connectToDatabase()
   .then(() => {
     app.use(express.json({ limit: "50mb" }));
     app.use(encryptionMiddleware);
-    app.use(cors(corsOptions));
+    app.use(cors());
     app.use("/patients", patientsRouter);
     app.use("/posts", postsRouter);
     app.use("/verify", verifyRouter);
