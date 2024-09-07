@@ -15,7 +15,7 @@ export default async function encryptionMiddleware(
   console.log(req.headers.authorization)
 
   if (!req.headers.authorization) return res.sendStatus(401);
-  const auth = nodeRSA.decrypt(req.headers.authorization, 'base64').toString();
+  const auth = nodeRSA.decrypt(req.headers.authorization).toString();
   console.log("DECRUITISADAS")
   console.log(auth)
   if (
