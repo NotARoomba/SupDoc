@@ -23,13 +23,14 @@ const corsOptions: CorsOptions = {
     // "http://172.20.10.5:5173",
     // "http://172.20.10.5"
   ],
+  allowedHeaders: 'Authorization'
 };
 
 // const io = new Server(httpServer, {cors: corsOptions});
 
 connectToDatabase()
   .then(() => {
-    app.use(cors());
+    app.use(cors(corsOptions));
     app.use(express.json({ limit: "50mb" }));
     app.use(encryptionMiddleware);
     app.use("/patients", patientsRouter);
@@ -39,7 +40,7 @@ connectToDatabase()
     app.use("/", async (_req: Request, res: Response) => {
       res.status(200).send("You arent supposed to be here");
     });
-
+    
     app.listen(port);
     console.log("Server started!");
     // app.listen(port, () => {
