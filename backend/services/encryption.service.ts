@@ -3,7 +3,7 @@ import * as dotenv from "ts-dotenv";
 import NodeRSA from "node-rsa";
 import { collections, encryption, env } from "./database.service";
 console.log(env.SERVER_PRIVATE)
-const nodeRSA = new NodeRSA(env.SERVER_PRIVATE, 'pkcs1-private-pem');
+const nodeRSA = new NodeRSA(env.SERVER_PRIVATE, 'pkcs1', {encryptionScheme: 'pkcs1'});
 
 export default async function encryptionMiddleware(
   req: Request,
