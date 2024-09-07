@@ -7,8 +7,8 @@ import { collections, encryption, env } from "./database.service";
 // const nodeRSA = new NodeRSA(env.SERVER_PRIVATE.replace(/\\n/g,"\n"), 'pkcs8');
 
 const privKey = Crypto.createPrivateKey(env.SERVER_PRIVATE.replace(/\\n/g,"\n"))
-privKey.asymmetricKeySize = 2048
-privKey.asymmetricKeyType = 'rsa'
+// privKey.asymmetricKeySize = 2048
+// privKey.asymmetricKeyType = 'rsa'
 
 
 export default async function encryptionMiddleware(
