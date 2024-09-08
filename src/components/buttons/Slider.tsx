@@ -64,7 +64,7 @@ export default function Slider({ options, setOption, selected }: SliderProps) {
             }
             onPress={(e: GestureResponderEvent) => {
               e.currentTarget.measure((_x, __, w, _h, x) => {
-                pos.value = withSpring(x - 14, springConfig);
+                pos.value = withSpring(x - 32, springConfig);
                 width.value = withSpring(w);
                 setOption(v);
               });
@@ -73,7 +73,7 @@ export default function Slider({ options, setOption, selected }: SliderProps) {
           >
             <Text
               suppressHighlighting
-              className="text-2xl w-44 px-12 h-fit text-ivory text-center"
+              className="text-2xl font-semibold w-44 px-12 h-fit text-ivory text-center"
             >
               {v}
             </Text>

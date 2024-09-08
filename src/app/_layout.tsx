@@ -3,9 +3,6 @@ import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaView, View } from "react-native";
 import Index from "./Index";
-import * as SplashScreen from 'expo-splash-screen';
-
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [isLogged, setIsLogged] = useState(false);

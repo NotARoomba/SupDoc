@@ -29,9 +29,9 @@ export enum UserType {
 }
 
 export enum BirthSex {
-  MALE = "Male",
-  FEMALE = "Female",
-  INTERSEX = "Intersex",
+  MALE = "M",
+  FEMALE = "F",
+  INTERSEX = "IS",
 }
 
 export interface SignupInfo {
@@ -40,6 +40,14 @@ export interface SignupInfo {
   countryCode?: string;
   identification?: string;
   dob?: number;
+  weight?: number;
+  height?: number;
+  gs: string;
+  rh: string;
+  pregnant?: boolean;
+  trans?: boolean;
+  hormones?: boolean;
+  surgery?: boolean;
   assignedSex?: BirthSex;
   preferedSex?: string;
 }

@@ -15,7 +15,7 @@ import {
   SignupInfo,
   UserType,
 } from "../components/utils/Types";
-import { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useEffect, useState } from "react";
 import { Image } from "expo-image";
 import Slider from "../components/buttons/Slider";
@@ -51,74 +51,102 @@ export default function Index({ setIsLogged }: IndexProps) {
   }, []);
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
-    <View className="flex flex-col relative  h-full bg-richer_black ">
-    
-      <Image
-        source={require("assets/images/icon.png")}
-        className="h-32 my-4 mx-auto aspect-square rounded-xl"
-      />
-      {pageIndex == 0 ? (
-        <View className="flex mt-4 ">
-        <Slider
-          options={["Login", "Signup"]}
-          setOption={(v) => setIsLogin(v == "Login")}
-          selected={!isLogin ? "Login" : "Signup"}
-        /></View>
-      ) : pageIndex == 1 ? (
-        <View className="flex mt-4 ">
-        <Slider
-          options={["Doctor", "Patient"]}
-          setOption={(v) => setInfo({ ...info, type: v as UserType })}
-          selected={info?.type}
-        /></View>
-      ) : (
-        <>
-          {isLogin ? (
-            <Login
-              setIsLogged={setIsLogged}
-              setIndex={setIndex}
-              index={pageIndex}
-              setInfo={setInfo}
-              info={info as LoginInfo}
-            />
-          ) : (
-            <Signup
-              setIndex={setIndex}
-              setIsLogged={setIsLogged}
-              index={pageIndex}
-              setInfo={setInfo}
-              info={info as SignupInfo}
-            />
-          )}
-        </>
-      )}
-      <View className={"flex flex-col absolute gap-y-4 w-full " + (Platform.OS === 'android' ? ' bottom-4 ' : 'bottom-24')}>
-        {pageIndex > 0 && (
-          <TouchableOpacity
-            onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
-            className={
-              "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg " +
-              (pageIndex > 0 ? "animate-show" : "animate-hide")
-            }
+      <View className="flex flex-col relative  h-full bg-richer_black ">
+        <Image
+          source={require("assets/images/icon.png")}
+          className="h-32 my-4 mx-auto aspect-square rounded-xl"
+        />
+        {pageIndex == 0 ? (
+          <Animated.View
+            key={pageIndex}
+            entering={FadeIn.duration(500)}
+            className="flex mt-4 "
           >
-            <Text className="text-xl  text-ivory font-bold text-center">
-              Back
+            <Slider
+              options={["Login", "Signup"]}
+              setOption={(v) => setIsLogin(v == "Login")}
+              selected={isLogin ? "Login" : "Signup"}
+            />
+          </Animated.View>
+        ) : pageIndex == 1 ? (
+          <Animated.View
+            key={pageIndex}
+            entering={FadeIn.duration(500)}
+            className="flex mt-4 "
+          >
+            <Slider
+              options={["Doctor", "Patient"]}
+              setOption={(v) => setInfo({ ...info, type: v as UserType })}
+              selected={info?.type}
+            />
+          </Animated.View>
+        ) : (
+          <>
+            {isLogin ? (
+              <Login
+                setIsLogged={setIsLogged}
+                setIndex={setIndex}
+                index={pageIndex}
+                setInfo={setInfo}
+                info={info as LoginInfo}
+              />
+            ) : (
+              <Signup
+                setIndex={setIndex}
+                setIsLogged={setIsLogged}
+                index={pageIndex}
+                setInfo={setInfo}
+                info={info as SignupInfo}
+              />
+            )}
+          </>
+        )}
+        <View
+          className={
+            "flex flex-col absolute gap-y-4 w-full " +
+            (Platform.OS === "android" ? " bottom-4 " : "bottom-24")
+          }
+        >
+          {pageIndex > 0 && (
+            <Animated.View
+              entering={FadeIn.duration(500)}
+              exiting={FadeOut.duration(500)}
+            >
+              <TouchableOpacity
+                onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
+                className={
+                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg " +
+                  (pageIndex > 0 ? "animate-show" : "animate-hide")
+                }
+              >
+                <Text className="text-xl  text-ivory font-medium text-center">
+                  Back
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+          <TouchableOpacity
+            onPress={() =>
+              (pageIndex == 1 && !info?.type) ||
+              (pageIndex == 2 && (!info?.number || !info?.identification)) ||
+              (pageIndex == 3 &&
+                info &&
+                "rh" in info &&
+                (!info.height || !info.weight))
+                ? Alert.alert(
+                    "Missing Info",
+                    "Please fill out the information!",
+                  )
+                : setIndex(pageIndex + 1)
+            }
+            className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
+          >
+            <Text className="text-xl text-ivory font-medium text-center">
+              Next
             </Text>
           </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          onPress={() =>
-            (pageIndex == 1 && !info?.type) ||
-            (pageIndex == 2 && (!info?.number || !info?.identification))
-              ? Alert.alert("Missing Info", "Please fill out the information!")
-              : setIndex(pageIndex + 1)
-          }
-          className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
-        >
-          <Text className="text-xl text-ivory font-bold text-center">Next</Text>
-        </TouchableOpacity>
+        </View>
       </View>
-    </View>
     </TouchableWithoutFeedback>
   );
 }
