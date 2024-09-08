@@ -7,10 +7,15 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { BirthSex, SignupProps, UserType } from "../components/utils/Types";
+import {
+  BirthSex,
+  SignupInfo,
+  SignupProps,
+  UserType,
+} from "../components/utils/Types";
 import React, { useEffect, useState } from "react";
 import { CountryPicker } from "react-native-country-codes-picker";
-import { callAPI } from "../components/utils/Functions";
+import { callAPI, isPatientInfo } from "../components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 import Loader from "components/misc/Loader";
 import { STATUS_CODES } from "@/backend/models/util";
@@ -27,7 +32,7 @@ import Animated, {
 export default function Signup({
   info,
   index,
-  setIndex,
+  userType,
   setInfo,
   setIsLogged,
 }: SignupProps) {
@@ -51,16 +56,6 @@ export default function Signup({
     };
     doChecks();
   }, [index]);
-  useEffect(() => {
-    //default value for pickers
-    setInfo({
-      ...info,
-      gs: "O",
-      rh: "-",
-      assignedSex: BirthSex.MALE,
-      pregnant: false,
-    });
-  }, []);
   return (
     <View className="h-full ">
       <Animated.Text
@@ -104,8 +99,8 @@ export default function Signup({
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
         </Animated.View>
-      ) : index == 3 ? (
-        info.type == UserType.PATIENT ? (
+      ) : isPatientInfo(userType, info) ? (
+        index == 3 ? (
           <Animated.View
             entering={FadeIn.duration(500)}
             className={"h-full flex flex-col"}
@@ -117,9 +112,10 @@ export default function Signup({
               <DateTimePicker
                 value={new Date(info.dob ?? new Date()) ?? new Date()}
                 maximumDate={new Date()}
-                onChange={(d) =>
-                  setInfo({ ...info, dob: d.nativeEvent.timestamp })
-                }
+                onChange={(d) => {
+                  console.log(d);
+                  setInfo({ ...info, dob: d.nativeEvent.timestamp });
+                }}
                 style={{
                   marginHorizontal: "auto",
                   transform: [{ translateX: -4 }],
@@ -136,10 +132,10 @@ export default function Signup({
                   onChangeText={(h) =>
                     setInfo({
                       ...info,
-                      height: isNaN(parseInt(h)) ? undefined : parseInt(h),
+                      height: isNaN(parseInt(h)) ? 0 : parseInt(h),
                     })
                   }
-                  value={info.height?.toString() ?? ""}
+                  value={info.height == 0 ? "" : info.height.toString()}
                   maxLength={3}
                   keyboardType="phone-pad"
                   placeholderTextColor={"#ffffff"}
@@ -183,10 +179,10 @@ export default function Signup({
                   onChangeText={(w) =>
                     setInfo({
                       ...info,
-                      weight: isNaN(parseInt(w)) ? undefined : parseInt(w),
+                      weight: isNaN(parseInt(w)) ? 0 : parseInt(w),
                     })
                   }
-                  value={info.weight?.toString() ?? ""}
+                  value={info.weight == 0 ? "" : info.weight.toString()}
                   maxLength={3}
                   keyboardType="phone-pad"
                   placeholderTextColor={"#ffffff"}
@@ -246,13 +242,7 @@ export default function Signup({
               </View>
             </View>
           </Animated.View>
-        ) : (
-          <View>
-            <Text className="text-6xl text-ivory">DOCTOR SIGNUP</Text>
-          </View>
-        )
-      ) : index == 4 ? (
-        info.type == UserType.PATIENT ? (
+        ) : index == 4 ? (
           <Animated.View entering={FadeIn.duration(500)}>
             <Text className="text-center w-10/12 mx-auto text-lg mb-4 text-ivory font-semibold">
               Do you identify as a different sex than your birth sex?
@@ -274,7 +264,6 @@ export default function Signup({
             {info.trans && (
               <Animated.View
                 entering={FadeIn.duration(500)}
-                exiting={FadeOut.duration(500)}
               >
                 <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
                   Do you take hormones?
@@ -307,13 +296,32 @@ export default function Signup({
               </Animated.View>
             )}
           </Animated.View>
+        ) : index == 5 && info.trans ? (
+          <Animated.View entering={FadeIn.duration(500)}>
+            <Text className="text-center w-10/12 mx-auto text-lg mb-4 text-ivory font-semibold">
+              What sex do you identify with?
+            </Text>
+            <View className="flex flex-row justify-center -mt-6">
+              <Picker
+                selectedValue={info.preferedSex}
+                style={{ width: 100 }}
+                onValueChange={(v) => setInfo({ ...info, preferedSex: v })}
+              >
+                <Picker.Item color="#fbfff1" label="M" value={BirthSex.MALE} />
+                <Picker.Item
+                  color="#fbfff1"
+                  label="F"
+                  value={BirthSex.FEMALE}
+                />
+                <Picker.Item
+                  color="#fbfff1"
+                  label="IS"
+                  value={BirthSex.INTERSEX}
+                />
+              </Picker>
+            </View>
+          </Animated.View>
         ) : (
-          <View>
-            <Text className="text-6xl text-ivory">OTHER DOCTOR PAGE</Text>
-          </View>
-        )
-      ) : index == 5 ? (
-        info.type == UserType.PATIENT ? (
           <View>
             <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
               Password
@@ -340,14 +348,10 @@ export default function Signup({
               className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
             />
           </View>
-        ) : (
-          <View>
-            <Text className="text-6xl text-ivory">OTHER OTHER DOCTOR PAGE</Text>
-          </View>
         )
       ) : (
         <View>
-          <Text className="etxt-6xl text-white">6 PAGE INDEX</Text>
+          <Text className="text-6xl text-ivory">DOCTR+OR SIGNUP FINALLL</Text>
         </View>
       )}
       <CountryPicker

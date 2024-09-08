@@ -12,6 +12,7 @@ import {
 import {
   IndexProps,
   LoginInfo,
+  PatientSignupInfo,
   SignupInfo,
   UserType,
 } from "../components/utils/Types";
@@ -25,13 +26,19 @@ import * as SecureStore from "expo-secure-store";
 import Signup from "./Signup";
 import { STATUS_CODES } from "@/backend/models/util";
 import Loader from "components/misc/Loader";
-import { callAPI } from "components/utils/Functions";
+import { callAPI, isPatientInfo } from "components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
-  const [isLogin, setIsLogin] = useState<boolean>();
-  const [info, setInfo] = useState<SignupInfo | LoginInfo>();
+  const [isLogin, setIsLogin] = useState<boolean>(true);
+  const [userType, setUserType] = useState<UserType>();
+  const [signUpInfo, setSignUpInfo] = useState<
+    SignupInfo<UserType.DOCTOR> | SignupInfo<UserType.PATIENT>
+  >({} as SignupInfo<UserType.PATIENT>);
+  const [loginInfo, setLoginInfo] = useState<
+    LoginInfo<UserType.DOCTOR> | LoginInfo<UserType.PATIENT>
+  >({} as LoginInfo<UserType.PATIENT>);
   const [pageIndex, setIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -58,11 +65,11 @@ export default function Index({ setIsLogged }: IndexProps) {
     //checl if passswords are the same
     setLoading(true);
     const doesExist = await callAPI(
-      `/${info?.type == UserType.PATIENT ? "patients" : "doctors"}/check`,
+      `/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`,
       "POST",
       {
-        id: info?.identification,
-        number: info?.number,
+        id: signUpInfo.identification,
+        number: signUpInfo.number,
       },
     );
     if (doesExist.status !== STATUS_CODES.GENERIC_ERROR) {
@@ -72,7 +79,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       else if (doesExist.status === STATUS_CODES.NUMBER_IN_USE)
         return Alert.alert("Error", "The number is already in use!");
       const res = await callAPI("/verify/code/send", "POST", {
-        number: info?.number,
+        number: signUpInfo.number,
       });
       if (res.status === STATUS_CODES.INVALID_NUMBER)
         return Alert.alert("Error", "That number is invalid!");
@@ -84,7 +91,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         setTimeout(() => {
           return Alert.prompt(
             "Enter Verification Code",
-            "Enter the verification code sent to: " + info?.number,
+            "Enter the verification code sent to: " + signUpInfo.number,
             async (input) => await checkSignup(input),
             "plain-text",
             "",
@@ -98,26 +105,34 @@ export default function Index({ setIsLogged }: IndexProps) {
     }
   };
   const checkSignup = async (code: string) => {
+    if (!userType) return;
     setLoading(true);
     const v = await callAPI("/verify/code/check", "POST", {
-      number: info?.number,
+      number: signUpInfo.number,
       code,
     });
-    if (v.status !== STATUS_CODES.SUCCESS || !info || !("rh" in info)) {
+    if (v.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
+      // need to update wth localizations
       return Alert.alert("Error", v.status);
     }
     const keys = await RSA.generateKeys(2048);
-    const encPriv = CryptoJS.AES.encrypt(keys.private, info.password);
+    const encPriv = CryptoJS.AES.encrypt(keys.private, signUpInfo.password);
     const create = await callAPI(
-      `/${info?.type == UserType.PATIENT ? "patients" : "doctors"}/create`,
+      `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
-      info?.type == UserType.PATIENT
+      isPatientInfo(userType, signUpInfo)
         ? {
-            number: info.number,
+            number: signUpInfo.countryCode + signUpInfo.number,
             dateJoined: new Date().getTime(), // D
             publicKey: keys.public, // R
             privateKey: encPriv, // R
+            identification: {
+              number: signUpInfo.identification,
+            },
+            metrics: {
+              age: Date.now() - (signUpInfo.dob ?? 0),
+            },
           }
         : {},
     );
@@ -134,6 +149,38 @@ export default function Index({ setIsLogged }: IndexProps) {
       return setIsLogged(true);
     }
   };
+  useEffect(() => {
+    // Initialize the state with appropriate structure based on signup/login
+    if (!isLogin) {
+      if (userType === UserType.DOCTOR) {
+        setSignUpInfo({
+          password: "",
+          passwordchk: "",
+          identification: "", // Required for Signup as Doctor
+          license: "", // Required for Signup as Doctor
+          isVerified: false, // Example field for doctor signup
+        } as SignupInfo<UserType.DOCTOR>);
+      } else if (userType === UserType.PATIENT) {
+        setSignUpInfo({
+          password: "",
+          passwordchk: "",
+          dob: Date.now(), // Required for patient signup
+          weight: 0, // Required for patient signup
+          height: 0, // Required for patient signup
+          gs: "O", // Blood group required for patient signup
+          rh: "-", // RH factor required for patient signup
+          assignedSex: "M",
+          preferedSex: "M",
+        } as SignupInfo<UserType.PATIENT>);
+      }
+    } else {
+      // Initialize LoginInfo for login
+      setLoginInfo({
+        identification: "", // Common field for login (both doctor and patient)
+        password: "",
+      } as LoginInfo);
+    }
+  }, [userType]);
   const parseLogin = async () => {};
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
@@ -162,8 +209,8 @@ export default function Index({ setIsLogged }: IndexProps) {
           >
             <Slider
               options={["Doctor", "Patient"]}
-              setOption={(v) => setInfo({ ...info, type: v as UserType })}
-              selected={info?.type}
+              setOption={(v) => setUserType(v as UserType)}
+              selected={userType}
             />
           </Animated.View>
         ) : (
@@ -173,16 +220,26 @@ export default function Index({ setIsLogged }: IndexProps) {
                 setIsLogged={setIsLogged}
                 setIndex={setIndex}
                 index={pageIndex}
-                setInfo={setInfo}
-                info={info as LoginInfo}
+                setInfo={setLoginInfo}
+                userType={userType ?? UserType.PATIENT}
+                info={
+                  userType
+                    ? (loginInfo as LoginInfo<typeof userType>)
+                    : (loginInfo as LoginInfo<UserType.PATIENT>)
+                }
               />
             ) : (
               <Signup
                 setIndex={setIndex}
                 setIsLogged={setIsLogged}
                 index={pageIndex}
-                setInfo={setInfo}
-                info={info as SignupInfo}
+                userType={userType ?? UserType.PATIENT}
+                setInfo={setSignUpInfo}
+                info={
+                  userType
+                    ? (signUpInfo as SignupInfo<typeof userType>)
+                    : (signUpInfo as SignupInfo<UserType.PATIENT>)
+                }
               />
             )}
           </>
@@ -193,74 +250,89 @@ export default function Index({ setIsLogged }: IndexProps) {
             (Platform.OS === "android" ? " bottom-4 " : "bottom-24")
           }
         >
-          {(
-            pageIndex > 0 && (
-              <Animated.View
-                entering={FadeIn.duration(500)}
-                exiting={FadeOut.duration(500)}
-              >
-                <TouchableOpacity
-                  onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
-                  className={
-                    "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
-                  }
-                >
-                  <Text className="text-xl  text-ivory font-medium text-center">
-                    Back
-                  </Text>
-                </TouchableOpacity>
-              </Animated.View>
-            )
-          )}
-          {/* Check for the other 4 routes that are possible */}
-          {pageIndex == 5 && info?.type == UserType.PATIENT && "rh" in info ? (
+          {pageIndex > 0 && (
             <Animated.View
               entering={FadeIn.duration(500)}
               exiting={FadeOut.duration(500)}
             >
               <TouchableOpacity
-                onPress={() =>
-                  info.type == UserType.PATIENT && "rh" in info
-                    ? parseSignup()
-                    : parseLogin()
-                }
+                onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
                 className={
                   "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
                 }
-              ><Text className="text-xl  text-ivory font-medium text-center">
+              >
+                <Text className="text-xl  text-ivory font-medium text-center">
+                  Back
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+          {/* Check for the other 4 routes that are possible */}
+          {userType &&
+          isPatientInfo(userType, signUpInfo) &&
+          (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5) ? (
+            <Animated.View
+              entering={FadeIn.duration(500)}
+              exiting={FadeOut.duration(500)}
+            >
+              <TouchableOpacity
+                onPress={() => (!isLogin ? parseSignup() : parseLogin())}
+                className={
+                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
+                }
+              >
+                <Text className="text-xl  text-ivory font-medium text-center">
                   Finish
                 </Text>
               </TouchableOpacity>
             </Animated.View>
-          ) : (<TouchableOpacity
-            onPress={() =>
-              (pageIndex == 1 && !info?.type) ||
-              (pageIndex == 2 && (!info?.number || !info?.identification)) ||
-              (pageIndex == 3 &&
-                info &&
-                "rh" in info &&
-                (!info.height || !info.weight))
-                ? Alert.alert(
-                    "Missing Info",
-                    "Please fill out the information!",
-                  )
-                : setIndex(pageIndex + 1)
-            }
-            className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
-          >
-            <Text className="text-xl text-ivory font-medium text-center">
-              Next
-            </Text>
-          </TouchableOpacity>)}
+          ) : (
+            <TouchableOpacity
+              onPress={() =>
+                (
+                  !isLogin
+                    ? (pageIndex == 1 && !userType) ||
+                      (pageIndex == 2 &&
+                        (!signUpInfo.number || !signUpInfo.identification)) ||
+                      (pageIndex == 3 &&
+                        userType &&
+                        isPatientInfo(userType, signUpInfo) &&
+                        (!signUpInfo.height || !signUpInfo.weight)) ||
+                      (pageIndex == 4 &&
+                        userType &&
+                        isPatientInfo(userType, signUpInfo) &&
+                        (signUpInfo.trans == undefined || signUpInfo.trans
+                          ? signUpInfo.hormones == undefined ||
+                            signUpInfo.surgery == undefined
+                          : false)) ||
+                      (userType &&
+                        isPatientInfo(userType, signUpInfo) &&
+                        (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5) &&
+                        (!signUpInfo.password || !signUpInfo.passwordchk))
+                    : false
+                )
+                  ? Alert.alert(
+                      "Missing Info",
+                      "Please fill out the information!",
+                    )
+                  : setIndex(pageIndex + 1)
+              }
+              className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
+            >
+              <Text className="text-xl text-ivory font-medium text-center">
+                Next
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
-      <Spinner
-        visible={loading}
-        overlayColor="#000000cc"
-        textContent={"Loading"}
-        customIndicator={<Loader />}
-        textStyle={{ color: "#fff", marginTop: -25 }}
-        animation="fade"
-      />
+        <Spinner
+          visible={loading}
+          overlayColor="#000000cc"
+          textContent={"Loading"}
+          customIndicator={<Loader />}
+          textStyle={{ color: "#fff", marginTop: -25 }}
+          animation="fade"
+        />
       </View>
     </TouchableWithoutFeedback>
   );

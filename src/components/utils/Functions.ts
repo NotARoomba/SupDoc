@@ -3,6 +3,7 @@ import CryptoJS from "crypto-es";
 import { RSA } from "react-native-rsa-native";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
+import { SignupInfo, UserType } from "./Types";
 
 export async function callAPI(
   endpoint: string,
@@ -70,3 +71,18 @@ export async function callAPI(
     };
   }
 }
+
+export const isPatientInfo = (
+  userType: UserType,
+  info: SignupInfo<UserType>,
+): info is SignupInfo<UserType.PATIENT> => {
+  return userType === UserType.PATIENT;
+};
+
+// Type guard to check if info is of type SignupInfo<UserType.DOCTOR>
+export const isDoctorInfo = (
+  userType: UserType,
+  info: SignupInfo<UserType>,
+): info is SignupInfo<UserType.DOCTOR> => {
+  return userType === UserType.DOCTOR;
+};

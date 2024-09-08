@@ -34,30 +34,57 @@ export enum BirthSex {
   INTERSEX = "IS",
 }
 
-export interface SignupInfo {
-  type?: UserType;
-  number?: string;
-  countryCode?: string;
-  identification?: string;
-  dob?: number;
-  weight?: number;
-  height?: number;
-  gs: string;
-  rh: string;
+interface BaseSignupInfo {
+  password: string;
+  passwordchk: string;
+  number: string;
+  countryCode: string;
+  identification: string;
+}
+
+// Conditional type to extend the base signup interface based on UserType
+export type SignupInfo<T extends UserType = UserType> = BaseSignupInfo &
+  (T extends UserType.DOCTOR ? DoctorSignupInfo : PatientSignupInfo);
+
+// Fields required for Doctor signup
+export interface DoctorSignupInfo {
+  license: string; // Required for doctors
+  isVerified: boolean; // Required for doctors
+}
+
+// Fields required for Patient signup
+export interface PatientSignupInfo {
+  dob: number; // Required for patients
+  weight: number; // Required for patients
+  height: number; // Required for patients
+  gs: string; // Required for patients
+  rh: string; // Required for patients
   pregnant?: boolean;
   trans?: boolean;
   hormones?: boolean;
   surgery?: boolean;
-  assignedSex?: BirthSex;
+  assignedSex: BirthSex; // Required for patients
   preferedSex?: string;
-  password: string;
-  passwordchk: string;
 }
 
-export interface LoginInfo {
-  type?: UserType;
-  number?: string;
-  identification?: string;
+// Base interface for shared login information
+interface BaseLoginInfo {
+  identification: string;
+  password: string;
+}
+
+// Conditional type to extend the base login interface based on UserType
+export type LoginInfo<T extends UserType = UserType> = BaseLoginInfo &
+  (T extends UserType.DOCTOR ? DoctorLoginExtras : PatientLoginExtras);
+
+// Additional fields required for Doctor login (if any in the future)
+interface DoctorLoginExtras {
+  // Add doctor-specific fields here, if necessary
+}
+
+// Additional fields required for Patient login (if any in the future)
+interface PatientLoginExtras {
+  // Add patient-specific fields here, if necessary
 }
 
 export interface SliderProps {
@@ -70,6 +97,7 @@ export interface SignupProps {
   info: SignupInfo;
   setInfo: (v: SignupInfo) => void;
   index: number;
+  userType: UserType;
   setIndex: (v: number) => void;
   setIsLogged: (v: boolean) => void;
 }
@@ -78,6 +106,7 @@ export interface LoginProps {
   info: LoginInfo;
   setInfo: (v: LoginInfo) => void;
   index: number;
+  userType: UserType;
   setIndex: (v: number) => void;
   setIsLogged: (v: boolean) => void;
 }
