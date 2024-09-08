@@ -50,6 +50,8 @@ export interface SignupInfo {
   surgery?: boolean;
   assignedSex?: BirthSex;
   preferedSex?: string;
+  password: string;
+  passwordchk: string;
 }
 
 export interface LoginInfo {

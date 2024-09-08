@@ -15,8 +15,10 @@ export default async function encryptionMiddleware(
   if (
     auth == env.LIMITED_AUTH &&
     ![
-      "/users/create",
-      "/users/check",
+      "/patients/create",
+      "/patients/check",
+      "/doctors/create",
+      "/doctors/check",
       "/verify/code/send",
       "/verify/code/check",
     ].includes(req.originalUrl)

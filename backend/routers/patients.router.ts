@@ -55,12 +55,12 @@ patientsRouter.get("/:id", async (req: Request, res: Response) => {
 patientsRouter.post("/create", async (req: Request, res: Response) => {
   const data: Patient<null> = req.body;
   // verification of id
-  const worker = await createWorker("eng");
-  const ret = await worker.recognize(data.identification.image);
-  await worker.terminate();
-  console.log(ret.data.text);
-  if (!ret.data.text.includes(data.identification.number.toString()))
-    return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
+  // const worker = await createWorker("eng");
+  // const ret = await worker.recognize(data.identification.image);
+  // await worker.terminate();
+  // console.log(ret.data.text);
+  // if (!ret.data.text.includes(data.identification.number.toString()))
+  //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
   const keyAltName = data.identification.number.toString(2);
   try {
     await createKey(keyAltName);
@@ -86,18 +86,18 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
 
         // Identification fields
         identification: {
-          type: await encryption.encrypt(data.identification.type, {
-            keyAltName,
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          }),
+          // type: await encryption.encrypt(data.identification.type, {
+          //   keyAltName,
+          //   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+          // }),
           number: await encryption.encrypt(data.identification.number, {
             keyAltName,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
           }),
-          image: await encryption.encrypt(data.identification.image, {
-            keyAltName,
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-          }),
+          // image: await encryption.encrypt(data.identification.image, {
+          //   keyAltName,
+          //   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+          // }),
         },
 
         // Metrics (info) fields

@@ -312,9 +312,42 @@ export default function Signup({
             <Text className="text-6xl text-ivory">OTHER DOCTOR PAGE</Text>
           </View>
         )
+      ) : index == 5 ? (
+        info.type == UserType.PATIENT ? (
+          <View>
+            <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+              Password
+            </Text>
+            <TextInput
+              onChangeText={(pw) => setInfo({ ...info, password: pw })}
+              value={info.password}
+              passwordRules="required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"
+              secureTextEntry
+              keyboardType="default"
+              placeholderTextColor={"#ffffff"}
+              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            />
+            <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+              Re-enter Password
+            </Text>
+            <TextInput
+              onChangeText={(pw) => setInfo({ ...info, passwordchk: pw })}
+              value={info.passwordchk}
+              passwordRules="required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"
+              secureTextEntry
+              keyboardType="default"
+              placeholderTextColor={"#ffffff"}
+              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            />
+          </View>
+        ) : (
+          <View>
+            <Text className="text-6xl text-ivory">OTHER OTHER DOCTOR PAGE</Text>
+          </View>
+        )
       ) : (
         <View>
-          <Text className="etxt-6xl text-white">5 PAGE INDEX</Text>
+          <Text className="etxt-6xl text-white">6 PAGE INDEX</Text>
         </View>
       )}
       <CountryPicker
