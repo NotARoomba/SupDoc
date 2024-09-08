@@ -2,7 +2,6 @@ import { STATUS_CODES } from "@/backend/models/util";
 import CryptoJS from "crypto-es";
 import { RSA } from "react-native-rsa-native";
 import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
 import axios from 'axios'
 
 export async function callAPI(
@@ -16,11 +15,6 @@ export async function callAPI(
     const encryptedKey = await RSA.encrypt(
       key,
       process.env.EXPO_PUBLIC_SERVER_PUBLIC
-      // Platform.OS === "android"
-      //   ? process.env.EXPO_PUBLIC_SERVER_PUBLIC
-      //   : "-----BEGIN PUBLIC KEY-----" +
-      //       process.env.EXPO_PUBLIC_SERVER_PUBLIC +
-      //       "-----END PUBLIC KEY-----",
     );
     const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
     const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
@@ -31,24 +25,18 @@ export async function callAPI(
           process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
         )) ?? process.env.EXPO_PUBLIC_LIMITED_AUTH,
         process.env.EXPO_PUBLIC_SERVER_PUBLIC
-        // Platform.OS === "android"
-        // ? process.env.EXPO_PUBLIC_SERVER_PUBLIC
-        // : "-----BEGIN PUBLIC KEY-----" +
-        //     process.env.EXPO_PUBLIC_SERVER_PUBLIC +
-        //     "-----END PUBLIC KEY-----",
       )
     ).replace(/\s+/g, '').replace('\n', '')
-    console.log(authorization)
     try {
       return method === "POST"
-        ? (await axios.post("https://supdoc-production.up.railway.app" + endpoint, magic, {
+        ? (await axios.post(process.env.EXPO_PUBLIC_API_URL + endpoint, magic, {
               method: method,
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
                 Authorization: authorization,
               }})).data
-        : (await axios.get("http://192.168.1.66:3001" + endpoint, {
+        : (await axios.get(process.env.EXPO_PUBLIC_API_URL + endpoint, {
               method: method,
               headers: {
                 Accept: "application/json",
@@ -66,5 +54,8 @@ export async function callAPI(
     }
   } catch (error: any) {
     console.log(error);
+    return {
+      status: STATUS_CODES.GENERIC_ERROR,
+    };
   }
 }

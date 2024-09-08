@@ -1,4 +1,4 @@
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { SignupProps, UserType } from "../components/utils/Types";
 import React, { useEffect, useState } from "react";
 import { CountryPicker } from "react-native-country-codes-picker";
@@ -6,6 +6,7 @@ import { callAPI } from "../components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 import Loader from "components/misc/Loader";
 import { STATUS_CODES } from "@/backend/models/util";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function Signup({
   info,
@@ -22,17 +23,14 @@ export default function Signup({
   useEffect(() => {
     const doChecks = async () => {
       if (index == 3) {
-        // setInfo({...info, countryCode: countryCode})
         // check if number and id dont exist
-        setIsLoading(true);
-        const res = await callAPI("/verify/code/send", "POST", {number: info.number});
-
-        if (res.status != STATUS_CODES.SUCCESS) {
-          console.log("Res: ", res)
-          setIsLoading(false);
-          setIndex(index-1);
-        }
-        console.log(res, "asd")
+        // setIsLoading(true);
+        // const res = await callAPI("/users/check", "POST", {number: info.number, identification: info.identification});
+        // if (res.status != STATUS_CODES.SUCCESS) {
+        //   setIsLoading(false);
+        //   setIndex(index-1);
+        //   Alert.alert("Error", "That number/ID already exists!");
+        // }
       }
 
     }
@@ -40,6 +38,7 @@ export default function Signup({
   }, [index]);
   return (
     <View className="h-full ">
+      <Text className="text-5xl text-ivory font-bold text-center mb-8">{index == 2 ? "Register" : "Personal Information"}</Text>
       {index == 2 ? (
         <View>
           {/* needs to show a text box to input a phone number and identificatio number */}
@@ -60,10 +59,10 @@ export default function Signup({
               value={info.number}
               keyboardType="phone-pad"
               placeholderTextColor={"#ffffff"}
-              className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-8/12   rounded-xl rounded-l-none bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+              className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-7/12   rounded-xl rounded-l-none bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
             />
           </View>
-          <Text className="text-center text-lg text-ivory -mb-3 mt-3 font-semibold">
+          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
             Cedula/TI
           </Text>
           <TextInput
@@ -71,12 +70,35 @@ export default function Signup({
             value={info.identification}
             keyboardType="phone-pad"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-11/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
         </View>
       ) : index == 3 ? (
         info.type == UserType.PATIENT ? (
-          <View className="h-full flex flex-col"></View>
+          <View className="h-full flex flex-col">
+            <Text className="text-center text-lg text-ivory mb-2 mt-4 font-semibold">
+            Date of Birth
+          </Text>
+          <View className="flex w-full justify-center">
+            <DateTimePicker
+            value={new Date()}
+            maximumDate={new Date()}
+            onChange={(d) => setInfo({...info, dob: d.nativeEvent.timestamp})}
+            style={{marginHorizontal: 'auto', transform: [{translateX: -4}]}}              
+            />
+          </View>
+          <View className="flex w-full">
+            <View className="w-1/2 flex flex-col">
+            <Text className="text-center text-lg text-ivory mb-2 mt-4 font-semibold">
+            Date of Birth
+          </Text>
+            </View>
+            <View className="w-1/2 flex flex-col">
+
+            </View>
+          </View>
+          
+          </View>
         ) : (
           <View></View>
         )

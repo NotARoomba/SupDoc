@@ -1,12 +1,15 @@
 import "expo-dev-client";
-import { NavigationContainer } from "@react-navigation/native";
 import { Stack } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView, View } from "react-native";
 import Index from "./Index";
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [isLogged, setIsLogged] = useState(false);
+
   return (
     <View className="text-ivory h-full">
       <SafeAreaView className="bg-richer_black" />

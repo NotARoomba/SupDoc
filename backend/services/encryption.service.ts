@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response, Send } from "express";
-import * as dotenv from "ts-dotenv";
 import NodeRSA from "node-rsa";
 import { collections, encryption, env } from "./database.service";
-console.log(env.SERVER_PRIVATE)
+import CryptoJS from "crypto-js";
 const nodeRSA = new NodeRSA(env.SERVER_PRIVATE, 'pkcs1', {encryptionScheme: 'pkcs1', environment: 'browser'});
 
 export default async function encryptionMiddleware(
@@ -11,13 +10,8 @@ export default async function encryptionMiddleware(
   next: NextFunction,
 ) {
   //check authorization and see if limited auth
-  console.log(req.body);
-  console.log(req.headers.authorization)
-
   if (!req.headers.authorization) return res.sendStatus(401);
   const auth = nodeRSA.decrypt(req.headers.authorization).toString();
-  console.log("DECRUITISADAS")
-  console.log(auth)
   if (
     auth == env.LIMITED_AUTH &&
     ![

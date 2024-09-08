@@ -39,6 +39,7 @@ export interface SignupInfo {
   number?: string;
   countryCode?: string;
   identification?: string;
+  dob?: number;
   assignedSex?: BirthSex;
   preferedSex?: string;
 }

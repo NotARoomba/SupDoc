@@ -1,9 +1,12 @@
 import {
   Alert,
   Button,
+  Keyboard,
+  Platform,
   SafeAreaView,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import {
@@ -47,23 +50,27 @@ export default function Index({ setIsLogged }: IndexProps) {
     onLoad();
   }, []);
   return (
+    <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
     <View className="flex flex-col relative  h-full bg-richer_black ">
+    
       <Image
         source={require("assets/images/icon.png")}
-        className="h-44 mt-16 mb-8 mx-auto aspect-square rounded-xl"
+        className="h-32 my-4 mx-auto aspect-square rounded-xl"
       />
       {pageIndex == 0 ? (
+        <View className="flex mt-4 ">
         <Slider
           options={["Login", "Signup"]}
           setOption={(v) => setIsLogin(v == "Login")}
           selected={!isLogin ? "Login" : "Signup"}
-        />
+        /></View>
       ) : pageIndex == 1 ? (
+        <View className="flex mt-4 ">
         <Slider
           options={["Doctor", "Patient"]}
           setOption={(v) => setInfo({ ...info, type: v as UserType })}
           selected={info?.type}
-        />
+        /></View>
       ) : (
         <>
           {isLogin ? (
@@ -85,7 +92,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           )}
         </>
       )}
-      <View className="flex flex-col absolute bottom-4 gap-y-4 w-full ">
+      <View className={"flex flex-col absolute gap-y-4 w-full " + (Platform.OS === 'android' ? ' bottom-4 ' : 'bottom-24')}>
         {pageIndex > 0 && (
           <TouchableOpacity
             onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
@@ -94,7 +101,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               (pageIndex > 0 ? "animate-show" : "animate-hide")
             }
           >
-            <Text className="text-xl text-ivory font-bold text-center">
+            <Text className="text-xl  text-ivory font-bold text-center">
               Back
             </Text>
           </TouchableOpacity>
@@ -112,5 +119,6 @@ export default function Index({ setIsLogged }: IndexProps) {
         </TouchableOpacity>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
