@@ -92,6 +92,9 @@ export default function Index({ setIsLogged }: IndexProps) {
           );
         }, 250);
       }
+    } else {
+      setLoading(false);
+      return Alert.alert("Error", "An error occured!");
     }
   };
   const checkSignup = async (code: string) => {
@@ -190,28 +193,7 @@ export default function Index({ setIsLogged }: IndexProps) {
             (Platform.OS === "android" ? " bottom-4 " : "bottom-24")
           }
         >
-          {/* Check for the other 4 routes that are possible */}
-          {pageIndex == 5 && info?.type == UserType.PATIENT && "rh" in info ? (
-            <Animated.View
-              entering={FadeIn.duration(500)}
-              exiting={FadeOut.duration(500)}
-            >
-              <TouchableOpacity
-                onPress={() =>
-                  info.type == UserType.PATIENT && "rh" in info
-                    ? parseSignup()
-                    : parseLogin()
-                }
-                className={
-                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
-                }
-              >
-                <Text className="text-xl  text-ivory font-medium text-center">
-                  Finish
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ) : (
+          {(
             pageIndex > 0 && (
               <Animated.View
                 entering={FadeIn.duration(500)}
@@ -230,7 +212,27 @@ export default function Index({ setIsLogged }: IndexProps) {
               </Animated.View>
             )
           )}
-          <TouchableOpacity
+          {/* Check for the other 4 routes that are possible */}
+          {pageIndex == 5 && info?.type == UserType.PATIENT && "rh" in info ? (
+            <Animated.View
+              entering={FadeIn.duration(500)}
+              exiting={FadeOut.duration(500)}
+            >
+              <TouchableOpacity
+                onPress={() =>
+                  info.type == UserType.PATIENT && "rh" in info
+                    ? parseSignup()
+                    : parseLogin()
+                }
+                className={
+                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
+                }
+              ><Text className="text-xl  text-ivory font-medium text-center">
+                  Finish
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          ) : (<TouchableOpacity
             onPress={() =>
               (pageIndex == 1 && !info?.type) ||
               (pageIndex == 2 && (!info?.number || !info?.identification)) ||
@@ -249,17 +251,17 @@ export default function Index({ setIsLogged }: IndexProps) {
             <Text className="text-xl text-ivory font-medium text-center">
               Next
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity>)}
         </View>
-      </View>
       <Spinner
         visible={loading}
-        overlayColor="#00000099"
+        overlayColor="#000000cc"
         textContent={"Loading"}
         customIndicator={<Loader />}
         textStyle={{ color: "#fff", marginTop: -25 }}
         animation="fade"
       />
+      </View>
     </TouchableWithoutFeedback>
   );
 }
