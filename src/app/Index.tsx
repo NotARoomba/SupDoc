@@ -41,6 +41,7 @@ export default function Index({ setIsLogged }: IndexProps) {
   >({} as LoginInfo<UserType.PATIENT>);
   const [pageIndex, setIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
   useEffect(() => {
     // check if key if not then create one and if theres a key check if it exists and login
     const onLoad = async () => {
@@ -184,7 +185,7 @@ export default function Index({ setIsLogged }: IndexProps) {
   const parseLogin = async () => {};
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
-      <View className="flex flex-col relative  h-full bg-richer_black ">
+      <View className="flex flex-col h-full bg-richer_black ">
         <Image
           source={require("assets/images/icon.png")}
           className="h-32 my-4 mx-auto aspect-square rounded-xl"
@@ -235,6 +236,8 @@ export default function Index({ setIsLogged }: IndexProps) {
                 index={pageIndex}
                 userType={userType ?? UserType.PATIENT}
                 setInfo={setSignUpInfo}
+                cameraOpen={cameraOpen}
+                setCameraOpen={setCameraOpen}
                 info={
                   userType
                     ? (signUpInfo as SignupInfo<typeof userType>)
@@ -244,9 +247,9 @@ export default function Index({ setIsLogged }: IndexProps) {
             )}
           </>
         )}
-        <View
+        {!cameraOpen && <View
           className={
-            "flex flex-col absolute gap-y-4 w-full " +
+            "flex flex-col absolute gap-y-4 w-full z-10 " +
             (Platform.OS === "android" ? " bottom-4 " : "bottom-24")
           }
         >
@@ -324,7 +327,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               </Text>
             </TouchableOpacity>
           )}
-        </View>
+        </View>}
         <Spinner
           visible={loading}
           overlayColor="#000000cc"

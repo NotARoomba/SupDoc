@@ -13,9 +13,13 @@ import {
   SignupProps,
   UserType,
 } from "../components/utils/Types";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import { CountryPicker } from "react-native-country-codes-picker";
-import { callAPI, isPatientInfo } from "../components/utils/Functions";
+import {
+  callAPI,
+  isDoctorInfo,
+  isPatientInfo,
+} from "../components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 import Loader from "components/misc/Loader";
 import { STATUS_CODES } from "@/backend/models/util";
@@ -28,6 +32,10 @@ import Animated, {
   FadeOut,
   FadeOutLeft,
 } from "react-native-reanimated";
+import { Camera, CameraView, PermissionStatus } from "expo-camera";
+import * as Linking from "expo-linking";
+import { Ionicons } from "@expo/vector-icons";
+import * as FileSystem from 'expo-file-system';
 
 export default function Signup({
   info,
@@ -35,27 +43,49 @@ export default function Signup({
   userType,
   setInfo,
   setIsLogged,
+  cameraOpen,
+  setCameraOpen
 }: SignupProps) {
   /// setInfo({...info, info.(PROPIEDAD Q QUIERES CAMBIAR)})
   const [show, setShow] = useState(false);
+  const [hasPermission, setHasPermission] = useState(false);
+  const cameraRef = createRef<CameraView>();
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [loading, setIsLoading] = useState(false);
+  const [ready, setisReady] = useState(false);
 
   useEffect(() => {
     const doChecks = async () => {
       if (index == 3) {
-        // check if number and id dont exist
-        // setIsLoading(true);
-        // const res = await callAPI("/users/check", "POST", {number: info.number, identification: info.identification});
-        // if (res.status != STATUS_CODES.SUCCESS) {
-        //   setIsLoading(false);
-        //   setIndex(index-1);
-        //   Alert.alert("Error", "That number/ID already exists!");
-        // }
+        if (userType == UserType.PATIENT) {
+          // check if number and id dont exist
+          // setIsLoading(true);
+          // const res = await callAPI("/users/check", "POST", {number: info.number, identification: info.identification});
+          // if (res.status != STATUS_CODES.SUCCESS) {
+          //   setIsLoading(false);
+          //   setIndex(index-1);
+          //   Alert.alert("Error", "That number/ID already exists!");
+          // }
+        } else {
+          (async () => {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            setHasPermission(status === "granted");
+          })();
+        }
       }
     };
     doChecks();
   }, [index]);
+  const photo = () => {
+    cameraRef.current?.takePictureAsync({ quality: 0 }).then((photo: any) => {
+      console.log(photo);
+      FileSystem.readAsStringAsync(photo.uri, {encoding: 'base64'}).then(res => {
+        setInfo({...info, license: res});
+        console.log((res.length / 1000).toFixed(2) + "KB")
+        setCameraOpen(false);
+      });
+    });
+  };
   return (
     <View className="h-full ">
       <Animated.Text
@@ -262,9 +292,7 @@ export default function Signup({
               }
             />
             {info.trans && (
-              <Animated.View
-                entering={FadeIn.duration(500)}
-              >
+              <Animated.View entering={FadeIn.duration(500)}>
                 <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
                   Do you take hormones?
                 </Text>
@@ -322,7 +350,7 @@ export default function Signup({
             </View>
           </Animated.View>
         ) : (
-          <View>
+          <Animated.View entering={FadeIn.duration(500)}>
             <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
               Password
             </Text>
@@ -347,12 +375,75 @@ export default function Signup({
               placeholderTextColor={"#ffffff"}
               className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
             />
-          </View>
+          </Animated.View>
         )
+      ) : index == 3 ? (
+        <Animated.View entering={FadeIn.duration(500)}>
+          <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+            Upload your doctor's license or degree
+          </Text>
+          {cameraOpen && hasPermission && (
+            <CameraView className="h-[106vh] -top-96 w-full absolute left-0 z-40" ref={cameraRef} onCameraReady={() => setisReady(true)}>
+              <TouchableOpacity
+                className="absolute left-1/2 -translate-x-12 bottom-16"
+                onPress={() => photo()}
+              >
+                <Ionicons name="ellipse-outline" size={98} color={"#fbfff1"} />
+                {/* <Icon name="circle" size={72} color={'#ffffff'} /> */}
+              </TouchableOpacity>
+            </CameraView>
+          )}
+          <TouchableOpacity
+            className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-4 "
+            onPress={() =>
+              hasPermission
+                ? setCameraOpen(true)
+                : Alert.alert(
+                    "Error",
+                    "Allow the camera in settings to take a photo!",
+                    [
+                      { text: "Cancel", style: 'cancel' },
+                      {
+                        text: "Settings",
+                        style: 'default',
+                        onPress: () => Linking.openSettings(),
+                      },
+                    ],
+                  )
+            }
+          >
+            <Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
+              Take Photo
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
       ) : (
-        <View>
-          <Text className="text-6xl text-ivory">DOCTR+OR SIGNUP FINALLL</Text>
-        </View>
+        <Animated.View entering={FadeIn.duration(500)}>
+          <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+            Password
+          </Text>
+          <TextInput
+            onChangeText={(pw) => setInfo({ ...info, password: pw })}
+            value={info.password}
+            passwordRules="required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"
+            secureTextEntry
+            keyboardType="default"
+            placeholderTextColor={"#ffffff"}
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+          />
+          <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+            Re-enter Password
+          </Text>
+          <TextInput
+            onChangeText={(pw) => setInfo({ ...info, passwordchk: pw })}
+            value={info.passwordchk}
+            passwordRules="required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"
+            secureTextEntry
+            keyboardType="default"
+            placeholderTextColor={"#ffffff"}
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+          />
+        </Animated.View>
       )}
       <CountryPicker
         show={show}

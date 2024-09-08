@@ -100,6 +100,8 @@ export interface SignupProps {
   userType: UserType;
   setIndex: (v: number) => void;
   setIsLogged: (v: boolean) => void;
+  cameraOpen: boolean;
+  setCameraOpen: (v: boolean) => void;
 }
 
 export interface LoginProps {
