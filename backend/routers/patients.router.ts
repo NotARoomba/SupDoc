@@ -147,6 +147,9 @@ patientsRouter.post("/check", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
   const number: string = req.body.number;
   try {
+    await createKey(id.toString(2))
+  } catch {}
+  try {
     let idUsers: Patient[] = [];
     let numberUsers: Patient[] = [];
     if (collections.patients) {
