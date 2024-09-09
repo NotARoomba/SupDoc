@@ -137,7 +137,7 @@ export default function Index({ setIsLogged }: IndexProps) {
             identification: {
               number: signUpInfo.identification,
             },
-            metrics: {
+            info: {
               age: new Date(Date.now() - (signUpInfo.dob ?? 0)).getFullYear(),
               weight: signUpInfo.weight,
               height: signUpInfo.height,
