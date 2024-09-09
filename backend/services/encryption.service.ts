@@ -47,7 +47,7 @@ export default async function encryptionMiddleware(
     const key = nodeRSA.decrypt(req.body.key, 'utf8');
     const data = CryptoJS.AES.decrypt(req.body.data, key);
     console.log("DATA AND KEY", data, key)
-    req.body = data.toString(CryptoJS.enc.Utf8);
+    req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
     res.send = function (body: any) {
       const key = CryptoJS.lib.WordArray.random(256 / 8).toString();
       const encrypted = CryptoJS.AES.encrypt(body, key).toString();
