@@ -26,7 +26,7 @@ import * as SecureStore from "expo-secure-store";
 import Signup from "./Signup";
 import { STATUS_CODES } from "@/backend/models/util";
 import Loader from "components/misc/Loader";
-import { callAPI, isPatientInfo } from "components/utils/Functions";
+import { callAPI, isDoctorInfo, isPatientInfo } from "components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 
 export default function Index({ setIsLogged }: IndexProps) {
@@ -271,9 +271,9 @@ export default function Index({ setIsLogged }: IndexProps) {
             </Animated.View>
           )}
           {/* Check for the other 4 routes that are possible */}
-          {userType &&
+          {(userType &&
           isPatientInfo(userType, signUpInfo) &&
-          (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5) ? (
+          (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) || (userType && isDoctorInfo(userType, signUpInfo) && pageIndex == 4) ? (
             <Animated.View
               entering={FadeIn.duration(500)}
               exiting={FadeOut.duration(500)}
@@ -311,7 +311,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                       (userType &&
                         isPatientInfo(userType, signUpInfo) &&
                         (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5) &&
-                        (!signUpInfo.password || !signUpInfo.passwordchk))
+                        (!signUpInfo.password || !signUpInfo.passwordchk)) || (pageIndex == 3 && userType && isDoctorInfo(userType, signUpInfo) && signUpInfo.license.length == 0)
                     : false
                 )
                   ? Alert.alert(

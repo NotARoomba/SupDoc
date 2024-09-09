@@ -77,11 +77,11 @@ export default function Signup({
     doChecks();
   }, [index]);
   const photo = () => {
-    cameraRef.current?.takePictureAsync({ quality: 0 }).then((photo: any) => {
-      console.log(photo);
+    cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
+      //https://github.com/gennadysx/react-native-document-scanner-plugin#readme
       FileSystem.readAsStringAsync(photo.uri, {encoding: 'base64'}).then(res => {
         setInfo({...info, license: res});
-        console.log((res.length / 1000).toFixed(2) + "KB")
+        // console.log((res.length / 1000).toFixed(2) + "KB")
         setCameraOpen(false);
       });
     });
@@ -378,7 +378,7 @@ export default function Signup({
           </Animated.View>
         )
       ) : index == 3 ? (
-        <Animated.View entering={FadeIn.duration(500)}>
+        <Animated.View className="flex flex-col" entering={FadeIn.duration(500)}>
           <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
             Upload your doctor's license or degree
           </Text>
@@ -415,7 +415,13 @@ export default function Signup({
             <Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
               Take Photo
             </Text>
+            
           </TouchableOpacity>
+          {info.license.length != 0 && <Animated.View key={info.license.length} entering={FadeIn.duration(500)} className="w-full flex flex-col"><Text className="mx-auto text-lg font-semibold text-ivory mt-2 w-full text-center">Photo: {(info.license.length / (1000 * 1000)).toFixed(2) + "MB"}</Text><TouchableOpacity
+            className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-2 "
+            onPress={() => setInfo({...info, license: ""})}><Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
+            Remove Photo
+          </Text></TouchableOpacity></Animated.View>}
         </Animated.View>
       ) : (
         <Animated.View entering={FadeIn.duration(500)}>
