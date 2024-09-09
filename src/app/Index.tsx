@@ -74,14 +74,15 @@ export default function Index({ setIsLogged }: IndexProps) {
       },
     );
     if (doesExist.status !== STATUS_CODES.GENERIC_ERROR) {
-      setLoading(false);
+      
       if (doesExist.status === STATUS_CODES.ID_IN_USE)
-        return Alert.alert("Error", "The ID is already in use!");
+         {setLoading(false); return Alert.alert("Error", "The ID is already in use!");}
       else if (doesExist.status === STATUS_CODES.NUMBER_IN_USE)
-        return Alert.alert("Error", "The number is already in use!");
+      {setLoading(false); return Alert.alert("Error", "The number is already in use!");}
       const res = await callAPI("/verify/code/send", "POST", {
         number: signUpInfo.number,
       });
+      setLoading(false);
       if (res.status === STATUS_CODES.INVALID_NUMBER)
         return Alert.alert("Error", "That number is invalid!");
       else if (res.status === STATUS_CODES.NUMBER_NOT_EXIST)
@@ -279,7 +280,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               exiting={FadeOut.duration(500)}
             >
               <TouchableOpacity
-                onPress={() => (!isLogin ? parseSignup() : parseLogin())}
+                onPress={() => signUpInfo.passwordchk.length == 0 || signUpInfo.passwordchk !== signUpInfo.password ? Alert.alert("Error", "The passwords do not match!") : (!isLogin ? parseSignup() : parseLogin())}
                 className={
                   "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
                 }
