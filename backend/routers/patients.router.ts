@@ -64,6 +64,22 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   const keyAltName = data.identification.number.toString(2);
   try {
     const keyUDID = await createKey(keyAltName);
+    const sexData = data.info.altSex ? {altSex: await encryption.encrypt(data.info.sex, {
+      keyAltName,
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+    }), hormones: await encryption.encrypt(data.info.hormones, {
+      keyAltName,
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+    }),surgery: await encryption.encrypt(data.info.surgery, {
+      keyAltName,
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+    }), sex: await encryption.encrypt(data.info.sex, {
+      keyAltName,
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+    })}: {sex: await encryption.encrypt(data.info.sex, {
+      keyAltName,
+      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+    })}
     if (collections.patients) {
       const ins = await collections.patients.insertOne({
         // UserBase fields
@@ -118,10 +134,6 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
             keyAltName,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
           }),
-          sex: await encryption.encrypt(data.info.sex, {
-            keyAltName,
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-          }),
           blood: await encryption.encrypt(data.info.blood, {
             keyAltName,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
@@ -130,6 +142,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
             keyAltName,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
           }),
+          ...sexData
         },
         // Posts field
         posts: [],

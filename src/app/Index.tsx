@@ -138,7 +138,16 @@ export default function Index({ setIsLogged }: IndexProps) {
               number: signUpInfo.identification,
             },
             metrics: {
-              age: Date.now() - (signUpInfo.dob ?? 0),
+              age: new Date(Date.now() - (signUpInfo.dob ?? 0)).getFullYear(),
+              weight: signUpInfo.weight,
+              height: signUpInfo.height,
+              dob: signUpInfo.dob,
+              sex: signUpInfo.sex,
+              blood: signUpInfo.gs +  signUpInfo.rh,
+              pregnant: signUpInfo.pregnant ?? false,
+              altSex: signUpInfo.altSex,
+              hormones: signUpInfo.hormones,
+              surgery: signUpInfo.surgery,
             },
           }
         : {},
