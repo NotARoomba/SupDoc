@@ -39,7 +39,7 @@ interface BaseSignupInfo {
   passwordchk: string;
   number: string;
   countryCode: string;
-  identification: string;
+  identification: number;
 }
 
 // Conditional type to extend the base signup interface based on UserType
@@ -69,7 +69,7 @@ export interface PatientSignupInfo {
 
 // Base interface for shared login information
 interface BaseLoginInfo {
-  identification: string;
+  identification: number;
   password: string;
 }
 

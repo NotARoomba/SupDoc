@@ -42,6 +42,7 @@ export default async function encryptionMiddleware(
   }
 
   if (req.method == "POST") {
+    console.log(req.body, "ENCRYPTION")
     if (!req.body.key || !req.body.data) return res.sendStatus(401);
     const key = nodeRSA.decrypt(req.body.key, 'utf8');
     const data = CryptoJS.AES.decrypt(req.body.data, key);

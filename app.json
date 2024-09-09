@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "bundleIdentifier": "com.notaroomba.supdoc"
     },
     "android": {
       "package": "com.notaroomba.supdoc",

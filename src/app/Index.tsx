@@ -158,7 +158,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         setSignUpInfo({
           password: "",
           passwordchk: "",
-          identification: "", // Required for Signup as Doctor
+          identification: 0, // Required for Signup as Doctor
           license: "", // Required for Signup as Doctor
           isVerified: false, // Example field for doctor signup
         } as SignupInfo<UserType.DOCTOR>);
@@ -178,7 +178,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     } else {
       // Initialize LoginInfo for login
       setLoginInfo({
-        identification: "", // Common field for login (both doctor and patient)
+        identification: 0, // Common field for login (both doctor and patient)
         password: "",
       } as LoginInfo);
     }
