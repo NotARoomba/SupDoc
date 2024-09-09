@@ -6,7 +6,7 @@ import {
   env,
 } from "../services/database.service";
 import { STATUS_CODES } from "../models/util";
-import { ObjectId } from "mongodb";
+import { MongoCryptError, ObjectId } from "mongodb";
 import Patient from "../models/patient";
 import { createWorker } from "tesseract.js";
 
@@ -176,6 +176,9 @@ patientsRouter.post("/check", async (req: Request, res: Response) => {
     else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
   } catch (error) {
     console.log(error);
+    if (error instanceof MongoCryptError) {
+      res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
+    }
     res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
