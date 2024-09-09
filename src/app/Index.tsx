@@ -28,6 +28,7 @@ import { STATUS_CODES } from "@/backend/models/util";
 import Loader from "components/misc/Loader";
 import { callAPI, isDoctorInfo, isPatientInfo } from "components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
+import CryptoJS from 'crypto-es'
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
@@ -70,20 +71,20 @@ export default function Index({ setIsLogged }: IndexProps) {
       "POST",
       {
         id: signUpInfo.identification,
-        number: signUpInfo.number,
+        number: (signUpInfo.countryCode + signUpInfo.number),
       },
     );
     console.log(doesExist);
     if (doesExist.status !== STATUS_CODES.GENERIC_ERROR) {
-      
       if (doesExist.status === STATUS_CODES.ID_IN_USE)
          {setLoading(false); return Alert.alert("Error", "The ID is already in use!");}
       else if (doesExist.status === STATUS_CODES.NUMBER_IN_USE)
       {setLoading(false); return Alert.alert("Error", "The number is already in use!");}
       const res = await callAPI("/verify/code/send", "POST", {
-        number: signUpInfo.number,
+        number: (signUpInfo.countryCode + signUpInfo.number),
       });
       setLoading(false);
+      console.log(signUpInfo.countryCode + signUpInfo.number)
       if (res.status === STATUS_CODES.INVALID_NUMBER)
         return Alert.alert("Error", "That number is invalid!");
       else if (res.status === STATUS_CODES.NUMBER_NOT_EXIST)
@@ -94,7 +95,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         setTimeout(() => {
           return Alert.prompt(
             "Enter Verification Code",
-            "Enter the verification code sent to: " + signUpInfo.number,
+            "Enter the verification code sent to: " + (signUpInfo.countryCode + signUpInfo.number),
             async (input) => await checkSignup(input),
             "plain-text",
             "",
@@ -111,7 +112,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     if (!userType) return;
     setLoading(true);
     const v = await callAPI("/verify/code/check", "POST", {
-      number: signUpInfo.number,
+      number: (signUpInfo.countryCode + signUpInfo.number),
       code,
     });
     if (v.status !== STATUS_CODES.SUCCESS) {
@@ -159,6 +160,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         setSignUpInfo({
           password: "",
           passwordchk: "",
+          countryCode: "+57",
           identification: 0, // Required for Signup as Doctor
           license: "", // Required for Signup as Doctor
           isVerified: false, // Example field for doctor signup
@@ -167,6 +169,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         setSignUpInfo({
           password: "",
           passwordchk: "",
+          countryCode: "+57",
           identification: 0, 
           dob: Date.now(), // Required for patient signup
           weight: 0, // Required for patient signup

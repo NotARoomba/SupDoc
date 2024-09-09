@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import CryptoJS from 'crypto-es'
 import {
   BirthSex,
   SignupInfo,
@@ -122,8 +123,8 @@ export default function Signup({
             Cedula/TI
           </Text>
           <TextInput
-            onChangeText={(id) => setInfo({ ...info, identification: parseInt(id) })}
-            value={info.identification == 0 ? "" : info.identification.toString()}
+            onChangeText={(id) => setInfo({ ...info, identification: isNaN(parseInt(id)) ? 0 : parseInt(id) })}
+            value={info.identification == 0 ? "" : info.identification.toString() }
             keyboardType="phone-pad"
             placeholderTextColor={"#ffffff"}
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
