@@ -226,10 +226,10 @@ export default function Signup({
                     </Text>
                     <View className="flex flex-row justify-center -mt-6">
                       <Picker
-                        selectedValue={info.assignedSex}
+                        selectedValue={info.sex}
                         style={{ width: 100 }}
                         onValueChange={(v) =>
-                          setInfo({ ...info, assignedSex: v })
+                          setInfo({ ...info, sex: v })
                         }
                       >
                         <Picker.Item color="#fbfff1" label="M" value="M" />
@@ -238,7 +238,7 @@ export default function Signup({
                       </Picker>
                     </View>
                   </View>
-                  {info.assignedSex != BirthSex.MALE && (
+                  {info.sex != BirthSex.MALE && (
                     <Animated.View
                       entering={FadeInLeft.duration(500)}
                       exiting={FadeOutLeft.duration(500)}
@@ -332,9 +332,9 @@ export default function Signup({
             </Text>
             <View className="flex flex-row justify-center -mt-6">
               <Picker
-                selectedValue={info.preferedSex}
+                selectedValue={info.altSex}
                 style={{ width: 100 }}
-                onValueChange={(v) => setInfo({ ...info, preferedSex: v })}
+                onValueChange={(v) => setInfo({ ...info, altSex: v })}
               >
                 <Picker.Item color="#fbfff1" label="M" value={BirthSex.MALE} />
                 <Picker.Item

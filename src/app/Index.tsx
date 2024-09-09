@@ -109,7 +109,9 @@ export default function Index({ setIsLogged }: IndexProps) {
     }
   };
   const checkSignup = async (code: string) => {
+    console.log(code)
     if (!userType) return;
+    console.log("ASDASD")
     setLoading(true);
     const v = await callAPI("/verify/code/check", "POST", {
       number: (signUpInfo.countryCode + signUpInfo.number),
@@ -120,6 +122,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       // need to update wth localizations
       return Alert.alert("Error", v.status);
     }
+    console.log("ASDASD")
     const keys = await RSA.generateKeys(2048);
     const encPriv = CryptoJS.AES.encrypt(keys.private, signUpInfo.password);
     const create = await callAPI(
@@ -176,8 +179,8 @@ export default function Index({ setIsLogged }: IndexProps) {
           height: 0, // Required for patient signup
           gs: "O", // Blood group required for patient signup
           rh: "-", // RH factor required for patient signup
-          assignedSex: "M",
-          preferedSex: "M",
+          sex: "M",
+          altSex: "M",
         } as SignupInfo<UserType.PATIENT>);
       }
     } else {

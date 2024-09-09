@@ -63,8 +63,8 @@ export interface PatientSignupInfo {
   trans?: boolean;
   hormones?: boolean;
   surgery?: boolean;
-  assignedSex: BirthSex; // Required for patients
-  preferedSex?: string;
+  sex: BirthSex; // Required for patients
+  altSex?: BirthSex;
 }
 
 // Base interface for shared login information

@@ -63,20 +63,20 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
   const keyAltName = data.identification.number.toString(2);
   try {
-    await createKey(keyAltName);
+    const keyUDID = await createKey(keyAltName);
     if (collections.patients) {
       const ins = await collections.patients.insertOne({
         // UserBase fields
         number: await encryption.encrypt(data.number, {
-          keyAltName,
+          keyId: keyUDID,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
         dateJoined: await encryption.encrypt(data.dateJoined, {
-          keyAltName,
+          keyId: keyUDID,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
         publicKey: await encryption.encrypt(data.publicKey, {
-          keyAltName,
+          keyId: keyUDID,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
         privateKey: await encryption.encrypt(data.privateKey, {
@@ -91,7 +91,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
           //   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
           // }),
           number: await encryption.encrypt(data.identification.number, {
-            keyAltName,
+            keyId: keyUDID,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
           }),
           // image: await encryption.encrypt(data.identification.image, {

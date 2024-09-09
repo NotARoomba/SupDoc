@@ -11,6 +11,9 @@ export default interface Metrics<T = Binary | null>
       sex: string;
       blood: string;
       pregnant: boolean;
+      altSex?: string;
+      hormones?: boolean;
+      surgery?: boolean;
     },
     T
   > {}
