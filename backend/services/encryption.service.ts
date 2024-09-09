@@ -51,10 +51,10 @@ export default async function encryptionMiddleware(
       const key = CryptoJS.SHA256(body).toString();
       const encrypted = CryptoJS.AES.encrypt(JSON.stringify(body), key).toString();
       // need to check fot the public key of the user
-      return oldSend({
+      return oldSend.apply(res, [{
         key: false ? nodeRSA.encrypt(key, 'utf8') : key,
         body: encrypted,
-      });
+      }]);
     };
   }
   next();
