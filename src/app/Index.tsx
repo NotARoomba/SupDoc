@@ -133,7 +133,7 @@ export default function Index({ setIsLogged }: IndexProps) {
             number: signUpInfo.countryCode + signUpInfo.number,
             dateJoined: new Date().getTime(), // D
             publicKey: keys.public, // R
-            privateKey: encPriv, // R
+            privateKey: encPriv.toString(), // R
             identification: {
               number: signUpInfo.identification,
             },
