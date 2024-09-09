@@ -167,6 +167,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         setSignUpInfo({
           password: "",
           passwordchk: "",
+          identification: 0, 
           dob: Date.now(), // Required for patient signup
           weight: 0, // Required for patient signup
           height: 0, // Required for patient signup

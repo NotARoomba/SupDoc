@@ -178,10 +178,6 @@ patientsRouter.post("/check", async (req: Request, res: Response) => {
       res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
     else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
   } catch (error) {
-    console.log(error);
-    if (error instanceof MongoCryptError) {
-      res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
-    }
     res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
