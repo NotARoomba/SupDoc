@@ -65,7 +65,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   try {
     const keyUDID = await createKey(keyAltName);
     console.log(data)
-    const sexData = data.info.altSex !== data.info.sex ? {altSex: await encryption.encrypt(data.info.altSex, {
+    const sexData =  data.info.altSex && data.info.altSex !== data.info.sex ? {altSex: await encryption.encrypt(data.info.altSex, {
       keyAltName,
       algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
     }), hormones: await encryption.encrypt(data.info.hormones, {
