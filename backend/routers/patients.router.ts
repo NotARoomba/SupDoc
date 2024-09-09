@@ -89,8 +89,8 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
         dateJoined: await encryption.encrypt(data.dateJoined, {
-          keyId: keyUDID,
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+          keyAltName: keyAltName,
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
         }),
         publicKey: await encryption.encrypt(data.publicKey, {
           keyId: keyUDID,
