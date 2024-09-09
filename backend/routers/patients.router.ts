@@ -144,7 +144,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
 
 patientsRouter.post("/check", async (req: Request, res: Response) => {
   console.log(req.body)
-  const id: number = req.body.id;
+  const id: number = parseInt(req.body.id);
   const number: string = req.body.number;
   try {
     let idUsers: Patient[] = [];
