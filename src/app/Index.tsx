@@ -73,6 +73,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         number: signUpInfo.number,
       },
     );
+    console.log(doesExist);
     if (doesExist.status !== STATUS_CODES.GENERIC_ERROR) {
       
       if (doesExist.status === STATUS_CODES.ID_IN_USE)

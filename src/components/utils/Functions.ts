@@ -19,19 +19,20 @@ export async function callAPI(
     );
     const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
     const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
+    const privateKey = await SecureStore.getItemAsync(
+      process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
+    )
     //private key should be encrypted with password
     const authorization = (
       await RSA.encrypt(
-        (await SecureStore.getItemAsync(
-          process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
-        )) ?? process.env.EXPO_PUBLIC_LIMITED_AUTH,
+         privateKey ?? process.env.EXPO_PUBLIC_LIMITED_AUTH,
         process.env.EXPO_PUBLIC_SERVER_PUBLIC,
       )
     )
       .replace(/\s+/g, "")
       .replace("\n", "");
     try {
-      return method === "POST"
+      const res = method === "POST"
         ? (
             await axios.post(
               process.env.EXPO_PUBLIC_API_URL + endpoint,
@@ -56,6 +57,10 @@ export async function callAPI(
               },
             })
           ).data;
+      const decryptKey = privateKey ?  await RSA.decrypt(res.key,
+        privateKey
+     ) : res.key
+     return JSON.parse(CryptoJS.AES.decrypt(res.body, decryptKey).toString(CryptoJS.enc.Utf8));
     } catch (error: any) {
       console.log(error);
       if (!error.response) return { status: STATUS_CODES.NO_CONNECTION };
