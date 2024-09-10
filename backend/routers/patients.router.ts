@@ -157,7 +157,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
 
 patientsRouter.post("/check", async (req: Request, res: Response) => {
   console.log(req.body)
-  const id: number = parseInt(req.body.id);
+  const id: number = parseInt(req.body.id ?? 0);
   const number: string = req.body.number;
   try {
     await createKey(id.toString(2))
@@ -166,7 +166,7 @@ patientsRouter.post("/check", async (req: Request, res: Response) => {
     let idUsers: Patient[] = [];
     let numberUsers: Patient[] = [];
     if (collections.patients) {
-      idUsers = (await collections.patients
+      if (id) idUsers = (await collections.patients
         .find({
           identification: {
             number: await encryption.encrypt(id, {
