@@ -208,9 +208,6 @@ export default function Index({ setIsLogged }: IndexProps) {
       } as LoginInfo);
     }
   }, [userType]);
-  useEffect(() => {
-    console.log(isLogin)
-  }, [isLogin])
   const parseLogin = async () => {
     setLoading(true);
     const doesExist = await callAPI(
@@ -377,8 +374,8 @@ export default function Index({ setIsLogged }: IndexProps) {
               >
                 <TouchableOpacity
                   onPress={() =>
-                    signUpInfo.passwordchk.length == 0 ||
-                    signUpInfo.passwordchk !== signUpInfo.password
+                    !isLogin && (signUpInfo.passwordchk.length == 0 ||
+                    signUpInfo.passwordchk !== signUpInfo.password)
                       ? Alert.alert("Error", "The passwords do not match!")
                       : !isLogin
                         ? parseSignup()

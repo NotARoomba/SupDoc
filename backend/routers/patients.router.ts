@@ -176,7 +176,7 @@ patientsRouter.post("/check", async (req: Request, res: Response) => {
           },
         })
         .toArray()) as unknown as Patient[];
-      numberUsers = (await collections.patients
+      if (number) numberUsers = (await collections.patients
         .find({
           number: await encryption.encrypt(number, {
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
