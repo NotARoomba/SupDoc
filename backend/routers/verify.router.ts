@@ -17,24 +17,24 @@ export const verifyRouter = express.Router();
 verifyRouter.use(express.json());
 // NEED VERIFY FOR ID AND DOCTOR
 verifyRouter.post("/code/send", async (req: Request, res: Response) => {
-  let number: string = req?.body?.number;
+  let number: string | number = req?.body?.number;
   let userType: UserType = req.body.userType;
   if (req?.body?.number === "") {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
   }
-  if (!number.includes('+')) {
+  if (typeof number === 'number') {
     const user = userType == UserType.DOCTOR ? await collections.doctors?.findOne({
       identification: {
-        number: await encryption.encrypt(parseInt(number), {
+        number: await encryption.encrypt(number, {
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          keyAltName: parseInt(number).toString(2),
+          keyAltName: number.toString(2),
         }),
       },
     }) : await collections.patients?.findOne({
       identification: {
-        number: await encryption.encrypt(parseInt(number), {
+        number: await encryption.encrypt(number, {
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          keyAltName: parseInt(number).toString(2),
+          keyAltName: number.toString(2),
         }),
       },
     })
