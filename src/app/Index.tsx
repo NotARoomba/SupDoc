@@ -208,6 +208,9 @@ export default function Index({ setIsLogged }: IndexProps) {
       } as LoginInfo);
     }
   }, [userType]);
+  useEffect(() => {
+    console.log(isLogin)
+  }, [isLogin])
   const parseLogin = async () => {
     setLoading(true);
     const doesExist = await callAPI(
@@ -361,12 +364,13 @@ export default function Index({ setIsLogged }: IndexProps) {
               </Animated.View>
             )}
             {/* Check for the other 4 routes that are possible */}
-            {!isLogin ? (
+            {(!isLogin ? (
               (userType &&
                 isPatientInfo(userType, signUpInfo) &&
                 (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
               (userType && isDoctorInfo(userType, signUpInfo) && pageIndex == 4)
-            ) : userType && loginInfo && pageIndex == 2 ? (
+            ) : pageIndex == 2)
+              ? (
               <Animated.View
                 entering={FadeIn.duration(500)}
                 exiting={FadeOut.duration(500)}

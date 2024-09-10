@@ -56,6 +56,7 @@ export default function Signup({
   const [ready, setisReady] = useState(false);
 
   useEffect(() => {
+    console.log(index)
     const doChecks = async () => {
       if (index == 3) {
         if (userType == UserType.PATIENT) {
@@ -78,7 +79,7 @@ export default function Signup({
     doChecks();
   }, [index]);
   const photo = () => {
-    cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
+    if (ready) cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
       //https://github.com/gennadysx/react-native-document-scanner-plugin#readme
       FileSystem.readAsStringAsync(photo.uri, { encoding: "base64" }).then(
         (res) => {
