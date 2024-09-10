@@ -49,7 +49,7 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
         channel: "sms",
       });
     if (verification.status === "pending") {
-      res.send({ status: STATUS_CODES.SUCCESS });
+      res.send({ number, status: STATUS_CODES.SUCCESS });
     } else if (!verification.lookup.valid) {
       res.send({ status: STATUS_CODES.NUMBER_NOT_EXIST });
     } else {

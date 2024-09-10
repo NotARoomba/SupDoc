@@ -84,7 +84,6 @@ export default function Index({ setIsLogged }: IndexProps) {
         number: (signUpInfo.countryCode + signUpInfo.number),
       });
       setLoading(false);
-      console.log(signUpInfo.countryCode + signUpInfo.number)
       if (res.status === STATUS_CODES.INVALID_NUMBER)
         return Alert.alert("Error", "That number is invalid!");
       else if (res.status === STATUS_CODES.NUMBER_NOT_EXIST)
@@ -204,14 +203,44 @@ export default function Index({ setIsLogged }: IndexProps) {
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`,
       "POST",
       {
-        id: signUpInfo.identification
+        id: loginInfo.identification
       },
     );
     if (doesExist.status !== STATUS_CODES.ID_IN_USE) {
       return setLoading(false);
     }
+    const res = await callAPI("/verify/code/send", "POST", {
+      number: loginInfo.identification,
+    });
     setLoading(false);
+    if (res.status === STATUS_CODES.ERROR_SENDING_CODE)
+        return Alert.alert("Error", "There was an error sending the code!");
+    else {
+      setTimeout(() => {
+        return Alert.prompt(
+          "Enter Verification Code",
+          "Enter the verification code sent to: " + res.number,
+          async (input) => await checkLogin(input, res.number),
+          "plain-text",
+          "",
+          "number-pad",
+        );
+      }, 250);
+    }
   };
+  const checkLogin = async (code: string, number: string) => {
+    if (!userType) return;
+    setLoading(true);
+    const v = await callAPI("/verify/code/check", "POST", {
+      number,
+      code,
+    });
+    if (v.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
+      // need to update wth localizations
+      return Alert.alert("Error", v.status);
+    }
+  }
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
       <View className="flex flex-col h-full bg-richer_black ">
