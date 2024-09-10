@@ -109,9 +109,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     }
   };
   const checkSignup = async (code: string) => {
-    console.log(code)
     if (!userType) return;
-    console.log("ASDASD")
     setLoading(true);
     const v = await callAPI("/verify/code/check", "POST", {
       number: (signUpInfo.countryCode + signUpInfo.number),
@@ -122,7 +120,6 @@ export default function Index({ setIsLogged }: IndexProps) {
       // need to update wth localizations
       return Alert.alert("Error", v.status);
     }
-    console.log("ASDASD")
     const keys = await RSA.generateKeys(2048);
     const encPriv = CryptoJS.AES.encrypt(keys.private, signUpInfo.password);
     const create = await callAPI(
@@ -162,6 +159,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
         keys.public,
       );
+      await SecureStore.setItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_TYPE, userType)
       return setIsLogged(true);
     }
   };
@@ -200,7 +198,18 @@ export default function Index({ setIsLogged }: IndexProps) {
       } as LoginInfo);
     }
   }, [userType]);
-  const parseLogin = async () => {};
+  const parseLogin = async () => {
+    setLoading(true);
+    const doesExist = await callAPI(
+      `/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`,
+      "POST",
+      {
+        id: signUpInfo.identification
+      },
+    );
+    console.log(doesExist);
+    setLoading(false);
+  };
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
       <View className="flex flex-col h-full bg-richer_black ">
@@ -289,9 +298,11 @@ export default function Index({ setIsLogged }: IndexProps) {
             </Animated.View>
           )}
           {/* Check for the other 4 routes that are possible */}
-          {(userType &&
+          {!isLogin ? ((userType &&
           isPatientInfo(userType, signUpInfo) &&
-          (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) || (userType && isDoctorInfo(userType, signUpInfo) && pageIndex == 4) ? (
+          (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) || (userType && isDoctorInfo(userType, signUpInfo) && pageIndex == 4)) : (userType &&
+            isPatientInfo(userType, loginInfo) &&
+            (pageIndex == 2)  ? (
             <Animated.View
               entering={FadeIn.duration(500)}
               exiting={FadeOut.duration(500)}

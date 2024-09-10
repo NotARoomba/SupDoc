@@ -12,6 +12,7 @@ declare global {
       EXPO_PUBLIC_SERVER_PUBLIC: string;
       EXPO_PUBLIC_API_URL: string;
       EXPO_PUBLIC_LIMITED_AUTH: string;
+      EXPO_PUBLIC_KEY_NAME_TYPE: string;
     }
   }
 }
