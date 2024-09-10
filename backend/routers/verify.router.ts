@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express";
 import { Twilio } from "twilio";
 import { load } from "ts-dotenv";
-import { STATUS_CODES } from "../models/util";
+import { STATUS_CODES, UserType } from "../models/util";
+import { collections, encryption } from "../services/database.service";
 
 const env = load({
   TW_SID: String,
@@ -16,9 +17,28 @@ export const verifyRouter = express.Router();
 verifyRouter.use(express.json());
 // NEED VERIFY FOR ID AND DOCTOR
 verifyRouter.post("/code/send", async (req: Request, res: Response) => {
-  const number: string = req?.body?.number;
+  let number: string = req?.body?.number;
+  let userType: UserType = req.body.userType;
   if (req?.body?.number === "") {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
+  }
+  if (!number.includes('+')) {
+    const user = userType == UserType.DOCTOR ? await collections.doctors?.findOne({
+      identification: {
+        number: await encryption.encrypt(parseInt(number), {
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+          keyAltName: parseInt(number).toString(2),
+        }),
+      },
+    }) : await collections.patients?.findOne({
+      identification: {
+        number: await encryption.encrypt(parseInt(number), {
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+          keyAltName: parseInt(number).toString(2),
+        }),
+      },
+    })
+    number = user?.number as string;
   }
   let verification;
   try {
@@ -51,11 +71,30 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
 });
 
 verifyRouter.post("/code/check", async (req: Request, res: Response) => {
-  const number: string = req?.body?.number;
+  let number: string = req?.body?.number;
   const code: string = req?.body?.code as string;
+  const userType: UserType = req?.body?.userType;
   let verification;
   if (number == "+573104250018") {
     return res.send({ status: STATUS_CODES.SUCCESS });
+  }
+  if (!number.includes('+')) {
+    const user = userType == UserType.DOCTOR ? await collections.doctors?.findOne({
+      identification: {
+        number: await encryption.encrypt(parseInt(number), {
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+          keyAltName: parseInt(number).toString(2),
+        }),
+      },
+    }) : await collections.patients?.findOne({
+      identification: {
+        number: await encryption.encrypt(parseInt(number), {
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+          keyAltName: parseInt(number).toString(2),
+        }),
+      },
+    })
+    number = user?.number as string;
   }
   try {
     verification = await twilio.verify.v2

@@ -33,3 +33,8 @@ export type ApplyConditionalType<T, U> = {
           T[K] // Recursively apply the conditional type to nested objects
         : ConditionalType<U, T[K]>; // Apply the conditional type to the field if it's a primitive
 };
+
+export enum UserType {
+  DOCTOR = "Doctor",
+  PATIENT = "Patient",
+}
