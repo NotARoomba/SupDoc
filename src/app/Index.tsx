@@ -26,9 +26,13 @@ import * as SecureStore from "expo-secure-store";
 import Signup from "./Signup";
 import { STATUS_CODES } from "@/backend/models/util";
 import Loader from "components/misc/Loader";
-import { callAPI, isDoctorInfo, isPatientInfo } from "components/utils/Functions";
+import {
+  callAPI,
+  isDoctorInfo,
+  isPatientInfo,
+} from "components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
-import CryptoJS from 'crypto-es'
+import CryptoJS from "crypto-es";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
@@ -71,17 +75,20 @@ export default function Index({ setIsLogged }: IndexProps) {
       "POST",
       {
         id: signUpInfo.identification,
-        number: (signUpInfo.countryCode + signUpInfo.number),
+        number: signUpInfo.countryCode + signUpInfo.number,
       },
     );
     console.log(doesExist);
     if (doesExist.status !== STATUS_CODES.GENERIC_ERROR) {
-      if (doesExist.status === STATUS_CODES.ID_IN_USE)
-         {setLoading(false); return Alert.alert("Error", "The ID is already in use!");}
-      else if (doesExist.status === STATUS_CODES.NUMBER_IN_USE)
-      {setLoading(false); return Alert.alert("Error", "The number is already in use!");}
+      if (doesExist.status === STATUS_CODES.ID_IN_USE) {
+        setLoading(false);
+        return Alert.alert("Error", "The ID is already in use!");
+      } else if (doesExist.status === STATUS_CODES.NUMBER_IN_USE) {
+        setLoading(false);
+        return Alert.alert("Error", "The number is already in use!");
+      }
       const res = await callAPI("/verify/code/send", "POST", {
-        number: (signUpInfo.countryCode + signUpInfo.number),
+        number: signUpInfo.countryCode + signUpInfo.number,
       });
       setLoading(false);
       if (res.status === STATUS_CODES.INVALID_NUMBER)
@@ -94,7 +101,8 @@ export default function Index({ setIsLogged }: IndexProps) {
         setTimeout(() => {
           return Alert.prompt(
             "Enter Verification Code",
-            "Enter the verification code sent to: " + (signUpInfo.countryCode + signUpInfo.number),
+            "Enter the verification code sent to: " +
+              (signUpInfo.countryCode + signUpInfo.number),
             async (input) => await checkSignup(input),
             "plain-text",
             "",
@@ -111,7 +119,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     if (!userType) return;
     setLoading(true);
     const v = await callAPI("/verify/code/check", "POST", {
-      number: (signUpInfo.countryCode + signUpInfo.number),
+      number: signUpInfo.countryCode + signUpInfo.number,
       code,
     });
     if (v.status !== STATUS_CODES.SUCCESS) {
@@ -139,7 +147,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               height: signUpInfo.height,
               dob: signUpInfo.dob,
               sex: signUpInfo.sex,
-              blood: signUpInfo.gs +  signUpInfo.rh,
+              blood: signUpInfo.gs + signUpInfo.rh,
               pregnant: signUpInfo.pregnant ?? false,
               altSex: signUpInfo.altSex,
               hormones: signUpInfo.hormones,
@@ -158,7 +166,10 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
         keys.public,
       );
-      await SecureStore.setItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_TYPE, userType)
+      await SecureStore.setItemAsync(
+        process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
+        userType,
+      );
       return setIsLogged(true);
     }
   };
@@ -179,7 +190,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           password: "",
           passwordchk: "",
           countryCode: "+57",
-          identification: 0, 
+          identification: 0,
           dob: Date.now(), // Required for patient signup
           weight: 0, // Required for patient signup
           height: 0, // Required for patient signup
@@ -203,7 +214,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`,
       "POST",
       {
-        id: loginInfo.identification
+        id: loginInfo.identification,
       },
     );
     if (doesExist.status !== STATUS_CODES.ID_IN_USE) {
@@ -214,7 +225,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     });
     setLoading(false);
     if (res.status === STATUS_CODES.ERROR_SENDING_CODE)
-        return Alert.alert("Error", "There was an error sending the code!");
+      return Alert.alert("Error", "There was an error sending the code!");
     else {
       setTimeout(() => {
         return Alert.prompt(
@@ -240,7 +251,27 @@ export default function Index({ setIsLogged }: IndexProps) {
       // need to update wth localizations
       return Alert.alert("Error", v.status);
     }
-  }
+    const res = await callAPI(
+      `/${userType == UserType.PATIENT ? "patients" : "doctors"}/keys`,
+      "POST",
+      {
+        number,
+        id: loginInfo.identification,
+      },
+    );
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
+      // need to update wth localizations
+      return Alert.alert("Error", "There was an error fetchign the keys!");
+    }
+    const isValid = await RSA.verify(
+      await RSA.encrypt(process.env.EXPO_PUBLIC_LIMITED_AUTH, res.public),
+      process.env.EXPO_PUBLIC_LIMITED_AUTH,
+      CryptoJS.AES.decrypt(res.private, loginInfo.password).toString(),
+    );
+    console.log(isValid);
+    // await SecureStore.setItemAsync(process.env.)
+  };
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
       <View className="flex flex-col h-full bg-richer_black ">
@@ -305,88 +336,105 @@ export default function Index({ setIsLogged }: IndexProps) {
             )}
           </>
         )}
-        {!cameraOpen && <View
-          className={
-            "flex flex-col absolute gap-y-4 w-full z-10 " +
-            (Platform.OS === "android" ? " bottom-4 " : "bottom-24")
-          }
-        >
-          {pageIndex > 0 && (
-            <Animated.View
-              entering={FadeIn.duration(500)}
-              exiting={FadeOut.duration(500)}
-            >
-              <TouchableOpacity
-                onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
-                className={
-                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
-                }
+        {!cameraOpen && (
+          <View
+            className={
+              "flex flex-col absolute gap-y-4 w-full z-10 " +
+              (Platform.OS === "android" ? " bottom-4 " : "bottom-24")
+            }
+          >
+            {pageIndex > 0 && (
+              <Animated.View
+                entering={FadeIn.duration(500)}
+                exiting={FadeOut.duration(500)}
               >
-                <Text className="text-xl  text-ivory font-medium text-center">
-                  Back
+                <TouchableOpacity
+                  onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
+                  className={
+                    "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
+                  }
+                >
+                  <Text className="text-xl  text-ivory font-medium text-center">
+                    Back
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            )}
+            {/* Check for the other 4 routes that are possible */}
+            {!isLogin ? (
+              (userType &&
+                isPatientInfo(userType, signUpInfo) &&
+                (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
+              (userType && isDoctorInfo(userType, signUpInfo) && pageIndex == 4)
+            ) : userType && loginInfo && pageIndex == 2 ? (
+              <Animated.View
+                entering={FadeIn.duration(500)}
+                exiting={FadeOut.duration(500)}
+              >
+                <TouchableOpacity
+                  onPress={() =>
+                    signUpInfo.passwordchk.length == 0 ||
+                    signUpInfo.passwordchk !== signUpInfo.password
+                      ? Alert.alert("Error", "The passwords do not match!")
+                      : !isLogin
+                        ? parseSignup()
+                        : parseLogin()
+                  }
+                  className={
+                    "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
+                  }
+                >
+                  <Text className="text-xl  text-ivory font-medium text-center">
+                    Finish
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            ) : (
+              <TouchableOpacity
+                onPress={() =>
+                  (
+                    !isLogin
+                      ? (pageIndex == 1 && !userType) ||
+                        (pageIndex == 2 &&
+                          (!signUpInfo.number || !signUpInfo.identification)) ||
+                        (pageIndex == 3 &&
+                          userType &&
+                          isPatientInfo(userType, signUpInfo) &&
+                          (!signUpInfo.height || !signUpInfo.weight)) ||
+                        (pageIndex == 4 &&
+                          userType &&
+                          isPatientInfo(userType, signUpInfo) &&
+                          (signUpInfo.trans == undefined || signUpInfo.trans
+                            ? signUpInfo.hormones == undefined ||
+                              signUpInfo.surgery == undefined
+                            : false)) ||
+                        (userType &&
+                          isPatientInfo(userType, signUpInfo) &&
+                          (signUpInfo.trans
+                            ? pageIndex == 6
+                            : pageIndex == 5) &&
+                          (!signUpInfo.password || !signUpInfo.passwordchk)) ||
+                        (pageIndex == 3 &&
+                          userType &&
+                          isDoctorInfo(userType, signUpInfo) &&
+                          signUpInfo.license.length == 0)
+                      : false
+                  )
+                    ? Alert.alert(
+                        "Missing Info",
+                        "Please fill out the information!",
+                      )
+                    : setIndex(pageIndex + 1)
+                }
+                className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
+              >
+                <Text className="text-xl text-ivory font-medium text-center">
+                  Next
                 </Text>
               </TouchableOpacity>
-            </Animated.View>
-          )}
-          {/* Check for the other 4 routes that are possible */}
-          {!isLogin ? ((userType &&
-          isPatientInfo(userType, signUpInfo) &&
-          (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) || (userType && isDoctorInfo(userType, signUpInfo) && pageIndex == 4)) : (userType && loginInfo &&
-            (pageIndex == 2))  ? (
-            <Animated.View
-              entering={FadeIn.duration(500)}
-              exiting={FadeOut.duration(500)}
-            >
-              <TouchableOpacity
-                onPress={() => signUpInfo.passwordchk.length == 0 || signUpInfo.passwordchk !== signUpInfo.password ? Alert.alert("Error", "The passwords do not match!") : (!isLogin ? parseSignup() : parseLogin())}
-                className={
-                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
-                }
-              >
-                <Text className="text-xl  text-ivory font-medium text-center">
-                  Finish
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ) : (
-            <TouchableOpacity
-              onPress={() =>
-                (
-                  !isLogin
-                    ? (pageIndex == 1 && !userType) ||
-                      (pageIndex == 2 &&
-                        (!signUpInfo.number || !signUpInfo.identification)) ||
-                      (pageIndex == 3 &&
-                        userType &&
-                        isPatientInfo(userType, signUpInfo) &&
-                        (!signUpInfo.height || !signUpInfo.weight)) ||
-                      (pageIndex == 4 &&
-                        userType &&
-                        isPatientInfo(userType, signUpInfo) &&
-                        (signUpInfo.trans == undefined || signUpInfo.trans
-                          ? signUpInfo.hormones == undefined ||
-                            signUpInfo.surgery == undefined
-                          : false)) ||
-                      (userType &&
-                        isPatientInfo(userType, signUpInfo) &&
-                        (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5) &&
-                        (!signUpInfo.password || !signUpInfo.passwordchk)) || (pageIndex == 3 && userType && isDoctorInfo(userType, signUpInfo) && signUpInfo.license.length == 0)
-                    : false
-                )
-                  ? Alert.alert(
-                      "Missing Info",
-                      "Please fill out the information!",
-                    )
-                  : setIndex(pageIndex + 1)
-              }
-              className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
-            >
-              <Text className="text-xl text-ivory font-medium text-center">
-                Next
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>}
+            )}
+          </View>
+        )}
         <Spinner
           visible={loading}
           overlayColor="#000000cc"

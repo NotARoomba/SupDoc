@@ -6,7 +6,7 @@ import Index from "./Index";
 import { SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 
-SplashScreen.preventAutoHideAsync()
+SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [isLogged, setIsLogged] = useState(false);
   useEffect(() => {
@@ -14,23 +14,26 @@ export default function RootLayout() {
       // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE)
       const privateKey = await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
-      )
+      );
       if (privateKey !== null) {
         setIsLogged(true);
       } else {
         setIsLogged(false);
         await SplashScreen.hideAsync();
       }
-     
-    }
-    updateData()
-  }, [])
+    };
+    updateData();
+  }, []);
   return (
     <View className="text-ivory h-full">
       <SafeAreaView className="bg-richer_black" />
       {isLogged ? (
         <Stack>
-          <Stack.Screen initialParams={{isLogged: isLogged}} name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            initialParams={{ isLogged: isLogged }}
+            name="(tabs)"
+            options={{ headerShown: false }}
+          />
         </Stack>
       ) : (
         <Index setIsLogged={setIsLogged} />

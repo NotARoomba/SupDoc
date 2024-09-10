@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import CryptoJS from 'crypto-es'
+import CryptoJS from "crypto-es";
 import {
   BirthSex,
   SignupInfo,
@@ -36,7 +36,7 @@ import Animated, {
 import { Camera, CameraView, PermissionStatus } from "expo-camera";
 import * as Linking from "expo-linking";
 import { Ionicons } from "@expo/vector-icons";
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 
 export default function Signup({
   info,
@@ -45,7 +45,7 @@ export default function Signup({
   setInfo,
   setIsLogged,
   cameraOpen,
-  setCameraOpen
+  setCameraOpen,
 }: SignupProps) {
   /// setInfo({...info, info.(PROPIEDAD Q QUIERES CAMBIAR)})
   const [show, setShow] = useState(false);
@@ -80,11 +80,13 @@ export default function Signup({
   const photo = () => {
     cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
       //https://github.com/gennadysx/react-native-document-scanner-plugin#readme
-      FileSystem.readAsStringAsync(photo.uri, {encoding: 'base64'}).then(res => {
-        setInfo({...info, license: res});
-        // console.log((res.length / 1000).toFixed(2) + "KB")
-        setCameraOpen(false);
-      });
+      FileSystem.readAsStringAsync(photo.uri, { encoding: "base64" }).then(
+        (res) => {
+          setInfo({ ...info, license: res });
+          // console.log((res.length / 1000).toFixed(2) + "KB")
+          setCameraOpen(false);
+        },
+      );
     });
   };
   return (
@@ -123,8 +125,15 @@ export default function Signup({
             Cedula/TI
           </Text>
           <TextInput
-            onChangeText={(id) => setInfo({ ...info, identification: isNaN(parseInt(id)) ? 0 : parseInt(id) })}
-            value={info.identification == 0 ? "" : info.identification.toString() }
+            onChangeText={(id) =>
+              setInfo({
+                ...info,
+                identification: isNaN(parseInt(id)) ? 0 : parseInt(id),
+              })
+            }
+            value={
+              info.identification == 0 ? "" : info.identification.toString()
+            }
             keyboardType="phone-pad"
             placeholderTextColor={"#ffffff"}
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
@@ -228,9 +237,7 @@ export default function Signup({
                       <Picker
                         selectedValue={info.sex}
                         style={{ width: 100 }}
-                        onValueChange={(v) =>
-                          setInfo({ ...info, sex: v })
-                        }
+                        onValueChange={(v) => setInfo({ ...info, sex: v })}
                       >
                         <Picker.Item color="#fbfff1" label="M" value="M" />
                         <Picker.Item color="#fbfff1" label="F" value="F" />
@@ -379,12 +386,19 @@ export default function Signup({
           </Animated.View>
         )
       ) : index == 3 ? (
-        <Animated.View className="flex flex-col" entering={FadeIn.duration(500)}>
+        <Animated.View
+          className="flex flex-col"
+          entering={FadeIn.duration(500)}
+        >
           <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
             Upload your doctor's license or degree
           </Text>
           {cameraOpen && hasPermission && (
-            <CameraView className="h-[106vh] -top-96 w-full absolute left-0 z-40" ref={cameraRef} onCameraReady={() => setisReady(true)}>
+            <CameraView
+              className="h-[106vh] -top-96 w-full absolute left-0 z-40"
+              ref={cameraRef}
+              onCameraReady={() => setisReady(true)}
+            >
               <TouchableOpacity
                 className="absolute left-1/2 -translate-x-12 bottom-16"
                 onPress={() => photo()}
@@ -403,10 +417,10 @@ export default function Signup({
                     "Error",
                     "Allow the camera in settings to take a photo!",
                     [
-                      { text: "Cancel", style: 'cancel' },
+                      { text: "Cancel", style: "cancel" },
                       {
                         text: "Settings",
-                        style: 'default',
+                        style: "default",
                         onPress: () => Linking.openSettings(),
                       },
                     ],
@@ -416,13 +430,26 @@ export default function Signup({
             <Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
               Take Photo
             </Text>
-            
           </TouchableOpacity>
-          {info.license.length != 0 && <Animated.View key={info.license.length} entering={FadeIn.duration(500)} className="w-full flex flex-col"><Text className="mx-auto text-lg font-semibold text-ivory mt-2 w-full text-center">Photo: {(info.license.length / (1000 * 1000)).toFixed(2) + "MB"}</Text><TouchableOpacity
-            className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-2 "
-            onPress={() => setInfo({...info, license: ""})}><Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
-            Remove Photo
-          </Text></TouchableOpacity></Animated.View>}
+          {info.license.length != 0 && (
+            <Animated.View
+              key={info.license.length}
+              entering={FadeIn.duration(500)}
+              className="w-full flex flex-col"
+            >
+              <Text className="mx-auto text-lg font-semibold text-ivory mt-2 w-full text-center">
+                Photo: {(info.license.length / (1000 * 1000)).toFixed(2) + "MB"}
+              </Text>
+              <TouchableOpacity
+                className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-2 "
+                onPress={() => setInfo({ ...info, license: "" })}
+              >
+                <Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
+                  Remove Photo
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
         </Animated.View>
       ) : (
         <Animated.View entering={FadeIn.duration(500)}>

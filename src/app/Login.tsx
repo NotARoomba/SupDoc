@@ -2,7 +2,13 @@ import { Text, View } from "react-native";
 import { LoginProps } from "../components/utils/Types";
 import Animated, { FadeIn } from "react-native-reanimated";
 
-export default function Login({ info, setIsLogged, userType, setInfo, index }: LoginProps) {
+export default function Login({
+  info,
+  setIsLogged,
+  userType,
+  setInfo,
+  index,
+}: LoginProps) {
   return (
     <View className="h-full ">
       <Animated.Text
@@ -12,6 +18,6 @@ export default function Login({ info, setIsLogged, userType, setInfo, index }: L
       >
         Login
       </Animated.Text>
-      </View>
+    </View>
   );
 }
