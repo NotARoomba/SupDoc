@@ -29,7 +29,7 @@ export default async function encryptionMiddleware(
       "/verify/code/check",
     ].includes(req.originalUrl)
   )
-    return res.status(401);
+    return res.sendStatus(401);
   // checks if the authorization exists
   else if (auth != env.LIMITED_AUTH) {
     const doctorExists = await collections.doctors?.findOne({
