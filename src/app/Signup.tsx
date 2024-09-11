@@ -110,7 +110,9 @@ export default function Signup({
     const doChecks = async () => {
       if (index == 3) {
         setIsLoading(true);
-        const res = await callAPI(`/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`, "POST", {number: info.number, id: info.identification});
+        console.log("CHECKING")
+        const res = await callAPI(`/users/check`, "POST", {number: info.number, id: info.identification});
+        console.log(res)
         if (res.status == STATUS_CODES.ID_IN_USE || res.status == STATUS_CODES.NUMBER_IN_USE) {
           setIsLoading(false);
           setIndex(index-1);

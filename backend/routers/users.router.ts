@@ -20,13 +20,13 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
     await createKey(id.toString(2));
   } catch {}
   try {
-    let idUsers: User[] = [];
-    let numberUsers: User[] = [];
+    let idUser: User | null = null;
+    let numberUser: User | null = null;
     if (collections.patients && collections.doctors) {
       if (id)
-        idUsers = (
+        idUser = (
           (await collections.patients
-            .find({
+            .findOne({
               identification: {
                 number: await encryption.encrypt(id, {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
@@ -34,43 +34,39 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
                 }),
               },
             })
-            .toArray()) as unknown as User[]
-        ).concat(
-          (await collections.doctors
-            .find({
+            ) ??
+       (await collections.doctors
+            .findOne({
               identification: {
                 number: await encryption.encrypt(id, {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                   keyAltName: id.toString(2),
                 }),
               },
-            })
-            .toArray()) as unknown as User[],
-        );
+            }))) as User
       if (number)
-        numberUsers = (
+        numberUser = (
           (await collections.patients
-            .find({
+            .findOne({
               number: await encryption.encrypt(number, {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                 keyAltName: id.toString(2),
               }),
             })
-            .toArray()) as unknown as Patient[]
-        ).concat(
+           ??
           (await collections.doctors
-            .find({
+            .findOne({
               number: await encryption.encrypt(number, {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                 keyAltName: id.toString(2),
               }),
             })
-            .toArray()) as unknown as Patient[],
-        );
+            
+        ))) as User
     }
-    if (idUsers.length !== 0)
+    if (idUser)
       return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
-    else if (numberUsers.length !== 0)
+    else if (numberUser)
       res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
     else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
   } catch (error) {

@@ -88,6 +88,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         setLoading(false);
         return Alert.alert("Error", "The number is already in use!");
       }
+      console.log(signUpInfo.countryCode + signUpInfo.number)
       const res = await callAPI("/verify/code/send", "POST", {
         number: signUpInfo.countryCode + signUpInfo.number,
       });
@@ -123,6 +124,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       number: signUpInfo.countryCode + signUpInfo.number,
       code,
     });
+    console.log(v)
     if (v.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
       // need to update wth localizations
