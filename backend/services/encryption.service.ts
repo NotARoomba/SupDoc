@@ -24,7 +24,7 @@ export default async function encryptionMiddleware(
       "/patients/keys",
       "/doctors/create",
       "/doctors/keys",
-      // "/users/check",
+      "/users/check",
       "/verify/code/send",
       "/verify/code/check",
     ].includes(req.originalUrl)
