@@ -111,7 +111,7 @@ export default function Signup({
       if (index == 3) {
         setIsLoading(true);
         console.log("CHECKING")
-        const res = await callAPI(`/users/check`, "POST", {number: info.number, id: info.identification});
+        const res = await callAPI(`/users/check`, "POST", {number: (info.countryCode + info.number), id: info.identification});
         console.log(res)
         if (res.status == STATUS_CODES.ID_IN_USE || res.status == STATUS_CODES.NUMBER_IN_USE) {
           setIsLoading(false);

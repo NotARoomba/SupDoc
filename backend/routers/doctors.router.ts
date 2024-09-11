@@ -48,7 +48,7 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
   const keyAltName = data.identification.number.toString(2);
   try {
-    const keyUDID = await createKey(keyAltName);
+    const keyUDID = await createKey([keyAltName, data.number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
     if (collections.doctors) {
       const ins = await collections.doctors.insertOne({
         number: await encryption.encrypt(data.number, {
@@ -95,7 +95,7 @@ doctorsRouter.post("/keys", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
   const number: string = req.body.number;
   try {
-    await createKey(id.toString(2));
+    await createKey([id.toString(2), number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
   } catch {}
   try {
     let idUser: Doctor;

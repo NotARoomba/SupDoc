@@ -42,14 +42,14 @@ const masterKey = {
   keyRing: env.GCP_KEYRING,
   keyName: env.GCP_KEYNAME,
 };
-export async function createKey(altName: string) {
+export async function createKey(altName: string[]) {
   try {
     return await encryption.createDataKey("gcp", {
       masterKey,
-      keyAltNames: altName ? [altName] : undefined,
+      keyAltNames: altName ? altName : undefined,
     });
   } catch {
-    return (await encryption.getKeyByAltName(altName))?._id;
+    return (await encryption.getKeyByAltName(altName[0]))?._id;
   }
 }
 
