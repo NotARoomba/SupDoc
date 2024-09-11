@@ -8,6 +8,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { SliderProps } from "../utils/Types";
 import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
@@ -64,7 +65,10 @@ export default function Slider({ options, setOption, selected }: SliderProps) {
             }
             onPress={(e: GestureResponderEvent) => {
               e.currentTarget.measure((_x, __, w, _h, x) => {
-                pos.value = withSpring(x - 32, springConfig);
+                pos.value = withSpring(
+                  x - (Platform.OS == "ios" ? 32 : 15),
+                  springConfig,
+                );
                 width.value = withSpring(w);
                 setOption(v);
               });

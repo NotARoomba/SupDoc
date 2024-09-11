@@ -13,6 +13,7 @@ declare global {
       EXPO_PUBLIC_API_URL: string;
       EXPO_PUBLIC_LIMITED_AUTH: string;
       EXPO_PUBLIC_KEY_NAME_TYPE: string;
+      EXPO_PUBLIC_KEY_NAME_PASS: string;
     }
   }
 }
@@ -32,7 +33,15 @@ export enum UserType {
 export enum BirthSex {
   MALE = "M",
   FEMALE = "F",
+  INTERSEX = "IS"
+}
+
+export enum Sex {
+  MALE = "M",
+  FEMALE = "F",
   INTERSEX = "IS",
+  NONBINARY = "NB",
+  OTHER = "O"
 }
 
 interface BaseSignupInfo {
@@ -65,7 +74,7 @@ export interface PatientSignupInfo {
   hormones?: boolean;
   surgery?: boolean;
   sex: BirthSex; // Required for patients
-  altSex?: BirthSex;
+  altSex?: Sex;
 }
 
 // Base interface for shared login information

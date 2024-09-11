@@ -16,7 +16,7 @@ export default function RootLayout() {
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
       );
       if (privateKey !== null) {
-        setIsLogged(true);
+        // setIsLogged(true);
       } else {
         setIsLogged(false);
         await SplashScreen.hideAsync();

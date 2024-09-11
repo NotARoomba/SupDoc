@@ -1,6 +1,7 @@
 import {
   Alert,
   Keyboard,
+  Platform,
   Text,
   TextInput,
   TouchableOpacity,
@@ -10,6 +11,7 @@ import {
 import CryptoJS from "crypto-es";
 import {
   BirthSex,
+  Sex,
   SignupInfo,
   SignupProps,
   UserType,
@@ -24,7 +26,9 @@ import {
 import Spinner from "react-native-loading-spinner-overlay";
 import Loader from "components/misc/Loader";
 import { STATUS_CODES } from "@/backend/models/util";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
 import { Picker, PickerIOS } from "@react-native-picker/picker";
 import Slider from "components/buttons/Slider";
 import Animated, {
@@ -37,6 +41,15 @@ import { Camera, CameraView, PermissionStatus } from "expo-camera";
 import * as Linking from "expo-linking";
 import { Ionicons } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
+import { SpinPicker } from "react-native-spin-picker";
+import ScrollPicker from "react-native-wheel-scrollview-picker";
+import { rgbaColor } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
+import {
+  GestureDetector,
+  GestureHandlerRootView,
+  ScrollView,
+} from "react-native-gesture-handler";
+import DropDownPicker from "react-native-dropdown-picker";
 
 export default function Signup({
   info,
@@ -54,9 +67,48 @@ export default function Signup({
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [loading, setIsLoading] = useState(false);
   const [ready, setisReady] = useState(false);
+  const [gsValue, setGSValue] = useState("O");
+  const [gsOpen, setGSOpen] = useState(false);
+  const [gsItems, setGSItems] = useState([
+    { label: "O", value: "O" },
+    { label: "A", value: "A" },
+    { label: "B", value: "B" },
+    { label: "AB", value: "AB" },
+  ]);
+  const [rhValue, setRhValue] = useState("+");
+  const [rhOpen, setRhOpen] = useState(false);
+  const [rhItems, setRhItems] = useState([
+    { label: "+", value: "+" },
+    { label: "-", value: "-" },
+  ]);
 
+  // Sex States
+  const [sexValue, setSexValue] = useState("M");
+  const [sexOpen, setSexOpen] = useState(false);
+  const [sexItems, setSexItems] = useState([
+    { label: "M", value: "M" },
+    { label: "F", value: "F" },
+    { label: "IS", value: "IS" },
+  ]);
+
+  const [altSexValue, setAltSexValue] = useState("M");
+  const [altSexOpen, setAltSexOpen] = useState(false);
+  const [altSexItems, setAltSexItems] = useState([
+    { label: "M", value: "M" },
+    { label: "F", value: "F" },
+    { label: "NB", value: "NB" },
+    { label: "O", value: "O" },
+  ]);
+
+  // Pregnancy Status States
+  const [isPregnantValue, setIsPregnantValue] = useState(false);
+  const [isPregnantOpen, setIsPregnantOpen] = useState(false);
+  const [isPregnantItems, setIsPregnantItems] = useState([
+    { label: "Yes", value: true },
+    { label: "No", value: false },
+  ]);
   useEffect(() => {
-    console.log(index)
+    console.log(index);
     const doChecks = async () => {
       if (index == 3) {
         if (userType == UserType.PATIENT) {
@@ -79,16 +131,17 @@ export default function Signup({
     doChecks();
   }, [index]);
   const photo = () => {
-    if (ready) cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
-      //https://github.com/gennadysx/react-native-document-scanner-plugin#readme
-      FileSystem.readAsStringAsync(photo.uri, { encoding: "base64" }).then(
-        (res) => {
-          setInfo({ ...info, license: res });
-          // console.log((res.length / 1000).toFixed(2) + "KB")
-          setCameraOpen(false);
-        },
-      );
-    });
+    if (ready)
+      cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
+        //https://github.com/gennadysx/react-native-document-scanner-plugin#readme
+        FileSystem.readAsStringAsync(photo.uri, { encoding: "base64" }).then(
+          (res) => {
+            setInfo({ ...info, license: res });
+            // console.log((res.length / 1000).toFixed(2) + "KB")
+            setCameraOpen(false);
+          },
+        );
+      });
   };
   return (
     <View className="h-full ">
@@ -150,18 +203,40 @@ export default function Signup({
               Date of Birth
             </Text>
             <View className="flex w-full justify-center">
-              <DateTimePicker
-                value={new Date(info.dob ?? new Date()) ?? new Date()}
-                maximumDate={new Date()}
-                onChange={(d) => {
-                  console.log(d);
-                  setInfo({ ...info, dob: d.nativeEvent.timestamp });
-                }}
-                style={{
-                  marginHorizontal: "auto",
-                  transform: [{ translateX: -4 }],
-                }}
-              />
+              {Platform.OS == "ios" ? (
+                <DateTimePicker
+                  value={new Date(info.dob ?? new Date())}
+                  maximumDate={new Date()}
+                  onChange={(d) => {
+                    setInfo({ ...info, dob: d.nativeEvent.timestamp });
+                  }}
+                  style={{
+                    marginHorizontal: "auto",
+                    transform: [{ translateX: -4 }],
+                  }}
+                />
+              ) : (
+                <TouchableOpacity
+                  onPress={() =>
+                    DateTimePickerAndroid.open({
+                      value: new Date(info.dob ?? new Date()),
+                      maximumDate: new Date(),
+                      onChange: (d) => {
+                        setInfo({ ...info, dob: d.nativeEvent.timestamp });
+                      },
+                    })
+                  }
+                  className="bg-neutral-800/80 rounded-lg py-0.5 px-3 w-fit mx-auto"
+                >
+                  <Text className="text-ivory text-lg">
+                    {new Intl.DateTimeFormat("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    }).format(new Date(info.dob ?? new Date()))}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
             <View className="flex w-full flex-row">
               <View className="w-1/2 flex flex-col">
@@ -185,30 +260,111 @@ export default function Signup({
                 <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
                   Blood Type
                 </Text>
-                <View className="flex flex-row justify-center -mt-6">
-                  <Picker
-                    className="h-12 text-ivory"
-                    selectedValue={info.gs ?? "Javascript"}
-                    style={{ width: 100 }}
-                    onValueChange={(v) =>
-                      setInfo({ ...info, gs: v.toString() })
-                    }
-                  >
-                    <Picker.Item color="#fbfff1" label="O" value="O" />
-                    <Picker.Item color="#fbfff1" label="A" value="A" />
-                    <Picker.Item color="#fbfff1" label="B" value="B" />
-                    <Picker.Item color="#fbfff1" label="AB" value="AB" />
-                  </Picker>
-                  <Picker
-                    selectedValue={info.rh}
-                    style={{ width: 100 }}
-                    onValueChange={(v) =>
-                      setInfo({ ...info, rh: v.toString() })
-                    }
-                  >
-                    <Picker.Item color="#fbfff1" label="-" value="-" />
-                    <Picker.Item color="#fbfff1" label="+" value="+" />
-                  </Picker>
+                <View className="flex flex-row justify-center mx-auto -mt-6">
+                  {Platform.OS == "ios" ? (
+                    <>
+                      <Picker
+                        className="h-12 text-ivory flex justify-center text-center mx-auto rounded-lg"
+                        selectedValue={info.gs}
+                        style={{
+                          width: 100,
+                          color: "#fbfff1",
+                        }}
+                        mode="dropdown"
+                        dropdownIconColor={"#fbfff1"}
+                        onValueChange={(v) =>
+                          setInfo({ ...info, gs: v.toString() })
+                        }
+                      >
+                        <Picker.Item
+                          style={{ backgroundColor: "#041225" }}
+                          color="#fbfff1"
+                          label="O"
+                          value="O"
+                        />
+                        <Picker.Item
+                          style={{ backgroundColor: "#041225" }}
+                          color="#fbfff1"
+                          label="A"
+                          value="A"
+                        />
+                        <Picker.Item
+                          style={{ backgroundColor: "#041225" }}
+                          color="#fbfff1"
+                          label="B"
+                          value="B"
+                        />
+                        <Picker.Item
+                          style={{ backgroundColor: "#041225" }}
+                          color="#fbfff1"
+                          label="AB"
+                          value="AB"
+                        />
+                      </Picker>
+                      <Picker
+                        selectedValue={info.rh}
+                        style={{ width: 100 }}
+                        mode="dropdown"
+                        onValueChange={(v) =>
+                          setInfo({ ...info, rh: v.toString() })
+                        }
+                      >
+                        <Picker.Item
+                          style={{ backgroundColor: "#041225" }}
+                          color="#fbfff1"
+                          label="-"
+                          value="-"
+                        />
+                        <Picker.Item
+                          style={{ backgroundColor: "#041225" }}
+                          color="#fbfff1"
+                          label="+"
+                          value="+"
+                        />
+                      </Picker>
+                    </>
+                  ) : (
+                    <>
+                      <DropDownPicker
+                        open={gsOpen}
+                        value={gsValue}
+                        items={gsItems}
+                        setOpen={setGSOpen}
+                        setValue={setGSValue}
+                        onChangeValue={(v) =>
+                          setInfo({ ...info, gs: v as string })
+                        }
+                        theme="DARK"
+                        textStyle={{ color: "#fbfff1" }}
+                        style={{ backgroundColor: "#041225" }}
+                        badgeColors={"#fbfff1"}
+                        labelStyle={{ textAlign: "center" }}
+                        containerStyle={{ width: 80, marginTop: 32 }}
+                        listParentContainerStyle={{ height: 36 }}
+                        listItemContainerStyle={{ backgroundColor: "#041225" }}
+                        setItems={setGSItems}
+                      />
+                      <DropDownPicker
+                        open={rhOpen}
+                        value={rhValue}
+                        items={rhItems}
+                        setOpen={setRhOpen}
+                        setValue={setRhValue}
+                        onChangeValue={(v) =>
+                          setInfo({ ...info, rh: v as string })
+                        }
+                        theme="DARK"
+                        textStyle={{ color: "#fbfff1" }}
+                        style={{ backgroundColor: "#041225" }}
+                        badgeColors={"#fbfff1"}
+                        labelStyle={{ textAlign: "center" }}
+                        containerStyle={{ width: 80, marginTop: 32 }}
+                        listParentContainerStyle={{ height: 36 }}
+                        listItemContainerStyle={{ backgroundColor: "#041225" }}
+                        setItems={setRhItems}
+                      />
+                    </>
+                  )}
                 </View>
               </View>
               <View className="w-1/2 flex flex-col">
@@ -235,15 +391,55 @@ export default function Signup({
                       Sex
                     </Text>
                     <View className="flex flex-row justify-center -mt-6">
-                      <Picker
-                        selectedValue={info.sex}
-                        style={{ width: 100 }}
-                        onValueChange={(v) => setInfo({ ...info, sex: v })}
-                      >
-                        <Picker.Item color="#fbfff1" label="M" value="M" />
-                        <Picker.Item color="#fbfff1" label="F" value="F" />
-                        <Picker.Item color="#fbfff1" label="O" value="O" />
-                      </Picker>
+                      {Platform.OS == "ios" ? (
+                        <Picker
+                          selectedValue={info.sex}
+                          style={{ width: 100 }}
+                          mode="dropdown"
+                          onValueChange={(v) => setInfo({ ...info, sex: v })}
+                        >
+                          <Picker.Item
+                            style={{ backgroundColor: "#041225" }}
+                            color="#fbfff1"
+                            label="M"
+                            value="M"
+                          />
+                          <Picker.Item
+                            style={{ backgroundColor: "#041225" }}
+                            color="#fbfff1"
+                            label="F"
+                            value="F"
+                          />
+                          <Picker.Item
+                            style={{ backgroundColor: "#041225" }}
+                            color="#fbfff1"
+                            label="O"
+                            value="O"
+                          />
+                        </Picker>
+                      ) : (
+                        <DropDownPicker
+                          open={sexOpen}
+                          value={sexValue}
+                          items={sexItems}
+                          setOpen={setSexOpen}
+                          setValue={setSexValue}
+                          onChangeValue={(v) =>
+                            setInfo({ ...info, sex: v as BirthSex })
+                          }
+                          theme="DARK"
+                          textStyle={{ color: "#fbfff1" }}
+                          style={{ backgroundColor: "#041225" }}
+                          badgeColors={"#fbfff1"}
+                          labelStyle={{ textAlign: "center" }}
+                          containerStyle={{ width: 80, marginTop: 32 }}
+                          listParentContainerStyle={{ height: 36 }}
+                          listItemContainerStyle={{
+                            backgroundColor: "#041225",
+                          }}
+                          setItems={setSexItems}
+                        />
+                      )}
                     </View>
                   </View>
                   {info.sex != BirthSex.MALE && (
@@ -256,24 +452,51 @@ export default function Signup({
                         Pregnant
                       </Text>
                       <View className="flex flex-row justify-center -mt-6">
-                        <Picker
-                          selectedValue={info.pregnant}
-                          style={{ width: 100 }}
-                          onValueChange={(v) =>
-                            setInfo({ ...info, pregnant: v })
-                          }
-                        >
-                          <Picker.Item
-                            color="#fbfff1"
-                            label="Yes"
-                            value={true}
+                        {Platform.OS == "ios" ? (
+                          <Picker
+                            selectedValue={info.pregnant}
+                            style={{ width: 100 }}
+                            mode="dropdown"
+                            onValueChange={(v) =>
+                              setInfo({ ...info, pregnant: v })
+                            }
+                          >
+                            <Picker.Item
+                              color="#fbfff1"
+                              style={{ backgroundColor: "#041225" }}
+                              label="Yes"
+                              value={true}
+                            />
+                            <Picker.Item
+                              color="#fbfff1"
+                              style={{ backgroundColor: "#041225" }}
+                              label="No"
+                              value={false}
+                            />
+                          </Picker>
+                        ) : (
+                          <DropDownPicker
+                            open={isPregnantOpen}
+                            value={isPregnantValue}
+                            items={isPregnantItems}
+                            setOpen={setIsPregnantOpen}
+                            setValue={setIsPregnantValue}
+                            onChangeValue={(v) =>
+                              setInfo({ ...info, pregnant: v as boolean })
+                            }
+                            theme="DARK"
+                            textStyle={{ color: "#fbfff1" }}
+                            style={{ backgroundColor: "#041225" }}
+                            badgeColors={"#fbfff1"}
+                            labelStyle={{ textAlign: "center" }}
+                            containerStyle={{ width: 80, marginTop: 32 }}
+                            listParentContainerStyle={{ height: 36 }}
+                            listItemContainerStyle={{
+                              backgroundColor: "#041225",
+                            }}
+                            setItems={setIsPregnantItems}
                           />
-                          <Picker.Item
-                            color="#fbfff1"
-                            label="No"
-                            value={false}
-                          />
-                        </Picker>
+                        )}
                       </View>
                     </Animated.View>
                   )}
@@ -339,23 +562,50 @@ export default function Signup({
               What sex do you identify with?
             </Text>
             <View className="flex flex-row justify-center -mt-6">
-              <Picker
-                selectedValue={info.altSex}
-                style={{ width: 100 }}
-                onValueChange={(v) => setInfo({ ...info, altSex: v })}
-              >
-                <Picker.Item color="#fbfff1" label="M" value={BirthSex.MALE} />
-                <Picker.Item
-                  color="#fbfff1"
-                  label="F"
-                  value={BirthSex.FEMALE}
+              {Platform.OS == "ios" ? (
+                <Picker
+                  selectedValue={info.altSex}
+                  style={{ width: 100 }}
+                  onValueChange={(v) => setInfo({ ...info, altSex: v })}
+                >
+                  <Picker.Item
+                    style={{ backgroundColor: "#041225" }}
+                    color="#fbfff1"
+                    label="M"
+                    value={BirthSex.MALE}
+                  />
+                  <Picker.Item
+                    color="#fbfff1"
+                    label="F"
+                    value={BirthSex.FEMALE}
+                  />
+                  <Picker.Item
+                    color="#fbfff1"
+                    label="IS"
+                    value={BirthSex.INTERSEX}
+                  />
+                </Picker>
+              ) : (
+                <DropDownPicker
+                  open={altSexOpen}
+                  value={altSexValue}
+                  items={altSexItems}
+                  setOpen={setAltSexOpen}
+                  setValue={setAltSexValue}
+                  onChangeValue={(v) =>
+                    setInfo({ ...info, altSex: v as Sex })
+                  }
+                  theme="DARK"
+                  textStyle={{ color: "#fbfff1" }}
+                  style={{ backgroundColor: "#041225" }}
+                  badgeColors={"#fbfff1"}
+                  labelStyle={{ textAlign: "center" }}
+                  containerStyle={{ width: 80, marginTop: 32 }}
+                  listParentContainerStyle={{ height: 36 }}
+                  listItemContainerStyle={{ backgroundColor: "#041225" }}
+                  setItems={setAltSexItems}
                 />
-                <Picker.Item
-                  color="#fbfff1"
-                  label="IS"
-                  value={BirthSex.INTERSEX}
-                />
-              </Picker>
+              )}
             </View>
           </Animated.View>
         ) : (

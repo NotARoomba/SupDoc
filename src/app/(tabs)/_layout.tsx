@@ -1,19 +1,22 @@
 import FontAwesome from "@expo/vector-icons/Octicons";
-import { Tabs } from "expo-router";
+import { SplashScreen, Tabs } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import * as SecureStore from "expo-secure-store";
 import { UserType } from "components/utils/Types";
+import { ParamListBase } from "@react-navigation/native";
 
-export default function TabLayout() {
+export default function TabLayout(props: ParamListBase) {
   const [userType, setUserType] = useState<UserType>();
   useEffect(() => {
+    console.log(props);
     const updateData = async () => {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
       setUserType(ut);
+      await SplashScreen.hideAsync();
     };
     updateData();
   }, []);
@@ -61,30 +64,40 @@ export default function TabLayout() {
           ),
         }}
       />
-      {userType == UserType.DOCTOR ? (
-        <Tabs.Screen
-          name="pins"
-          options={{
-            tabBarIcon: ({ color }) => (
-              <FontAwesome size={38} name="pin" color={color} />
-            ),
-          }}
-        />
-      ) : (
-        <Tabs.Screen
-          name="upload"
-          options={{
-            tabBarIcon: ({ color }) => (
-              <FontAwesome size={38} name="plus-circle" color={color} />
-            ),
-          }}
-        />
-      )}
+
+      <Tabs.Screen
+        name="pins"
+        options={{
+          href: userType == UserType.DOCTOR ? "/(tabs)/pins" : null,
+          tabBarIcon: ({ color }) => (
+            <FontAwesome size={38} name="pin" color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="upload"
+        options={{
+          href: userType != UserType.DOCTOR ? "/(tabs)/upload" : null,
+          tabBarIcon: ({ color }) => (
+            <FontAwesome size={38} name="plus-circle" color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="settings"
         options={{
+          href: null,
           tabBarIcon: ({ color }) => (
             <FontAwesome size={38} name="gear" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <FontAwesome size={38} name="person" color={color} />
           ),
         }}
       />

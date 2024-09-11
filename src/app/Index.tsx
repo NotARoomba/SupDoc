@@ -264,13 +264,38 @@ export default function Index({ setIsLogged }: IndexProps) {
       // need to update wth localizations
       return Alert.alert("Error", "There was an error fetchign the keys!");
     }
-    const isValid = await RSA.verify(
-      await RSA.encrypt(process.env.EXPO_PUBLIC_LIMITED_AUTH, res.public),
+    const test = await RSA.encrypt(
       process.env.EXPO_PUBLIC_LIMITED_AUTH,
-      CryptoJS.AES.decrypt(res.private, loginInfo.password).toString(),
+      res.public,
     );
-    console.log(isValid);
-    // await SecureStore.setItemAsync(process.env.)
+    try {
+      const decrypted = CryptoJS.AES.decrypt(
+        res.private,
+        loginInfo.password,
+      ).toString(CryptoJS.enc.Utf8);
+      const isValid =
+        (await RSA.decrypt(test, decrypted)) ==
+        process.env.EXPO_PUBLIC_LIMITED_AUTH;
+      if (!isValid) return Alert.alert("Error", "Wrong password!");
+      await SecureStore.setItemAsync(
+        process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
+        decrypted,
+      );
+      await SecureStore.setItemAsync(
+        process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
+        res.public,
+      );
+      await SecureStore.setItemAsync(
+        process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
+        userType,
+      );
+      setLoading(false);
+      Alert.alert("Success!", "You are now signed in!");
+      return setIsLogged(true);
+    } catch (e) {
+      setLoading(false);
+      return Alert.alert("Error", "Wrong password!");
+    }
   };
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
@@ -361,25 +386,36 @@ export default function Index({ setIsLogged }: IndexProps) {
               </Animated.View>
             )}
             {/* Check for the other 4 routes that are possible */}
-            {(!isLogin ? (
-              (userType &&
-                isPatientInfo(userType, signUpInfo) &&
-                (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
-              (userType && isDoctorInfo(userType, signUpInfo) && pageIndex == 4)
-            ) : pageIndex == 2)
-              ? (
+            {(
+              !isLogin
+                ? (userType &&
+                    isPatientInfo(userType, signUpInfo) &&
+                    (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
+                  (userType &&
+                    isDoctorInfo(userType, signUpInfo) &&
+                    pageIndex == 4)
+                : pageIndex == 2
+            ) ? (
               <Animated.View
                 entering={FadeIn.duration(500)}
                 exiting={FadeOut.duration(500)}
               >
                 <TouchableOpacity
                   onPress={() =>
-                    !isLogin && (signUpInfo.passwordchk.length == 0 ||
-                    signUpInfo.passwordchk !== signUpInfo.password)
-                      ? Alert.alert("Error", "The passwords do not match!")
-                      : !isLogin
-                        ? parseSignup()
-                        : parseLogin()
+                    !isLogin
+                      ? signUpInfo.passwordchk.length == 0 ||
+                        signUpInfo.passwordchk !== signUpInfo.password
+                      : loginInfo.identification == 0 ||
+                          loginInfo.password.length == 0
+                        ? Alert.alert(
+                            "Error",
+                            !isLogin
+                              ? "The passwords do not match!"
+                              : "Please fill out the information!",
+                          )
+                        : !isLogin
+                          ? parseSignup()
+                          : parseLogin()
                   }
                   className={
                     "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
@@ -419,7 +455,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                           userType &&
                           isDoctorInfo(userType, signUpInfo) &&
                           signUpInfo.license.length == 0)
-                      : false
+                      : pageIndex == 1 && !userType
                   )
                     ? Alert.alert(
                         "Missing Info",
