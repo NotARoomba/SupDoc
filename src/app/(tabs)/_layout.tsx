@@ -15,6 +15,9 @@ export default function TabLayout(props: ParamListBase) {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
+      const priv = await SecureStore.getItemAsync(
+        process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
+      )
       setUserType(ut);
       await SplashScreen.hideAsync();
     };

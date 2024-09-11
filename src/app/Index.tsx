@@ -70,7 +70,6 @@ export default function Index({ setIsLogged }: IndexProps) {
   }, []);
   const parseSignup = async () => {
     //checl if passswords are the same
-    console.log("ASDSAD")
     setLoading(true);
     const doesExist = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`,

@@ -41,7 +41,8 @@ export default async function encryptionMiddleware(
       }),
     });
     if (!(doctorExists || patientExists)) return res.sendStatus(401);
-  }
+    const publicKey = doctorExists ? doctorExists.publicKey : patientExists?.publicKey
+
 
   if (req.method == "POST") {
     if (!req.body.key || !req.body.data) return res.sendStatus(401);
@@ -55,10 +56,11 @@ export default async function encryptionMiddleware(
       // need to check fot the public key of the user
       res.send = oldSend
       return res.send({
-        key: false ? nodeRSA.encrypt(key, 'utf8') : key,
+        key: auth == env.LIMITED_AUTH ? key : new NodeRSA(publicKey as string, 'pkcs1-public', {encryptionScheme: 'pkcs1', environment: 'browser'}).encrypt(key).toString(),
         body: encrypted,
       });
     };
   }
+}
   next();
 }
