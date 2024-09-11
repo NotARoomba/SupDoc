@@ -22,10 +22,13 @@ export async function callAPI(
     const privateKey = await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
     );
+    const password = await SecureStore.getItemAsync(
+      process.env.EXPO_PUBLIC_KEY_NAME_PASS,
+    )
     //private key should be encrypted with password
     const authorization = (
       await RSA.encrypt(
-        privateKey ?? process.env.EXPO_PUBLIC_LIMITED_AUTH,
+        (privateKey && password) ? CryptoJS.AES.encrypt(privateKey, password).toString() : process.env.EXPO_PUBLIC_LIMITED_AUTH,
         process.env.EXPO_PUBLIC_SERVER_PUBLIC,
       )
     )

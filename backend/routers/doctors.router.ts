@@ -14,29 +14,12 @@ export const doctorsRouter = express.Router();
 
 doctorsRouter.use(express.json());
 
-doctorsRouter.get("/:id", async (req: Request, res: Response) => {
-  const id = req?.params?.id;
-  console.log(`Getting data for: ${id}`);
+doctorsRouter.get("/", async (req: Request, res: Response) => {
   try {
     let user: Doctor | null = null;
     if (collections.doctors) {
       //check if is a number
-      user = (await collections.doctors.findOne({
-        $or: [
-          {
-            identification: {
-              number: await encryption.encrypt(
-                !isNaN(parseFloat(id)) ? id : 0,
-                {
-                  algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                  keyAltName: id,
-                },
-              ),
-            },
-          },
-          { _id: new ObjectId(id) },
-        ],
-      })) as unknown as Doctor;
+      user = (await collections.doctors.findOne({privateKey: req.headers.authorization})) as unknown as Doctor;
     }
     if (user) {
       res.status(200).send({ user, status: STATUS_CODES.SUCCESS });
@@ -78,10 +61,7 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
           keyId: keyUDID,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
-        privateKey: await encryption.encrypt(data.privateKey, {
-          keyAltName: env.KEY_ALIAS,
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        }),
+        privateKey: data.privateKey,
 
         // Identification fields
         identification: {
