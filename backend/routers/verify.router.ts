@@ -22,22 +22,25 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
   if (req?.body?.number === "") {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
   }
-  if (typeof number === 'number') {
-    const user = userType == UserType.DOCTOR ? await collections.doctors?.findOne({
-      identification: {
-        number: await encryption.encrypt(number, {
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          keyAltName: number.toString(2),
-        }),
-      },
-    }) : await collections.patients?.findOne({
-      identification: {
-        number: await encryption.encrypt(number, {
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          keyAltName: number.toString(2),
-        }),
-      },
-    })
+  if (typeof number === "number") {
+    const user =
+      userType == UserType.DOCTOR
+        ? await collections.doctors?.findOne({
+            identification: {
+              number: await encryption.encrypt(number, {
+                algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                keyAltName: number.toString(2),
+              }),
+            },
+          })
+        : await collections.patients?.findOne({
+            identification: {
+              number: await encryption.encrypt(number, {
+                algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                keyAltName: number.toString(2),
+              }),
+            },
+          });
     number = user?.number as string;
   }
   let verification;
@@ -78,22 +81,25 @@ verifyRouter.post("/code/check", async (req: Request, res: Response) => {
   if (number == "+573104250018") {
     return res.send({ status: STATUS_CODES.SUCCESS });
   }
-  if (!number.includes('+')) {
-    const user = userType == UserType.DOCTOR ? await collections.doctors?.findOne({
-      identification: {
-        number: await encryption.encrypt(parseInt(number), {
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          keyAltName: parseInt(number).toString(2),
-        }),
-      },
-    }) : await collections.patients?.findOne({
-      identification: {
-        number: await encryption.encrypt(parseInt(number), {
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          keyAltName: parseInt(number).toString(2),
-        }),
-      },
-    })
+  if (!number.includes("+")) {
+    const user =
+      userType == UserType.DOCTOR
+        ? await collections.doctors?.findOne({
+            identification: {
+              number: await encryption.encrypt(parseInt(number), {
+                algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                keyAltName: parseInt(number).toString(2),
+              }),
+            },
+          })
+        : await collections.patients?.findOne({
+            identification: {
+              number: await encryption.encrypt(parseInt(number), {
+                algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                keyAltName: parseInt(number).toString(2),
+              }),
+            },
+          });
     number = user?.number as string;
   }
   try {

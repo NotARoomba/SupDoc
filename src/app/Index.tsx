@@ -72,7 +72,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     //checl if passswords are the same
     setLoading(true);
     const doesExist = await callAPI(
-      `/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`,
+      `/users/check`,
       "POST",
       {
         id: signUpInfo.identification,
@@ -212,7 +212,7 @@ export default function Index({ setIsLogged }: IndexProps) {
   const parseLogin = async () => {
     setLoading(true);
     const doesExist = await callAPI(
-      `/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`,
+      `/users/check`,
       "POST",
       {
         id: loginInfo.identification,

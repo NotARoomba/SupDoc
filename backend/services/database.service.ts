@@ -44,10 +44,13 @@ const masterKey = {
 };
 export async function createKey(altName: string) {
   try {
-  return await encryption.createDataKey("gcp", {
-    masterKey,
-    keyAltNames: altName ? [altName] : undefined,
-  });} catch{return (await encryption.getKeyByAltName(altName))?._id}
+    return await encryption.createDataKey("gcp", {
+      masterKey,
+      keyAltNames: altName ? [altName] : undefined,
+    });
+  } catch {
+    return (await encryption.getKeyByAltName(altName))?._id;
+  }
 }
 
 export async function connectToDatabase() {

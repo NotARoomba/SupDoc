@@ -76,7 +76,7 @@ export async function callAPI(
       };
     }
   } catch (error: any) {
-    console.log(error);
+    console.log("REQUEST ERROR", error);
     return {
       status: STATUS_CODES.GENERIC_ERROR,
     };

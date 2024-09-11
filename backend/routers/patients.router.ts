@@ -20,9 +20,8 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
     if (collections.patients) {
       //check if is a number
       user = (await collections.patients.findOne({
-            privateKey: req.headers.authorization
-          },
-      )) as unknown as Patient;
+        privateKey: req.headers.authorization,
+      })) as unknown as Patient;
     }
     if (user) {
       res.status(200).send({ user, status: STATUS_CODES.SUCCESS });
@@ -50,22 +49,32 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   const keyAltName = data.identification.number.toString(2);
   try {
     const keyUDID = await createKey(keyAltName);
-    const sexData =  data.info.altSex && data.info.altSex !== data.info.sex ? {altSex: await encryption.encrypt(data.info.altSex, {
-      keyAltName,
-      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-    }), hormones: await encryption.encrypt(data.info.hormones, {
-      keyAltName,
-      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-    }),surgery: await encryption.encrypt(data.info.surgery, {
-      keyAltName,
-      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-    }), sex: await encryption.encrypt(data.info.sex, {
-      keyAltName,
-      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-    })}: {sex: await encryption.encrypt(data.info.sex, {
-      keyAltName,
-      algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-    })}
+    const sexData =
+      data.info.altSex && data.info.altSex !== data.info.sex
+        ? {
+            altSex: await encryption.encrypt(data.info.altSex, {
+              keyAltName,
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            }),
+            hormones: await encryption.encrypt(data.info.hormones, {
+              keyAltName,
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            }),
+            surgery: await encryption.encrypt(data.info.surgery, {
+              keyAltName,
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            }),
+            sex: await encryption.encrypt(data.info.sex, {
+              keyAltName,
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            }),
+          }
+        : {
+            sex: await encryption.encrypt(data.info.sex, {
+              keyAltName,
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            }),
+          };
     if (collections.patients) {
       const ins = await collections.patients.insertOne({
         // UserBase fields
@@ -125,7 +134,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
             keyAltName,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
           }),
-          ...sexData
+          ...sexData,
         },
         // Posts field
         posts: [],
@@ -142,31 +151,33 @@ patientsRouter.post("/keys", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
   const number: string = req.body.number;
   try {
-    await createKey(id.toString(2))
+    await createKey(id.toString(2));
   } catch {}
   try {
     let idUser: Patient;
     let numberUser: Patient;
     if (collections.patients) {
-      idUser = (await collections.patients
-        .findOne({
-          identification: {
-            number: await encryption.encrypt(id, {
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-              keyAltName: id.toString(2),
-            }),
-          },
-        })
-        ) as unknown as Patient;
-      numberUser = (await collections.patients
-        .findOne({
-          number: await encryption.encrypt(number, {
+      idUser = (await collections.patients.findOne({
+        identification: {
+          number: await encryption.encrypt(id, {
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
             keyAltName: id.toString(2),
           }),
-        })
-        ) as unknown as Patient;
-        res.status(200).send({status: STATUS_CODES.SUCCESS, private: idUser ? idUser.privateKey : numberUser.privateKey, public: idUser ? idUser.publicKey : numberUser.publicKey})
+        },
+      })) as unknown as Patient;
+      numberUser = (await collections.patients.findOne({
+        number: await encryption.encrypt(number, {
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+          keyAltName: id.toString(2),
+        }),
+      })) as unknown as Patient;
+      res
+        .status(200)
+        .send({
+          status: STATUS_CODES.SUCCESS,
+          private: idUser ? idUser.privateKey : numberUser.privateKey,
+          public: idUser ? idUser.publicKey : numberUser.publicKey,
+        });
     }
   } catch (error) {
     res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });

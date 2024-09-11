@@ -11,7 +11,7 @@ export default function RootLayout() {
   const [isLogged, setIsLogged] = useState(false);
   useEffect(() => {
     const updateData = async () => {
-      // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE)
+      await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE)
       const privateKey = await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
       );
