@@ -7,6 +7,7 @@ import { patientsRouter } from "./routers/patients.router";
 import { Server, Socket } from "socket.io";
 import { createServer } from "http";
 import { postsRouter } from "./routers/posts.router";
+import { doctorsRouter } from "./routers/doctors.router";
 
 const app = express();
 const httpServer = createServer(app);
@@ -24,6 +25,7 @@ connectToDatabase()
     app.use(express.json({ limit: "50mb" }));
     app.use(encryptionMiddleware);
     app.use("/patients", patientsRouter);
+    app.use("/doctors", doctorsRouter);
     app.use("/posts", postsRouter);
     app.use("/verify", verifyRouter);
 
