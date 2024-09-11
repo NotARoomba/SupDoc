@@ -171,13 +171,11 @@ patientsRouter.post("/keys", async (req: Request, res: Response) => {
           keyAltName: id.toString(2),
         }),
       })) as unknown as Patient;
-      res
-        .status(200)
-        .send({
-          status: STATUS_CODES.SUCCESS,
-          private: idUser ? idUser.privateKey : numberUser.privateKey,
-          public: idUser ? idUser.publicKey : numberUser.publicKey,
-        });
+      res.status(200).send({
+        status: STATUS_CODES.SUCCESS,
+        private: idUser ? idUser.privateKey : numberUser.privateKey,
+        public: idUser ? idUser.publicKey : numberUser.publicKey,
+      });
     }
   } catch (error) {
     res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
