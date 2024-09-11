@@ -54,7 +54,7 @@ export default function Signup({
   index,
   userType,
   setInfo,
-  setIsLogged,
+  setIndex,
   cameraOpen,
   setCameraOpen,
 }: SignupProps) {
@@ -109,16 +109,21 @@ export default function Signup({
     console.log(index);
     const doChecks = async () => {
       if (index == 3) {
-        if (userType == UserType.PATIENT) {
-          // check if number and id dont exist
-          // setIsLoading(true);
-          // const res = await callAPI("/users/check", "POST", {number: info.number, identification: info.identification});
-          // if (res.status != STATUS_CODES.SUCCESS) {
-          //   setIsLoading(false);
-          //   setIndex(index-1);
-          //   Alert.alert("Error", "That number/ID already exists!");
-          // }
-        } else {
+        setIsLoading(true);
+        const res = await callAPI(`/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`, "POST", {number: info.number, id: info.identification});
+        if (res.status == STATUS_CODES.ID_IN_USE || res.status == STATUS_CODES.NUMBER_IN_USE) {
+          setIsLoading(false);
+          setIndex(index-1);
+          Alert.alert("Error", "That number/ID already exists!");
+        }
+        const isValid = (/^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/).test(info.number)
+        if (!isValid) {
+          setIsLoading(false);
+          setIndex(index-1);
+          Alert.alert("Error", "That is not a valid phone number");
+        }
+        setIsLoading(false);
+        if (userType != UserType.PATIENT) {
           (async () => {
             const { status } = await Camera.requestCameraPermissionsAsync();
             setHasPermission(status === "granted");
@@ -644,7 +649,7 @@ export default function Signup({
           </Text>
           {cameraOpen && hasPermission && (
             <CameraView
-              className="h-[106vh] -top-96 w-full absolute left-0 z-40"
+              className={"h-[100vh]  w-full absolute left-0 z-40 " + (Platform.OS == 'ios' ? '-top-[336px]' : '-top-[260px]')}
               ref={cameraRef}
               onCameraReady={() => setisReady(true)}
             >

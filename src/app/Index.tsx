@@ -69,6 +69,7 @@ export default function Index({ setIsLogged }: IndexProps) {
   }, []);
   const parseSignup = async () => {
     //checl if passswords are the same
+    console.log("ASDSAD")
     setLoading(true);
     const doesExist = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/check`,
@@ -78,7 +79,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         number: signUpInfo.countryCode + signUpInfo.number,
       },
     );
-    console.log(doesExist);
+    console.log(doesExist, userType);
     if (doesExist.status !== STATUS_CODES.GENERIC_ERROR) {
       if (doesExist.status === STATUS_CODES.ID_IN_USE) {
         setLoading(false);
@@ -218,6 +219,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       },
     );
     if (doesExist.status !== STATUS_CODES.ID_IN_USE) {
+      Alert.alert("Error", "There is no user with that ID!")
       return setLoading(false);
     }
     const res = await callAPI("/verify/code/send", "POST", {
@@ -401,12 +403,12 @@ export default function Index({ setIsLogged }: IndexProps) {
                 exiting={FadeOut.duration(500)}
               >
                 <TouchableOpacity
-                  onPress={() =>
-                    !isLogin
-                      ? signUpInfo.passwordchk.length == 0 ||
-                        signUpInfo.passwordchk !== signUpInfo.password
-                      : loginInfo.identification == 0 ||
-                          loginInfo.password.length == 0
+                  onPress={() => 
+                    (!isLogin
+                      ? (signUpInfo.passwordchk.length == 0 ||
+                        signUpInfo.passwordchk !== signUpInfo.password)
+                      : (loginInfo.identification == 0 ||
+                          loginInfo.password.length == 0))
                         ? Alert.alert(
                             "Error",
                             !isLogin
