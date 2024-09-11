@@ -15,7 +15,8 @@ export default async function encryptionMiddleware(
   //check authorization and see if limited auth
   if (!req.headers.authorization) return res.sendStatus(401);
   const auth = nodeRSA.decrypt(req.headers.authorization).toString();
-  console.log(auth)
+  console.log(req.originalUrl)
+  let publicKey: string;
   if (
     auth == env.LIMITED_AUTH &&
     ![
@@ -32,22 +33,17 @@ export default async function encryptionMiddleware(
   // checks if the authorization exists
   else if (auth != env.LIMITED_AUTH) {
     const doctorExists = await collections.doctors?.findOne({
-      privateKey: await encryption.encrypt(auth, {
-        keyAltName: env.KEY_ALIAS,
-        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-      }),
-    });
+      privateKey: auth});
     const patientExists = await collections.patients?.findOne({
-      privateKey: await encryption.encrypt(auth, {
-        keyAltName: env.KEY_ALIAS,
-        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-      }),
-    });
+      privateKey: auth});
+      console.log(patientExists, doctorExists)
+    // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists)) return res.sendStatus(401);
-    const publicKey = doctorExists
-      ? doctorExists.publicKey
-      : patientExists?.publicKey;
+    else if (doctorExists)  publicKey = doctorExists.publicKey as unknown as string;
+    else if (patientExists)  publicKey = patientExists.publicKey as unknown as string;
+    
 
+    }
     if (req.method == "POST") {
       if (!req.body.key || !req.body.data) return res.sendStatus(401);
       const key = nodeRSA.decrypt(req.body.key, "utf8");
@@ -76,6 +72,5 @@ export default async function encryptionMiddleware(
         });
       };
     }
-  }
   next();
 }
