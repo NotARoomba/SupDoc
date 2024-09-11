@@ -15,15 +15,15 @@ export default async function encryptionMiddleware(
   //check authorization and see if limited auth
   if (!req.headers.authorization) return res.sendStatus(401);
   const auth = nodeRSA.decrypt(req.headers.authorization).toString();
+  console.log(auth)
   if (
     auth == env.LIMITED_AUTH &&
     ![
       "/patients/create",
-      "/patients/check",
       "/patients/keys",
       "/doctors/create",
-      "/doctors/check",
       "/doctors/keys",
+      // "/users/check",
       "/verify/code/send",
       "/verify/code/check",
     ].includes(req.originalUrl)
