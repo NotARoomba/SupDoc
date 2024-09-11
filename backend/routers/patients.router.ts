@@ -138,46 +138,6 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   }
 });
 
-patientsRouter.post("/check", async (req: Request, res: Response) => {
-  console.log(req.body)
-  const id: number = req.body.id;
-  const number: string = req.body.number;
-  try {
-    await createKey(id.toString(2))
-  } catch {}
-  try {
-    let idUsers: Patient[] = [];
-    let numberUsers: Patient[] = [];
-    if (collections.patients) {
-      if (id) idUsers = (await collections.patients
-        .find({
-          identification: {
-            number: await encryption.encrypt(id, {
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-              keyAltName: id.toString(2),
-            }),
-          },
-        })
-        .toArray()) as unknown as Patient[];
-      if (number) numberUsers = (await collections.patients
-        .find({
-          number: await encryption.encrypt(number, {
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-            keyAltName: id.toString(2),
-          }),
-        })
-        .toArray()) as unknown as Patient[];
-    }
-    if (idUsers.length !== 0)
-      return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
-    else if (numberUsers.length !== 0)
-      res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
-    else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
-  } catch (error) {
-    res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
-  }
-});
-
 patientsRouter.post("/keys", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
   const number: string = req.body.number;

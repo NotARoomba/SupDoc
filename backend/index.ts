@@ -8,6 +8,7 @@ import { Server, Socket } from "socket.io";
 import { createServer } from "http";
 import { postsRouter } from "./routers/posts.router";
 import { doctorsRouter } from "./routers/doctors.router";
+import { usersRouter } from "./routers/users.router";
 
 const app = express();
 const httpServer = createServer(app);
@@ -24,6 +25,7 @@ connectToDatabase()
     app.use(cors());
     app.use(express.json({ limit: "50mb" }));
     app.use(encryptionMiddleware);
+    app.use("/users", usersRouter);
     app.use("/patients", patientsRouter);
     app.use("/doctors", doctorsRouter);
     app.use("/posts", postsRouter);
