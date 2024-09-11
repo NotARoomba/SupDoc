@@ -146,38 +146,3 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
     res.send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
-
-patientsRouter.post("/keys", async (req: Request, res: Response) => {
-  const id: number = parseInt(req.body.id);
-  const number: string = req.body.number;
-  try {
-    await createKey([id.toString(2), number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
-  } catch {}
-  try {
-    let idUser: Patient;
-    let numberUser: Patient;
-    if (collections.patients) {
-      idUser = (await collections.patients.findOne({
-        identification: {
-          number: await encryption.encrypt(id, {
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-            keyAltName: id.toString(2),
-          }),
-        },
-      })) as unknown as Patient;
-      numberUser = (await collections.patients.findOne({
-        number: await encryption.encrypt(number, {
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          keyAltName: id.toString(2),
-        }),
-      })) as unknown as Patient;
-      res.status(200).send({
-        status: STATUS_CODES.SUCCESS,
-        private: idUser ? idUser.privateKey : numberUser.privateKey,
-        public: idUser ? idUser.publicKey : numberUser.publicKey,
-      });
-    }
-  } catch (error) {
-    res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
-  }
-});
