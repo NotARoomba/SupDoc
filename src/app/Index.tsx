@@ -33,6 +33,7 @@ import {
 } from "components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 import CryptoJS from "crypto-es";
+import prompt from "@powerdesigninc/react-native-prompt";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
@@ -100,7 +101,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         return Alert.alert("Error", "There was an error sending the code!");
       else {
         setTimeout(() => {
-          return Alert.prompt(
+          return prompt(
             "Enter Verification Code",
             "Enter the verification code sent to: " +
               (signUpInfo.countryCode + signUpInfo.number),
@@ -230,7 +231,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       return Alert.alert("Error", "There was an error sending the code!");
     else {
       setTimeout(() => {
-        return Alert.prompt(
+        return prompt(
           "Enter Verification Code",
           "Enter the verification code sent to: " + res.number,
           async (input) => await checkLogin(input, res.number),
