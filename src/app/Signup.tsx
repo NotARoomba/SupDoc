@@ -41,8 +41,6 @@ import { Camera, CameraView, PermissionStatus } from "expo-camera";
 import * as Linking from "expo-linking";
 import { Ionicons } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
-import { SpinPicker } from "react-native-spin-picker";
-import ScrollPicker from "react-native-wheel-scrollview-picker";
 import { rgbaColor } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 import {
   GestureDetector,
