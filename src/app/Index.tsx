@@ -114,6 +114,10 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
         userType,
       );
+      await SecureStore.setItemAsync(
+        process.env.EXPO_PUBLIC_KEY_NAME_PASS,
+        signUpInfo.password,
+      );
       return setIsLogged(true);
     }
   };
@@ -238,6 +242,10 @@ export default function Index({ setIsLogged }: IndexProps) {
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
         userType,
+      );
+      await SecureStore.setItemAsync(
+        process.env.EXPO_PUBLIC_KEY_NAME_PASS,
+        loginInfo.password,
       );
       setLoading(false);
       Alert.alert("Success!", "You are now signed in!");
