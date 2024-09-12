@@ -9,7 +9,7 @@ const nodeRSA = new NodeRSA(env.SERVER_PRIVATE, "pkcs1", {
   environment: "browser",
 });
 
-express.response.send = function (body: any) {
+app.response.send = function (body: any) {
   const key = CryptoJS.SHA256(body).toString();
   const encrypted = CryptoJS.AES.encrypt(
     JSON.stringify(body),
@@ -19,7 +19,7 @@ express.response.send = function (body: any) {
   // res.send = oldSend;
   console.log("SEND")
   console.log(this.req.headers.authorization)
-  return this.status(200).send({
+  return express.response.send({
     key:
       this.req.headers.authorization == env.LIMITED_AUTH
         ? key
