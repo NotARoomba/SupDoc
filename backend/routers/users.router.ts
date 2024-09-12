@@ -97,6 +97,7 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
           }),
         })) : (await collections.doctors.findOne({
             number}))) as unknown as User;
+            if (!numberUser && !idUser) return res.status(200).send({status: STATUS_CODES.USER_NOT_FOUND})
           res.status(200).send({
             status: STATUS_CODES.SUCCESS,
             private: idUser ? idUser.privateKey : numberUser.privateKey,

@@ -19,6 +19,7 @@ export enum STATUS_CODES {
   INVALID_IDENTITY,
   COMMENT_LIMIT_REACHED,
   DOES_NOT_EXIST,
+  WRONG_PASSWORD
 }
 
 type ConditionalType<T, U> = T extends Binary ? T : U;

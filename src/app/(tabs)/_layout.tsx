@@ -6,6 +6,7 @@ import Animated from "react-native-reanimated";
 import * as SecureStore from "expo-secure-store";
 import { UserType } from "components/utils/Types";
 import { ParamListBase } from "@react-navigation/native";
+import { callAPI } from "components/utils/Functions";
 
 export default function TabLayout(props: ParamListBase) {
   const [userType, setUserType] = useState<UserType>();
@@ -17,6 +18,8 @@ export default function TabLayout(props: ParamListBase) {
       const priv = await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
       )
+      const res = callAPI(`/${ut == UserType.PATIENT?"patients":"doctors"}/`, "GET")
+      console.log(res)
       setUserType(ut);
       await SplashScreen.hideAsync();
     };
