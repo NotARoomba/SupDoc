@@ -25,15 +25,13 @@ export async function callAPI(
     const password = await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_PASS,
     )
+    // console.log(privateKey)
     //private key should be encrypted with password
-    const authorization = (
-      await RSA.encrypt(
-        (privateKey && password) ? CryptoJS.AES.encrypt(privateKey, password).toString() : process.env.EXPO_PUBLIC_LIMITED_AUTH,
-        process.env.EXPO_PUBLIC_SERVER_PUBLIC,
-      )
-    )
-      .replace(/\s+/g, "")
-      .replace("\n", "");
+    let encryptedPriv = process.env.EXPO_PUBLIC_LIMITED_AUTH;
+    if ((privateKey && password)) encryptedPriv = CryptoJS.AES.encrypt(privateKey, password).toString()
+    const authKey = CryptoJS.SHA256(encryptedPriv).toString()
+    const authorization = Buffer.from(JSON.stringify({key: await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC), data: CryptoJS.AES.encrypt(encryptedPriv, authKey)})).toString('base64')
+    console.log(authorization)
     try {
       const res =
         method === "POST"
