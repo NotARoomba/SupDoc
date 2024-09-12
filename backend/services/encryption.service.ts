@@ -21,11 +21,11 @@ export default async function encryptionMiddleware(
   console.log(auth);
   console.log("ATH 1")
   try {
-    auth =  nodeRSA.decrypt(req.headers.authorization).toString('utf-8');
+    auth = nodeRSA.decrypt(req.headers.authorization).toString('utf-8');
     console.log(auth);
     console.log("ATH 2")
   } catch {}
-  console.log("ATH FINAL")
+  console.log("ATH 1")
   console.log(req.originalUrl)
   let publicKey: string = "none";
   if (
