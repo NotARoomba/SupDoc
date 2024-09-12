@@ -36,7 +36,6 @@ export default function RootLayout() {
         // <Animated.View entering={FadeIn.duration(500)}>
         <Stack>
           <Stack.Screen
-            initialParams={{ isLogged: isLogged }}
             name="(tabs)"
             options={{ headerShown: false }}
           />
