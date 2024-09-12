@@ -187,15 +187,15 @@ export default function Index({ setIsLogged }: IndexProps) {
   const checkLogin = async (code: string, number: string) => {
     if (!userType) return;
     setLoading(true);
-    const v = await callAPI("/verify/code/check", "POST", {
-      number,
-      code,
-    });
-    if (v.status !== STATUS_CODES.SUCCESS) {
-      setLoading(false);
-      // need to update wth localizations
-      return Alert.alert("Error", v.status);
-    }
+    // const v = await callAPI("/verify/code/check", "POST", {
+    //   number,
+    //   code,
+    // });
+    // if (v.status !== STATUS_CODES.SUCCESS) {
+    //   setLoading(false);
+    //   // need to update wth localizations
+    //   return Alert.alert("Error", v.status);
+    // }
     const res = await callAPI(
       `/users/keys`,
       "POST",
@@ -208,7 +208,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     if (res.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
       // need to update wth localizations
-      return Alert.alert("Error", "There was an error fetchign the keys!");
+      return Alert.alert("Error", "Wrong password");
     }
     const test = await RSA.encrypt(
       process.env.EXPO_PUBLIC_LIMITED_AUTH,
@@ -361,7 +361,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                           )
                         : !isLogin
                           ? signup()
-                          : parseLogin()
+                          : checkLogin("7", "8")
                   }
                   className={
                     "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
