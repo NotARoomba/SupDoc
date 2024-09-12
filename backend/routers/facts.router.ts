@@ -16,9 +16,9 @@ factsRouter.use(express.json());
 factsRouter.get("/", async (req: Request, res: Response) => {
   try {
     let fact: Fact | null = null;
-    // if (collections.facts) {
+    if (collections.facts) {
      
-    // }
+    }
     res.status(200).send({fact, status: STATUS_CODES.SUCCESS})
   } catch (error) {
     res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });

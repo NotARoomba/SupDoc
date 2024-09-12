@@ -1,7 +1,7 @@
 import Icons from "@expo/vector-icons/Octicons";
 import { SplashScreen, Tabs } from "expo-router";
 import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import Animated from "react-native-reanimated";
 import * as SecureStore from "expo-secure-store";
 import { UserType } from "components/utils/Types";
@@ -31,7 +31,7 @@ export default function TabLayout(props: ParamListBase) {
           display: "flex",
           backgroundColor: "#071932",
           position: "absolute",
-          bottom: 40,
+          bottom: Platform.OS == 'ios' ? 40 : 20,
           borderRadius: 12,
           width: 350,
           left: "50%",

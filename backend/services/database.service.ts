@@ -22,6 +22,7 @@ export const env = dotenv.load({
   POST_COLLECTION: String,
   COMMENT_COLLECTION: String,
   REPORT_COLLECTION: String,
+  FACT_COLLECTION: String,
   SERVER_PUBLIC: String,
   SERVER_PRIVATE: String,
   LIMITED_AUTH: String,
@@ -33,6 +34,7 @@ export const collections: {
   posts?: mongoDB.Collection<Post>;
   comments?: mongoDB.Collection<Comment>;
   reports?: mongoDB.Collection<Report>;
+  facts?: mongoDB.Collection<Report>;
 } = {};
 
 export let encryption: mongoDB.ClientEncryption;
@@ -97,9 +99,11 @@ export async function connectToDatabase() {
 
   collections.patients = userDB.collection(env.PATIENT_COLLECTION);
   collections.doctors = userDB.collection(env.DOCTOR_COLLECTION);
+
   collections.posts = interactionDB.collection(env.POST_COLLECTION);
   collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
   collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
+  collections.facts = interactionDB.collection(env.FACT_COLLECTION);
 
   console.log("Successfully connected to database!");
 }
