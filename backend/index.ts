@@ -11,7 +11,7 @@ import { doctorsRouter } from "./routers/doctors.router";
 import { usersRouter } from "./routers/users.router";
 import { factsRouter } from "./routers/facts.router";
 
-const app = express();
+export const app = express();
 const httpServer = createServer(app);
 const port = 3001;
 
