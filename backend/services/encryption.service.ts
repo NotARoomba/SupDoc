@@ -17,6 +17,7 @@ export default async function encryptionMiddleware(
   const auth = nodeRSA.decrypt(req.headers.authorization).toString();
   console.log(req.originalUrl)
   let publicKey: string;
+  console.log(auth)
   if (
     auth == env.LIMITED_AUTH &&
     ![

@@ -18,7 +18,7 @@ export default function TabLayout(props: ParamListBase) {
       const priv = await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
       )
-      const res = callAPI(`/${ut == UserType.PATIENT?"patients":"doctors"}/`, "GET")
+      const res = callAPI(`/patients/`, "GET")
       console.log(res)
       setUserType(ut);
       await SplashScreen.hideAsync();

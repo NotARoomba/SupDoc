@@ -19,7 +19,7 @@ export default function RootLayout() {
       const privateKey = await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
       );
-      // console.log(privateKey)
+      console.log(privateKey)
       if (privateKey !== null) {
         setIsLogged(true);
       } else {
