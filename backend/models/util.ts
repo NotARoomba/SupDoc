@@ -27,9 +27,9 @@ type ConditionalType<T, U> = T extends Binary ? T : U;
 export type ApplyConditionalType<T, U> = {
   [K in keyof T]: K extends "_id"
     ? T[K] // Do not apply ConditionalType to _id
-    // : 
-    // K extends "privateKey"
-    //   ? T[K]
+    : 
+    K extends "privateKey"
+      ? T[K]
       : T[K] extends Array<infer R> // Check if T[K] is an array
         ? Array<ConditionalType<U, R>> // Apply ConditionalType to the array's elements, but keep the array itself
         : T[K] extends object
