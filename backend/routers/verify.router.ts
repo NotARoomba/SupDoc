@@ -68,7 +68,6 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
         status: STATUS_CODES.NUMBER_NOT_EXIST,
       });
     }
-    console.log(status);
     res.send({ status: STATUS_CODES.ERROR_SENDING_CODE });
   }
 });
