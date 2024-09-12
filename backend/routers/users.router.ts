@@ -63,7 +63,8 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
     else if (user) res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
     else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
   } catch (error) {
-    res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
+    console.log(error)
+    res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
 
@@ -103,6 +104,7 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
           });
       }
     } catch (error) {
-      res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
+      console.log(error)
+      res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
     }
   });

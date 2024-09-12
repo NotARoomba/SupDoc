@@ -124,43 +124,43 @@ export default function Signup({
           setIsLoading(false);
           return Alert.alert("Error", "That is not a valid phone number");
         }
-        const verify = await callAPI("/verify/code/send", "POST", {
-          number: info.countryCode + info.number,
-        });
-        if (verify.status === STATUS_CODES.INVALID_NUMBER)
-         { setIndex(index-1);
-          setIsLoading(false);return Alert.alert("Error", "That number is invalid!");}
-        else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
-         { setIndex(index-1);
-          setIsLoading(false);return Alert.alert("Error", "That number does not exist!");}
-        else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
-        {  setIndex(index-1);
-          setIsLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
-        else {
-          setTimeout(() => {
-            return prompt(
-              "Enter Verification Code",
-              "Enter the verification code sent to: " +
-                (info.countryCode + info.number),
-              [{text: 'Cancel', style: 'cancel', onPress: () => {setIndex(index-1);
-                setIsLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
-                setIsLoading(true);
-                const v = await callAPI("/verify/code/check", "POST", {
-                  number: info.countryCode + info.number,
-                  input,
-                });
-                if (v.status !== STATUS_CODES.SUCCESS) {
-                  setIsLoading(false);
-                  return Alert.alert("Error", "The code is incorrect!");
-                }
-                setIsVerified(true);
-              }}],
-              "plain-text",
-              "",
-              "number-pad",
-            );
-          }, 250);
-        }
+        // const verify = await callAPI("/verify/code/send", "POST", {
+        //   number: info.countryCode + info.number,
+        // });
+        // if (verify.status === STATUS_CODES.INVALID_NUMBER)
+        //  { setIndex(index-1);
+        //   setIsLoading(false);return Alert.alert("Error", "That number is invalid!");}
+        // else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
+        //  { setIndex(index-1);
+        //   setIsLoading(false);return Alert.alert("Error", "That number does not exist!");}
+        // else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
+        // {  setIndex(index-1);
+        //   setIsLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
+        // else {
+        //   setTimeout(() => {
+        //     return prompt(
+        //       "Enter Verification Code",
+        //       "Enter the verification code sent to: " +
+        //         (info.countryCode + info.number),
+        //       [{text: 'Cancel', style: 'cancel', onPress: () => {setIndex(index-1);
+        //         setIsLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
+        //         setIsLoading(true);
+        //         const v = await callAPI("/verify/code/check", "POST", {
+        //           number: info.countryCode + info.number,
+        //           input,
+        //         });
+        //         if (v.status !== STATUS_CODES.SUCCESS) {
+        //           setIsLoading(false);
+        //           return Alert.alert("Error", "The code is incorrect!");
+        //         }
+        //         setIsVerified(true);
+        //       }}],
+        //       "plain-text",
+        //       "",
+        //       "number-pad",
+        //     );
+        //   }, 250);
+        // }
       }
         setIsLoading(false);
         if (userType != UserType.PATIENT) {

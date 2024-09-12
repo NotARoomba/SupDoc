@@ -11,7 +11,7 @@ export default function RootLayout() {
   const [isLogged, setIsLogged] = useState(false);
   useEffect(() => {
     const updateData = async () => {
-      // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE)
+      await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE)
       // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC)
       // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_TYPE)
       // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PASS)
@@ -22,7 +22,7 @@ export default function RootLayout() {
       if (privateKey !== null) {
         setIsLogged(true);
       } else {
-        setIsLogged(true); //TESTING
+        setIsLogged(false); 
         await SplashScreen.hideAsync();
       }
     };

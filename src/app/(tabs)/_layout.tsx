@@ -10,7 +10,6 @@ import { ParamListBase } from "@react-navigation/native";
 export default function TabLayout(props: ParamListBase) {
   const [userType, setUserType] = useState<UserType>();
   useEffect(() => {
-    console.log(props);
     const updateData = async () => {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
@@ -56,7 +55,7 @@ export default function TabLayout(props: ParamListBase) {
       })}
       sceneContainerStyle={{
         zIndex: -900,
-        backgroundColor: "#000000",
+        backgroundColor: "#020912",
       }}
     >
       <Tabs.Screen
