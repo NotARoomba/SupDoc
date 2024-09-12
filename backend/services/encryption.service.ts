@@ -21,7 +21,7 @@ export default async function encryptionMiddleware(
   console.log(auth);
   console.log("ATH 1")
   try {
-    auth = nodeRSA.decrypt(req.headers.authorization).toString('utf-8');
+    auth = nodeRSA.decrypt(req.headers.authorization, 'utf8');
     console.log(auth);
     console.log("ATH 2")
   } catch {}
