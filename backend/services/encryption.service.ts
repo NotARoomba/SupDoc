@@ -50,7 +50,7 @@ export default async function encryptionMiddleware(
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       })});
       console.log("DOCTOR EXISTS")
-      console.log(patientExists?.toArray(), doctorExists?.toArray())
+      console.log(await patientExists?.toArray(), await doctorExists?.toArray())
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists)) return res.sendStatus(401);
     // else if (doctorExists)  publicKey = doctorExists.publicKey as unknown as string;
