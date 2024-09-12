@@ -49,5 +49,29 @@ export default async function encryptionMiddleware(
       const data = CryptoJS.AES.decrypt(req.body.data, key);
       req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
     }
+    const altSend = res.send;
+    res.send = function (body: any) {
+      const key = CryptoJS.SHA256(body).toString();
+      const encrypted = CryptoJS.AES.encrypt(
+        JSON.stringify(body),
+        key,
+      ).toString();
+      // need to check fot the public key of the user
+      // res.send = oldSend;
+      console.log("SEND")
+      console.log(this.req.headers.authorization)
+      return altSend({
+        key:
+          this.req.headers.authorization == env.LIMITED_AUTH
+            ? key
+            : (new NodeRSA(this.req.headers.authorization as string, "pkcs8-public", {
+                encryptionScheme: "pkcs1",
+                environment: "browser",
+              }))
+                .encrypt(key)
+                .toString(),
+        body: encrypted,
+      });
+    };
   next();
 }
