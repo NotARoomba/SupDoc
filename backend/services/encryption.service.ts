@@ -13,14 +13,11 @@ export default async function encryptionMiddleware(
   next: NextFunction,
 ) {
   //check authorization and see if limited auth
-  console.log(req.headers.authorization)
-  console.log("ASDASD")
   if (!req.headers.authorization) return res.sendStatus(401);
   // const obj = JSON.parse(CryptoJS.enc.Base64.parse(req.headers.authorization).toString(CryptoJS.enc.Utf8))
   // const authKey = nodeRSA.decrypt(obj.key).toString('utf8');
   // const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(CryptoJS.enc.Utf8);
   const auth = nodeRSA.decrypt(req.headers.authorization, 'utf8');
-  console.log(auth)
   console.log(req.originalUrl)
   let publicKey: string = "none";
   if (
