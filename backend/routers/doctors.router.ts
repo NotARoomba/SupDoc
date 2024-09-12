@@ -18,7 +18,6 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
   try {
     let user: Doctor | null = null;
     if (collections.doctors) {
-      //check if is a number
       user = (await collections.doctors.findOne({
         privateKey: req.headers.authorization,
       })) as unknown as Doctor;
@@ -46,40 +45,10 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
   // console.log(ret.data.text);
   // if (!ret.data.text.includes(data.identification.number.toString()))
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
-  const keyAltName = data.identification.number.toString(2);
   try {
-    const keyUDID = await createKey([keyAltName, data.number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
     if (collections.doctors) {
-      const ins = await collections.doctors.insertOne({
-        number: await encryption.encrypt(data.number, {
-          keyId: keyUDID,
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        }),
-        dateJoined: await encryption.encrypt(data.dateJoined, {
-          keyAltName: keyAltName,
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        }),
-        publicKey: await encryption.encrypt(data.publicKey, {
-          keyId: keyUDID,
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        }),
-        privateKey: data.privateKey,
-
-        // Identification fields
-        identification: {
-          license: await encryption.encrypt(data.identification.license, {
-            keyId: keyUDID,
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          }),
-          number: await encryption.encrypt(data.identification.number, {
-            keyId: keyUDID,
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          }),
-          isVerified: await encryption.encrypt(data.identification.isVerified, {
-            keyId: keyUDID,
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-          }),
-        },
+      const ins = await collections.doctors.insertOne({...data,
+        identification: {...data.identification, isVerified: false},
         comments: [],
         reports: [],
       });
