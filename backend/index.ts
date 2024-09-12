@@ -49,7 +49,7 @@ express.response.send = function (body: any) {
   // res.send = oldSend;
   console.log("SEND")
   console.log(this.req.headers.authorization)
-  return app.response.send({
+  return express.response.send({
     key:
       this.req.headers.authorization == env.LIMITED_AUTH
         ? key
