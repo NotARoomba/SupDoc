@@ -16,8 +16,8 @@ export default async function encryptionMiddleware(
   if (!req.headers.authorization) return res.sendStatus(401);
   const obj = JSON.parse(CryptoJS.enc.Base64.parse(req.headers.authorization).toString(CryptoJS.enc.Utf8))
   console.log(obj)
-  const authKey = nodeRSA.decrypt(obj.key).toString('utf8');
-  const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString();
+  const authKey = nodeRSA.decrypt(obj.key, 'utf8');
+  const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(CryptoJS.enc.Utf8);
   console.log(auth)
   // const auth = nodeRSA.decrypt(req.headers.authorization, 'utf8');
   console.log(req.originalUrl)

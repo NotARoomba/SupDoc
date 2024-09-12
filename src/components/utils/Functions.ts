@@ -4,6 +4,7 @@ import { RSA } from "react-native-rsa-native";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { SignupInfo, UserType } from "./Types";
+import { Base64 } from "crypto-es/lib/enc-base64";
 
 export async function callAPI(
   endpoint: string,
@@ -27,13 +28,16 @@ export async function callAPI(
     )
     // console.log(privateKey)
     //private key should be encrypted with password
-    // let encryptedPriv = process.env.EXPO_PUBLIC_LIMITED_AUTH;
-    // if ((privateKey && password)) encryptedPriv = CryptoJS.AES.encrypt(privateKey, password).toString()
-    // const authKey = CryptoJS.SHA256(encryptedPriv).toString()
-    // const authorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(JSON.stringify({key: await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC), data: CryptoJS.AES.encrypt(encryptedPriv, authKey).toString()})))
-    
-    const authorization = (await RSA.encrypt(((privateKey && password) ? CryptoJS.AES.encrypt(privateKey, password).toString() : process.env.EXPO_PUBLIC_LIMITED_AUTH), process.env.EXPO_PUBLIC_SERVER_PUBLIC)).replace(/\s+/g, "")
-    .replace("\n", "");
+    let encryptedPriv = process.env.EXPO_PUBLIC_LIMITED_AUTH;
+    if ((privateKey && password)) encryptedPriv = CryptoJS.AES.encrypt(privateKey, password).toString()
+    const authKey = CryptoJS.SHA256(encryptedPriv).toString()
+  console.log(authKey)
+    const authorization = Base64.stringify(CryptoJS.enc.Utf8.parse(JSON.stringify({key: (await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC)).replace(/\s+/g, "")
+    .replace("\n", ""), data: CryptoJS.AES.encrypt(encryptedPriv, authKey).toString()})))
+    // console.log(CryptoJS.enc.Utf8.parse(authorization).toString(CryptoJS.enc.Utf8))
+    // // const authorization = (await RSA.encrypt(((privateKey && password) ? CryptoJS.AES.encrypt(privateKey, password).toString() : process.env.EXPO_PUBLIC_LIMITED_AUTH), process.env.EXPO_PUBLIC_SERVER_PUBLIC)).replace(/\s+/g, "")
+    // // .replace("\n", "");
+    // console.log(CryptoJS.AES.encrypt(encryptedPriv, authKey).toString())
     console.log(authorization)
     try {
       const res =
