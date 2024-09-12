@@ -41,12 +41,12 @@ export default async function encryptionMiddleware(
     console.log("ASAAAAAAAAAAAAAAAAAAAAAAAAa")
     const doctorExists = await collections.doctors?.findOne({
       privateKey: await encryption.encrypt(auth, {
-        keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
+        keyAltName: env.KEY_ALIAS,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       })});
     const patientExists = await collections.patients?.findOne({
       privateKey: await encryption.encrypt(auth, {
-        keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
+        keyAltName: env.KEY_ALIAS,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       })});
       console.log("DOCTOR EXISTS")
