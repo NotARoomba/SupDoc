@@ -15,11 +15,9 @@ export default async function encryptionMiddleware(
   //check authorization and see if limited auth
   if (!req.headers.authorization) return res.sendStatus(401);
   const obj = JSON.parse(CryptoJS.enc.Base64.parse(req.headers.authorization).toString(CryptoJS.enc.Utf8))
-  console.log(obj)
   const authKey = nodeRSA.decrypt(obj.key, 'utf8');
   const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(CryptoJS.enc.Utf8);
-  console.log(auth)
-  console.log(req.originalUrl)
+  req.headers.authorization = auth;
   let publicKey: string = "none";
   if (
     auth == env.LIMITED_AUTH &&
@@ -37,12 +35,10 @@ export default async function encryptionMiddleware(
     return res.sendStatus(401);
   // checks if the authorization exists
   else if (auth != env.LIMITED_AUTH) {
-    console.log("ASAAAAAAAAAAAAAAAAAAAAAAAAa")
     const doctorExists = await collections.doctors?.findOne({
       publicKey: auth});
     const patientExists = await collections.patients?.findOne({
       publicKey: auth});
-      console.log("DOCTOR EXISTS")
       console.log(patientExists, doctorExists)
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists)) return res.sendStatus(401);

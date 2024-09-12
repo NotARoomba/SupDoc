@@ -21,17 +21,14 @@ export async function callAPI(
     const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
     const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
     const publicKey = await SecureStore.getItemAsync(
-      process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
+      process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
     );
     const privateKey = await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
     );
-    // console.log(privateKey)
-    //private key should be encrypted with password
     let encryptedAuth = publicKey ?? process.env.EXPO_PUBLIC_LIMITED_AUTH;
     console.log(encryptedAuth)
     const authKey = CryptoJS.SHA256(encryptedAuth).toString()
-  // console.log(authKey)
     const authorization = Base64.stringify(CryptoJS.enc.Utf8.parse(JSON.stringify({key: (await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC)).replace(/\s+/g, "")
     .replace("\n", ""), data: CryptoJS.AES.encrypt(encryptedAuth, authKey).toString()})))
     // console.log(CryptoJS.enc.Utf8.parse(authorization).toString(CryptoJS.enc.Utf8))

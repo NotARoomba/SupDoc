@@ -20,10 +20,7 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
     if (collections.patients) {
       //check if is a number
       user = (await collections.patients.findOne({
-        privateKey: await encryption.encrypt(req.headers.authorization, {
-          keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        }),
+        publicKey: req.headers.authorization,
       })) as unknown as Patient;
     }
     console.log("GET USER", user)
