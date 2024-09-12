@@ -9,6 +9,29 @@ const nodeRSA = new NodeRSA(env.SERVER_PRIVATE, "pkcs1", {
   environment: "browser",
 });
 
+express.response.send = function (body: any) {
+  const key = CryptoJS.SHA256(body).toString();
+  const encrypted = CryptoJS.AES.encrypt(
+    JSON.stringify(body),
+    key,
+  ).toString();
+  // need to check fot the public key of the user
+  // res.send = oldSend;
+  console.log("ALT SEND")
+  return this.send({
+    key:
+      this.getHeader('Authorization') == env.LIMITED_AUTH
+        ? key
+        : (new NodeRSA(this.getHeader('Authorization') as string, "pkcs1", {
+            encryptionScheme: "pkcs1",
+            environment: "browser",
+          }))
+            .encrypt(key)
+            .toString(),
+    body: encrypted,
+  });
+};
+
 export default async function encryptionMiddleware(
   req: Request,
   res: Response,
@@ -44,8 +67,7 @@ export default async function encryptionMiddleware(
       console.log(patientExists, doctorExists)
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists)) return res.sendStatus(401);
-    else if (doctorExists)  publicKey = doctorExists.publicKey as unknown as string;
-    else if (patientExists)  publicKey = patientExists.publicKey as unknown as string;
+    else publicKey = auth;
     console.log("PUBLIC KEY", publicKey)
 
     }
@@ -54,29 +76,6 @@ export default async function encryptionMiddleware(
       const key = nodeRSA.decrypt(req.body.key, "utf8");
       const data = CryptoJS.AES.decrypt(req.body.data, key);
       req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
-      // const oldSend = res.send;
-      
-      app.response.send = function (body: any) {
-        const key = CryptoJS.SHA256(body).toString();
-        const encrypted = CryptoJS.AES.encrypt(
-          JSON.stringify(body),
-          key,
-        ).toString();
-        // need to check fot the public key of the user
-        // res.send = oldSend;
-        return this.send({
-          key:
-            auth == env.LIMITED_AUTH
-              ? key
-              : (new NodeRSA(publicKey as string, "pkcs1", {
-                  encryptionScheme: "pkcs1",
-                  environment: "browser",
-                }))
-                  .encrypt(key)
-                  .toString(),
-          body: encrypted,
-        });
-      };
     }
   next();
 }
