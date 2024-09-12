@@ -22,7 +22,7 @@ express.response.send = function (body: any) {
     key:
       this.req.headers.authorization == env.LIMITED_AUTH
         ? key
-        : (new NodeRSA(this.req.headers.authorization as string, "pkcs1", {
+        : (new NodeRSA(this.req.headers.authorization as string, "pkcs1-public", {
             encryptionScheme: "pkcs1",
             environment: "browser",
           }))
