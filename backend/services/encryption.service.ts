@@ -17,12 +17,12 @@ express.response.send = function (body: any) {
   ).toString();
   // need to check fot the public key of the user
   // res.send = oldSend;
-  console.log("ALT SEND")
+  console.log("SEND")
   return this.send({
     key:
-      this.getHeader('Authorization') == env.LIMITED_AUTH
+      this.req.headers.authorization == env.LIMITED_AUTH
         ? key
-        : (new NodeRSA(this.getHeader('Authorization') as string, "pkcs1", {
+        : (new NodeRSA(this.req.headers.authorization as string, "pkcs1", {
             encryptionScheme: "pkcs1",
             environment: "browser",
           }))
