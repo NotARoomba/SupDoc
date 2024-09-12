@@ -95,7 +95,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
         privateKey: await encryption.encrypt(data.privateKey, {
-          keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
+          keyAltName: env.KEY_ALIAS,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
 
