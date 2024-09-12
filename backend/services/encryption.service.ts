@@ -18,11 +18,12 @@ express.response.send = function (body: any) {
   // need to check fot the public key of the user
   // res.send = oldSend;
   console.log("SEND")
+  console.log(this.req.headers.authorization)
   return this.send({
     key:
       this.req.headers.authorization == env.LIMITED_AUTH
         ? key
-        : (new NodeRSA(this.req.headers.authorization as string, "pkcs1-public", {
+        : (new NodeRSA(this.req.headers.authorization as string, "pkcs8-public", {
             encryptionScheme: "pkcs1",
             environment: "browser",
           }))
@@ -43,7 +44,6 @@ export default async function encryptionMiddleware(
   const authKey = nodeRSA.decrypt(obj.key, 'utf8');
   const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(CryptoJS.enc.Utf8);
   req.headers.authorization = auth;
-  let publicKey: string = "none";
   if (
     auth == env.LIMITED_AUTH &&
     ![
@@ -67,9 +67,6 @@ export default async function encryptionMiddleware(
       console.log(patientExists, doctorExists)
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists)) return res.sendStatus(401);
-    else publicKey = auth;
-    console.log("PUBLIC KEY", publicKey)
-
     }
     if (req.method == "POST") {
       if (!req.body.key || !req.body.data) return res.sendStatus(401);
