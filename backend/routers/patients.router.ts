@@ -26,6 +26,7 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
         }),
       })) as unknown as Patient;
     }
+    console.log(user)
     if (user) {
       res.status(200).send({ user, status: STATUS_CODES.SUCCESS });
     } else {
