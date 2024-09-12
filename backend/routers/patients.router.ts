@@ -25,7 +25,7 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
     }
     console.log("GET USER", user)
     if (user) {
-      res.status(200).send({ user, status: STATUS_CODES.SUCCESS });
+      res.sendStatus({ user, status: STATUS_CODES.SUCCESS });
     } else {
       res.status(404).send({
         user: null,
