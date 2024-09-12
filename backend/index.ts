@@ -6,6 +6,7 @@ import { verifyRouter } from "./routers/verify.router";
 import { patientsRouter } from "./routers/patients.router";
 import { Server, Socket } from "socket.io";
 import { createServer } from "http";
+import CryptoJS from "crypto-js";
 import { postsRouter } from "./routers/posts.router";
 import { doctorsRouter } from "./routers/doctors.router";
 import { usersRouter } from "./routers/users.router";
