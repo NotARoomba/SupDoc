@@ -31,7 +31,7 @@ export async function callAPI(
     if ((privateKey && password)) encryptedPriv = CryptoJS.AES.encrypt(privateKey, password).toString()
     const authKey = CryptoJS.SHA256(encryptedPriv).toString()
     const authorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(JSON.stringify({key: await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC), data: CryptoJS.AES.encrypt(encryptedPriv, authKey).toString()})))
-    console.log(authorization)
+    console.log(encryptedPriv)
     try {
       const res =
         method === "POST"
