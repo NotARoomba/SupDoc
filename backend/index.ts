@@ -9,6 +9,7 @@ import { createServer } from "http";
 import { postsRouter } from "./routers/posts.router";
 import { doctorsRouter } from "./routers/doctors.router";
 import { usersRouter } from "./routers/users.router";
+import { factsRouter } from "./routers/facts.router";
 
 const app = express();
 const httpServer = createServer(app);
@@ -29,6 +30,7 @@ connectToDatabase()
     app.use("/patients", patientsRouter);
     app.use("/doctors", doctorsRouter);
     app.use("/posts", postsRouter);
+    app.use("/facts", factsRouter);
     app.use("/verify", verifyRouter);
 
     app.use("/", async (_req: Request, res: Response) => {
