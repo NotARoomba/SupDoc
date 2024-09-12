@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 
 export default function Profile() {
   return (
-    <View>
+    <View className="h-full">
       <Text className="text-6xl text-ivory">PROFILE</Text>
     </View>
   );

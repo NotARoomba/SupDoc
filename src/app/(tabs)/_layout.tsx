@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/Octicons";
+import Icons from "@expo/vector-icons/Octicons";
 import { SplashScreen, Tabs } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -63,7 +63,7 @@ export default function TabLayout(props: ParamListBase) {
         name="index"
         options={{
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={38} name="home" color={color} />
+            <Icons size={38} name="home" color={color} />
           ),
         }}
       />
@@ -73,7 +73,7 @@ export default function TabLayout(props: ParamListBase) {
         options={{
           href: userType == UserType.DOCTOR ? "/(tabs)/pins" : null,
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={38} name="pin" color={color} />
+            <Icons size={38} name="pin" color={color} />
           ),
         }}
       />
@@ -83,7 +83,7 @@ export default function TabLayout(props: ParamListBase) {
         options={{
           href: userType != UserType.DOCTOR ? "/(tabs)/upload" : null,
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={38} name="plus-circle" color={color} />
+            <Icons size={38} name="plus-circle" color={color} />
           ),
         }}
       />
@@ -92,7 +92,7 @@ export default function TabLayout(props: ParamListBase) {
         options={{
           href: null,
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={38} name="gear" color={color} />
+            <Icons size={38} name="gear" color={color} />
           ),
         }}
       />
@@ -100,7 +100,7 @@ export default function TabLayout(props: ParamListBase) {
         name="profile"
         options={{
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={38} name="person" color={color} />
+            <Icons size={38} name="person" color={color} />
           ),
         }}
       />

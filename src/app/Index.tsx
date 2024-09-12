@@ -68,68 +68,9 @@ export default function Index({ setIsLogged }: IndexProps) {
     };
     onLoad();
   }, []);
-  const parseSignup = async () => {
-    //checl if passswords are the same
-    setLoading(true);
-    const doesExist = await callAPI(
-      `/users/check`,
-      "POST",
-      {
-        id: signUpInfo.identification,
-        number: signUpInfo.countryCode + signUpInfo.number,
-      },
-    );
-    console.log(doesExist, userType);
-    if (doesExist.status !== STATUS_CODES.GENERIC_ERROR) {
-      if (doesExist.status === STATUS_CODES.ID_IN_USE) {
-        setLoading(false);
-        return Alert.alert("Error", "The ID is already in use!");
-      } else if (doesExist.status === STATUS_CODES.NUMBER_IN_USE) {
-        setLoading(false);
-        return Alert.alert("Error", "The number is already in use!");
-      }
-      console.log(signUpInfo.countryCode + signUpInfo.number)
-      const res = await callAPI("/verify/code/send", "POST", {
-        number: signUpInfo.countryCode + signUpInfo.number,
-      });
-      setLoading(false);
-      if (res.status === STATUS_CODES.INVALID_NUMBER)
-        return Alert.alert("Error", "That number is invalid!");
-      else if (res.status === STATUS_CODES.NUMBER_NOT_EXIST)
-        return Alert.alert("Error", "That number does not exist!");
-      else if (res.status === STATUS_CODES.ERROR_SENDING_CODE)
-        return Alert.alert("Error", "There was an error sending the code!");
-      else {
-        setTimeout(() => {
-          return prompt(
-            "Enter Verification Code",
-            "Enter the verification code sent to: " +
-              (signUpInfo.countryCode + signUpInfo.number),
-            async (input) => await checkSignup(input),
-            "plain-text",
-            "",
-            "number-pad",
-          );
-        }, 250);
-      }
-    } else {
-      setLoading(false);
-      return Alert.alert("Error", "An error occured!");
-    }
-  };
-  const checkSignup = async (code: string) => {
+  const signup = async () => {
     if (!userType) return;
     setLoading(true);
-    const v = await callAPI("/verify/code/check", "POST", {
-      number: signUpInfo.countryCode + signUpInfo.number,
-      code,
-    });
-    console.log(v)
-    if (v.status !== STATUS_CODES.SUCCESS) {
-      setLoading(false);
-      // need to update wth localizations
-      return Alert.alert("Error", v.status);
-    }
     const keys = await RSA.generateKeys(2048);
     const encPriv = CryptoJS.AES.encrypt(keys.private, signUpInfo.password);
     const create = await callAPI(
@@ -256,11 +197,12 @@ export default function Index({ setIsLogged }: IndexProps) {
       return Alert.alert("Error", v.status);
     }
     const res = await callAPI(
-      `/${userType == UserType.PATIENT ? "patients" : "doctors"}/keys`,
+      `/users/keys`,
       "POST",
       {
         number,
         id: loginInfo.identification,
+        userType
       },
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
@@ -418,7 +360,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                               : "Please fill out the information!",
                           )
                         : !isLogin
-                          ? parseSignup()
+                          ? signup()
                           : parseLogin()
                   }
                   className={

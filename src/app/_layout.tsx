@@ -22,7 +22,7 @@ export default function RootLayout() {
       if (privateKey !== null) {
         setIsLogged(true);
       } else {
-        setIsLogged(false);
+        setIsLogged(true); //TESTING
         await SplashScreen.hideAsync();
       }
     };

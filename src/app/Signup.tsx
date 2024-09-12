@@ -48,6 +48,7 @@ import {
   ScrollView,
 } from "react-native-gesture-handler";
 import DropDownPicker from "react-native-dropdown-picker";
+import prompt from "@powerdesigninc/react-native-prompt";
 
 export default function Signup({
   info,
@@ -67,6 +68,7 @@ export default function Signup({
   const [ready, setisReady] = useState(false);
   const [gsValue, setGSValue] = useState("O");
   const [gsOpen, setGSOpen] = useState(false);
+  const [verified, setIsVerified] = useState(false);
   const [gsItems, setGSItems] = useState([
     { label: "O", value: "O" },
     { label: "A", value: "A" },
@@ -110,20 +112,56 @@ export default function Signup({
     const doChecks = async () => {
       if (index == 3) {
         setIsLoading(true);
-        console.log("CHECKING")
         const res = await callAPI(`/users/check`, "POST", {number: (info.countryCode + info.number), id: info.identification});
-        console.log(res)
         if (res.status == STATUS_CODES.ID_IN_USE || res.status == STATUS_CODES.NUMBER_IN_USE) {
-          setIsLoading(false);
           setIndex(index-1);
-          Alert.alert("Error", "That number/ID already exists!");
+          setIsLoading(false);
+          return Alert.alert("Error", "That number/ID already exists!");
         }
+        if (!verified) {
         const isValid = (/^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/).test(info.number)
-        if (!isValid) {
+        if (!isValid) {setIndex(index-1);
           setIsLoading(false);
-          setIndex(index-1);
-          Alert.alert("Error", "That is not a valid phone number");
+          return Alert.alert("Error", "That is not a valid phone number");
         }
+        const verify = await callAPI("/verify/code/send", "POST", {
+          number: info.countryCode + info.number,
+        });
+        if (verify.status === STATUS_CODES.INVALID_NUMBER)
+         { setIndex(index-1);
+          setIsLoading(false);return Alert.alert("Error", "That number is invalid!");}
+        else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
+         { setIndex(index-1);
+          setIsLoading(false);return Alert.alert("Error", "That number does not exist!");}
+        else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
+        {  setIndex(index-1);
+          setIsLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
+        else {
+          setTimeout(() => {
+            return prompt(
+              "Enter Verification Code",
+              "Enter the verification code sent to: " +
+                (info.countryCode + info.number),
+              [{text: 'Cancel', style: 'cancel', onPress: () => {setIndex(index-1);
+                setIsLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
+                setIsLoading(true);
+                const v = await callAPI("/verify/code/check", "POST", {
+                  number: info.countryCode + info.number,
+                  input,
+                });
+                if (v.status !== STATUS_CODES.SUCCESS) {
+                  setIsLoading(false);
+                  return Alert.alert("Error", "The code is incorrect!");
+                }
+                setIsVerified(true);
+              }}],
+              "plain-text",
+              "",
+              "number-pad",
+            );
+          }, 250);
+        }
+      }
         setIsLoading(false);
         if (userType != UserType.PATIENT) {
           (async () => {
@@ -173,7 +211,7 @@ export default function Signup({
               </Text>
             </TouchableOpacity>
             <TextInput
-              onChangeText={(n) => setInfo({ ...info, number: n })}
+              onChangeText={(n) => {setIsVerified(false);setInfo({ ...info, number: n })}}
               value={info.number}
               keyboardType="phone-pad"
               placeholderTextColor={"#ffffff"}
@@ -278,7 +316,7 @@ export default function Signup({
                         mode="dropdown"
                         dropdownIconColor={"#fbfff1"}
                         onValueChange={(v) =>
-                          setInfo({ ...info, gs: v.toString() })
+                          setInfo({ ...info, gs: v })
                         }
                       >
                         <Picker.Item
@@ -311,7 +349,7 @@ export default function Signup({
                         style={{ width: 100 }}
                         mode="dropdown"
                         onValueChange={(v) =>
-                          setInfo({ ...info, rh: v.toString() })
+                          setInfo({ ...info, rh: v })
                         }
                       >
                         <Picker.Item
@@ -418,8 +456,8 @@ export default function Signup({
                           <Picker.Item
                             style={{ backgroundColor: "#041225" }}
                             color="#fbfff1"
-                            label="O"
-                            value="O"
+                            label="IS"
+                            value="IS"
                           />
                         </Picker>
                       ) : (
@@ -447,7 +485,7 @@ export default function Signup({
                       )}
                     </View>
                   </View>
-                  {info.sex != BirthSex.MALE && (
+                  {info.sex == BirthSex.FEMALE && (
                     <Animated.View
                       entering={FadeInLeft.duration(500)}
                       exiting={FadeOutLeft.duration(500)}
@@ -577,17 +615,22 @@ export default function Signup({
                     style={{ backgroundColor: "#041225" }}
                     color="#fbfff1"
                     label="M"
-                    value={BirthSex.MALE}
+                    value={Sex.MALE}
                   />
                   <Picker.Item
                     color="#fbfff1"
                     label="F"
-                    value={BirthSex.FEMALE}
+                    value={Sex.FEMALE}
                   />
                   <Picker.Item
                     color="#fbfff1"
-                    label="IS"
-                    value={BirthSex.INTERSEX}
+                    label="NB"
+                    value={Sex.NONBINARY}
+                  />
+                  <Picker.Item
+                    color="#fbfff1"
+                    label="O"
+                    value={Sex.OTHER}
                   />
                 </Picker>
               ) : (
