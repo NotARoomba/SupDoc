@@ -34,7 +34,7 @@ export async function callAPI(
     console.log("ASDSADASD")
     let authorization = await RSA.encrypt(process.env.EXPO_PUBLIC_LIMITED_AUTH, process.env.EXPO_PUBLIC_SERVER_PUBLIC);
     console.log(authorization)
-    if ((privateKey && password)) authorization = CryptoJS.AES.encrypt(privateKey, password).toString();
+    if ((privateKey && password)) authorization = await RSA.encrypt(CryptoJS.AES.encrypt(privateKey, password).toString(), process.env.EXPO_PUBLIC_SERVER_PUBLIC);
     console.log(authorization)
     try {
       const res =
