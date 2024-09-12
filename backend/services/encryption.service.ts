@@ -19,7 +19,6 @@ export default async function encryptionMiddleware(
   const authKey = nodeRSA.decrypt(obj.key, 'utf8');
   const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(CryptoJS.enc.Utf8);
   console.log(auth)
-  // const auth = nodeRSA.decrypt(req.headers.authorization, 'utf8');
   console.log(req.originalUrl)
   let publicKey: string = "none";
   if (
@@ -40,9 +39,9 @@ export default async function encryptionMiddleware(
   else if (auth != env.LIMITED_AUTH) {
     console.log("ASAAAAAAAAAAAAAAAAAAAAAAAAa")
     const doctorExists = await collections.doctors?.findOne({
-      privateKey: auth});
+      publicKey: auth});
     const patientExists = await collections.patients?.findOne({
-      privateKey: auth});
+      publicKey: auth});
       console.log("DOCTOR EXISTS")
       console.log(patientExists, doctorExists)
     // await encryption.decrypt(doctorExists?.publicKey)
