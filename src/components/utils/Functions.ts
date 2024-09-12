@@ -64,8 +64,9 @@ export async function callAPI(
               })
             ).data;
       const decryptKey = privateKey
-        ? await RSA.decrypt(res.key, privateKey)
+        ? (await RSA.decrypt(res.key, privateKey))
         : res.key;
+        console.log(res)
       return JSON.parse(
         CryptoJS.AES.decrypt(res.body, decryptKey).toString(CryptoJS.enc.Utf8),
       );

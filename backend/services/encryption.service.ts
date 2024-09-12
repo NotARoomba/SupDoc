@@ -65,10 +65,10 @@ export default async function encryptionMiddleware(
           key:
             auth == env.LIMITED_AUTH
               ? key
-              : new NodeRSA(publicKey as string, "pkcs1-public", {
+              : (new NodeRSA(publicKey as string, "pkcs1", {
                   encryptionScheme: "pkcs1",
                   environment: "browser",
-                })
+                }))
                   .encrypt(key)
                   .toString(),
           body: encrypted,
