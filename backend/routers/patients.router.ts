@@ -20,7 +20,10 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
     if (collections.patients) {
       //check if is a number
       user = (await collections.patients.findOne({
-        privateKey: req.headers.authorization,
+        privateKey: await encryption.encrypt(req.headers.authorization, {
+          keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+        }),
       })) as unknown as Patient;
     }
     if (user) {
@@ -90,7 +93,10 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
           keyId: keyUDID,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
-        privateKey: data.privateKey,
+        privateKey: await encryption.encrypt(data.privateKey, {
+          keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+        }),
 
         // Identification fields
         identification: {

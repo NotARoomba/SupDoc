@@ -34,9 +34,15 @@ export default async function encryptionMiddleware(
   // checks if the authorization exists
   else if (auth != env.LIMITED_AUTH) {
     const doctorExists = await collections.doctors?.findOne({
-      privateKey: auth});
+      privateKey: await encryption.encrypt(auth, {
+        keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      })});
     const patientExists = await collections.patients?.findOne({
-      privateKey: auth});
+      privateKey: await encryption.encrypt(auth, {
+        keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+      })});
       console.log(patientExists, doctorExists)
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists)) return res.sendStatus(401);

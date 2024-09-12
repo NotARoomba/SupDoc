@@ -5,6 +5,7 @@ import { SafeAreaView, View } from "react-native";
 import Index from "./Index";
 import { SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
@@ -22,8 +23,8 @@ export default function RootLayout() {
       if (privateKey !== null) {
         setIsLogged(true);
       } else {
-        setIsLogged(false); 
         await SplashScreen.hideAsync();
+        setIsLogged(false); 
       }
     };
     updateData();
@@ -32,13 +33,14 @@ export default function RootLayout() {
     <View className="text-ivory h-full">
       <SafeAreaView className="bg-richer_black" />
       {isLogged ? (
+        <Animated.View entering={FadeIn.duration(500)}>
         <Stack>
           <Stack.Screen
             initialParams={{ isLogged: isLogged }}
             name="(tabs)"
             options={{ headerShown: false }}
           />
-        </Stack>
+        </Stack></Animated.View>
       ) : (
         <Index setIsLogged={setIsLogged} />
       )}
