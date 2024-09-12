@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Send } from "express";
 import NodeRSA from "node-rsa";
 import { collections, encryption, env } from "./database.service";
 import CryptoJS from "crypto-js";
+import * as express from "express";
 const nodeRSA = new NodeRSA(env.SERVER_PRIVATE, "pkcs1", {
   encryptionScheme: "pkcs1",
   environment: "browser",
@@ -53,7 +54,8 @@ export default async function encryptionMiddleware(
       const data = CryptoJS.AES.decrypt(req.body.data, key);
       req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
       const oldSend = res.send;
-      res.send = function (body: any) {
+      
+      express.response.send = function (body: any) {
         const key = CryptoJS.SHA256(body).toString();
         const encrypted = CryptoJS.AES.encrypt(
           JSON.stringify(body),
