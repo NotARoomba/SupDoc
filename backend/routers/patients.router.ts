@@ -51,7 +51,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   // if (!ret.data.text.includes(data.identification.number.toString()))
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
   const keyAltName = data.identification.number.toString(2);
-  console.log((await encryption.getKeyByAltName(env.KEY_ALIAS))?._id)
+  console.log(data)
   try {
     const keyUDID = await createKey([keyAltName, data.number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
     const sexData =
