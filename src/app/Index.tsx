@@ -73,6 +73,8 @@ export default function Index({ setIsLogged }: IndexProps) {
     setLoading(true);
     const keys = await RSA.generateKeys(2048);
     const encPriv = CryptoJS.AES.encrypt(keys.private, signUpInfo.password);
+    let sexData = {};
+    if (isPatientInfo(userType, signUpInfo)) sexData = signUpInfo.trans ? {altSex: signUpInfo.altSex, surgery: signUpInfo.surgery, hormones: signUpInfo.hormones} : {}
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
@@ -93,9 +95,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               sex: signUpInfo.sex,
               blood: signUpInfo.gs + signUpInfo.rh,
               pregnant: signUpInfo.pregnant ?? false,
-              altSex: signUpInfo.altSex,
-              hormones: signUpInfo.hormones,
-              surgery: signUpInfo.surgery,
+              ...sexData
             },
           }
         : {},

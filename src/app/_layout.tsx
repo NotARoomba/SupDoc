@@ -33,14 +33,15 @@ export default function RootLayout() {
     <View className="text-ivory h-full">
       <SafeAreaView className="bg-richer_black" />
       {isLogged ? (
-        <Animated.View entering={FadeIn.duration(500)}>
+        // <Animated.View entering={FadeIn.duration(500)}>
         <Stack>
           <Stack.Screen
             initialParams={{ isLogged: isLogged }}
             name="(tabs)"
             options={{ headerShown: false }}
           />
-        </Stack></Animated.View>
+        </Stack>
+        // </Animated.View>
       ) : (
         <Index setIsLogged={setIsLogged} />
       )}

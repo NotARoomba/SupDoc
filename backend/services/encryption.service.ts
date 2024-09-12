@@ -16,8 +16,7 @@ export default async function encryptionMiddleware(
   if (!req.headers.authorization) return res.sendStatus(401);
   const auth = nodeRSA.decrypt(req.headers.authorization).toString();
   console.log(req.originalUrl)
-  let publicKey: string;
-  console.log(auth)
+  let publicKey: string = "none";
   if (
     auth == env.LIMITED_AUTH &&
     ![
@@ -34,6 +33,7 @@ export default async function encryptionMiddleware(
     return res.sendStatus(401);
   // checks if the authorization exists
   else if (auth != env.LIMITED_AUTH) {
+    console.log("ASAAAAAAAAAAAAAAAAAAAAAAAAa")
     const doctorExists = await collections.doctors?.findOne({
       privateKey: await encryption.encrypt(auth, {
         keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
@@ -44,12 +44,13 @@ export default async function encryptionMiddleware(
         keyId: (await encryption.getKeyByAltName(env.KEY_ALIAS))?._id,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       })});
+      console.log("DOCTOR EXISTS")
       console.log(patientExists, doctorExists)
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists)) return res.sendStatus(401);
     else if (doctorExists)  publicKey = doctorExists.publicKey as unknown as string;
     else if (patientExists)  publicKey = patientExists.publicKey as unknown as string;
-    
+    console.log("PUBLIC KEY", publicKey)
 
     }
     if (req.method == "POST") {
