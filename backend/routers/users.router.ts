@@ -15,9 +15,9 @@ usersRouter.use(express.json());
 
 usersRouter.post("/check", async (req: Request, res: Response) => {
   const id: number = req.body.id;
-  const number: string = req.body.number;
+  const number: string | null = req.body.number;
   try {
-    await createKey([id.toString(2), number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
+    if (number) await createKey([id.toString(2), number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
   } catch {}
   try {
     let user: User | null = null;
@@ -33,7 +33,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
             },
           },
           {
-            number: await encryption.encrypt(number, {
+            number: await encryption.encrypt(number ?? "", {
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
               keyAltName: id.toString(2),
             }),
@@ -51,7 +51,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
               },
             },
             {
-              number: await encryption.encrypt(number, {
+              number: await encryption.encrypt(number ?? "", {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                 keyAltName: id.toString(2),
               }),
