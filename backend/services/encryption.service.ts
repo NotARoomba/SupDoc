@@ -18,11 +18,14 @@ export default async function encryptionMiddleware(
   // const authKey = nodeRSA.decrypt(obj.key).toString('utf8');
   // const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(CryptoJS.enc.Utf8);
   let auth = req.headers.authorization
+  console.log(auth);
+  console.log("ATH 1")
   try {
     auth =  nodeRSA.decrypt(req.headers.authorization).toString('utf-8');
     console.log(auth);
+    console.log("ATH 2")
   } catch {}
-  console.log(auth)
+  console.log("ATH FINAL")
   console.log(req.originalUrl)
   let publicKey: string = "none";
   if (
