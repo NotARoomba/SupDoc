@@ -66,8 +66,7 @@ export function encrypt(body: any, auth: string | undefined) {
             encryptionScheme: "pkcs1",
             environment: "browser",
           }))
-            .encrypt(key)
-            .toString(),
+            .encrypt(key).toString('utf8'),
     body: encrypted,
   };
 };

@@ -28,14 +28,14 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
     if (user) {
       res.status(200).send(encrypt({ user, status: STATUS_CODES.SUCCESS }, req.headers.authorization));
     } else {
-      res.status(404).send({
+      res.status(404).send(encrypt({
         user: null,
         status: STATUS_CODES.USER_NOT_FOUND,
-      });
+      }, req.headers.authorization));
     }
   } catch (error) {
     console.log(error);
-    res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
+    res.status(404).send(encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization));
   }
 });
 
@@ -141,10 +141,10 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
         // Posts field
         posts: [],
       });
-      res.send({ id: ins.insertedId, status: STATUS_CODES.SUCCESS });
+      res.send(encrypt({ id: ins.insertedId, status: STATUS_CODES.SUCCESS }, req.headers.authorization));
     }
   } catch (error) {
     console.log(error);
-    res.send({ status: STATUS_CODES.GENERIC_ERROR });
+    res.send(encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization));
   }
 });

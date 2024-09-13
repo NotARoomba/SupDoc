@@ -8,6 +8,7 @@ import {
 import { STATUS_CODES, UserType } from "../models/util";
 import Patient from "../models/patient";
 import { User } from "../models/user";
+import { encrypt } from "../services/encryption.service";
 
 export const usersRouter = express.Router();
 
@@ -59,12 +60,12 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
           ],
         }))) as User;
     }
-    if (user) return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
-    else if (user) res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
-    else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
+    if (user) return res.status(200).send(encrypt({ status: STATUS_CODES.ID_IN_USE }, req.headers.authorization));
+    else if (user) res.status(200).send(encrypt({ status: STATUS_CODES.NUMBER_IN_USE }, req.headers.authorization));
+    else res.status(200).send(encrypt({ status: STATUS_CODES.NONE_IN_USE }, req.headers.authorization));
   } catch (error) {
     console.log(error)
-    res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+    res.status(200).send(encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization));
   }
 });
 
@@ -97,15 +98,15 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
           }),
         })) : (await collections.doctors.findOne({
             number}))) as unknown as User;
-            if (!numberUser && !idUser) return res.status(200).send({status: STATUS_CODES.USER_NOT_FOUND})
-          res.status(200).send({
+            if (!numberUser && !idUser) return res.status(200).send(encrypt({status: STATUS_CODES.USER_NOT_FOUND}, req.headers.authorization))
+          res.status(200).send(encrypt({
             status: STATUS_CODES.SUCCESS,
             private: idUser ? idUser.privateKey : numberUser.privateKey,
             public: idUser ? idUser.publicKey : numberUser.publicKey,
-          });
+          }, req.headers.authorization));
       }
     } catch (error) {
       console.log(error)
-      res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+      res.status(200).send(encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization));
     }
   });

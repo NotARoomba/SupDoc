@@ -9,6 +9,7 @@ import { STATUS_CODES, UserType } from "../models/util";
 import { User } from "../models/user";
 import Fact from "../models/fact";
 import { ObjectId } from "mongodb";
+import { encrypt } from "../services/encryption.service";
 
 export const factsRouter = express.Router();
 
@@ -49,11 +50,11 @@ factsRouter.get("/", async (req: Request, res: Response) => {
 
       fact = randomFact.length > 0 ? randomFact[0] : null;
     }
-    if (fact) res.status(200).send({ fact, status: STATUS_CODES.SUCCESS });
-    else res.status(200).send({status: STATUS_CODES.GENERIC_ERROR });
+    if (fact) res.status(200).send(encrypt({ fact, status: STATUS_CODES.SUCCESS }, req.headers.authorization));
+    else res.status(200).send(encrypt({status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization));
   } catch (error) {
     console.error("Error fetching fact:", error);
-    res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+    res.status(200).send(encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization));
   }
 });
 
