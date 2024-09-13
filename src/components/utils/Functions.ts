@@ -5,6 +5,8 @@ import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { SignupInfo, UserType } from "./Types";
 import { Base64 } from "crypto-es/lib/enc-base64";
+import { reloadAppAsync } from "expo";
+
 
 export async function callAPI(
   endpoint: string,
@@ -98,3 +100,11 @@ export const isDoctorInfo = (
 ): info is SignupInfo<UserType.DOCTOR> => {
   return userType === UserType.DOCTOR;
 };
+
+export async function logout() {
+    await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE)
+    await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC)
+    await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_TYPE)
+    await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PASS)
+    reloadAppAsync()
+}

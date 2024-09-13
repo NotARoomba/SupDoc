@@ -6,16 +6,14 @@ import Index from "./Index";
 import { SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { logout } from "components/utils/Functions";
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [isLogged, setIsLogged] = useState(false);
   useEffect(() => {
     const updateData = async () => {
-      // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE)
-      // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC)
-      // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_TYPE)
-      // await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PASS)
+      // await logout();
       const privateKey = await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
       );
