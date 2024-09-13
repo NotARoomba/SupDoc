@@ -7,18 +7,17 @@ import * as SecureStore from "expo-secure-store";
 import { UserType } from "components/utils/Types";
 import { ParamListBase } from "@react-navigation/native";
 import { callAPI } from "components/utils/Functions";
+import { User } from "@/backend/models/user";
 
 export default function TabLayout(props: ParamListBase) {
   const [userType, setUserType] = useState<UserType>();
+  const [user, setUser] = useState<User>();
   useEffect(() => {
     const updateData = async () => {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
-      const priv = await SecureStore.getItemAsync(
-        process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
-      )
-      const res = await callAPI(`/patients/`, "GET")
+      const res = await callAPI(`/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`, "GET")
       console.log(res)
       setUserType(ut);
       await SplashScreen.hideAsync();
