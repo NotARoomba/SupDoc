@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import cors, { CorsOptions } from "cors";
 import { connectToDatabase, env } from "./services/database.service";
-import { decryptionMiddleware, encryptionMiddleware } from "./services/encryption.service";
+import { decryptionMiddleware } from "./services/encryption.service";
 import { verifyRouter } from "./routers/verify.router";
 import { patientsRouter } from "./routers/patients.router";
 import { Server, Socket } from "socket.io";
@@ -34,7 +34,6 @@ connectToDatabase()
     app.use("/posts", postsRouter);
     app.use("/facts", factsRouter);
     app.use("/verify", verifyRouter);
-    app.use(encryptionMiddleware);
 
     app.use("/", async (_req: Request, res: Response) => {
       res.status(200).send("You arent supposed to be here");

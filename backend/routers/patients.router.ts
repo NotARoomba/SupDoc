@@ -9,6 +9,7 @@ import { STATUS_CODES } from "../models/util";
 import { MongoCryptError, ObjectId } from "mongodb";
 import Patient from "../models/patient";
 import { createWorker } from "tesseract.js";
+import { encrypt } from "../services/encryption.service";
 
 export const patientsRouter = express.Router();
 
@@ -25,7 +26,7 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
     }
     console.log("GET USER", user)
     if (user) {
-      res.status(200).send({ user, status: STATUS_CODES.SUCCESS });
+      res.status(200).send(encrypt({ user, status: STATUS_CODES.SUCCESS }, req.headers.authorization));
     } else {
       res.status(404).send({
         user: null,

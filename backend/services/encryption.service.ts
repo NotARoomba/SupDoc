@@ -49,36 +49,25 @@ export async function decryptionMiddleware(
       const data = CryptoJS.AES.decrypt(req.body.data, key);
       req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
     }
-    const send = res.send;
-    res.send = function (body: any) {
-      const key = CryptoJS.SHA256(body).toString();
-      const encrypted = CryptoJS.AES.encrypt(
-        JSON.stringify(body),
-        key,
-      ).toString();
-      // need to check fot the public key of the user
-      // res.send = oldSend;
-      console.log("SEND")
-      console.log(this.req.headers.authorization)
-      return send.call(this, {
-        key:
-          this.req.headers.authorization == env.LIMITED_AUTH
-            ? key
-            : (new NodeRSA(this.req.headers.authorization as string, "pkcs8-public", {
-                encryptionScheme: "pkcs1",
-                environment: "browser",
-              }))
-                .encrypt(key)
-                .toString(),
-        body: encrypted,
-      });
-    };
   next();
 }
 
-export async function encryptionMiddleware(req: Request,
-  res: Response,
-  next: NextFunction) {
-    
-    next();
-  }
+export function encrypt(body: any, auth: string | undefined) {
+  const key = CryptoJS.SHA256(body).toString();
+  const encrypted = CryptoJS.AES.encrypt(
+    JSON.stringify(body),
+    key,
+  ).toString();
+  return {
+    key:
+      auth == env.LIMITED_AUTH
+        ? key
+        : (new NodeRSA(auth as string, "pkcs8-public", {
+            encryptionScheme: "pkcs1",
+            environment: "browser",
+          }))
+            .encrypt(key)
+            .toString(),
+    body: encrypted,
+  };
+};
