@@ -27,7 +27,6 @@ export async function callAPI(
       process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
     );
     let encryptedAuth = publicKey ?? process.env.EXPO_PUBLIC_LIMITED_AUTH;
-    console.log(encryptedAuth)
     const authKey = CryptoJS.SHA256(encryptedAuth).toString()
     const authorization = Base64.stringify(CryptoJS.enc.Utf8.parse(JSON.stringify({key: (await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC)).replace(/\s+/g, "")
     .replace("\n", ""), data: CryptoJS.AES.encrypt(encryptedAuth, authKey).toString()})))
@@ -35,7 +34,7 @@ export async function callAPI(
     // // const authorization = (await RSA.encrypt(((privateKey && password) ? CryptoJS.AES.encrypt(privateKey, password).toString() : process.env.EXPO_PUBLIC_LIMITED_AUTH), process.env.EXPO_PUBLIC_SERVER_PUBLIC)).replace(/\s+/g, "")
     // // .replace("\n", "");
     // console.log(CryptoJS.AES.encrypt(encryptedPriv, authKey).toString())
-    console.log(authorization)
+    // console.log(authorization)
     try {
       const res =
         method === "POST"
@@ -66,7 +65,6 @@ export async function callAPI(
       const decryptKey = privateKey
         ? (await RSA.decrypt(res.key, privateKey))
         : res.key;
-        console.log(res.body, decryptKey, privateKey)
       return JSON.parse(
         CryptoJS.AES.decrypt(res.body, decryptKey).toString(CryptoJS.enc.Utf8),
       );

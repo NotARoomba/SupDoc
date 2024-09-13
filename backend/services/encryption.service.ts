@@ -39,7 +39,7 @@ export async function decryptionMiddleware(
       publicKey: auth});
     const patientExists = await collections.patients?.findOne({
       publicKey: auth});
-      console.log(patientExists, doctorExists)
+      // console.log(patientExists, doctorExists)
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists)) return res.sendStatus(401);
     }

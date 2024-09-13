@@ -24,7 +24,7 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
         publicKey: req.headers.authorization,
       })) as unknown as Patient;
     }
-    console.log("GET USER", user)
+    // console.log("GET USER", user)
     if (user) {
       res.status(200).send(encrypt({ user, status: STATUS_CODES.SUCCESS }, req.headers.authorization));
     } else {
