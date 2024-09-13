@@ -8,7 +8,7 @@ const nodeRSA = new NodeRSA(env.SERVER_PRIVATE, "pkcs1", {
   environment: "browser",
 });
 
-export default async function encryptionMiddleware(
+export async function decryptionMiddleware(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -49,7 +49,13 @@ export default async function encryptionMiddleware(
       const data = CryptoJS.AES.decrypt(req.body.data, key);
       req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
     }
-    const altSend = res.send;
+  next();
+}
+
+export async function encryptionMiddleware(req: Request,
+  res: Response,
+  next: NextFunction) {
+    const send = structuredClone(res.send);
     res.send = function (body: any) {
       const key = CryptoJS.SHA256(body).toString();
       const encrypted = CryptoJS.AES.encrypt(
@@ -60,7 +66,7 @@ export default async function encryptionMiddleware(
       // res.send = oldSend;
       console.log("SEND")
       console.log(this.req.headers.authorization)
-      return express.response.send.call(this, {
+      return send({
         key:
           this.req.headers.authorization == env.LIMITED_AUTH
             ? key
@@ -73,5 +79,5 @@ export default async function encryptionMiddleware(
         body: encrypted,
       });
     };
-  next();
-}
+    next();
+  }
