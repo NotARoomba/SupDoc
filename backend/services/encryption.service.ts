@@ -60,7 +60,7 @@ export default async function encryptionMiddleware(
       // res.send = oldSend;
       console.log("SEND")
       console.log(this.req.headers.authorization)
-      return altSend.call(this, {
+      return express.response.send.call(this, {
         key:
           this.req.headers.authorization == env.LIMITED_AUTH
             ? key
