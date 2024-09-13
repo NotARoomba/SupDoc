@@ -49,12 +49,6 @@ export async function decryptionMiddleware(
       const data = CryptoJS.AES.decrypt(req.body.data, key);
       req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
     }
-  next();
-}
-
-export async function encryptionMiddleware(req: Request,
-  res: Response,
-  next: NextFunction) {
     const send = structuredClone(res.send);
     res.send = function (body: any) {
       const key = CryptoJS.SHA256(body).toString();
@@ -79,5 +73,12 @@ export async function encryptionMiddleware(req: Request,
         body: encrypted,
       });
     };
+  next();
+}
+
+export async function encryptionMiddleware(req: Request,
+  res: Response,
+  next: NextFunction) {
+    
     next();
   }
