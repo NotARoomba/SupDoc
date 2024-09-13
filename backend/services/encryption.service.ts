@@ -49,7 +49,7 @@ export async function decryptionMiddleware(
       const data = CryptoJS.AES.decrypt(req.body.data, key);
       req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
     }
-    const send = structuredClone(res.send);
+    const send = res.send;
     res.send = function (body: any) {
       const key = CryptoJS.SHA256(body).toString();
       const encrypted = CryptoJS.AES.encrypt(
@@ -60,7 +60,7 @@ export async function decryptionMiddleware(
       // res.send = oldSend;
       console.log("SEND")
       console.log(this.req.headers.authorization)
-      return send({
+      return send.call(this, {
         key:
           this.req.headers.authorization == env.LIMITED_AUTH
             ? key
