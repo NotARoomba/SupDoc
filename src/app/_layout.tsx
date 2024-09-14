@@ -22,7 +22,7 @@ export default function RootLayout() {
         setIsLogged(true);
       } else {
         await SplashScreen.hideAsync();
-        setIsLogged(false); 
+        setIsLogged(false);
       }
     };
     updateData();
@@ -33,13 +33,10 @@ export default function RootLayout() {
       {isLogged ? (
         // <Animated.View entering={FadeIn.duration(500)}>
         <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false }}
-          />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
-        // </Animated.View>
       ) : (
+        // </Animated.View>
         <Index setIsLogged={setIsLogged} />
       )}
     </View>

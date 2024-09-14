@@ -64,11 +64,8 @@ export default function Slider({ options, setOption, selected }: SliderProps) {
                 : undefined
             }
             onPress={(e: GestureResponderEvent) => {
-              e.currentTarget.measure((_x, _y, w,) => {
-                pos.value = withSpring(
-                  w* i,
-                  springConfig,
-                );
+              e.currentTarget.measure((_x, _y, w) => {
+                pos.value = withSpring(w * i, springConfig);
                 width.value = withSpring(w);
                 setOption(v);
               });

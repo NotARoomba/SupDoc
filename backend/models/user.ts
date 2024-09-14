@@ -15,4 +15,4 @@ export interface UserBase<T = Binary | null>
     T
   > {}
 
-export type User = Patient | Doctor;
+export type User = Patient<null> | Doctor<null>;

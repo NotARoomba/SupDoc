@@ -28,8 +28,8 @@ import { STATUS_CODES } from "@/backend/models/util";
 import Loader from "components/misc/Loader";
 import {
   callAPI,
-  isDoctorInfo,
-  isPatientInfo,
+  isDoctorSignupInfo,
+  isPatientSignupInfo,
 } from "components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 import CryptoJS from "crypto-es";
@@ -74,11 +74,18 @@ export default function Index({ setIsLogged }: IndexProps) {
     const keys = await RSA.generateKeys(2048);
     const encPriv = CryptoJS.AES.encrypt(keys.private, signUpInfo.password);
     let sexData = {};
-    if (isPatientInfo(userType, signUpInfo)) sexData = signUpInfo.trans ? {altSex: signUpInfo.altSex, surgery: signUpInfo.surgery, hormones: signUpInfo.hormones} : {}
+    if (isPatientSignupInfo(userType, signUpInfo))
+      sexData = signUpInfo.trans
+        ? {
+            altSex: signUpInfo.altSex,
+            surgery: signUpInfo.surgery,
+            hormones: signUpInfo.hormones,
+          }
+        : {};
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
-      isPatientInfo(userType, signUpInfo)
+      isPatientSignupInfo(userType, signUpInfo)
         ? {
             number: signUpInfo.countryCode + signUpInfo.number,
             dateJoined: new Date().getTime(), // D
@@ -95,7 +102,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               sex: signUpInfo.sex,
               blood: signUpInfo.gs + signUpInfo.rh,
               pregnant: signUpInfo.pregnant ?? false,
-              ...sexData
+              ...sexData,
             },
           }
         : {},
@@ -158,15 +165,11 @@ export default function Index({ setIsLogged }: IndexProps) {
   }, [userType]);
   const parseLogin = async () => {
     setLoading(true);
-    const doesExist = await callAPI(
-      `/users/check`,
-      "POST",
-      {
-        id: loginInfo.identification,
-      },
-    );
+    const doesExist = await callAPI(`/users/check`, "POST", {
+      id: loginInfo.identification,
+    });
     if (doesExist.status !== STATUS_CODES.ID_IN_USE) {
-      Alert.alert("Error", "There is no user with that ID!")
+      Alert.alert("Error", "There is no user with that ID!");
       return setLoading(false);
     }
     const res = await callAPI("/verify/code/send", "POST", {
@@ -200,15 +203,11 @@ export default function Index({ setIsLogged }: IndexProps) {
     //   // need to update wth localizations
     //   return Alert.alert("Error", v.status);
     // }
-    const res = await callAPI(
-      `/users/keys`,
-      "POST",
-      {
-        number,
-        id: loginInfo.identification,
-        userType
-      },
-    );
+    const res = await callAPI(`/users/keys`, "POST", {
+      number,
+      id: loginInfo.identification,
+      userType,
+    });
     if (res.status == STATUS_CODES.USER_NOT_FOUND) {
       setLoading(false);
       // need to update wth localizations
@@ -347,10 +346,10 @@ export default function Index({ setIsLogged }: IndexProps) {
             {(
               !isLogin
                 ? (userType &&
-                    isPatientInfo(userType, signUpInfo) &&
+                    isPatientSignupInfo(userType, signUpInfo) &&
                     (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
                   (userType &&
-                    isDoctorInfo(userType, signUpInfo) &&
+                    isDoctorSignupInfo(userType, signUpInfo) &&
                     pageIndex == 4)
                 : pageIndex == 2
             ) ? (
@@ -359,21 +358,23 @@ export default function Index({ setIsLogged }: IndexProps) {
                 exiting={FadeOut.duration(500)}
               >
                 <TouchableOpacity
-                  onPress={() => 
-                    (!isLogin
-                      ? (signUpInfo.passwordchk.length == 0 ||
-                        signUpInfo.passwordchk !== signUpInfo.password)
-                      : (loginInfo.identification == 0 ||
-                          loginInfo.password.length == 0))
-                        ? Alert.alert(
-                            "Error",
-                            !isLogin
-                              ? "The passwords do not match!"
-                              : "Please fill out the information!",
-                          )
-                        : !isLogin
-                          ? signup()
-                          : checkLogin("7", "8")
+                  onPress={() =>
+                    (
+                      !isLogin
+                        ? signUpInfo.passwordchk.length == 0 ||
+                          signUpInfo.passwordchk !== signUpInfo.password
+                        : loginInfo.identification == 0 ||
+                          loginInfo.password.length == 0
+                    )
+                      ? Alert.alert(
+                          "Error",
+                          !isLogin
+                            ? "The passwords do not match!"
+                            : "Please fill out the information!",
+                        )
+                      : !isLogin
+                        ? signup()
+                        : checkLogin("7", "8")
                   }
                   className={
                     "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
@@ -394,24 +395,24 @@ export default function Index({ setIsLogged }: IndexProps) {
                           (!signUpInfo.number || !signUpInfo.identification)) ||
                         (pageIndex == 3 &&
                           userType &&
-                          isPatientInfo(userType, signUpInfo) &&
+                          isPatientSignupInfo(userType, signUpInfo) &&
                           (!signUpInfo.height || !signUpInfo.weight)) ||
                         (pageIndex == 4 &&
                           userType &&
-                          isPatientInfo(userType, signUpInfo) &&
+                          isPatientSignupInfo(userType, signUpInfo) &&
                           (signUpInfo.trans == undefined || signUpInfo.trans
                             ? signUpInfo.hormones == undefined ||
                               signUpInfo.surgery == undefined
                             : false)) ||
                         (userType &&
-                          isPatientInfo(userType, signUpInfo) &&
+                          isPatientSignupInfo(userType, signUpInfo) &&
                           (signUpInfo.trans
                             ? pageIndex == 6
                             : pageIndex == 5) &&
                           (!signUpInfo.password || !signUpInfo.passwordchk)) ||
                         (pageIndex == 3 &&
                           userType &&
-                          isDoctorInfo(userType, signUpInfo) &&
+                          isDoctorSignupInfo(userType, signUpInfo) &&
                           signUpInfo.license.length == 0)
                       : pageIndex == 1 && !userType
                   )

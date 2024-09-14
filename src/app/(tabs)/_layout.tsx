@@ -34,7 +34,7 @@ export default function TabLayout() {
           display: "flex",
           backgroundColor: "#071932",
           position: "absolute",
-          bottom: Platform.OS == 'ios' ? 40 : 20,
+          bottom: Platform.OS == "ios" ? 40 : 20,
           borderRadius: 12,
           width: 350,
           left: "50%",

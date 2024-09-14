@@ -33,7 +33,7 @@ export enum UserType {
 export enum BirthSex {
   MALE = "M",
   FEMALE = "F",
-  INTERSEX = "IS"
+  INTERSEX = "IS",
 }
 
 export enum Sex {
@@ -41,7 +41,7 @@ export enum Sex {
   FEMALE = "F",
   INTERSEX = "IS",
   NONBINARY = "NB",
-  OTHER = "O"
+  OTHER = "O",
 }
 
 interface BaseSignupInfo {

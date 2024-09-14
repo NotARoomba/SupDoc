@@ -6,7 +6,8 @@ import axios from "axios";
 import { SignupInfo, UserType } from "./Types";
 import { Base64 } from "crypto-es/lib/enc-base64";
 import { reloadAppAsync } from "expo";
-
+import { User } from "@/backend/models/user";
+import Patient from "@/backend/models/patient";
 
 export async function callAPI(
   endpoint: string,
@@ -29,9 +30,19 @@ export async function callAPI(
       process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
     );
     let encryptedAuth = publicKey ?? process.env.EXPO_PUBLIC_LIMITED_AUTH;
-    const authKey = CryptoJS.SHA256(encryptedAuth).toString()
-    const authorization = Base64.stringify(CryptoJS.enc.Utf8.parse(JSON.stringify({key: (await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC)).replace(/\s+/g, "")
-    .replace("\n", ""), data: CryptoJS.AES.encrypt(encryptedAuth, authKey).toString()})))
+    const authKey = CryptoJS.SHA256(encryptedAuth).toString();
+    const authorization = Base64.stringify(
+      CryptoJS.enc.Utf8.parse(
+        JSON.stringify({
+          key: (
+            await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC)
+          )
+            .replace(/\s+/g, "")
+            .replace("\n", ""),
+          data: CryptoJS.AES.encrypt(encryptedAuth, authKey).toString(),
+        }),
+      ),
+    );
     // console.log(CryptoJS.enc.Utf8.parse(authorization).toString(CryptoJS.enc.Utf8))
     // // const authorization = (await RSA.encrypt(((privateKey && password) ? CryptoJS.AES.encrypt(privateKey, password).toString() : process.env.EXPO_PUBLIC_LIMITED_AUTH), process.env.EXPO_PUBLIC_SERVER_PUBLIC)).replace(/\s+/g, "")
     // // .replace("\n", "");
@@ -65,7 +76,7 @@ export async function callAPI(
               })
             ).data;
       const decryptKey = privateKey
-        ? (await RSA.decrypt(res.key, privateKey))
+        ? await RSA.decrypt(res.key, privateKey)
         : res.key;
       return JSON.parse(
         CryptoJS.AES.decrypt(res.body, decryptKey).toString(CryptoJS.enc.Utf8),
@@ -86,15 +97,22 @@ export async function callAPI(
   }
 }
 
-export const isPatientInfo = (
+export const isPatientSignupInfo = (
   userType: UserType,
   info: SignupInfo<UserType>,
 ): info is SignupInfo<UserType.PATIENT> => {
   return userType === UserType.PATIENT;
 };
 
+export const isPatientInfo = (
+  userType: UserType,
+  info: User,
+): info is Patient<null> => {
+  return userType === UserType.PATIENT;
+};
+
 // Type guard to check if info is of type SignupInfo<UserType.DOCTOR>
-export const isDoctorInfo = (
+export const isDoctorSignupInfo = (
   userType: UserType,
   info: SignupInfo<UserType>,
 ): info is SignupInfo<UserType.DOCTOR> => {
@@ -102,9 +120,9 @@ export const isDoctorInfo = (
 };
 
 export async function logout() {
-    await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE)
-    await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC)
-    await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_TYPE)
-    await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PASS)
-    reloadAppAsync()
+  await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE);
+  await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC);
+  await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_TYPE);
+  await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PASS);
+  reloadAppAsync();
 }

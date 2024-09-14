@@ -20,8 +20,8 @@ import React, { createRef, useEffect, useState } from "react";
 import { CountryPicker } from "react-native-country-codes-picker";
 import {
   callAPI,
-  isDoctorInfo,
-  isPatientInfo,
+  isDoctorSignupInfo,
+  isPatientSignupInfo,
 } from "../components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 import Loader from "components/misc/Loader";
@@ -112,56 +112,66 @@ export default function Signup({
     const doChecks = async () => {
       if (index == 3) {
         setIsLoading(true);
-        const res = await callAPI(`/users/check`, "POST", {number: (info.countryCode + info.number), id: info.identification});
-        if (res.status == STATUS_CODES.ID_IN_USE || res.status == STATUS_CODES.NUMBER_IN_USE) {
-          setIndex(index-1);
+        const res = await callAPI(`/users/check`, "POST", {
+          number: info.countryCode + info.number,
+          id: info.identification,
+        });
+        if (
+          res.status == STATUS_CODES.ID_IN_USE ||
+          res.status == STATUS_CODES.NUMBER_IN_USE
+        ) {
+          setIndex(index - 1);
           setIsLoading(false);
           return Alert.alert("Error", "That number/ID already exists!");
         }
         if (!verified) {
-        const isValid = (/^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/).test(info.number)
-        if (!isValid) {setIndex(index-1);
-          setIsLoading(false);
-          return Alert.alert("Error", "That is not a valid phone number");
+          const isValid =
+            /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/.test(
+              info.number,
+            );
+          if (!isValid) {
+            setIndex(index - 1);
+            setIsLoading(false);
+            return Alert.alert("Error", "That is not a valid phone number");
+          }
+          // const verify = await callAPI("/verify/code/send", "POST", {
+          //   number: info.countryCode + info.number,
+          // });
+          // if (verify.status === STATUS_CODES.INVALID_NUMBER)
+          //  { setIndex(index-1);
+          //   setIsLoading(false);return Alert.alert("Error", "That number is invalid!");}
+          // else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
+          //  { setIndex(index-1);
+          //   setIsLoading(false);return Alert.alert("Error", "That number does not exist!");}
+          // else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
+          // {  setIndex(index-1);
+          //   setIsLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
+          // else {
+          //   setTimeout(() => {
+          //     return prompt(
+          //       "Enter Verification Code",
+          //       "Enter the verification code sent to: " +
+          //         (info.countryCode + info.number),
+          //       [{text: 'Cancel', style: 'cancel', onPress: () => {setIndex(index-1);
+          //         setIsLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
+          //         setIsLoading(true);
+          //         const v = await callAPI("/verify/code/check", "POST", {
+          //           number: info.countryCode + info.number,
+          //           input,
+          //         });
+          //         if (v.status !== STATUS_CODES.SUCCESS) {
+          //           setIsLoading(false);
+          //           return Alert.alert("Error", "The code is incorrect!");
+          //         }
+          //         setIsVerified(true);
+          //       }}],
+          //       "plain-text",
+          //       "",
+          //       "number-pad",
+          //     );
+          //   }, 250);
+          // }
         }
-        // const verify = await callAPI("/verify/code/send", "POST", {
-        //   number: info.countryCode + info.number,
-        // });
-        // if (verify.status === STATUS_CODES.INVALID_NUMBER)
-        //  { setIndex(index-1);
-        //   setIsLoading(false);return Alert.alert("Error", "That number is invalid!");}
-        // else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
-        //  { setIndex(index-1);
-        //   setIsLoading(false);return Alert.alert("Error", "That number does not exist!");}
-        // else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
-        // {  setIndex(index-1);
-        //   setIsLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
-        // else {
-        //   setTimeout(() => {
-        //     return prompt(
-        //       "Enter Verification Code",
-        //       "Enter the verification code sent to: " +
-        //         (info.countryCode + info.number),
-        //       [{text: 'Cancel', style: 'cancel', onPress: () => {setIndex(index-1);
-        //         setIsLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
-        //         setIsLoading(true);
-        //         const v = await callAPI("/verify/code/check", "POST", {
-        //           number: info.countryCode + info.number,
-        //           input,
-        //         });
-        //         if (v.status !== STATUS_CODES.SUCCESS) {
-        //           setIsLoading(false);
-        //           return Alert.alert("Error", "The code is incorrect!");
-        //         }
-        //         setIsVerified(true);
-        //       }}],
-        //       "plain-text",
-        //       "",
-        //       "number-pad",
-        //     );
-        //   }, 250);
-        // }
-      }
         setIsLoading(false);
         if (userType != UserType.PATIENT) {
           (async () => {
@@ -211,7 +221,10 @@ export default function Signup({
               </Text>
             </TouchableOpacity>
             <TextInput
-              onChangeText={(n) => {setIsVerified(false);setInfo({ ...info, number: n })}}
+              onChangeText={(n) => {
+                setIsVerified(false);
+                setInfo({ ...info, number: n });
+              }}
               value={info.number}
               keyboardType="phone-pad"
               placeholderTextColor={"#ffffff"}
@@ -236,7 +249,7 @@ export default function Signup({
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
         </Animated.View>
-      ) : isPatientInfo(userType, info) ? (
+      ) : isPatientSignupInfo(userType, info) ? (
         index == 3 ? (
           <Animated.View
             entering={FadeIn.duration(500)}
@@ -315,9 +328,7 @@ export default function Signup({
                         }}
                         mode="dropdown"
                         dropdownIconColor={"#fbfff1"}
-                        onValueChange={(v) =>
-                          setInfo({ ...info, gs: v })
-                        }
+                        onValueChange={(v) => setInfo({ ...info, gs: v })}
                       >
                         <Picker.Item
                           style={{ backgroundColor: "#041225" }}
@@ -348,9 +359,7 @@ export default function Signup({
                         selectedValue={info.rh}
                         style={{ width: 100 }}
                         mode="dropdown"
-                        onValueChange={(v) =>
-                          setInfo({ ...info, rh: v })
-                        }
+                        onValueChange={(v) => setInfo({ ...info, rh: v })}
                       >
                         <Picker.Item
                           style={{ backgroundColor: "#041225" }}
@@ -617,21 +626,13 @@ export default function Signup({
                     label="M"
                     value={Sex.MALE}
                   />
-                  <Picker.Item
-                    color="#fbfff1"
-                    label="F"
-                    value={Sex.FEMALE}
-                  />
+                  <Picker.Item color="#fbfff1" label="F" value={Sex.FEMALE} />
                   <Picker.Item
                     color="#fbfff1"
                     label="NB"
                     value={Sex.NONBINARY}
                   />
-                  <Picker.Item
-                    color="#fbfff1"
-                    label="O"
-                    value={Sex.OTHER}
-                  />
+                  <Picker.Item color="#fbfff1" label="O" value={Sex.OTHER} />
                 </Picker>
               ) : (
                 <DropDownPicker
@@ -640,9 +641,7 @@ export default function Signup({
                   items={altSexItems}
                   setOpen={setAltSexOpen}
                   setValue={setAltSexValue}
-                  onChangeValue={(v) =>
-                    setInfo({ ...info, altSex: v as Sex })
-                  }
+                  onChangeValue={(v) => setInfo({ ...info, altSex: v as Sex })}
                   theme="DARK"
                   textStyle={{ color: "#fbfff1" }}
                   style={{ backgroundColor: "#041225" }}
@@ -694,7 +693,10 @@ export default function Signup({
           </Text>
           {cameraOpen && hasPermission && (
             <CameraView
-              className={"h-[100vh]  w-full absolute left-0 z-40 " + (Platform.OS == 'ios' ? '-top-[336px]' : '-top-[260px]')}
+              className={
+                "h-[100vh]  w-full absolute left-0 z-40 " +
+                (Platform.OS == "ios" ? "-top-[336px]" : "-top-[260px]")
+              }
               ref={cameraRef}
               onCameraReady={() => setisReady(true)}
             >
