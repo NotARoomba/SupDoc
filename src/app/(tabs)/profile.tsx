@@ -56,12 +56,38 @@ export default function Profile() {
     fetchData();
   }, []);
   const updateUser = async () => {
-    const res = await callAPI( `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/update`, "POST", userEdit);
-    if (res != STATUS_CODES.SUCCESS) {
+    setLoading(true);
+    const res = await callAPI(
+      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/update`,
+      "POST",
+      { ...userEdit, number: countryCode.slice(4) + userEdit?.number },
+    );
+    console.log(res);
+    if (res.status != STATUS_CODES.SUCCESS) {
       // setUserEdit(user);
-      return Alert.alert("Error", "There was an error updating your information!")
+      setLoading(false);
+      return Alert.alert(
+        "Error",
+        "There was an error updating your information!",
+      );
+    } else {
+      setUser(res.user);
+      setUserEdit({
+        ...res.user,
+        number: parsePhoneNumber(res.user.number)?.nationalNumber,
+      });
+      setCountryCode(
+        [...(parsePhoneNumber(res.user.number)?.country ?? "CO").toUpperCase()]
+          .map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
+          .reduce(
+            (a, b) =>
+              `${a}${b}+${parsePhoneNumber(res.user.number)?.countryCallingCode}`,
+          ),
+      );
+      setLoading(false);
+      return Alert.alert("Success", "Successfully updated your information!");
     }
-  }
+  };
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
       <View>
@@ -85,7 +111,7 @@ export default function Profile() {
           </TouchableOpacity>
         </View>
         <View className="flex mx-auto mt-20">
-          <View className="mx-auto bg-midnight_green p-4 aspect-square rounded-full">
+          <View className="mx-auto bg-transparent p-4 aspect-square rounded-full">
             <View className=" m-auto">
               <Icons name="person" size={150} color={"#fbfff1"} />
             </View>
@@ -119,97 +145,98 @@ export default function Profile() {
           {userEdit && isPatientInfo(userType, userEdit) ? (
             <View className="flex w-full flex-row px-8">
               <View>
-              <View className="flex w-full flex-row h-fit ">
-                <View className="w-1/2 flex flex-col">
-                  <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-                    Height (cm)
-                  </Text>
+                <View className="flex w-full flex-row h-fit ">
+                  <View className="w-1/2 flex flex-col">
+                    <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+                      Height (cm)
+                    </Text>
 
-                  <TextInput
-                    onChangeText={(h) =>
-                      setUserEdit({
-                        ...(userEdit as Patient<null>),
-                        info: {
-                          ...(userEdit as Patient<null>).info,
-                          height: isNaN(parseInt(h)) ? 0 : parseInt(h),
-                        },
-                      })
-                    }
-                    value={
-                      userEdit.info.height == 0
-                        ? ""
-                        : userEdit.info.height.toString()
-                    }
-                    maxLength={3}
-                    keyboardType="phone-pad"
-                    placeholderTextColor={"#ffffff"}
-                    className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-                  />
-                </View>
-                <View className="w-1/2 flex flex-col">
-                  <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-                    Weight (kg)
-                  </Text>
+                    <TextInput
+                      onChangeText={(h) =>
+                        setUserEdit({
+                          ...(userEdit as Patient<null>),
+                          info: {
+                            ...(userEdit as Patient<null>).info,
+                            height: isNaN(parseInt(h)) ? 0 : parseInt(h),
+                          },
+                        })
+                      }
+                      value={
+                        userEdit.info.height == 0
+                          ? ""
+                          : userEdit.info.height.toString()
+                      }
+                      maxLength={3}
+                      keyboardType="phone-pad"
+                      placeholderTextColor={"#ffffff"}
+                      className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                    />
+                  </View>
+                  <View className="w-1/2 flex flex-col">
+                    <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+                      Weight (kg)
+                    </Text>
 
-                  <TextInput
-                    onChangeText={(w) =>
-                      setUserEdit({
-                        ...userEdit,
-                        info: {
-                          ...userEdit.info,
-                          weight: isNaN(parseInt(w)) ? 0 : parseInt(w),
-                        },
-                      })
-                    }
-                    value={
-                      userEdit.info.weight == 0
-                        ? ""
-                        : userEdit.info.weight.toString()
-                    }
-                    maxLength={3}
-                    keyboardType="phone-pad"
-                    placeholderTextColor={"#ffffff"}
-                    className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-                  />
+                    <TextInput
+                      onChangeText={(w) =>
+                        setUserEdit({
+                          ...userEdit,
+                          info: {
+                            ...userEdit.info,
+                            weight: isNaN(parseInt(w)) ? 0 : parseInt(w),
+                          },
+                        })
+                      }
+                      value={
+                        userEdit.info.weight == 0
+                          ? ""
+                          : userEdit.info.weight.toString()
+                      }
+                      maxLength={3}
+                      keyboardType="phone-pad"
+                      placeholderTextColor={"#ffffff"}
+                      className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                    />
+                  </View>
                 </View>
-                </View>
-                 {(userEdit.info.sex == BirthSex.FEMALE ||
-                (userEdit.info.surgery &&
-                  userEdit.info.altSex == BirthSex.FEMALE)) && (
-                <View className="flex flex-col">
-                  <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-                    Pregnant
-                  </Text>
-              <Slider
-                    options={["Yes", "No"]}
-                    setOption={(v) =>
-                      setUserEdit({
-                        ...userEdit,
-                        info: { ...userEdit.info, pregnant: v == "Yes" },
-                      })
-                    }
-                    selected={userEdit.info.pregnant ? "Yes" : "No"}
-                  />
-                </View>
-              )}
+                {(userEdit.info.sex == BirthSex.FEMALE ||
+                  (userEdit.info.surgery &&
+                    userEdit.info.altSex == BirthSex.FEMALE)) && (
+                  <View className="flex flex-col">
+                    <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+                      Pregnant
+                    </Text>
+                    <Slider
+                      options={["Yes", "No"]}
+                      setOption={(v) =>
+                        setUserEdit({
+                          ...userEdit,
+                          info: { ...userEdit.info, pregnant: v == "Yes" },
+                        })
+                      }
+                      selected={userEdit.info.pregnant ? "Yes" : "No"}
+                    />
+                  </View>
+                )}
               </View>
-             
-             
             </View>
           ) : (
             <View />
           )}
-           {JSON.stringify({...userEdit, number: countryCode.slice(4) + userEdit?.number} as User) != JSON.stringify(user) && <View
-            className={
-              "flex flex-col absolute gap-y-4 w-full z-10 bottom-4"
-            }
-          ><Animated.View
+          {JSON.stringify({
+            ...userEdit,
+            number: countryCode.slice(4) + userEdit?.number,
+          } as User) != JSON.stringify(user) && (
+            <View
+              className={"flex flex-col absolute gap-y-4 w-full z-10 bottom-4"}
+            >
+              <Animated.View
                 entering={FadeIn.duration(500)}
                 exiting={FadeOut.duration(500)}
                 className="mt-5"
               >
                 <TouchableOpacity
-                  onPress={() => {}}
+                  onPress={updateUser}
                   className={
                     "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
                   }
@@ -218,7 +245,9 @@ export default function Profile() {
                     Update
                   </Text>
                 </TouchableOpacity>
-              </Animated.View></View>}
+              </Animated.View>
+            </View>
+          )}
         </View>
         <CountryPicker
           show={countryShow}
