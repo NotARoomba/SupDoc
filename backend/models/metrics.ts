@@ -1,7 +1,7 @@
 import { Binary } from "mongodb";
 import { ApplyConditionalType } from "./util";
 
-export default interface Metrics<T = Binary | null>
+export interface PatientMetrics<T = Binary | null>
   extends ApplyConditionalType<
     {
       age: number;
@@ -17,3 +17,7 @@ export default interface Metrics<T = Binary | null>
     },
     T
   > {}
+  
+export interface DoctorMetrics {
+  
+}

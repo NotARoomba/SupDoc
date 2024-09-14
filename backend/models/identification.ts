@@ -20,7 +20,7 @@ export interface DoctorIdentification<T = Binary | null>
     ApplyConditionalType<
       {
         number: number;
-        license: string; // R
+        license: string[]; // R
         isVerified: boolean; // D
       },
       T

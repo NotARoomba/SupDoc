@@ -3,14 +3,13 @@ import { DoctorIdentification } from "./identification";
 import Report from "./report";
 import { UserBase } from "./user";
 import { ApplyConditionalType } from "./util";
+import { Specialty } from "./specialty";
 
-export interface Doctor<T = Binary | null>
-  extends UserBase<T>,
-    ApplyConditionalType<
-      {
-        identification: DoctorIdentification<T>; // M
+export interface Doctor
+  extends UserBase{
+        name: string,
+        identification: DoctorIdentification; // M
         comments: string[]; // R
-        reports: Report<T>[]; // D
-      },
-      T
-    > {}
+        reports: Report[]; // D
+      } {}
+

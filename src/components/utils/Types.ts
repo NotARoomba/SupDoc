@@ -1,5 +1,7 @@
 /// <reference types="nativewind/types" />
 
+import { Specialty } from "@/backend/models/specialty";
+
 export interface IndexProps {
   setIsLogged: (v: boolean) => void;
 }
@@ -58,7 +60,10 @@ export type SignupInfo<T extends UserType = UserType> = BaseSignupInfo &
 
 // Fields required for Doctor signup
 export interface DoctorSignupInfo {
-  license: string; // Required for doctors
+  firstNames: string;
+  lastNames: string;
+  specialty: Specialty;
+  license: string[]; // Required for doctors
   isVerified: boolean; // Required for doctors
 }
 

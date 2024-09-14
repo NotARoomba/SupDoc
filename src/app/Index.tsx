@@ -134,10 +134,12 @@ export default function Index({ setIsLogged }: IndexProps) {
       if (userType === UserType.DOCTOR) {
         setSignUpInfo({
           password: "",
+          firstNames: "",
+          lastNames: "",
           passwordchk: "",
           countryCode: "+57",
           identification: 0, // Required for Signup as Doctor
-          license: "", // Required for Signup as Doctor
+          license: Array<string>(), // Required for Signup as Doctor
           isVerified: false, // Example field for doctor signup
         } as SignupInfo<UserType.DOCTOR>);
       } else if (userType === UserType.PATIENT) {

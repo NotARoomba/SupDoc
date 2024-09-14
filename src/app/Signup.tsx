@@ -1,5 +1,6 @@
 import {
   Alert,
+  Dimensions,
   Keyboard,
   Platform,
   Text,
@@ -49,6 +50,7 @@ import {
 } from "react-native-gesture-handler";
 import DropDownPicker from "react-native-dropdown-picker";
 import prompt from "@powerdesigninc/react-native-prompt";
+import { Specialty } from "@/backend/models/specialty";
 
 export default function Signup({
   info,
@@ -107,6 +109,15 @@ export default function Signup({
     { label: "Yes", value: true },
     { label: "No", value: false },
   ]);
+
+  const [specialtyValue, setSpecialtyValue] = useState(
+    Specialty.GeneralPractitioner,
+  ); // Default value
+  const [specialtyOpen, setSpecialtyOpen] = useState(false);
+  const [specialtyItems, setSpecialtyItems] = useState(
+    Object.values(Specialty).map((s) => ({ label: s, value: s })),
+  );
+
   useEffect(() => {
     console.log(index);
     const doChecks = async () => {
@@ -184,12 +195,12 @@ export default function Signup({
     doChecks();
   }, [index]);
   const photo = () => {
-    if (ready)
+    if (ready && isDoctorSignupInfo(userType, info))
       cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
         //https://github.com/gennadysx/react-native-document-scanner-plugin#readme
         FileSystem.readAsStringAsync(photo.uri, { encoding: "base64" }).then(
           (res) => {
-            setInfo({ ...info, license: res });
+            setInfo({ ...info, license: [...info.license, res] });
             // console.log((res.length / 1000).toFixed(2) + "KB")
             setCameraOpen(false);
           },
@@ -201,7 +212,7 @@ export default function Signup({
       <Animated.Text
         entering={FadeIn.duration(500)}
         key={index}
-        className="text-5xl text-ivory font-bold text-center mb-8"
+        className="text-5xl text-ivory font-bold text-center mb-6"
       >
         {index == 2 ? "Register" : "Personal Information"}
       </Animated.Text>
@@ -232,7 +243,7 @@ export default function Signup({
             />
           </View>
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            Cedula/TI
+            {userType == UserType.DOCTOR ? "Cedula" : "Cedula/TI"}
           </Text>
           <TextInput
             onChangeText={(id) =>
@@ -688,6 +699,84 @@ export default function Signup({
           className="flex flex-col"
           entering={FadeIn.duration(500)}
         >
+          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+            First Names
+          </Text>
+          <TextInput
+            onChangeText={(n) =>
+              setInfo({
+                ...info,
+                firstNames: n,
+              })
+            }
+            value={info.firstNames}
+            keyboardType="default"
+            placeholderTextColor={"#ffffff"}
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+          />
+          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+            Last Names
+          </Text>
+          <TextInput
+            onChangeText={(n) =>
+              setInfo({
+                ...info,
+                lastNames: n,
+              })
+            }
+            value={info.lastNames}
+            keyboardType="default"
+            placeholderTextColor={"#ffffff"}
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+          />
+          <Text className="text-center w-10/12 mx-auto text-lg mt-4 text-ivory font-semibold">
+            What is your specialty?
+          </Text>
+          <View className="flex flex-row justify-center">
+            {Platform.OS !== "ios" ? (
+              <Picker
+                selectedValue={info.specialty}
+                style={{
+                  width: (Dimensions.get("window").width * 11) / 12,
+                  marginTop: -40,
+                }}
+                onValueChange={(v) => setInfo({ ...info, specialty: v })}
+              >
+                {Object.values(Specialty).map((v, i) => (
+                  <Picker.Item color="#fbfff1" key={i} label={v} value={v} />
+                ))}
+              </Picker>
+            ) : (
+              <DropDownPicker
+                open={specialtyOpen}
+                value={specialtyValue}
+                items={specialtyItems}
+                setOpen={setSpecialtyOpen}
+                setValue={setSpecialtyValue}
+                onChangeValue={(v) =>
+                  setInfo({ ...info, specialty: v as Specialty })
+                }
+                theme="DARK"
+                textStyle={{ color: "#fbfff1" }}
+                style={{ backgroundColor: "#041225" }}
+                badgeColors={"#fbfff1"}
+                labelStyle={{ textAlign: "center" }}
+                dropDownContainerStyle={{ height: 120 }}
+                containerStyle={{
+                  width: (Dimensions.get("window").width * 11) / 12,
+                }}
+                listParentContainerStyle={{ height: 40 }}
+                listItemContainerStyle={{ backgroundColor: "#041225" }}
+                setItems={setSpecialtyItems}
+              />
+            )}
+          </View>
+        </Animated.View>
+      ) : index == 4 ? (
+        <Animated.View
+          className="flex flex-col"
+          entering={FadeIn.duration(500)}
+        >
           <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
             Upload your doctor's license or degree
           </Text>
@@ -738,12 +827,13 @@ export default function Signup({
               entering={FadeIn.duration(500)}
               className="w-full flex flex-col"
             >
+              {/* ADD PHOTO SCROLL WITH DELET BUTTON ON TAP */}
               <Text className="mx-auto text-lg font-semibold text-ivory mt-2 w-full text-center">
                 Photo: {(info.license.length / (1000 * 1000)).toFixed(2) + "MB"}
               </Text>
               <TouchableOpacity
                 className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-2 "
-                onPress={() => setInfo({ ...info, license: "" })}
+                onPress={() => setInfo({ ...info, license: [] })}
               >
                 <Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
                   Remove Photo
