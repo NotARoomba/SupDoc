@@ -33,7 +33,7 @@ export default function Profile() {
   const [userEdit, setUserEdit] = useState<User>();
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    const updateUser = async () => {
+    const fetchData = async () => {
       setLoading(true);
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
@@ -52,13 +52,16 @@ export default function Profile() {
       });
       setUserType(ut);
       setLoading(false);
-      // await SplashScreen.hideAsync();
     };
-    updateUser();
+    fetchData();
   }, []);
-  useEffect(() => {
-    console.log(JSON.stringify({...userEdit, number: countryCode.slice(4) + userEdit?.number} as User), JSON.stringify(user));
-  }, [userEdit]);
+  const updateUser = async () => {
+    const res = await callAPI( `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/update`, "POST", userEdit);
+    if (res != STATUS_CODES.SUCCESS) {
+      // setUserEdit(user);
+      return Alert.alert("Error", "There was an error updating your information!")
+    }
+  }
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
       <View>

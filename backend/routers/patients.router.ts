@@ -155,27 +155,25 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
   try {
     const keyUDID = await createKey([keyAltName, data.number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
     if (collections.patients) {
-      await collections.patients.updateOne({publicKey: data.publicKey}, {
+      const upd = await collections.patients.findOneAndUpdate({publicKey: data.publicKey}, {$set: {
         number: await encryption.encrypt(data.number, {
           keyId: keyUDID,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
-        info: {
-          height: await encryption.encrypt(data.info.height, {
+          "info.height": await encryption.encrypt(data.info.height, {
             keyAltName,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
           }),
-          weight: await encryption.encrypt(data.info.weight, {
+          "info.weight": await encryption.encrypt(data.info.weight, {
             keyAltName,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
           }),
-          pregnant: await encryption.encrypt(data.info.pregnant, {
+          "info.pregnant": await encryption.encrypt(data.info.pregnant, {
             keyAltName,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
           }),
-        },
-      });
-      res.send(encrypt({ status: STATUS_CODES.SUCCESS }, req.headers.authorization));
+      }}, {returnDocument:'after'});
+      res.send(encrypt({ user: upd, status: STATUS_CODES.SUCCESS }, req.headers.authorization));
     }
   } catch (error) {
     console.log(error);
