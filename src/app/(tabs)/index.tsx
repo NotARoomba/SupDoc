@@ -1,17 +1,15 @@
 import Post from "@/backend/models/post";
 import FunFact from "components/misc/FunFact";
-import { useState } from "react";
-import { View, Text, StyleSheet, Platform } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { Line } from "react-native-svg";
-import { useGlobalSearchParams, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet, Platform, Animated } from "react-native";
+import useFade from "components/misc/useFade";
 
 export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const fadeAnim = useFade();
   return (
     <Animated.View
-      entering={FadeIn.duration(500)}
-      exiting={FadeOut.duration(500)}
+      style={{ opacity: fadeAnim }}
       className={"h-full pt-6 " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}
     >
       <FunFact />

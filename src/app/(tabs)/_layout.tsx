@@ -1,8 +1,7 @@
 import Icons from "@expo/vector-icons/Octicons";
 import { SplashScreen, Tabs } from "expo-router";
-import { useEffect, useState } from "react";
-import { Alert, Platform, View } from "react-native";
-import Animated from "react-native-reanimated";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Alert, Platform, View, Animated } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { UserType } from "components/utils/Types";
 import { ParamListBase } from "@react-navigation/native";
@@ -12,6 +11,7 @@ import { STATUS_CODES } from "@/backend/models/util";
 
 export default function TabLayout() {
   const [userType, setUserType] = useState<UserType>();
+
   // const [user, setUser] = useState<User>();
   useEffect(() => {
     const updateData = async () => {

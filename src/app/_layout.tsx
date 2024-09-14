@@ -28,7 +28,7 @@ export default function RootLayout() {
     updateData();
   }, []);
   return (
-    <View className="text-ivory h-full">
+    <View className="text-ivory h-full bg-white">
       <SafeAreaView className="bg-richer_black" />
       {isLogged ? (
         // <Animated.View entering={FadeIn.duration(500)}>

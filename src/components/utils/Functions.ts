@@ -8,6 +8,7 @@ import { Base64 } from "crypto-es/lib/enc-base64";
 import { reloadAppAsync } from "expo";
 import { User } from "@/backend/models/user";
 import Patient from "@/backend/models/patient";
+import { SplashScreen } from "expo-router";
 
 export async function callAPI(
   endpoint: string,
