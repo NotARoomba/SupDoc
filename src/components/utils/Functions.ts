@@ -16,6 +16,7 @@ export async function callAPI(
   body: object = {},
 ) {
   try {
+    // return { status: STATUS_CODES.NONE_IN_USE };
     const data = JSON.stringify(body);
     const key = CryptoJS.SHA256(data).toString();
     const encryptedKey = await RSA.encrypt(
