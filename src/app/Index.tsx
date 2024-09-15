@@ -34,6 +34,8 @@ import {
 import Spinner from "react-native-loading-spinner-overlay";
 import CryptoJS from "crypto-es";
 import prompt from "@powerdesigninc/react-native-prompt";
+import Patient from "@/backend/models/patient";
+import { Doctor } from "@/backend/models/doctor";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
@@ -82,15 +84,17 @@ export default function Index({ setIsLogged }: IndexProps) {
             hormones: signUpInfo.hormones,
           }
         : {};
+        const sharedData = { number: signUpInfo.countryCode + signUpInfo.number,
+          dateJoined: new Date().getTime(), // D
+          publicKey: keys.public, // R
+          privateKey: encPriv.toString(), // R
+        }
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
       isPatientSignupInfo(userType, signUpInfo)
         ? {
-            number: signUpInfo.countryCode + signUpInfo.number,
-            dateJoined: new Date().getTime(), // D
-            publicKey: keys.public, // R
-            privateKey: encPriv.toString(), // R
+            ...sharedData,
             identification: {
               number: signUpInfo.identification,
             },
@@ -105,7 +109,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               ...sexData,
             },
           }
-        : {},
+        : {...sharedData, name: signUpInfo.firstNames + " " + signUpInfo.lastNames, identification: {license: signUpInfo.license, number: signUpInfo.identification}} as Doctor,
     );
     if (create.status === STATUS_CODES.SUCCESS) {
       Alert.alert("Success", "You are now registered!");
@@ -126,6 +130,9 @@ export default function Index({ setIsLogged }: IndexProps) {
         signUpInfo.password,
       );
       return setIsLogged(true);
+    } else {
+      setLoading(false);
+      return Alert.alert("Error", "There was an error creating a user!")
     }
   };
   useEffect(() => {
@@ -352,7 +359,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                     (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
                   (userType &&
                     isDoctorSignupInfo(userType, signUpInfo) &&
-                    pageIndex == 4)
+                    pageIndex == 5)
                 : pageIndex == 2
             ) ? (
               <Animated.View
@@ -415,7 +422,10 @@ export default function Index({ setIsLogged }: IndexProps) {
                         (pageIndex == 3 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
-                          (!signUpInfo.firstNames || !signUpInfo.lastNames))
+                          (!signUpInfo.firstNames || !signUpInfo.lastNames)) || (pageIndex == 4 &&
+                            userType &&
+                            isDoctorSignupInfo(userType, signUpInfo) &&
+                            (signUpInfo.license.length == 0))
                       : pageIndex == 1 && !userType
                   )
                     ? Alert.alert(
@@ -438,7 +448,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           overlayColor="#000000cc"
           textContent={"Loading"}
           customIndicator={<Loader />}
-          textStyle={{ color: "#fff", marginTop: -25 }}
+          textStyle={{ color: "#fbfff1", marginTop: -25 }}
           animation="fade"
         />
       </View>

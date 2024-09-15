@@ -37,8 +37,14 @@ import Slider from "components/buttons/Slider";
 import Animated, {
   FadeIn,
   FadeInLeft,
+  FadeInUp,
   FadeOut,
+  FadeOutDown,
   FadeOutLeft,
+  SlideInLeft,
+  SlideOutDown,
+  SlideOutRight,
+  ZoomOut,
 } from "react-native-reanimated";
 import { Camera, CameraView, PermissionStatus } from "expo-camera";
 import * as Linking from "expo-linking";
@@ -73,6 +79,7 @@ export default function Signup({
   const [gsValue, setGSValue] = useState("O");
   const [gsOpen, setGSOpen] = useState(false);
   const [verified, setIsVerified] = useState(false);
+  const [activeDelete, setActiveDelete] = useState("")
   const [gsItems, setGSItems] = useState([
     { label: "O", value: "O" },
     { label: "A", value: "A" },
@@ -790,14 +797,14 @@ export default function Signup({
           {cameraOpen && hasPermission && (
             <CameraView
               className={
-                "w-screen aspect-square top-0 absolute left-0 z-40 "
+                "w-screen aspect-square absolute z-40 "
                 // + (Platform.OS == "ios" ? "-top-[336px]" : "-top-[260px]")
               }
               ref={cameraRef}
               onCameraReady={() => setisReady(true)}
             >
               <TouchableOpacity
-                className="absolute left-1/2 -translate-x-12 bottom-16"
+                className="absolute left-1/2 -translate-x-12 -bottom-28"
                 onPress={() => photo()}
               >
                 <Ionicons name="ellipse-outline" size={98} color={"#fbfff1"} />
@@ -828,24 +835,26 @@ export default function Signup({
               Take Photo
             </Text>
           </TouchableOpacity> */}
-          <ScrollView
+          <Animated.ScrollView
             horizontal
+            entering={FadeIn.duration(500)}
+            // exiting={FadeOut.duration(0)}
             contentContainerStyle={{ justifyContent: "space-between" }}
             style={{ width: Dimensions.get("window").width }}
             className="flex flex-row h-fit m-auto p-4"
           >
             {info.license.map((v, i) => (
-              <ImageUpload key={i} image={v} removeImage={removeImage} />
-            ))}
-            <TouchableOpacity
-              onPress={() => setCameraOpen(true)}
-              className=" w-64 h-64 mx-2 aspect-square flex border-dashed border border-ivory/80 rounded-xl"
-            >
-              <View className="m-auto">
-                <Icons name="plus-circle" color={"#fbfff1"} size={50} />
-              </View>
-            </TouchableOpacity>
-          </ScrollView>
+              <ImageUpload activeDelete={v == activeDelete} setActiveDelete={setActiveDelete} key={i} image={v} removeImage={removeImage} />
+            ))}<TouchableOpacity
+            onPress={() => setCameraOpen(true)}
+            className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
+          >
+            <View className="m-auto">
+              <Icons name="plus-circle" color={"#fbfff1"} size={50} />
+            </View>
+          </TouchableOpacity>
+            
+          </Animated.ScrollView>
         </Animated.View>
       ) : (
         <Animated.View entering={FadeIn.duration(500)}>

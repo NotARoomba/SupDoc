@@ -29,10 +29,10 @@ export const env = dotenv.load({
 });
 
 export const collections: {
-  patients?: mongoDB.Collection<Patient<mongoDB.Binary>>;
+  patients?: mongoDB.Collection;
   doctors?: mongoDB.Collection<Doctor>;
-  posts?: mongoDB.Collection<Post>;
-  comments?: mongoDB.Collection<Comment>;
+  posts?: mongoDB.Collection;
+  comments?: mongoDB.Collection;
   reports?: mongoDB.Collection<Report>;
   facts?: mongoDB.Collection<Report>;
 } = {};
