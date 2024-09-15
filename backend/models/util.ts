@@ -19,7 +19,7 @@ export enum STATUS_CODES {
   INVALID_IDENTITY,
   COMMENT_LIMIT_REACHED,
   DOES_NOT_EXIST,
-  WRONG_PASSWORD
+  WRONG_PASSWORD,
 }
 
 type ConditionalType<T, U> = T extends Binary ? T : U;
@@ -27,8 +27,7 @@ type ConditionalType<T, U> = T extends Binary ? T : U;
 export type ApplyConditionalType<T, U> = {
   [K in keyof T]: K extends "_id"
     ? T[K] // Do not apply ConditionalType to _id
-    : 
-    K extends "publicKey"
+    : K extends "publicKey"
       ? T[K]
       : T[K] extends Array<infer R> // Check if T[K] is an array
         ? Array<ConditionalType<U, R>> // Apply ConditionalType to the array's elements, but keep the array itself

@@ -22,7 +22,6 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { CountryPicker } from "react-native-country-codes-picker";
 import parsePhoneNumber from "libphonenumber-js";
 import Patient from "@/backend/models/patient";
-import Metrics from "@/backend/models/metrics";
 import Slider from "components/buttons/Slider";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import prompt from "@powerdesigninc/react-native-prompt";
@@ -180,32 +179,36 @@ export default function Profile() {
                 <Icons name="person" size={150} color={"#fbfff1"} />
               </View>
             </View>
-            <Text className="text-2xl mt-2 text-ivory font-semibold text-center">
-              {user?.identification.number}
-            </Text>
-            <View className="h-0.5 rounded-full w-72 mx-auto bg-powder_blue/50 my-4" />
-            <Text className="text-center text-lg text-ivory  font-semibold">
-              Phone Number
-            </Text>
-            <View className="flex flex-row justify-center align-middle -mt-3  ">
-              <TouchableOpacity
-                onPress={() => setCountryShow(!countryShow)}
-                className=" bg-rich_black border border-powder_blue/20 border-r-0 text-center align-middle p-1 h-12 mt-3 w-3/12 rounded-l-xl"
-              >
-                <Text className="align-middle m-auto text-lg text-ivory font-semibold">
-                  {countryCode}
+            {userEdit && (
+              <>
+                <Text className="text-2xl mt-2 text-ivory font-semibold text-center">
+                  {user?.identification.number}
                 </Text>
-              </TouchableOpacity>
-              <TextInput
-                onChangeText={(n) => {
-                  setUserEdit({ ...userEdit, number: n } as User);
-                }}
-                value={userEdit?.number}
-                keyboardType="phone-pad"
-                placeholderTextColor={"#ffffff"}
-                className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-7/12   rounded-xl rounded-l-none bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-              />
-            </View>
+                <View className="h-0.5 rounded-full w-72 mx-auto bg-powder_blue/50 my-4" />
+                <Text className="text-center text-lg text-ivory  font-semibold">
+                  Phone Number
+                </Text>
+                <View className="flex flex-row justify-center align-middle -mt-3  ">
+                  <TouchableOpacity
+                    onPress={() => setCountryShow(!countryShow)}
+                    className=" bg-rich_black border border-powder_blue/20 border-r-0 text-center align-middle p-1 h-12 mt-3 w-3/12 rounded-l-xl"
+                  >
+                    <Text className="align-middle m-auto text-lg text-ivory font-semibold">
+                      {countryCode}
+                    </Text>
+                  </TouchableOpacity>
+                  <TextInput
+                    onChangeText={(n) => {
+                      setUserEdit({ ...userEdit, number: n } as User);
+                    }}
+                    value={userEdit.number}
+                    keyboardType="phone-pad"
+                    placeholderTextColor={"#ffffff"}
+                    className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-7/12   rounded-xl rounded-l-none bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                  />
+                </View>
+              </>
+            )}
             {userEdit && isPatientInfo(userType, userEdit) ? (
               <View className="flex w-full flex-row px-8">
                 <View>
@@ -218,9 +221,9 @@ export default function Profile() {
                       <TextInput
                         onChangeText={(h) =>
                           setUserEdit({
-                            ...(userEdit as Patient<null>),
+                            ...(userEdit as Patient),
                             info: {
-                              ...(userEdit as Patient<null>).info,
+                              ...(userEdit as Patient).info,
                               height: isNaN(parseInt(h)) ? 0 : parseInt(h),
                             },
                           })

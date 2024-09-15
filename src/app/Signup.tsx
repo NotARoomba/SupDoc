@@ -3,12 +3,14 @@ import {
   Dimensions,
   Keyboard,
   Platform,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import Icons from "@expo/vector-icons/Octicons";
 import CryptoJS from "crypto-es";
 import {
   BirthSex,
@@ -46,11 +48,11 @@ import { rgbaColor } from "react-native-reanimated/lib/typescript/reanimated2/Co
 import {
   GestureDetector,
   GestureHandlerRootView,
-  ScrollView,
 } from "react-native-gesture-handler";
 import DropDownPicker from "react-native-dropdown-picker";
 import prompt from "@powerdesigninc/react-native-prompt";
 import { Specialty } from "@/backend/models/specialty";
+import ImageUpload from "components/misc/ImageUpload";
 
 export default function Signup({
   info,
@@ -198,15 +200,20 @@ export default function Signup({
     if (ready && isDoctorSignupInfo(userType, info))
       cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
         //https://github.com/gennadysx/react-native-document-scanner-plugin#readme
-        FileSystem.readAsStringAsync(photo.uri, { encoding: "base64" }).then(
-          (res) => {
-            setInfo({ ...info, license: [...info.license, res] });
-            // console.log((res.length / 1000).toFixed(2) + "KB")
-            setCameraOpen(false);
-          },
-        );
+        setInfo({ ...info, license: [...info.license, photo.uri] });
+        setCameraOpen(false);
+        // FileSystem.readAsStringAsync(photo.uri, { encoding: "base64" }).then(
+        //   (res) => {
+        //     setInfo({ ...info, license: [...info.license, res] });
+        //     // console.log((res.length / 1000).toFixed(2) + "KB")
+        //     setCameraOpen(false);
+        //   },
+        // );
       });
   };
+  const removeImage = (image: string) =>
+    isDoctorSignupInfo(userType, info) &&
+    setInfo({ ...info, license: info.license.filter((v) => v !== image) });
   return (
     <View className="h-full ">
       <Animated.Text
@@ -729,7 +736,7 @@ export default function Signup({
             placeholderTextColor={"#ffffff"}
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
-          <Text className="text-center w-10/12 mx-auto text-lg mt-4 text-ivory font-semibold">
+          {/* <Text className="text-center w-10/12 mx-auto text-lg mt-4 text-ivory font-semibold">
             What is your specialty?
           </Text>
           <View className="flex flex-row justify-center">
@@ -770,21 +777,21 @@ export default function Signup({
                 setItems={setSpecialtyItems}
               />
             )}
-          </View>
+          </View> */}
         </Animated.View>
       ) : index == 4 ? (
         <Animated.View
-          className="flex flex-col"
+          className="flex flex-col w-full"
           entering={FadeIn.duration(500)}
         >
-          <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+          <Text className="text-center text-lg text-ivory  font-semibold">
             Upload your doctor's license or degree
           </Text>
           {cameraOpen && hasPermission && (
             <CameraView
               className={
-                "h-[100vh]  w-full absolute left-0 z-40 " +
-                (Platform.OS == "ios" ? "-top-[336px]" : "-top-[260px]")
+                "w-screen aspect-square top-0 absolute left-0 z-40 "
+                // + (Platform.OS == "ios" ? "-top-[336px]" : "-top-[260px]")
               }
               ref={cameraRef}
               onCameraReady={() => setisReady(true)}
@@ -798,7 +805,7 @@ export default function Signup({
               </TouchableOpacity>
             </CameraView>
           )}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-4 "
             onPress={() =>
               hasPermission
@@ -820,27 +827,25 @@ export default function Signup({
             <Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
               Take Photo
             </Text>
-          </TouchableOpacity>
-          {info.license.length != 0 && (
-            <Animated.View
-              key={info.license.length}
-              entering={FadeIn.duration(500)}
-              className="w-full flex flex-col"
+          </TouchableOpacity> */}
+          <ScrollView
+            horizontal
+            contentContainerStyle={{ justifyContent: "space-between" }}
+            style={{ width: Dimensions.get("window").width }}
+            className="flex flex-row h-fit m-auto p-4"
+          >
+            {info.license.map((v, i) => (
+              <ImageUpload key={i} image={v} removeImage={removeImage} />
+            ))}
+            <TouchableOpacity
+              onPress={() => setCameraOpen(true)}
+              className=" w-64 h-64 mx-2 aspect-square flex border-dashed border border-ivory/80 rounded-xl"
             >
-              {/* ADD PHOTO SCROLL WITH DELET BUTTON ON TAP */}
-              <Text className="mx-auto text-lg font-semibold text-ivory mt-2 w-full text-center">
-                Photo: {(info.license.length / (1000 * 1000)).toFixed(2) + "MB"}
-              </Text>
-              <TouchableOpacity
-                className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-2 "
-                onPress={() => setInfo({ ...info, license: [] })}
-              >
-                <Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
-                  Remove Photo
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          )}
+              <View className="m-auto">
+                <Icons name="plus-circle" color={"#fbfff1"} size={50} />
+              </View>
+            </TouchableOpacity>
+          </ScrollView>
         </Animated.View>
       ) : (
         <Animated.View entering={FadeIn.duration(500)}>

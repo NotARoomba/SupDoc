@@ -26,16 +26,35 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
     }
     // console.log("GET USER", user)
     if (user) {
-      res.status(200).send(encrypt({ user, status: STATUS_CODES.SUCCESS }, req.headers.authorization));
+      res
+        .status(200)
+        .send(
+          encrypt(
+            { user, status: STATUS_CODES.SUCCESS },
+            req.headers.authorization,
+          ),
+        );
     } else {
-      res.status(404).send(encrypt({
-        user: null,
-        status: STATUS_CODES.USER_NOT_FOUND,
-      }, req.headers.authorization));
+      res.status(404).send(
+        encrypt(
+          {
+            user: null,
+            status: STATUS_CODES.USER_NOT_FOUND,
+          },
+          req.headers.authorization,
+        ),
+      );
     }
   } catch (error) {
     console.log(error);
-    res.status(404).send(encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization));
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
   }
 });
 
@@ -50,7 +69,13 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
   const keyAltName = data.identification.number.toString(2);
   try {
-    const keyUDID = await createKey([keyAltName, data.number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
+    const keyUDID = await createKey([
+      keyAltName,
+      data.number
+        .split("")
+        .map((bin) => String.fromCharCode(parseInt(bin, 2)))
+        .join(""),
+    ]);
     const sexData =
       data.info.altSex && data.info.altSex !== data.info.sex
         ? {
@@ -141,11 +166,21 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
         // Posts field
         posts: [],
       });
-      res.send(encrypt({ id: ins.insertedId, status: STATUS_CODES.SUCCESS }, req.headers.authorization));
+      res.send(
+        encrypt(
+          { id: ins.insertedId, status: STATUS_CODES.SUCCESS },
+          req.headers.authorization,
+        ),
+      );
     }
   } catch (error) {
     console.log(error);
-    res.send(encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization));
+    res.send(
+      encrypt(
+        { status: STATUS_CODES.GENERIC_ERROR },
+        req.headers.authorization,
+      ),
+    );
   }
 });
 
@@ -153,30 +188,52 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
   const data: Patient<null> = req.body;
   const keyAltName = data.identification.number.toString(2);
   try {
-    const keyUDID = await createKey([keyAltName, data.number.split('').map(bin => String.fromCharCode(parseInt(bin, 2))).join('')]);
+    const keyUDID = await createKey([
+      keyAltName,
+      data.number
+        .split("")
+        .map((bin) => String.fromCharCode(parseInt(bin, 2)))
+        .join(""),
+    ]);
     if (collections.patients) {
-      const upd = await collections.patients.findOneAndUpdate({publicKey: data.publicKey}, {$set: {
-        number: await encryption.encrypt(data.number, {
-          keyId: keyUDID,
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        }),
-          "info.height": await encryption.encrypt(data.info.height, {
-            keyAltName,
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-          }),
-          "info.weight": await encryption.encrypt(data.info.weight, {
-            keyAltName,
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-          }),
-          "info.pregnant": await encryption.encrypt(data.info.pregnant, {
-            keyAltName,
-            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-          }),
-      }}, {returnDocument:'after'});
-      res.send(encrypt({ user: upd, status: STATUS_CODES.SUCCESS }, req.headers.authorization));
+      const upd = await collections.patients.findOneAndUpdate(
+        { publicKey: data.publicKey },
+        {
+          $set: {
+            number: await encryption.encrypt(data.number, {
+              keyId: keyUDID,
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            }),
+            "info.height": await encryption.encrypt(data.info.height, {
+              keyAltName,
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            }),
+            "info.weight": await encryption.encrypt(data.info.weight, {
+              keyAltName,
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            }),
+            "info.pregnant": await encryption.encrypt(data.info.pregnant, {
+              keyAltName,
+              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            }),
+          },
+        },
+        { returnDocument: "after" },
+      );
+      res.send(
+        encrypt(
+          { user: upd, status: STATUS_CODES.SUCCESS },
+          req.headers.authorization,
+        ),
+      );
     }
   } catch (error) {
     console.log(error);
-    res.send(encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization));
+    res.send(
+      encrypt(
+        { status: STATUS_CODES.GENERIC_ERROR },
+        req.headers.authorization,
+      ),
+    );
   }
-})
+});

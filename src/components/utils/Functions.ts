@@ -108,7 +108,7 @@ export const isPatientSignupInfo = (
 export const isPatientInfo = (
   userType: UserType,
   info: User,
-): info is Patient<null> => {
+): info is Patient => {
   return userType === UserType.PATIENT;
 };
 

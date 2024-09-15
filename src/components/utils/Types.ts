@@ -131,3 +131,8 @@ export interface LoadingScreenProps {
   show: boolean;
   text: string;
 }
+
+export interface ImageUploadProps {
+  image: string;
+  removeImage: (v: string) => void;
+}

@@ -9,13 +9,9 @@ enum REPORT_REASONS {
   IMPERSONATION,
 }
 
-export default interface Report<T = Binary | null>
-  extends ApplyConditionalType<
-    {
-      _id: ObjectId;
-      reporter: number;
-      reason: REPORT_REASONS;
-      proof: string;
-    },
-    T
-  > {}
+export default interface Report {
+  _id: ObjectId;
+  reporter: number;
+  reason: REPORT_REASONS;
+  proof: string;
+}

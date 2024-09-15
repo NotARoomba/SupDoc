@@ -415,7 +415,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                         (pageIndex == 3 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
-                          signUpInfo.license.length == 0)
+                          (!signUpInfo.firstNames || !signUpInfo.lastNames))
                       : pageIndex == 1 && !userType
                   )
                     ? Alert.alert(

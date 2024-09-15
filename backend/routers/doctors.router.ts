@@ -1,14 +1,7 @@
 import express, { Request, Response } from "express";
-import {
-  collections,
-  createKey,
-  encryption,
-  env,
-} from "../services/database.service";
+import { collections } from "../services/database.service";
 import { STATUS_CODES } from "../models/util";
-import { MongoCryptError, ObjectId } from "mongodb";
 import { Doctor } from "../models/doctor";
-import { createWorker } from "tesseract.js";
 
 export const doctorsRouter = express.Router();
 
@@ -47,8 +40,9 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
   try {
     if (collections.doctors) {
-      const ins = await collections.doctors.insertOne({...data,
-        identification: {...data.identification, isVerified: false},
+      const ins = await collections.doctors.insertOne({
+        ...data,
+        identification: { ...data.identification, isVerified: false },
         comments: [],
         reports: [],
       });
