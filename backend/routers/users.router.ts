@@ -18,7 +18,10 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
   const id: number = req.body.id;
   const number: string | null = req.body.number;
   try {
-    if (number)
+    if (number && !(await encryption.getKeyByAltName(number
+      .split("")
+      .map((bin) => bin.charCodeAt(0).toString(2))
+      .join(""))))
       await createKey([
         id.toString(2),
         number
