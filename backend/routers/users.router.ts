@@ -17,30 +17,31 @@ usersRouter.use(express.json());
 usersRouter.post("/check", async (req: Request, res: Response) => {
   const id: number = req.body.id;
   const number: string | null = req.body.number;
-  try {
-    if (
-      number 
+  // try {
+  //   if (
+  //     number 
       
-    ) {
-      const exists = (await encryption.getKeyByAltName(
-        number
-          .split("")
-          .map((bin) => bin.charCodeAt(0).toString(2))
-          .join(""),
-      ))
-      console.log(exists, number
-        .split("")
-        .map((bin) => bin.charCodeAt(0).toString(2))
-        .join(""))
-      if (!exists) await createKey([
-        id.toString(2),
-        number
-          .split("")
-          .map((bin) => bin.charCodeAt(0).toString(2))
-          .join(""),
-      ]);
-    }
-  } catch (e) { console.log(e); }
+  //   ) {
+  //     const exists = (await encryption.getKeyByAltName(
+  //       number
+  //         .split("")
+  //         .map((bin) => bin.charCodeAt(0).toString(2))
+  //         .join(""),
+  //     ))
+  //     console.log(exists, number
+  //       .split("")
+  //       .map((bin) => bin.charCodeAt(0).toString(2))
+  //       .join(""))
+        
+  //     if (!exists) await createKey([
+  //       id.toString(2),
+  //       number
+  //         .split("")
+  //         .map((bin) => bin.charCodeAt(0).toString(2))
+  //         .join(""),
+  //     ]);
+  //   }
+  // } catch (e) { console.log(e); }
   try {
     let user: User | null = null;
     if (collections.patients && collections.doctors) {

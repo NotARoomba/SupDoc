@@ -71,10 +71,9 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   try {
     const keyUDID = await createKey([
       keyAltName,
-      data.number
-        .split("")
-        .map((bin) => String.fromCharCode(parseInt(bin, 2)))
-        .join(""),
+      data.number.split("")
+      .map((bin) => bin.charCodeAt(0).toString(2))
+      .join(""),
     ]);
     const sexData =
       data.info.altSex && data.info.altSex !== data.info.sex
@@ -168,7 +167,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
       });
       res.send(
         encrypt(
-          { id: ins.insertedId, status: STATUS_CODES.SUCCESS },
+          { status: STATUS_CODES.SUCCESS },
           req.headers.authorization,
         ),
       );
