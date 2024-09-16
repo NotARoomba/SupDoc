@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert, Linking } from "react-native";
 
-export default function usePhotos() {
+export default function useGallery() {
   const requestPermission = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 

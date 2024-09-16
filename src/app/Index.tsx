@@ -128,7 +128,7 @@ export default function Index({ setIsLogged }: IndexProps) {
             info: {
               specialty: signUpInfo.specialty,
               experience: signUpInfo.experience,
-              about: signUpInfo.about
+              about: signUpInfo.about,
             },
             identification: {
               license: signUpInfo.license,
@@ -389,7 +389,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                     (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
                   (userType &&
                     isDoctorSignupInfo(userType, signUpInfo) &&
-                    pageIndex == 7)
+                    pageIndex == 8)
                 : pageIndex == 2
             ) ? (
               <Animated.View
@@ -452,15 +452,20 @@ export default function Index({ setIsLogged }: IndexProps) {
                         (pageIndex == 3 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
-                          (!signUpInfo.firstNames || !signUpInfo.lastNames)) || (pageIndex == 4 &&
-                            userType &&
-                            isDoctorSignupInfo(userType, signUpInfo) &&
-                            (!signUpInfo.specialty || !signUpInfo.experience || !signUpInfo.about))||
+                          (!signUpInfo.firstNames || !signUpInfo.lastNames)) ||
+                        (pageIndex == 4 &&
+                          userType &&
+                          isDoctorSignupInfo(userType, signUpInfo) &&
+                          (!signUpInfo.specialty || !signUpInfo.experience)) ||
                         (pageIndex == 5 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
-                          signUpInfo.license.length == 0) ||
+                          !signUpInfo.about) ||
                         (pageIndex == 6 &&
+                          userType &&
+                          isDoctorSignupInfo(userType, signUpInfo) &&
+                          signUpInfo.license.length == 0) ||
+                        (pageIndex == 7 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
                           !signUpInfo.picture)

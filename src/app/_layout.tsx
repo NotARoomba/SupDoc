@@ -1,7 +1,12 @@
 import "expo-dev-client";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, SafeAreaView, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  View,
+} from "react-native";
 import Index from "./Index";
 import { SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";

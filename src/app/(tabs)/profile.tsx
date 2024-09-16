@@ -34,12 +34,12 @@ import prompt from "@powerdesigninc/react-native-prompt";
 import useFade from "components/misc/useFade";
 import { Image } from "expo-image";
 import useCamera from "components/misc/useCamera";
-import usePhotos from "components/misc/usePhotos";
+import useGallery from "components/misc/useGallery";
 import * as FileSystem from "expo-file-system";
 
 export default function Profile() {
   const camera = useCamera();
-  const photos = usePhotos();
+  const gallery = useGallery();
   const [userType, setUserType] = useState<UserType>();
   const [countryShow, setCountryShow] = useState(false);
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
@@ -177,11 +177,11 @@ export default function Profile() {
       }
     } else await updateUser();
   };
-  const selectImage = async (pickerType: "camera" | "photos") => {
+  const selectImage = async (pickerType: "camera" | "gallery") => {
     if (
       !(await camera.requestPermission()) &&
       pickerType == "camera" &&
-      !(await photos.requestPermission()) &&
+      !(await gallery.requestPermission()) &&
       pickerType !== "camera"
     )
       return console.log("NO PHOTOS");
@@ -193,7 +193,7 @@ export default function Profile() {
           quality: 0.5,
         });
       } else {
-        result = await photos.selectImage({
+        result = await gallery.selectImage({
           quality: 0.5,
           allowsEditing: true,
         });
@@ -228,7 +228,10 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
       {userType && (
-        <TouchableWithoutFeedback className="h-full w-full" onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback
+          className="h-full w-full"
+          onPress={Keyboard.dismiss}
+        >
           <View className="w-full">
             <View className="flex mx-auto pt-8  h-full w-full">
               <View className="mx-auto bg-transparent w-48 h-48 rounded-full">
@@ -267,7 +270,7 @@ export default function Profile() {
                                           setUserEdit({
                                             ...userEdit,
                                             picture:
-                                              (await selectImage("photos")) ??
+                                              (await selectImage("gallery")) ??
                                               userEdit.picture,
                                           }),
                                       },
