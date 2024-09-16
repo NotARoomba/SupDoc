@@ -74,3 +74,20 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
     res.send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
+
+doctorsRouter.post("/update", async (req: Request, res: Response) => {
+  const data: Doctor = req.body;
+  try {
+    if (collections.doctors) {
+      await collections.doctors.updateOne({publicKey: req.headers.authorization},{
+        number: data.number,
+        picture: data.picture,
+      });
+      res.send({ status: STATUS_CODES.SUCCESS });
+    }
+  } catch (error) {
+    console.log(error);
+    res.send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+});
+
