@@ -119,7 +119,7 @@ export default function Profile() {
   const parseUpdate = async () => {
     setLoading(true);
     //need to check phone number
-    if (countryCode.slice(4) + userEdit?.number != user?.number) {
+    if ((countryCode.slice(4) + userEdit?.number) != user?.number) {
       const verify = await callAPI("/verify/code/send", "POST", {
         number: countryCode.slice(4) + userEdit?.number,
       });
