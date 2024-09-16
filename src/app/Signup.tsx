@@ -46,6 +46,7 @@ import Animated, {
   SlideOutRight,
   ZoomOut,
 } from "react-native-reanimated";
+import * as ImagePicker from 'expo-image-picker';
 import { Camera, CameraView, PermissionStatus } from "expo-camera";
 import * as Linking from "expo-linking";
 import { Ionicons } from "@expo/vector-icons";
@@ -60,6 +61,7 @@ import prompt from "@powerdesigninc/react-native-prompt";
 import { Specialty } from "@/backend/models/specialty";
 import ImageUpload from "components/misc/ImageUpload";
 
+
 export default function Signup({
   info,
   index,
@@ -71,7 +73,7 @@ export default function Signup({
 }: SignupProps) {
   /// setInfo({...info, info.(PROPIEDAD Q QUIERES CAMBIAR)})
   const [show, setShow] = useState(false);
-  const [hasPermission, setHasPermission] = useState(false);
+  const [status, requestPermission] = ImagePicker.useCameraPermissions();
   const cameraRef = createRef<CameraView>();
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [loading, setIsLoading] = useState(false);
@@ -197,7 +199,9 @@ export default function Signup({
       } else if (index == 4) {
         if (userType != UserType.PATIENT) {
           (async () => {
-            const { status } = await Camera.requestCameraPermissionsAsync();
+            // const { status } = await Camera.requestCameraPermissionsAsync();
+            const { status } = await requestPermission();
+
             setHasPermission(status === "granted");
           })();
         }
@@ -715,6 +719,14 @@ export default function Signup({
           className="flex flex-col"
           entering={FadeIn.duration(500)}
         >
+          <TouchableOpacity
+              onPress={() => setCameraOpen(true)}
+              className=" w-48 h-48 mx-auto  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
+            >
+              <View className="m-auto">
+                <Icons name="plus-circle" color={"#fbfff1"} size={50} />
+              </View>
+            </TouchableOpacity>
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
             First Names
           </Text>

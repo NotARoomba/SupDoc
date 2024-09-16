@@ -1,5 +1,5 @@
 import { STATUS_CODES } from "@/backend/models/util";
-import { callAPI, isPatientInfo, logout } from "components/utils/Functions";
+import { callAPI, isDoctorInfo, isPatientInfo, logout } from "components/utils/Functions";
 import { BirthSex, UserType } from "components/utils/Types";
 import React, { useEffect, useState } from "react";
 import {
@@ -26,9 +26,10 @@ import Slider from "components/buttons/Slider";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import prompt from "@powerdesigninc/react-native-prompt";
 import useFade from "components/misc/useFade";
+import { Image } from "expo-image";
 
 export default function Profile() {
-  const [userType, setUserType] = useState<UserType>(UserType.PATIENT);
+  const [userType, setUserType] = useState<UserType>();
   const [countryShow, setCountryShow] = useState(false);
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [user, setUser] = useState<User>();
@@ -176,12 +177,19 @@ export default function Profile() {
           <Icons name="sign-out" size={38} color={"#fbfff1"} />
         </TouchableOpacity>
       </View>
-      <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
+      {userType && <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
         <View>
           <View className="flex mx-auto pt-8 h-full">
             <View className="mx-auto bg-transparent p-4 aspect-square rounded-full">
               <View className=" m-auto">
-                <Icons name="person" size={150} color={"#fbfff1"} />
+                {userType == UserType.PATIENT ? <Icons name="person" size={150} color={"#fbfff1"} /> : user && isDoctorInfo(userType, user) && <TouchableOpacity
+              onPress={() => console.log("CHANGE PHOTO")}
+              className=" w-48 h-48  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
+            >
+              <View className="m-auto">
+                <Image source={user.picture} />
+              </View>
+            </TouchableOpacity>}
               </View>
             </View>
             {userEdit && (
@@ -226,9 +234,9 @@ export default function Profile() {
                       <TextInput
                         onChangeText={(h) =>
                           setUserEdit({
-                            ...(userEdit as Patient),
+                            ...(userEdit),
                             info: {
-                              ...(userEdit as Patient).info,
+                              ...(userEdit).info,
                               height: isNaN(parseInt(h)) ? 0 : parseInt(h),
                             },
                           })
@@ -293,7 +301,7 @@ export default function Profile() {
                 </View>
               </View>
             ) : (
-              <View />
+              <View><Text className="text-ivory">DOCTORRR</Text></View>
             )}
             {userEdit &&
               JSON.stringify({
@@ -362,7 +370,7 @@ export default function Profile() {
             animation="fade"
           />
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>}
     </Animated.View>
   );
 }

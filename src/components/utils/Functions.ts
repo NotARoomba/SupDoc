@@ -9,6 +9,7 @@ import { reloadAppAsync } from "expo";
 import { User } from "@/backend/models/user";
 import Patient from "@/backend/models/patient";
 import { SplashScreen } from "expo-router";
+import { Doctor } from "@/backend/models/doctor";
 
 export async function callAPI(
   endpoint: string,
@@ -77,11 +78,9 @@ export async function callAPI(
                 },
               })
             ).data;
-            console.log(res, "ASDASDs")
       const decryptKey = privateKey
         ? await RSA.decrypt(res.key, privateKey)
         : res.key;
-        console.log(decryptKey)
       return decryptKey ? JSON.parse(
         CryptoJS.AES.decrypt(res.body, decryptKey).toString(CryptoJS.enc.Utf8) ,
       ) : res;
@@ -113,6 +112,13 @@ export const isPatientInfo = (
   info: User,
 ): info is Patient => {
   return userType === UserType.PATIENT;
+};
+
+export const isDoctorInfo = (
+  userType: UserType,
+  info: User,
+): info is Doctor => {
+  return userType === UserType.DOCTOR;
 };
 
 // Type guard to check if info is of type SignupInfo<UserType.DOCTOR>

@@ -8,6 +8,7 @@ import { DoctorMetrics } from "./metrics";
 
 export interface Doctor extends UserBase {
   name: string;
+  picture: string;
   info: DoctorMetrics;
   identification: DoctorIdentification; // M
   comments: string[]; // R
