@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { collections } from "../services/database.service";
 import { STATUS_CODES } from "../models/util";
 import { Doctor } from "../models/doctor";
+import { encrypt } from "../services/encryption.service";
 
 export const doctorsRouter = express.Router();
 
@@ -16,16 +17,35 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
       })) as unknown as Doctor;
     }
     if (user) {
-      res.status(200).send({ user, status: STATUS_CODES.SUCCESS });
+      res
+        .status(200)
+        .send(
+          encrypt(
+            { user, status: STATUS_CODES.SUCCESS },
+            req.headers.authorization,
+          ),
+        );
     } else {
-      res.status(404).send({
-        user: null,
-        status: STATUS_CODES.USER_NOT_FOUND,
-      });
+      res.status(404).send(
+        encrypt(
+          {
+            user: null,
+            status: STATUS_CODES.USER_NOT_FOUND,
+          },
+          req.headers.authorization,
+        ),
+      );
     }
   } catch (error) {
     console.log(error);
-    res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
   }
 });
 
@@ -46,7 +66,7 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
         comments: [],
         reports: [],
       });
-      res.send({ id: ins.insertedId, status: STATUS_CODES.SUCCESS });
+      res.send({ status: STATUS_CODES.SUCCESS });
     }
   } catch (error) {
     console.log(error);

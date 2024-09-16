@@ -29,9 +29,7 @@ export async function decryptionMiddleware(
     auth == env.LIMITED_AUTH &&
     ![
       "/patients/create",
-      "/patients/keys",
       "/doctors/create",
-      "/doctors/keys",
       "/users/check",
       "/users/keys",
       "/verify/code/send",

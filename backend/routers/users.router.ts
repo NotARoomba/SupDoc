@@ -18,10 +18,15 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
   const id: number = req.body.id;
   const number: string | null = req.body.number;
   try {
-    if (number && !(await encryption.getKeyByAltName(number
-      .split("")
-      .map((bin) => bin.charCodeAt(0).toString(2))
-      .join(""))))
+    if (
+      number &&
+      !(await encryption.getKeyByAltName(
+        number
+          .split("")
+          .map((bin) => bin.charCodeAt(0).toString(2))
+          .join(""),
+      ))
+    )
       await createKey([
         id.toString(2),
         number
@@ -64,43 +69,12 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
           ],
         }))) as User;
     }
-    if (user)
-      return res
-        .status(200)
-        .send(
-          encrypt(
-            { status: STATUS_CODES.ID_IN_USE },
-            req.headers.authorization,
-          ),
-        );
-    else if (user)
-      res
-        .status(200)
-        .send(
-          encrypt(
-            { status: STATUS_CODES.NUMBER_IN_USE },
-            req.headers.authorization,
-          ),
-        );
-    else
-      res
-        .status(200)
-        .send(
-          encrypt(
-            { status: STATUS_CODES.NONE_IN_USE },
-            req.headers.authorization,
-          ),
-        );
+    if (user) return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
+    else if (user) res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+    else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
   } catch (error) {
     console.log(error);
-    res
-      .status(200)
-      .send(
-        encrypt(
-          { status: STATUS_CODES.GENERIC_ERROR },
-          req.headers.authorization,
-        ),
-      );
+    res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
 
@@ -146,34 +120,15 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
             number,
           })) as unknown as User;
       if (!numberUser && !idUser)
-        return res
-          .status(200)
-          .send(
-            encrypt(
-              { status: STATUS_CODES.USER_NOT_FOUND },
-              req.headers.authorization,
-            ),
-          );
-      res.status(200).send(
-        encrypt(
-          {
-            status: STATUS_CODES.SUCCESS,
-            private: idUser ? idUser.privateKey : numberUser.privateKey,
-            public: idUser ? idUser.publicKey : numberUser.publicKey,
-          },
-          req.headers.authorization,
-        ),
-      );
+        return res.status(200).send({ status: STATUS_CODES.USER_NOT_FOUND });
+      res.status(200).send({
+        status: STATUS_CODES.SUCCESS,
+        private: idUser ? idUser.privateKey : numberUser.privateKey,
+        public: idUser ? idUser.publicKey : numberUser.publicKey,
+      });
     }
   } catch (error) {
     console.log(error);
-    res
-      .status(200)
-      .send(
-        encrypt(
-          { status: STATUS_CODES.GENERIC_ERROR },
-          req.headers.authorization,
-        ),
-      );
+    res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });

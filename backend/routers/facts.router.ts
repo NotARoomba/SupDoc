@@ -94,11 +94,33 @@ factsRouter.post("/like", async (req: Request, res: Response) => {
         { $push: { likes: doctorID } },
       );
       if (update.acknowledged)
-        return res.status(200).send({ status: STATUS_CODES.SUCCESS });
-      else return res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
+      else
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.GENERIC_ERROR },
+              req.headers.authorization,
+            ),
+          );
     }
   } catch (error) {
     console.error("Error liking fact:", error);
-    res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+    res
+      .status(200)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
   }
 });

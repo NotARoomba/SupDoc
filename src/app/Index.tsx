@@ -84,11 +84,12 @@ export default function Index({ setIsLogged }: IndexProps) {
             hormones: signUpInfo.hormones,
           }
         : {};
-        const sharedData = { number: signUpInfo.countryCode + signUpInfo.number,
-          dateJoined: new Date().getTime(), // D
-          publicKey: keys.public, // R
-          privateKey: encPriv.toString(), // R
-        }
+    const sharedData = {
+      number: signUpInfo.countryCode + signUpInfo.number,
+      dateJoined: new Date().getTime(), // D
+      publicKey: keys.public, // R
+      privateKey: encPriv.toString(), // R
+    };
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
@@ -109,7 +110,14 @@ export default function Index({ setIsLogged }: IndexProps) {
               ...sexData,
             },
           }
-        : {...sharedData, name: signUpInfo.firstNames + " " + signUpInfo.lastNames, identification: {license: signUpInfo.license, number: signUpInfo.identification}} as Doctor,
+        : ({
+            ...sharedData,
+            name: signUpInfo.firstNames + " " + signUpInfo.lastNames,
+            identification: {
+              license: signUpInfo.license,
+              number: signUpInfo.identification,
+            },
+          } as Doctor),
     );
     if (create.status === STATUS_CODES.SUCCESS) {
       Alert.alert("Success", "You are now registered!");
@@ -132,7 +140,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       return setIsLogged(true);
     } else {
       setLoading(false);
-      return Alert.alert("Error", "There was an error creating a user!")
+      return Alert.alert("Error", "There was an error creating a user!");
     }
   };
   useEffect(() => {
@@ -422,10 +430,11 @@ export default function Index({ setIsLogged }: IndexProps) {
                         (pageIndex == 3 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
-                          (!signUpInfo.firstNames || !signUpInfo.lastNames)) || (pageIndex == 4 &&
-                            userType &&
-                            isDoctorSignupInfo(userType, signUpInfo) &&
-                            (signUpInfo.license.length == 0))
+                          (!signUpInfo.firstNames || !signUpInfo.lastNames)) ||
+                        (pageIndex == 4 &&
+                          userType &&
+                          isDoctorSignupInfo(userType, signUpInfo) &&
+                          signUpInfo.license.length == 0)
                       : pageIndex == 1 && !userType
                   )
                     ? Alert.alert(

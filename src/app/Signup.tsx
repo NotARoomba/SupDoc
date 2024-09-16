@@ -79,7 +79,7 @@ export default function Signup({
   const [gsValue, setGSValue] = useState("O");
   const [gsOpen, setGSOpen] = useState(false);
   const [verified, setIsVerified] = useState(false);
-  const [activeDelete, setActiveDelete] = useState("")
+  const [activeDelete, setActiveDelete] = useState("");
   const [gsItems, setGSItems] = useState([
     { label: "O", value: "O" },
     { label: "A", value: "A" },
@@ -136,7 +136,7 @@ export default function Signup({
           number: info.countryCode + info.number,
           id: info.identification,
         });
-        console.log(info.countryCode + info.number)
+        console.log(info.countryCode + info.number);
         if (
           res.status == STATUS_CODES.ID_IN_USE ||
           res.status == STATUS_CODES.NUMBER_IN_USE
@@ -845,16 +845,22 @@ export default function Signup({
             className="flex flex-row h-fit m-auto p-4"
           >
             {info.license.map((v, i) => (
-              <ImageUpload activeDelete={v == activeDelete} setActiveDelete={setActiveDelete} key={i} image={v} removeImage={removeImage} />
-            ))}<TouchableOpacity
-            onPress={() => setCameraOpen(true)}
-            className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
-          >
-            <View className="m-auto">
-              <Icons name="plus-circle" color={"#fbfff1"} size={50} />
-            </View>
-          </TouchableOpacity>
-            
+              <ImageUpload
+                activeDelete={v == activeDelete}
+                setActiveDelete={setActiveDelete}
+                key={i}
+                image={v}
+                removeImage={removeImage}
+              />
+            ))}
+            <TouchableOpacity
+              onPress={() => setCameraOpen(true)}
+              className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
+            >
+              <View className="m-auto">
+                <Icons name="plus-circle" color={"#fbfff1"} size={50} />
+              </View>
+            </TouchableOpacity>
           </Animated.ScrollView>
         </Animated.View>
       ) : (

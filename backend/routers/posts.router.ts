@@ -4,12 +4,14 @@ import { collections, encryption } from "../services/database.service";
 import { Binary, ObjectId } from "mongodb";
 import { STATUS_CODES } from "../models/util";
 import Comment from "../models/comment";
+import { encrypt } from "../services/encryption.service";
 
 export const postsRouter = express.Router();
 
 postsRouter.use(express.json());
 // GETS POST FROM POST ID
 postsRouter.get("/:id", async (req: Request, res: Response) => {
+  //check if doctor
   const id = req?.params?.id;
   try {
     let post: Post | null = null;
@@ -19,16 +21,35 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
       })) as unknown as Post;
     }
     if (post) {
-      res.status(200).send({ post, status: STATUS_CODES.SUCCESS });
+      res
+        .status(200)
+        .send(
+          encrypt(
+            { post, status: STATUS_CODES.SUCCESS },
+            req.headers.authorization,
+          ),
+        );
     } else {
-      res.status(404).send({
-        post: null,
-        status: STATUS_CODES.USER_NOT_FOUND,
-      });
+      res.status(404).send(
+        encrypt(
+          {
+            post: null,
+            status: STATUS_CODES.USER_NOT_FOUND,
+          },
+          req.headers.authorization,
+        ),
+      );
     }
   } catch (error) {
     console.log(error);
-    res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
   }
 });
 
@@ -62,17 +83,36 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
         reports: [],
       });
       if (postInsert.acknowledged) {
-        res.status(200).send({ status: STATUS_CODES.SUCCESS });
+        res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
       } else {
-        res.status(404).send({
-          post: null,
-          status: STATUS_CODES.USER_NOT_FOUND,
-        });
+        res.status(404).send(
+          encrypt(
+            {
+              post: null,
+              status: STATUS_CODES.USER_NOT_FOUND,
+            },
+            req.headers.authorization,
+          ),
+        );
       }
     }
   } catch (error) {
     console.log(error);
-    res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
   }
 });
 
@@ -87,7 +127,14 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
       _id: new ObjectId(comment.parent),
     })) as unknown as Comment;
     if (!parentComment)
-      return res.status(200).send({ status: STATUS_CODES.DOES_NOT_EXIST });
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.DOES_NOT_EXIST },
+            req.headers.authorization,
+          ),
+        );
     const insComment = await collections.comments?.insertOne({
       // Comment fields
       postId: await encryption.encrypt(comment.postId, {
@@ -136,20 +183,43 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
       },
     );
     if (updated?.acknowledged) {
-      return res.status(200).send({ status: STATUS_CODES.SUCCESS });
+      return res
+        .status(200)
+        .send(
+          encrypt({ status: STATUS_CODES.SUCCESS }, req.headers.authorization),
+        );
     } else {
-      return res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.GENERIC_ERROR },
+            req.headers.authorization,
+          ),
+        );
     }
   } else {
     const parentPost = (await collections.posts?.findOne({
       _id: new ObjectId(comment.postId),
     })) as unknown as Post;
     if (!parentPost)
-      return res.status(200).send({ status: STATUS_CODES.DOES_NOT_EXIST });
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.DOES_NOT_EXIST },
+            req.headers.authorization,
+          ),
+        );
     if (parentPost.comments.length > 2)
       return res
         .status(200)
-        .send({ status: STATUS_CODES.COMMENT_LIMIT_REACHED });
+        .send(
+          encrypt(
+            { status: STATUS_CODES.COMMENT_LIMIT_REACHED },
+            req.headers.authorization,
+          ),
+        );
     const insComment = await collections.comments?.insertOne({
       // Comment fields
       postId: await encryption.encrypt(comment.postId, {
@@ -198,9 +268,20 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
       },
     );
     if (updated?.acknowledged) {
-      return res.status(200).send({ status: STATUS_CODES.SUCCESS });
+      return res
+        .status(200)
+        .send(
+          encrypt({ status: STATUS_CODES.SUCCESS }, req.headers.authorization),
+        );
     } else {
-      return res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.GENERIC_ERROR },
+            req.headers.authorization,
+          ),
+        );
     }
   }
 });
