@@ -41,13 +41,18 @@ export default function Profile() {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
+      console.log(ut)
       const res = await callAPI(
         `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
         "GET",
       );
-      if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
-      else if (res.status == STATUS_CODES.GENERIC_ERROR)
-        return Alert.alert("Error", "There was an error fetching your data!");
+      console.log(res)
+      if (res.status == STATUS_CODES.USER_NOT_FOUND) {
+        setLoading(false)
+        return await logout();}
+      else if (res.status == STATUS_CODES.GENERIC_ERROR){
+        setLoading(false);
+        return Alert.alert("Error", "There was an error fetching your data!");}
       setUser(res.user);
       setUserEdit({
         ...res.user,

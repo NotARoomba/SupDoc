@@ -13,7 +13,7 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
     let user: Doctor | null = null;
     if (collections.doctors) {
       user = (await collections.doctors.findOne({
-        privateKey: req.headers.authorization,
+        publicKey: req.headers.authorization,
       })) as unknown as Doctor;
     }
     if (user) {
@@ -60,7 +60,7 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
   try {
     if (collections.doctors) {
-      const ins = await collections.doctors.insertOne({
+      await collections.doctors.insertOne({
         ...data,
         identification: { ...data.identification, isVerified: false },
         comments: [],

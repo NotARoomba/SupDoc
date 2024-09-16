@@ -194,6 +194,7 @@ export default function Signup({
           // }
         }
         setIsLoading(false);
+      } else if (index == 4) {
         if (userType != UserType.PATIENT) {
           (async () => {
             const { status } = await Camera.requestCameraPermissionsAsync();

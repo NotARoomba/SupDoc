@@ -77,12 +77,14 @@ export async function callAPI(
                 },
               })
             ).data;
+            console.log(res, "ASDASDs")
       const decryptKey = privateKey
         ? await RSA.decrypt(res.key, privateKey)
         : res.key;
-      return JSON.parse(
-        CryptoJS.AES.decrypt(res.body, decryptKey).toString(CryptoJS.enc.Utf8),
-      );
+        console.log(decryptKey)
+      return decryptKey ? JSON.parse(
+        CryptoJS.AES.decrypt(res.body, decryptKey).toString(CryptoJS.enc.Utf8) ,
+      ) : res;
     } catch (error: any) {
       console.log(error);
       if (!error.response) return { status: STATUS_CODES.NO_CONNECTION };

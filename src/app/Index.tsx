@@ -36,6 +36,7 @@ import CryptoJS from "crypto-es";
 import prompt from "@powerdesigninc/react-native-prompt";
 import Patient from "@/backend/models/patient";
 import { Doctor } from "@/backend/models/doctor";
+import * as FileSystem from "expo-file-system";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
@@ -90,6 +91,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       publicKey: keys.public, // R
       privateKey: encPriv.toString(), // R
     };
+    if (isDoctorSignupInfo(userType, signUpInfo)) for (let i = 0; i < signUpInfo.license.length; i++) signUpInfo.license[i]= await FileSystem.readAsStringAsync(signUpInfo.license[i], { encoding: "base64" })
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
