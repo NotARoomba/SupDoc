@@ -852,7 +852,7 @@ export default function Signup({
               className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
             />
             <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-              Tell us about yourself
+              Bio
             </Text>
             <TextInput
               onChangeText={(n) =>
