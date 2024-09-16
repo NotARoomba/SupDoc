@@ -73,7 +73,8 @@ export default function Signup({
 }: SignupProps) {
   /// setInfo({...info, info.(PROPIEDAD Q QUIERES CAMBIAR)})
   const [show, setShow] = useState(false);
-  const [status, requestPermission] = ImagePicker.useCameraPermissions();
+  const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
+  const [galleryPermission, requestGalleryPermission] = ImagePicker.useMediaLibraryPermissions();
   const cameraRef = createRef<CameraView>();
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [loading, setIsLoading] = useState(false);
@@ -200,9 +201,9 @@ export default function Signup({
         if (userType != UserType.PATIENT) {
           (async () => {
             // const { status } = await Camera.requestCameraPermissionsAsync();
-            const { status } = await requestPermission();
-
-            setHasPermission(status === "granted");
+            const cameraPerms = await requestCameraPermission()
+            const galleryPerms = await requestGalleryPermission()
+            
           })();
         }
       }
