@@ -214,11 +214,11 @@ export default function Signup({
       if (pickerType === "camera") {
         result = await camera.takePhoto({
           allowsEditing: true,
-          quality: 1,
+          quality: 0.5,
         } as ImagePicker.ImagePickerOptions);
       } else {
         result = await photos.selectImage({
-          quality: 1,
+          quality: 0.5,
           allowsEditing: true,
         });
       }

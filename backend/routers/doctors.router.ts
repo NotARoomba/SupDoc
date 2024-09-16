@@ -10,13 +10,14 @@ doctorsRouter.use(express.json());
 
 doctorsRouter.get("/", async (req: Request, res: Response) => {
   try {
-    let user: Doctor | null = null;
+    let u: Doctor | null = null;
     if (collections.doctors) {
-      user = (await collections.doctors.findOne({
+      u = (await collections.doctors.findOne({
         publicKey: req.headers.authorization,
       })) as unknown as Doctor;
     }
-    if (user) {
+    if (u) {
+      const { identification: {license}, ...user} = u
       res
         .status(200)
         .send(
