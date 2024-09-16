@@ -52,7 +52,7 @@ export default function Profile() {
         `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
         "GET",
       );
-      console.log(res);
+      console.log(Object.keys(res.user));
       if (res.status == STATUS_CODES.USER_NOT_FOUND) {
         setLoading(false);
         return await logout();
@@ -65,6 +65,7 @@ export default function Profile() {
         ...res.user,
         number: parsePhoneNumber(res.user.number)?.nationalNumber,
       });
+      console.log("ASDASDASD")
       setUserType(ut);
       setLoading(false);
     };

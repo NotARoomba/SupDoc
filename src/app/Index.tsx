@@ -121,7 +121,10 @@ export default function Index({ setIsLogged }: IndexProps) {
         : ({
             ...sharedData,
             name: signUpInfo.firstNames + " " + signUpInfo.lastNames,
-            picture: signUpInfo.picture,
+            picture: await FileSystem.readAsStringAsync(
+              signUpInfo.picture,
+              { encoding: "base64" },
+            ),
             identification: {
               license: signUpInfo.license,
               number: signUpInfo.identification,
