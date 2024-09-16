@@ -79,10 +79,10 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
   const data: Doctor = req.body;
   try {
     if (collections.doctors) {
-      await collections.doctors.updateOne({publicKey: req.headers.authorization},{
+      await collections.doctors.updateOne({publicKey: req.headers.authorization},{$set: {
         number: data.number,
         picture: data.picture,
-      });
+    }});
       res.send({ status: STATUS_CODES.SUCCESS });
     }
   } catch (error) {
