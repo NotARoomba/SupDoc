@@ -4,6 +4,7 @@ import Patient from "../models/patient";
 import { Doctor } from "../models/doctor";
 import Post from "../models/post";
 import Comment from "../models/comment";
+import Fact from "../models/fact";
 
 export const env = dotenv.load({
   MONGODB: String,
@@ -29,12 +30,12 @@ export const env = dotenv.load({
 });
 
 export const collections: {
-  patients?: mongoDB.Collection<Patient<mongoDB.Binary>>;
+  patients?: mongoDB.Collection;
   doctors?: mongoDB.Collection<Doctor>;
-  posts?: mongoDB.Collection<Post>;
-  comments?: mongoDB.Collection<Comment>;
+  posts?: mongoDB.Collection;
+  comments?: mongoDB.Collection;
   reports?: mongoDB.Collection<Report>;
-  facts?: mongoDB.Collection<Report>;
+  facts?: mongoDB.Collection<Fact>;
 } = {};
 
 export let encryption: mongoDB.ClientEncryption;
