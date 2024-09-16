@@ -17,7 +17,7 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
       })) as unknown as Doctor;
     }
     if (user) {
-      user.identification.license = []
+      user.identification.license = [];
       res
         .status(200)
         .send(
@@ -79,15 +79,40 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
   const data: Doctor = req.body;
   try {
     if (collections.doctors) {
-      const upd = await collections.doctors.findOneAndUpdate({publicKey: req.headers.authorization},{$set: {
-        number: data.number,
-        picture: data.picture,
-    }}, { returnDocument: "after" });
-      res.send({ user: upd, status: STATUS_CODES.SUCCESS });
+      const upd = await collections.doctors.findOneAndUpdate(
+        { publicKey: req.headers.authorization },
+        {
+          $set: {
+            number: data.number,
+            picture: data.picture,
+          },
+        },
+        { returnDocument: "after" },
+      );
+      if (upd) {
+        upd.identification.license = [];
+        res
+          .status(200)
+          .send(
+            encrypt(
+              { user: upd, status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
+      } else {
+        res.status(404).send(
+          encrypt(
+            {
+              user: null,
+              status: STATUS_CODES.USER_NOT_FOUND,
+            },
+            req.headers.authorization,
+          ),
+        );
+      }
     }
   } catch (error) {
     console.log(error);
     res.send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
-

@@ -21,7 +21,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
   try {
     let user: User | null = null;
     if (collections.patients && collections.doctors) {
-      user = 
+      user =
         (await collections.doctors.findOne({
           $or: [
             {
@@ -33,7 +33,8 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
               number: number ?? "",
             },
           ],
-        })) ?? ((await collections.patients.findOne({
+        })) ??
+        ((await collections.patients.findOne({
           $or: [
             {
               identification: {
@@ -50,7 +51,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
               }),
             },
           ],
-        }))) as User;
+        })) as User);
     }
     if (user) return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
     else if (user) res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });

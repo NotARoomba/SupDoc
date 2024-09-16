@@ -35,7 +35,7 @@ import useFade from "components/misc/useFade";
 import { Image } from "expo-image";
 import useCamera from "components/misc/useCamera";
 import usePhotos from "components/misc/usePhotos";
-import * as FileSystem from 'expo-file-system'
+import * as FileSystem from "expo-file-system";
 
 export default function Profile() {
   const camera = useCamera();
@@ -70,7 +70,7 @@ export default function Profile() {
         ...res.user,
         number: parsePhoneNumber(res.user.number)?.nationalNumber,
       });
-      console.log("ASDASDASD")
+      console.log("ASDASDASD");
       setUserType(ut);
       setLoading(false);
     };
@@ -78,10 +78,14 @@ export default function Profile() {
   }, []);
   const updateUser = async () => {
     // NEED TO CHECK IF PATIENT WITH THE USEREDIT
-    const doctorStuff = userType && userEdit && isDoctorInfo(userType, userEdit) ? {picture: await FileSystem.readAsStringAsync(
-      userEdit.picture,
-      { encoding: "base64" },
-    )} : {}
+    const doctorStuff =
+      userType && userEdit && isDoctorInfo(userType, userEdit)
+        ? {
+            picture: await FileSystem.readAsStringAsync(userEdit.picture, {
+              encoding: "base64",
+            }),
+          }
+        : {};
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/update`,
       "POST",
@@ -119,7 +123,7 @@ export default function Profile() {
   const parseUpdate = async () => {
     setLoading(true);
     //need to check phone number
-    if ((countryCode.slice(4) + userEdit?.number) != user?.number) {
+    if (countryCode.slice(4) + userEdit?.number != user?.number) {
       const verify = await callAPI("/verify/code/send", "POST", {
         number: countryCode.slice(4) + userEdit?.number,
       });
@@ -174,8 +178,13 @@ export default function Profile() {
     } else await updateUser();
   };
   const selectImage = async (pickerType: "camera" | "photos") => {
-    if ((!(await camera.requestPermission()) && pickerType == 'camera') && (!(await photos.requestPermission()) && pickerType !== 'camera')) return console.log("NO PHOTOS");
-    ;
+    if (
+      !(await camera.requestPermission()) &&
+      pickerType == "camera" &&
+      !(await photos.requestPermission()) &&
+      pickerType !== "camera"
+    )
+      return console.log("NO PHOTOS");
     try {
       let result;
       if (pickerType === "camera") {
@@ -227,54 +236,65 @@ export default function Profile() {
                   {userType == UserType.PATIENT ? (
                     <Icons name="person" size={150} color={"#fbfff1"} />
                   ) : (
-                    user && userEdit &&
-                    isDoctorInfo(userType, user) && isDoctorInfo(userType, userEdit) && (
-                      <TouchableOpacity
-                        className=" w-48 h-48  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
-                      >
+                    user &&
+                    userEdit &&
+                    isDoctorInfo(userType, user) &&
+                    isDoctorInfo(userType, userEdit) && (
+                      <TouchableOpacity className=" w-48 h-48  aspect-square flex border-dashed border border-ivory/80 rounded-xl">
                         <View className="m-auto">
-                          <Image className="rounded-xl h-full aspect-square" source={{uri: `${userEdit.picture !== user.picture ? userEdit.picture : `data:image/png;base64,${userEdit.picture}`}`}} />
+                          <Image
+                            className="rounded-xl h-full aspect-square"
+                            source={{
+                              uri: `${userEdit.picture !== user.picture ? userEdit.picture : `data:image/png;base64,${userEdit.picture}`}`,
+                            }}
+                          />
                           <Pressable
-                onPress={() => setActiveChange(!activeChange)}
-                className="absolute rounded-xl w-48 h-48  z-50  flex"
-              >
-                {activeChange  && (
-                  <Reanimated.View
-                    entering={FadeIn.duration(250)}
-                    exiting={FadeOut.duration(250)}
-                    className="h-full rounded-xl w-full bg-ivory/50"
-                  >
-                    <TouchableOpacity
-                      onPress={() =>
-                        Alert.alert("Please choose", undefined, [
-                          {
-                            text: "Photos",
-                            onPress: async () =>
-                              setUserEdit({
-                                ...userEdit,
-                                picture:
-                                  (await selectImage("photos")) ?? userEdit.picture,
-                              }),
-                          },
-                          {
-                            text: "Camera",
-                            onPress: async () =>
-                            setUserEdit({
-                              ...userEdit,
-                              picture:
-                                (await selectImage("camera")) ?? userEdit.picture,
-                            }),
-                          },
-                          { text: "Cancel", style: "cancel" },
-                        ])
-                      }
-                      className="m-auto p-4"
-                    >
-                      <Icons name="pencil" size={60} color={"#08254099"} />
-                    </TouchableOpacity>
-                  </Reanimated.View>
-                )}
-              </Pressable>
+                            onPress={() => setActiveChange(!activeChange)}
+                            className="absolute rounded-xl w-48 h-48  z-50  flex"
+                          >
+                            {activeChange && (
+                              <Reanimated.View
+                                entering={FadeIn.duration(250)}
+                                exiting={FadeOut.duration(250)}
+                                className="h-full rounded-xl w-full bg-ivory/50"
+                              >
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    Alert.alert("Please choose", undefined, [
+                                      {
+                                        text: "Photos",
+                                        onPress: async () =>
+                                          setUserEdit({
+                                            ...userEdit,
+                                            picture:
+                                              (await selectImage("photos")) ??
+                                              userEdit.picture,
+                                          }),
+                                      },
+                                      {
+                                        text: "Camera",
+                                        onPress: async () =>
+                                          setUserEdit({
+                                            ...userEdit,
+                                            picture:
+                                              (await selectImage("camera")) ??
+                                              userEdit.picture,
+                                          }),
+                                      },
+                                      { text: "Cancel", style: "cancel" },
+                                    ])
+                                  }
+                                  className="m-auto p-4"
+                                >
+                                  <Icons
+                                    name="pencil"
+                                    size={60}
+                                    color={"#08254099"}
+                                  />
+                                </TouchableOpacity>
+                              </Reanimated.View>
+                            )}
+                          </Pressable>
                         </View>
                       </TouchableOpacity>
                     )
