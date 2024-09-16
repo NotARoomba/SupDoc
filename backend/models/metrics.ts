@@ -16,5 +16,7 @@ export interface PatientMetrics {
 }
 
 export interface DoctorMetrics {
-  specialty: Specialty;
+  specialty: string;
+  experience: string;
+  about: string
 }

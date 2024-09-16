@@ -206,7 +206,7 @@ export default function Profile() {
     }
   };
   return (
-    <Animated.View style={{ opacity: fadeAnim }} className="h-full">
+    <Animated.View style={{ opacity: fadeAnim }} className="h-full w-full">
       <View className="absolute w-full p-4 flex justify-between z-50 flex-row">
         <TouchableOpacity className="z-50 p-1">
           <Icons name="info" size={38} color={"#fbfff1"} />
@@ -228,10 +228,10 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
       {userType && (
-        <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
-          <View>
-            <View className="flex mx-auto pt-8 h-full">
-              <View className="mx-auto bg-transparent p-4 aspect-square rounded-full">
+        <TouchableWithoutFeedback className="h-full w-full" onPress={Keyboard.dismiss}>
+          <View className="w-full">
+            <View className="flex mx-auto pt-8  h-full w-full">
+              <View className="mx-auto bg-transparent w-48 h-48 rounded-full">
                 <View className=" m-auto">
                   {userType == UserType.PATIENT ? (
                     <Icons name="person" size={150} color={"#fbfff1"} />
@@ -421,7 +421,7 @@ export default function Profile() {
                 } as User) != JSON.stringify(user) && (
                   <View
                     className={
-                      "flex flex-col absolute gap-y-4 w-full z-10 bottom-32"
+                      "flex flex-col absolute gap-y-4 w-full z-10 left-0 bottom-32"
                     }
                   >
                     <Reanimated.View

@@ -79,7 +79,6 @@ export default function Signup({
   const [show, setShow] = useState(false);
   const camera = useCamera();
   const photos = usePhotos();
-  const cameraRef = createRef<CameraView>();
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [loading, setIsLoading] = useState(false);
   const [gsValue, setGSValue] = useState("O");
@@ -820,7 +819,54 @@ export default function Signup({
             )}
           </View> */}
           </Animated.View>
-        ) : index == 4 ? (
+        ) : index == 4 ? <Animated.View className="flex flex-col w-full"
+        entering={FadeIn.duration(500)}>
+          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+              Specialty
+            </Text>
+            <TextInput
+              onChangeText={(n) =>
+                setInfo({
+                  ...info,
+                  specialty: n,
+                })
+              }
+              value={info.specialty}
+              keyboardType="default"
+              placeholderTextColor={"#ffffff"}
+              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            />
+            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+              Experience
+            </Text>
+            <TextInput
+              onChangeText={(n) =>
+                setInfo({
+                  ...info,
+                  experience: n,
+                })
+              }
+              value={info.experience}
+              keyboardType="default"
+              placeholderTextColor={"#ffffff"}
+              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            />
+            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+              Tell us about yourself
+            </Text>
+            <TextInput
+              onChangeText={(n) =>
+                setInfo({
+                  ...info,
+                  about: n,
+                })
+              }
+              value={info.about}
+              keyboardType="default"
+              placeholderTextColor={"#ffffff"}
+              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            />
+        </Animated.View> : index == 5 ?(
           <Animated.View
             className="flex flex-col w-full"
             entering={FadeIn.duration(500)}
@@ -898,7 +944,7 @@ export default function Signup({
               </TouchableOpacity>
             </Animated.ScrollView>
           </Animated.View>
-        ) : index == 5 ? (
+        ) : index == 6 ? (
           <Animated.View entering={FadeIn.duration(500)}>
             <Text className="text-center text-lg text-ivory mb-3  font-semibold">
               Upload a profile photo

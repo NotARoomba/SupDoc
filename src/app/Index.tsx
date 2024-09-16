@@ -120,11 +120,16 @@ export default function Index({ setIsLogged }: IndexProps) {
             },
           }
         : ({
-            ...sharedData,
             name: signUpInfo.firstNames + " " + signUpInfo.lastNames,
+            ...sharedData,
             picture: await FileSystem.readAsStringAsync(signUpInfo.picture, {
               encoding: "base64",
             }),
+            info: {
+              specialty: signUpInfo.specialty,
+              experience: signUpInfo.experience,
+              about: signUpInfo.about
+            },
             identification: {
               license: signUpInfo.license,
               number: signUpInfo.identification,
@@ -164,6 +169,9 @@ export default function Index({ setIsLogged }: IndexProps) {
           password: "",
           firstNames: "",
           lastNames: "",
+          specialty: "",
+          experience: "",
+          about: "",
           passwordchk: "",
           picture: "",
           countryCode: "+57",
@@ -381,7 +389,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                     (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
                   (userType &&
                     isDoctorSignupInfo(userType, signUpInfo) &&
-                    pageIndex == 6)
+                    pageIndex == 7)
                 : pageIndex == 2
             ) ? (
               <Animated.View
@@ -444,12 +452,15 @@ export default function Index({ setIsLogged }: IndexProps) {
                         (pageIndex == 3 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
-                          (!signUpInfo.firstNames || !signUpInfo.lastNames)) ||
-                        (pageIndex == 4 &&
+                          (!signUpInfo.firstNames || !signUpInfo.lastNames)) || (pageIndex == 4 &&
+                            userType &&
+                            isDoctorSignupInfo(userType, signUpInfo) &&
+                            (!signUpInfo.specialty || !signUpInfo.experience || !signUpInfo.about))||
+                        (pageIndex == 5 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
                           signUpInfo.license.length == 0) ||
-                        (pageIndex == 5 &&
+                        (pageIndex == 6 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
                           !signUpInfo.picture)

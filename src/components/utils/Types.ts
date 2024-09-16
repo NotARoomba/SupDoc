@@ -62,6 +62,9 @@ export type SignupInfo<T extends UserType = UserType> = BaseSignupInfo &
 export interface DoctorSignupInfo {
   firstNames: string;
   lastNames: string;
+  specialty: string;
+  experience: string;
+  about: string;
   picture: string;
   license: string[]; // Required for doctors
   isVerified: boolean; // Required for doctors
