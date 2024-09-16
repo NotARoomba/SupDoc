@@ -60,6 +60,9 @@ import DropDownPicker from "react-native-dropdown-picker";
 import prompt from "@powerdesigninc/react-native-prompt";
 import { Specialty } from "@/backend/models/specialty";
 import ImageUpload from "components/misc/ImageUpload";
+import useCamera from "components/misc/useCamera";
+import usePhotos from "components/misc/usePhotos";
+import { Image } from "expo-image";
 
 
 export default function Signup({
@@ -75,6 +78,8 @@ export default function Signup({
   const [show, setShow] = useState(false);
   const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
   const [galleryPermission, requestGalleryPermission] = ImagePicker.useMediaLibraryPermissions();
+  const camera = useCamera();
+  const photos = usePhotos();
   const cameraRef = createRef<CameraView>();
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [loading, setIsLoading] = useState(false);
@@ -198,19 +203,46 @@ export default function Signup({
         }
         setIsLoading(false);
       } else if (index == 4) {
-        if (userType != UserType.PATIENT) {
-          (async () => {
-            // const { status } = await Camera.requestCameraPermissionsAsync();
-            const cameraPerms = await requestCameraPermission()
-            const galleryPerms = await requestGalleryPermission()
+        // if (userType != UserType.PATIENT) {
+        //   (async () => {
+        //     // const { status } = await Camera.requestCameraPermissionsAsync();
             
-          })();
-        }
+            
+        //   })();
+        // }
       }
     };
     doChecks();
   }, [index]);
-  const photo = () => {
+  const activateCameraGallery = async () => {
+    const cameraPerms = await requestCameraPermission()
+    const galleryPerms = await requestGalleryPermission()
+    if (cameraPerms.granted) {
+      console.log("ASD")
+    }
+  }
+  const selectImage = async (pickerType: 'camera' | 'photos') => {
+    try {
+      let result;
+        if (pickerType === 'camera') {
+            result = await camera.takePhoto({
+                allowsEditing: true,
+                quality: 1,
+                
+            } as ImagePicker.ImagePickerOptions)
+        } else {
+            result = await photos.selectImage({
+                quality: 1,
+                allowsEditing: true,
+            });
+        }
+        return result.assets ? result.assets[0].uri : null
+    } catch (error) {
+        Alert.alert('Image error', 'Error reading image');
+        console.log(error);
+    }
+};
+  const photo = async () => {
     if (ready && isDoctorSignupInfo(userType, info))
       cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
         //https://github.com/gennadysx/react-native-document-scanner-plugin#readme
@@ -721,7 +753,15 @@ export default function Signup({
           entering={FadeIn.duration(500)}
         >
           <TouchableOpacity
-              onPress={() => setCameraOpen(true)}
+              onPress={() => Alert.alert(
+                'Please choose',
+                undefined,
+                [
+                    { text: 'Photos', onPress: () => selectImage('photos') },
+                    { text: 'Camera', onPress: () => selectImage('camera') },
+                    { text: 'Cancel', style: 'cancel' }
+                ]
+            )}
               className=" w-48 h-48 mx-auto  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
             >
               <View className="m-auto">
@@ -809,7 +849,7 @@ export default function Signup({
           <Text className="text-center text-lg text-ivory  font-semibold">
             Upload your doctor's license or degree
           </Text>
-          {cameraOpen && hasPermission && (
+          {cameraOpen && (
             <CameraView
               className={
                 "w-screen aspect-square absolute z-40 "
@@ -868,7 +908,7 @@ export default function Signup({
               />
             ))}
             <TouchableOpacity
-              onPress={() => setCameraOpen(true)}
+              onPress={() => activateCameraGallery()}
               className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
             >
               <View className="m-auto">

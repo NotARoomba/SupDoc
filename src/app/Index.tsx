@@ -115,6 +115,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         : ({
             ...sharedData,
             name: signUpInfo.firstNames + " " + signUpInfo.lastNames,
+            picture: signUpInfo.picture,
             identification: {
               license: signUpInfo.license,
               number: signUpInfo.identification,
@@ -154,6 +155,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           firstNames: "",
           lastNames: "",
           passwordchk: "",
+          picture: "",
           countryCode: "+57",
           identification: 0, // Required for Signup as Doctor
           license: Array<string>(), // Required for Signup as Doctor
