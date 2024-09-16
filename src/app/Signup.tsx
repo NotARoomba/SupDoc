@@ -821,6 +821,8 @@ export default function Signup({
           </Animated.View>
         ) : index == 4 ? <Animated.View className="flex flex-col w-full"
         entering={FadeIn.duration(500)}>
+          
+            <KeyboardAvoidingView behavior="height"><ScrollView>
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
               Specialty
             </Text>
@@ -861,11 +863,12 @@ export default function Signup({
                   about: n,
                 })
               }
+              multiline
               value={info.about}
               keyboardType="default"
               placeholderTextColor={"#ffffff"}
-              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-            />
+              className="flex justify-center align-middle  m-auto h-24 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            /></ScrollView></KeyboardAvoidingView>
         </Animated.View> : index == 5 ?(
           <Animated.View
             className="flex flex-col w-full"
