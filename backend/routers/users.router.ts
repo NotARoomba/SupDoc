@@ -23,7 +23,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
         id.toString(2),
         number
           .split("")
-          .map((bin) => String.fromCharCode(parseInt(bin, 2)))
+          .map((bin) => bin.charCodeAt(0).toString(2))
           .join(""),
       ]);
   } catch {}
