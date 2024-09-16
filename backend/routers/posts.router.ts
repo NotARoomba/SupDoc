@@ -33,7 +33,7 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
 });
 
 postsRouter.post("/create", async (req: Request, res: Response) => {
-  const data: Post<null> = req.body;
+  const data: Post = req.body;
   const keyAltName = data.patient.toString(2);
   try {
     if (collections.posts) {
@@ -77,7 +77,7 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
 });
 
 postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
-  const comment: Comment<null> = req.body;
+  const comment: Comment = req.body;
   // if comment has a parent then get the parent and add the id as a child
   // if the comment does not have a parent then get the postID and run checks if the comment is able to be placed, if not then throw an error, else add the comment ID to the array of comments
   // DOCTOR IS DOCTOR ID NOT IDENTIFICATION
@@ -85,7 +85,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   if (comment.parent) {
     const parentComment = (await collections.comments?.findOne({
       _id: new ObjectId(comment.parent),
-    })) as unknown as Comment<null>;
+    })) as unknown as Comment;
     if (!parentComment)
       return res.status(200).send({ status: STATUS_CODES.DOES_NOT_EXIST });
     const insComment = await collections.comments?.insertOne({
@@ -143,7 +143,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   } else {
     const parentPost = (await collections.posts?.findOne({
       _id: new ObjectId(comment.postId),
-    })) as unknown as Post<null>;
+    })) as unknown as Post;
     if (!parentPost)
       return res.status(200).send({ status: STATUS_CODES.DOES_NOT_EXIST });
     if (parentPost.comments.length > 2)
