@@ -97,6 +97,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           signUpInfo.license[i],
           { encoding: "base64" },
         );
+    if (isDoctorSignupInfo(userType, signUpInfo)) console.log(signUpInfo.license[0].length / 1000)
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
@@ -147,6 +148,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       );
       return setIsLogged(true);
     } else {
+      console.log(create)
       setLoading(false);
       return Alert.alert("Error", "There was an error creating a user!");
     }

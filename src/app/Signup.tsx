@@ -143,6 +143,7 @@ export default function Signup({
           number: info.countryCode + info.number,
           id: info.identification,
         });
+        console.log(res)
         console.log(info.countryCode + info.number);
         if (
           res.status == STATUS_CODES.ID_IN_USE ||
