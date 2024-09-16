@@ -1,7 +1,7 @@
 import Icons from "@expo/vector-icons/Octicons";
 import { SplashScreen, Tabs } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Platform, View, Animated } from "react-native";
+import { Alert, Platform, View, Animated, KeyboardAvoidingView } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { UserType } from "components/utils/Types";
 import { ParamListBase } from "@react-navigation/native";

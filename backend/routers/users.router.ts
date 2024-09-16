@@ -34,7 +34,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
           .map((bin) => bin.charCodeAt(0).toString(2))
           .join(""),
       ]);
-  } catch {}
+  } catch (e) { console.log(e); }
   try {
     let user: User | null = null;
     if (collections.patients && collections.doctors) {

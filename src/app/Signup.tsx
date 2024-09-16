@@ -2,7 +2,9 @@ import {
   Alert,
   Dimensions,
   Keyboard,
+  KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   TextInput,
@@ -46,7 +48,7 @@ import Animated, {
   SlideOutRight,
   ZoomOut,
 } from "react-native-reanimated";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { Camera, CameraView, PermissionStatus } from "expo-camera";
 import * as Linking from "expo-linking";
 import { Ionicons } from "@expo/vector-icons";
@@ -64,7 +66,6 @@ import useCamera from "components/misc/useCamera";
 import usePhotos from "components/misc/usePhotos";
 import { Image } from "expo-image";
 
-
 export default function Signup({
   info,
   index,
@@ -76,17 +77,15 @@ export default function Signup({
 }: SignupProps) {
   /// setInfo({...info, info.(PROPIEDAD Q QUIERES CAMBIAR)})
   const [show, setShow] = useState(false);
-  const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
-  const [galleryPermission, requestGalleryPermission] = ImagePicker.useMediaLibraryPermissions();
   const camera = useCamera();
   const photos = usePhotos();
   const cameraRef = createRef<CameraView>();
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [loading, setIsLoading] = useState(false);
-  const [ready, setisReady] = useState(false);
   const [gsValue, setGSValue] = useState("O");
   const [gsOpen, setGSOpen] = useState(false);
   const [verified, setIsVerified] = useState(false);
+  const [activeChange, setActiveChange] = useState(false);
   const [activeDelete, setActiveDelete] = useState("");
   const [gsItems, setGSItems] = useState([
     { label: "O", value: "O" },
@@ -202,66 +201,39 @@ export default function Signup({
           // }
         }
         setIsLoading(false);
-      } else if (index == 4) {
-        // if (userType != UserType.PATIENT) {
-        //   (async () => {
-        //     // const { status } = await Camera.requestCameraPermissionsAsync();
-            
-            
-        //   })();
-        // }
       }
     };
     doChecks();
   }, [index]);
-  const activateCameraGallery = async () => {
-    const cameraPerms = await requestCameraPermission()
-    const galleryPerms = await requestGalleryPermission()
-    if (cameraPerms.granted) {
-      console.log("ASD")
-    }
-  }
-  const selectImage = async (pickerType: 'camera' | 'photos') => {
+  const selectImage = async (pickerType: "camera" | "photos") => {
+    if ((!(await camera.requestPermission()) && pickerType == 'camera') && (!(await photos.requestPermission()) && pickerType !== 'camera')) return console.log("NO PHOTOS");
+    ;
     try {
       let result;
-        if (pickerType === 'camera') {
-            result = await camera.takePhoto({
-                allowsEditing: true,
-                quality: 1,
-                
-            } as ImagePicker.ImagePickerOptions)
-        } else {
-            result = await photos.selectImage({
-                quality: 1,
-                allowsEditing: true,
-            });
-        }
-        return result.assets ? result.assets[0].uri : null
+      if (pickerType === "camera") {
+        result = await camera.takePhoto({
+          allowsEditing: true,
+          quality: 1,
+        } as ImagePicker.ImagePickerOptions);
+      } else {
+        result = await photos.selectImage({
+          quality: 1,
+          allowsEditing: true,
+        });
+      }
+      setActiveChange(false);
+      return result.assets ? result.assets[0].uri : null;
     } catch (error) {
-        Alert.alert('Image error', 'Error reading image');
-        console.log(error);
+      Alert.alert("Image error", "Error reading image");
+      console.log(error);
     }
-};
-  const photo = async () => {
-    if (ready && isDoctorSignupInfo(userType, info))
-      cameraRef.current?.takePictureAsync({ quality: 1 }).then((photo: any) => {
-        //https://github.com/gennadysx/react-native-document-scanner-plugin#readme
-        setInfo({ ...info, license: [...info.license, photo.uri] });
-        setCameraOpen(false);
-        // FileSystem.readAsStringAsync(photo.uri, { encoding: "base64" }).then(
-        //   (res) => {
-        //     setInfo({ ...info, license: [...info.license, res] });
-        //     // console.log((res.length / 1000).toFixed(2) + "KB")
-        //     setCameraOpen(false);
-        //   },
-        // );
-      });
   };
   const removeImage = (image: string) =>
     isDoctorSignupInfo(userType, info) &&
     setInfo({ ...info, license: info.license.filter((v) => v !== image) });
   return (
     <View className="h-full ">
+       <KeyboardAvoidingView className="flex" style={{ flex: 1 }}enabled behavior="padding">
       <Animated.Text
         entering={FadeIn.duration(500)}
         key={index}
@@ -752,22 +724,6 @@ export default function Signup({
           className="flex flex-col"
           entering={FadeIn.duration(500)}
         >
-          <TouchableOpacity
-              onPress={() => Alert.alert(
-                'Please choose',
-                undefined,
-                [
-                    { text: 'Photos', onPress: () => selectImage('photos') },
-                    { text: 'Camera', onPress: () => selectImage('camera') },
-                    { text: 'Cancel', style: 'cancel' }
-                ]
-            )}
-              className=" w-48 h-48 mx-auto  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
-            >
-              <View className="m-auto">
-                <Icons name="plus-circle" color={"#fbfff1"} size={50} />
-              </View>
-            </TouchableOpacity>
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
             First Names
           </Text>
@@ -849,24 +805,6 @@ export default function Signup({
           <Text className="text-center text-lg text-ivory  font-semibold">
             Upload your doctor's license or degree
           </Text>
-          {cameraOpen && (
-            <CameraView
-              className={
-                "w-screen aspect-square absolute z-40 "
-                // + (Platform.OS == "ios" ? "-top-[336px]" : "-top-[260px]")
-              }
-              ref={cameraRef}
-              onCameraReady={() => setisReady(true)}
-            >
-              <TouchableOpacity
-                className="absolute left-1/2 -translate-x-12 -bottom-28"
-                onPress={() => photo()}
-              >
-                <Ionicons name="ellipse-outline" size={98} color={"#fbfff1"} />
-                {/* <Icon name="circle" size={72} color={'#ffffff'} /> */}
-              </TouchableOpacity>
-            </CameraView>
-          )}
           {/* <TouchableOpacity
             className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-4 "
             onPress={() =>
@@ -908,7 +846,27 @@ export default function Signup({
               />
             ))}
             <TouchableOpacity
-              onPress={() => activateCameraGallery()}
+              onPress={() =>
+                Alert.alert("Please choose", undefined, [
+                  {
+                    text: "Photos",
+                    onPress: async () => {
+                      const i = await selectImage("photos");
+                      if (i)
+                        setInfo({ ...info, license: [...info.license, i] });
+                    },
+                  },
+                  {
+                    text: "Camera",
+                    onPress: async () => {
+                      const i = await selectImage("camera");
+                      if (i)
+                        setInfo({ ...info, license: [...info.license, i] });
+                    },
+                  },
+                  { text: "Cancel", style: "cancel" },
+                ])
+              }
               className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
             >
               <View className="m-auto">
@@ -917,7 +875,94 @@ export default function Signup({
             </TouchableOpacity>
           </Animated.ScrollView>
         </Animated.View>
-      ) : (
+      ) : index == 5 ? <Animated.View entering={FadeIn.duration(500)}>
+        <Text className="text-center text-lg text-ivory mb-3  font-semibold">
+            Upload a profile photo
+          </Text>
+         {info.picture.length == 0 ? (
+            <TouchableOpacity
+              onPress={() =>
+                Alert.alert("Please choose", undefined, [
+                  {
+                    text: "Photos",
+                    onPress: async () =>
+                      setInfo({
+                        ...info,
+                        picture: (await selectImage("photos")) ?? info.picture,
+                      }),
+                  },
+                  {
+                    text: "Camera",
+                    onPress: async () =>
+                      setInfo({
+                        ...info,
+                        picture: (await selectImage("camera")) ?? info.picture,
+                      }),
+                  },
+                  { text: "Cancel", style: "cancel" },
+                ])
+              }
+              className=" w-64 h-64 mx-auto  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
+            >
+              <View className="m-auto">
+                <Icons name="plus-circle" color={"#fbfff1"} size={50} />
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <Animated.View
+              // exiting={FadeOut.duration(500)}
+              entering={FadeInUp.duration(500)}
+              className="w-64 h-64 mx-auto relative z-50 flex aspect-square border border-solid border-ivory/80 rounded-xl"
+            >
+              <Image
+                source={info.picture}
+                className=" aspect-square rounded-xl"
+              />
+              <Pressable
+                onPress={() => setActiveChange(!activeChange)}
+                className="absolute rounded-xl w-64 h-64  z-50  flex"
+              >
+                {activeChange && (
+                  <Animated.View
+                    entering={FadeIn.duration(250)}
+                    exiting={FadeOut.duration(250)}
+                    className="h-full rounded-xl w-full bg-ivory/50"
+                  >
+                    <TouchableOpacity
+                      onPress={() =>
+                        Alert.alert("Please choose", undefined, [
+                          {
+                            text: "Photos",
+                            onPress: async () =>
+                              setInfo({
+                                ...info,
+                                picture:
+                                  (await selectImage("photos")) ?? info.picture,
+                              }),
+                          },
+                          {
+                            text: "Camera",
+                            onPress: async () =>
+                              setInfo({
+                                ...info,
+                                picture:
+                                  (await selectImage("camera")) ?? info.picture,
+                              }),
+                          },
+                          { text: "Cancel", style: "cancel" },
+                        ])
+                      }
+                      className="m-auto p-4"
+                    >
+                      <Icons name="pencil" size={60} color={"#08254099"} />
+                    </TouchableOpacity>
+                  </Animated.View>
+                )}
+              </Pressable>
+            </Animated.View>
+          )}
+          
+      </Animated.View> : (
         <Animated.View entering={FadeIn.duration(500)}>
           <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
             Password
@@ -985,6 +1030,7 @@ export default function Signup({
         textStyle={{ color: "#fff", marginTop: -25 }}
         animation="fade"
       />
+      </KeyboardAvoidingView>
     </View>
   );
 }

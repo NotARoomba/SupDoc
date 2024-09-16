@@ -91,7 +91,12 @@ export default function Index({ setIsLogged }: IndexProps) {
       publicKey: keys.public, // R
       privateKey: encPriv.toString(), // R
     };
-    if (isDoctorSignupInfo(userType, signUpInfo)) for (let i = 0; i < signUpInfo.license.length; i++) signUpInfo.license[i]= await FileSystem.readAsStringAsync(signUpInfo.license[i], { encoding: "base64" })
+    if (isDoctorSignupInfo(userType, signUpInfo))
+      for (let i = 0; i < signUpInfo.license.length; i++)
+        signUpInfo.license[i] = await FileSystem.readAsStringAsync(
+          signUpInfo.license[i],
+          { encoding: "base64" },
+        );
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
@@ -371,7 +376,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                     (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
                   (userType &&
                     isDoctorSignupInfo(userType, signUpInfo) &&
-                    pageIndex == 5)
+                    pageIndex == 6)
                 : pageIndex == 2
             ) ? (
               <Animated.View
@@ -434,11 +439,15 @@ export default function Index({ setIsLogged }: IndexProps) {
                         (pageIndex == 3 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
-                          (!signUpInfo.firstNames || !signUpInfo.lastNames)) ||
+                          (!signUpInfo.firstNames ||
+                            !signUpInfo.lastNames)) ||
                         (pageIndex == 4 &&
                           userType &&
                           isDoctorSignupInfo(userType, signUpInfo) &&
-                          signUpInfo.license.length == 0)
+                          signUpInfo.license.length == 0) || ( pageIndex == 5 &&
+                            userType &&
+                            isDoctorSignupInfo(userType, signUpInfo) &&
+                            !signUpInfo.picture)
                       : pageIndex == 1 && !userType
                   )
                     ? Alert.alert(
