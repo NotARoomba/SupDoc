@@ -185,7 +185,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
 });
 
 patientsRouter.post("/update", async (req: Request, res: Response) => {
-  const data: Patient<null> = req.body;
+  const data: Patient = req.body;
   const keyAltName = data.identification.number.toString(2);
   try {
     const keyUDID = await createKey([
