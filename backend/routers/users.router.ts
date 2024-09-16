@@ -56,7 +56,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
               },
             },
             {
-              number,
+              number: number ?? "",
             },
           ],
         }))) as User;
