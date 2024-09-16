@@ -4,6 +4,7 @@ import Patient from "../models/patient";
 import { Doctor } from "../models/doctor";
 import Post from "../models/post";
 import Comment from "../models/comment";
+import Fact from "../models/fact";
 
 export const env = dotenv.load({
   MONGODB: String,
@@ -34,7 +35,7 @@ export const collections: {
   posts?: mongoDB.Collection;
   comments?: mongoDB.Collection;
   reports?: mongoDB.Collection<Report>;
-  facts?: mongoDB.Collection<Report>;
+  facts?: mongoDB.Collection<Fact>;
 } = {};
 
 export let encryption: mongoDB.ClientEncryption;
