@@ -17,6 +17,7 @@ import {
   TouchableWithoutFeedback,
   Platform,
   Animated,
+  Pressable,
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { User } from "@/backend/models/user";
@@ -32,14 +33,20 @@ import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import prompt from "@powerdesigninc/react-native-prompt";
 import useFade from "components/misc/useFade";
 import { Image } from "expo-image";
+import useCamera from "components/misc/useCamera";
+import usePhotos from "components/misc/usePhotos";
+import * as FileSystem from 'expo-file-system'
 
 export default function Profile() {
+  const camera = useCamera();
+  const photos = usePhotos();
   const [userType, setUserType] = useState<UserType>();
   const [countryShow, setCountryShow] = useState(false);
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [user, setUser] = useState<User>();
   const [userEdit, setUserEdit] = useState<User>();
   const [loading, setLoading] = useState(false);
+  const [activeChange, setActiveChange] = useState(false);
   const fadeAnim = useFade();
   useEffect(() => {
     const fetchData = async () => {
@@ -47,12 +54,10 @@ export default function Profile() {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
-      console.log(ut);
       const res = await callAPI(
         `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
         "GET",
       );
-      console.log(Object.keys(res.user));
       if (res.status == STATUS_CODES.USER_NOT_FOUND) {
         setLoading(false);
         return await logout();
@@ -72,11 +77,17 @@ export default function Profile() {
     fetchData();
   }, []);
   const updateUser = async () => {
+    // NEED TO CHECK IF PATIENT WITH THE USEREDIT
+    const doctorStuff = userType && userEdit && isDoctorInfo(userType, userEdit) ? {picture: await FileSystem.readAsStringAsync(
+      userEdit.picture,
+      { encoding: "base64" },
+    )} : {}
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/update`,
       "POST",
       {
         ...userEdit,
+        ...doctorStuff,
         number: countryCode.slice(4) + userEdit?.number,
       },
     );
@@ -162,6 +173,29 @@ export default function Profile() {
       }
     } else await updateUser();
   };
+  const selectImage = async (pickerType: "camera" | "photos") => {
+    if ((!(await camera.requestPermission()) && pickerType == 'camera') && (!(await photos.requestPermission()) && pickerType !== 'camera')) return console.log("NO PHOTOS");
+    ;
+    try {
+      let result;
+      if (pickerType === "camera") {
+        result = await camera.takePhoto({
+          allowsEditing: true,
+          quality: 0.5,
+        });
+      } else {
+        result = await photos.selectImage({
+          quality: 0.5,
+          allowsEditing: true,
+        });
+      }
+      setActiveChange(false);
+      return result.assets ? result.assets[0].uri : null;
+    } catch (error) {
+      Alert.alert("Image error", "Error reading image");
+      console.log(error);
+    }
+  };
   return (
     <Animated.View style={{ opacity: fadeAnim }} className="h-full">
       <View className="absolute w-full p-4 flex justify-between z-50 flex-row">
@@ -193,14 +227,54 @@ export default function Profile() {
                   {userType == UserType.PATIENT ? (
                     <Icons name="person" size={150} color={"#fbfff1"} />
                   ) : (
-                    user &&
-                    isDoctorInfo(userType, user) && (
+                    user && userEdit &&
+                    isDoctorInfo(userType, user) && isDoctorInfo(userType, userEdit) && (
                       <TouchableOpacity
-                        onPress={() => console.log("CHANGE PHOTO")}
                         className=" w-48 h-48  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
                       >
                         <View className="m-auto">
-                          <Image source={user.picture} />
+                          <Image className="rounded-xl h-full aspect-square" source={{uri: `${userEdit.picture !== user.picture ? userEdit.picture : `data:image/png;base64,${userEdit.picture}`}`}} />
+                          <Pressable
+                onPress={() => setActiveChange(!activeChange)}
+                className="absolute rounded-xl w-48 h-48  z-50  flex"
+              >
+                {activeChange  && (
+                  <Reanimated.View
+                    entering={FadeIn.duration(250)}
+                    exiting={FadeOut.duration(250)}
+                    className="h-full rounded-xl w-full bg-ivory/50"
+                  >
+                    <TouchableOpacity
+                      onPress={() =>
+                        Alert.alert("Please choose", undefined, [
+                          {
+                            text: "Photos",
+                            onPress: async () =>
+                              setUserEdit({
+                                ...userEdit,
+                                picture:
+                                  (await selectImage("photos")) ?? userEdit.picture,
+                              }),
+                          },
+                          {
+                            text: "Camera",
+                            onPress: async () =>
+                            setUserEdit({
+                              ...userEdit,
+                              picture:
+                                (await selectImage("camera")) ?? userEdit.picture,
+                            }),
+                          },
+                          { text: "Cancel", style: "cancel" },
+                        ])
+                      }
+                      className="m-auto p-4"
+                    >
+                      <Icons name="pencil" size={60} color={"#08254099"} />
+                    </TouchableOpacity>
+                  </Reanimated.View>
+                )}
+              </Pressable>
                         </View>
                       </TouchableOpacity>
                     )
