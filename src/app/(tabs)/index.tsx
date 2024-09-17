@@ -3,12 +3,12 @@ import FunFact from "components/misc/FunFact";
 import useFade from "components/misc/useFade";
 import { HomeProps } from "components/utils/Types";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Animated, Platform, Text, View } from "react-native";
-import { useTranslation } from 'react-i18next';
 export default function Index({ userType }: HomeProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const fadeAnim = useFade();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   return (
     <Animated.View
       style={{ opacity: fadeAnim }}
@@ -17,7 +17,7 @@ export default function Index({ userType }: HomeProps) {
       <FunFact />
       <View className="h-0.5 rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
       <Text className="text-4xl font-bold text-center text-ivory">
-        Your Posts {t('hello')}
+        Your Posts
       </Text>
       {posts.length == 0 ? (
         <Text className=" text-center text-powder_blue/80">

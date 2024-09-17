@@ -44,6 +44,13 @@ export enum Sex {
   OTHER = "O",
 }
 
+export enum GS {
+  O = "O",
+  A = "A",
+  B = "B",
+  AB = "AB",
+}
+
 interface BaseSignupInfo {
   password: string;
   passwordchk: string;

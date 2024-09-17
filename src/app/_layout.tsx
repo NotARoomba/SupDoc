@@ -3,6 +3,7 @@ import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { SafeAreaView, View } from "react-native";
+import "../components/utils/i18n";
 import Index from "./Index";
 
 SplashScreen.preventAutoHideAsync();

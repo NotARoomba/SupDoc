@@ -241,7 +241,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     // }
     const res = await callAPI(`/users/keys`, "POST", {
       id: loginInfo.identification,
-      userType
+      userType,
     });
     if (res.status == STATUS_CODES.USER_NOT_FOUND) {
       setLoading(false);

@@ -1,0 +1,68 @@
+{
+    "success": "Success",
+    "error": "Error",
+    "cancel": "Cancel",
+    "settings": "Settings",
+    "loading": "Loading",
+    "inputs": {
+        "number": "Phone Number",
+        "identification": "Identification",
+        "password": "Password"
+    },
+    "posts": {
+        "none": "(You have not posted anything yet)"
+    },
+    "titles": {
+        "login": "Login",
+        "signup": "Signup",
+        "register": "Register",
+        "personal": "Personal Information",
+        "fact": "Fun Fact",
+        "posts": "Your Posts"
+    },
+    "images": {
+        "readingTitle": "Image Error",
+        "readingDescription": "Error reading image",
+        "galleryTitle": "Allow Gallery Access",
+        "galleryDescription": "You need to allow media library permissions for this to work",
+        "cameraTitle": "Allow Camera Access",
+        "cameraDescription": "You need to allow camera permissions for this to work",
+        "remove": "Remove",
+        "removeTitle": "Remove Image",
+        "removeDescription": "Are you sure you want to remove this image?"
+    },
+    "buttons": {
+        "back": "Back",
+        "next": "Next",
+        "finish": "Finish"
+    },
+    "successMsg": {
+        "login": "You are now logged in",
+        "signup": "You are now registered"
+    },
+    "errorMsg": {
+        "createUser": "There was an error creating a user",
+        "loginNotFound": "{{userType}} not found with that ID",
+        "wrongPassword": "The password entered is incorrect",
+        "GENERIC_ERROR": "An error has occured",
+        "USER_NOT_FOUND": "That user does not exist",
+        "INVALID_NUMBER": "The phone number is invalid",
+        "SENT_CODE": "A code has already been sent to {{number}}",
+        "NUMBER_NOT_EXIST": "That number does not exist",
+        "ERROR_SENDING_CODE": "There was an error sending the code",
+        "TOO_MANY_ATTEMPTS": "You have attempted too many times, please wait 5 minutes",
+        "CODE_DENIED": "The code is incorrect",
+        "CODE_EXPIRED": "The code has expired",
+        "CODE_FAILED": "There was an error sending the code",
+        "NO_CONNECTION": "There was an error connecting to the server, please check your internet connection.",
+        "ID_IN_USE": "The identification provided is already in use",
+        "NUMBER_IN_USE": "The phone number provided is already in use",
+        "INVALID_IDENTITY": "The identification provided is invalid",
+        "COMMENT_LIMIT_REACHED": "The post has reached the maximum limit of comments allowed",
+        "DOES_NOT_EXIST": "The requested resource does not exist"
+    },
+    "verification": {
+        "title": "Enter Verification Code",
+        "description": "Enter the verification code sent to: "
+    }
+}

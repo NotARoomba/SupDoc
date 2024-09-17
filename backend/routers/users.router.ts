@@ -49,12 +49,12 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
           ],
         })) as User) : null;
     }
-    if (!user) return res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
+    if (!user) return res.status(200).send({ status: STATUS_CODES.SUCCESS });
     else if (user.identification.number == id) return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
     else if (user.number == number) res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
   } catch (error) {
     if (error instanceof MongoCryptError) {
-      return res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
+      return res.status(200).send({ status: STATUS_CODES.SUCCESS });
     }
     res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
@@ -86,7 +86,6 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
                   keyAltName: id.toString(2),
                 }),
         })) as User) : null);
-        console.log(user)
       if (!user)return res.status(200).send({ status: STATUS_CODES.USER_NOT_FOUND });
       res.status(200).send({
         status: STATUS_CODES.SUCCESS,

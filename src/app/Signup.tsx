@@ -40,6 +40,7 @@ import {
 } from "../components/utils/Functions";
 import {
   BirthSex,
+  GS,
   Sex,
   SignupProps,
   UserType,
@@ -58,17 +59,14 @@ export default function Signup({
   const gallery = useGallery();
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [loading, setIsLoading] = useState(false);
-  const [gsValue, setGSValue] = useState("O");
+  const [gsValue, setGSValue] = useState(GS.O);
   const [gsOpen, setGSOpen] = useState(false);
   const [verified, setIsVerified] = useState(false);
   const [activeChange, setActiveChange] = useState(false);
   const [activeDelete, setActiveDelete] = useState("");
-  const [gsItems, setGSItems] = useState([
-    { label: "O", value: "O" },
-    { label: "A", value: "A" },
-    { label: "B", value: "B" },
-    { label: "AB", value: "AB" },
-  ]);
+  const [gsItems, setGSItems] = useState(
+    Object.values(GS).map((s) => ({ label: s, value: s })),
+  );
   const [rhValue, setRhValue] = useState("+");
   const [rhOpen, setRhOpen] = useState(false);
   const [rhItems, setRhItems] = useState([
@@ -77,22 +75,17 @@ export default function Signup({
   ]);
 
   // Sex States
-  const [sexValue, setSexValue] = useState("M");
+  const [sexValue, setSexValue] = useState(BirthSex.MALE);
   const [sexOpen, setSexOpen] = useState(false);
-  const [sexItems, setSexItems] = useState([
-    { label: "M", value: "M" },
-    { label: "F", value: "F" },
-    { label: "IS", value: "IS" },
-  ]);
+  const [sexItems, setSexItems] = useState(
+    Object.values(BirthSex).map((s) => ({ label: s, value: s })),
+  );
 
-  const [altSexValue, setAltSexValue] = useState("M");
+  const [altSexValue, setAltSexValue] = useState(Sex.MALE);
   const [altSexOpen, setAltSexOpen] = useState(false);
-  const [altSexItems, setAltSexItems] = useState([
-    { label: "M", value: "M" },
-    { label: "F", value: "F" },
-    { label: "NB", value: "NB" },
-    { label: "O", value: "O" },
-  ]);
+  const [altSexItems, setAltSexItems] = useState(
+    Object.values(Sex).map((s) => ({ label: s, value: s })),
+  );
 
   // Pregnancy Status States
   const [isPregnantValue, setIsPregnantValue] = useState(false);
@@ -111,7 +104,6 @@ export default function Signup({
   );
 
   useEffect(() => {
-    console.log(index);
     const doChecks = async () => {
       if (index == 3) {
         setIsLoading(true);
@@ -119,12 +111,7 @@ export default function Signup({
           number: info.countryCode + info.number,
           id: info.identification,
         });
-        console.log(res);
-        console.log(info.countryCode + info.number);
-        if (
-          res.status == STATUS_CODES.ID_IN_USE ||
-          res.status == STATUS_CODES.NUMBER_IN_USE
-        ) {
+        if (res.status !== STATUS_CODES.SUCCESS) {
           setIndex(index - 1);
           setIsLoading(false);
           return Alert.alert("Error", "That number/ID already exists!");
@@ -189,7 +176,7 @@ export default function Signup({
       !(await gallery.requestPermission()) &&
       pickerType !== "camera"
     )
-      return console.log("NO PHOTOS");
+      return;
     try {
       let result;
       if (pickerType === "camera") {
