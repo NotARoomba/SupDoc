@@ -33,7 +33,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
               number: number ?? "",
             },
           ],
-        })) ??
+        })) ??  (await encryption.getKeyByAltName(id.toString(2))) ?
         ((await collections.patients.findOne({
           $or: [
             {
@@ -51,11 +51,11 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
               }),
             },
           ],
-        })) as User);
+        })) as User) : null;
     }
-    if (user) return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
-    else if (user) res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
-    else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
+    if (!user) res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
+    else if (user.identification.number == id) return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
+    else if (user.number == number) res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
   } catch (error) {
     if (error instanceof MongoCryptError) {
       return res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
