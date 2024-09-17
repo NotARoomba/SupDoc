@@ -45,6 +45,7 @@ import {
   SignupProps,
   UserType,
 } from "../components/utils/Types";
+import { useTranslation } from "react-i18next";
 
 export default function Signup({
   info,
@@ -64,6 +65,7 @@ export default function Signup({
   const [verified, setIsVerified] = useState(false);
   const [activeChange, setActiveChange] = useState(false);
   const [activeDelete, setActiveDelete] = useState("");
+  const { t } = useTranslation();
   const [gsItems, setGSItems] = useState(
     Object.values(GS).map((s) => ({ label: s, value: s })),
   );
@@ -91,8 +93,8 @@ export default function Signup({
   const [isPregnantValue, setIsPregnantValue] = useState(false);
   const [isPregnantOpen, setIsPregnantOpen] = useState(false);
   const [isPregnantItems, setIsPregnantItems] = useState([
-    { label: "Yes", value: true },
-    { label: "No", value: false },
+    { label: t('yes'), value: true },
+    { label: t('no'), value: false },
   ]);
 
   const [specialtyValue, setSpecialtyValue] = useState(
@@ -114,7 +116,7 @@ export default function Signup({
         if (res.status !== STATUS_CODES.SUCCESS) {
           setIndex(index - 1);
           setIsLoading(false);
-          return Alert.alert("Error", "That number/ID already exists!");
+          return Alert.alert(t('error'), "That number/ID already exists!");
         }
         if (!verified) {
           const isValid =

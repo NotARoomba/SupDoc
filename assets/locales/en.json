@@ -4,10 +4,30 @@
     "cancel": "Cancel",
     "settings": "Settings",
     "loading": "Loading",
+    "yes": "Yes",
+    "no": "No",
     "inputs": {
+        "first": "First Names",
+        "last": "Last Names",
         "number": "Phone Number",
         "identification": "Identification",
-        "password": "Password"
+        "dob": "Date of Birth",
+        "height": "Height (cm)",
+        "blood": "Blood Type",
+        "weight": "Weight (kg)",
+        "sex": "Sex",
+        "pregnant": "Pregnant",
+        "trans": "Do you identify as a different sex than your birth sex?",
+        "hormones": "Do you take hormones?",
+        "surgery": "Have you had a sex-changing surgery?",
+        "altSex": "What sex do you identify with?",
+        "password": "Password",
+        "passwordChk": "Re-enter Password",
+        "specialty": "Specialty",
+        "experience": "Experience",
+        "bio": "Bio",
+        "license": "Upload your doctor's license or degree",
+        "picture": "Upload a profile photo"
     },
     "posts": {
         "none": "(You have not posted anything yet)"
@@ -21,6 +41,8 @@
         "posts": "Your Posts"
     },
     "images": {
+        "gallery": "Gallery",
+        "camera": "Camera",
         "readingTitle": "Image Error",
         "readingDescription": "Error reading image",
         "galleryTitle": "Allow Gallery Access",
