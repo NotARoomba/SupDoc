@@ -85,6 +85,9 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
           $set: {
             number: data.number,
             picture: data.picture,
+            info: {
+              ...data.info
+            }
           },
         },
         { returnDocument: "after" },

@@ -412,9 +412,11 @@ export default function Index({ setIsLogged }: IndexProps) {
                             ? "The passwords do not match!"
                             : "Please fill out the information!",
                         )
-                      : (!isLogin ? verifyPassword(signUpInfo.password) : true) ? !isLogin
-                        ? signup()
-                        : checkLogin("7", "8") : 0
+                      : (!isLogin ? verifyPassword(signUpInfo.password) : true)
+                        ? !isLogin
+                          ? signup()
+                          : checkLogin("7", "8")
+                        : 0
                   }
                   className={
                     "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "

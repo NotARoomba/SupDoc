@@ -18,6 +18,7 @@ import {
   Platform,
   Animated,
   Pressable,
+  ScrollView,
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { User } from "@/backend/models/user";
@@ -45,11 +46,11 @@ export default function Profile() {
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [user, setUser] = useState<User>();
   const [userEdit, setUserEdit] = useState<User>();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeChange, setActiveChange] = useState(false);
   const fadeAnim = useFade();
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const fetchData = async () => {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
@@ -265,7 +266,7 @@ export default function Profile() {
                                   onPress={() =>
                                     Alert.alert("Please choose", undefined, [
                                       {
-                                        text: "Photos",
+                                        text: "Gallery",
                                         onPress: async () =>
                                           setUserEdit({
                                             ...userEdit,
@@ -334,6 +335,7 @@ export default function Profile() {
                   </View>
                 </>
               )}
+              <ScrollView onScrollBeginDrag={Keyboard.dismiss} onScrollEndDrag={Keyboard.dismiss} className=" h-52">
               {userEdit && isPatientInfo(userType, userEdit) ? (
                 <View className="flex w-full flex-row px-8">
                   <View>
@@ -412,56 +414,60 @@ export default function Profile() {
                     )}
                   </View>
                 </View>
-              ) : userEdit && isDoctorInfo(userType, userEdit) && (
-                <View className="h-full flex">
-                  <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            Specialty
-          </Text>
-          <TextInput
-            onChangeText={(n) =>
-              setUserEdit({
-                ...userEdit,
-                info: {...userEdit.info, specialty: n},
-              })
-            }
-            value={userEdit.info.specialty}
-            keyboardType="default"
-            placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-          />
-          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            Experience
-          </Text>
-          <TextInput
-            onChangeText={(n) =>
-              setUserEdit({
-                ...userEdit,
-                info: {...userEdit.info, experience: n},
-              })
-            }
-            value={userEdit.info.experience}
-            keyboardType="default"
-            placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-          /><Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
-          Bio ({userEdit.info.about.length}/300)
-        </Text>
-        <TextInput
-          onChangeText={(n) =>
-            setUserEdit({
-              ...userEdit,
-              info: {...userEdit.info, about: n},
-            })
-          }
-          maxLength={300}
-          multiline
-          value={userEdit.info.about}
-          keyboardType="default"
-          placeholderTextColor={"#ffffff"}
-          className="flex justify-center align-middle  m-auto h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-        />
-                </View>
-              )}
+              ) : (
+                userEdit &&
+                isDoctorInfo(userType, userEdit) && (
+                  <View className="flex">
+                    <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                      Specialty
+                    </Text>
+                    <TextInput
+                      onChangeText={(n) =>
+                        setUserEdit({
+                          ...userEdit,
+                          info: { ...userEdit.info, specialty: n },
+                        })
+                      }
+                      value={userEdit.info.specialty}
+                      keyboardType="default"
+                      placeholderTextColor={"#ffffff"}
+                      className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                    />
+                    <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                      Experience
+                    </Text>
+                    <TextInput
+                      onChangeText={(n) =>
+                        setUserEdit({
+                          ...userEdit,
+                          info: { ...userEdit.info, experience: n },
+                        })
+                      }
+                      value={userEdit.info.experience}
+                      keyboardType="default"
+                      placeholderTextColor={"#ffffff"}
+                      className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                    />
+                    <Text className="text-center flex text-lg text-ivory -mb-3 mt-4 font-semibold">
+                      Bio ({userEdit.info.about.length}/300)
+                    </Text>
+                    <TextInput
+                      onChangeText={(n) =>
+                        setUserEdit({
+                          ...userEdit,
+                          info: { ...userEdit.info, about: n },
+                        })
+                      }
+                      maxLength={300}
+                      multiline
+                      value={userEdit.info.about}
+                      keyboardType="default"
+                      placeholderTextColor={"#ffffff"}
+                      className="flex justify-center align-middle  m-auto mb-52 h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                    />
+                  </View>
+                )
+              )}</ScrollView>
               {userEdit &&
                 JSON.stringify({
                   ...userEdit,

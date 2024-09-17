@@ -916,7 +916,7 @@ export default function Signup({
               onPress={() =>
                 Alert.alert("Please choose", undefined, [
                   {
-                    text: "Photos",
+                    text: "Gallery",
                     onPress: async () => {
                       const i = await selectImage("gallery");
                       if (i)
@@ -952,7 +952,7 @@ export default function Signup({
               onPress={() =>
                 Alert.alert("Please choose", undefined, [
                   {
-                    text: "Photos",
+                    text: "Gallery",
                     onPress: async () =>
                       setInfo({
                         ...info,
@@ -1000,7 +1000,7 @@ export default function Signup({
                       onPress={() =>
                         Alert.alert("Please choose", undefined, [
                           {
-                            text: "Photos",
+                            text: "Gallery",
                             onPress: async () =>
                               setInfo({
                                 ...info,
