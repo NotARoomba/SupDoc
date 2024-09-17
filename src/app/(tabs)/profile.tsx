@@ -80,7 +80,7 @@ export default function Profile() {
   const updateUser = async () => {
     // NEED TO CHECK IF PATIENT WITH THE USEREDIT
     const doctorStuff =
-      userType && userEdit && isDoctorInfo(userType, userEdit)
+      userType && userEdit && user && isDoctorInfo(userType, userEdit) && isDoctorInfo(userType, user) && userEdit.picture !== user.picture
         ? {
             picture: await FileSystem.readAsStringAsync(userEdit.picture, {
               encoding: "base64",
@@ -307,7 +307,10 @@ export default function Profile() {
               </View>
               {userEdit && (
                 <>
-                  <Text className="text-2xl mt-2 text-ivory font-semibold text-center">
+                {isDoctorInfo(userType, userEdit) && <Text className="text-2xl mt-2 -mb-2 text-ivory font-semibold text-center">
+                    {userEdit.name}
+                  </Text>}
+                  <Text className={" mt-2 text-ivory  text-center " + (isDoctorInfo(userType, userEdit) ? "text-xl font-medium" : "text-2xl font-semibold")}>
                     {user?.identification.number}
                   </Text>
                   <View className="h-0.5 rounded-full w-72 mx-auto bg-powder_blue/50 my-4" />
