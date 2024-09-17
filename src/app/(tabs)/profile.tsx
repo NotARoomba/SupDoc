@@ -49,8 +49,8 @@ export default function Profile() {
   const [activeChange, setActiveChange] = useState(false);
   const fadeAnim = useFade();
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
-      setLoading(true);
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
@@ -412,9 +412,54 @@ export default function Profile() {
                     )}
                   </View>
                 </View>
-              ) : (
-                <View>
-                  <Text className="text-ivory">DOCTORRR</Text>
+              ) : userEdit && isDoctorInfo(userType, userEdit) && (
+                <View className="h-full flex">
+                  <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+            Specialty
+          </Text>
+          <TextInput
+            onChangeText={(n) =>
+              setUserEdit({
+                ...userEdit,
+                info: {...userEdit.info, specialty: n},
+              })
+            }
+            value={userEdit.info.specialty}
+            keyboardType="default"
+            placeholderTextColor={"#ffffff"}
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+          />
+          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+            Experience
+          </Text>
+          <TextInput
+            onChangeText={(n) =>
+              setUserEdit({
+                ...userEdit,
+                info: {...userEdit.info, experience: n},
+              })
+            }
+            value={userEdit.info.experience}
+            keyboardType="default"
+            placeholderTextColor={"#ffffff"}
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+          /><Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
+          Bio ({userEdit.info.about.length}/300)
+        </Text>
+        <TextInput
+          onChangeText={(n) =>
+            setUserEdit({
+              ...userEdit,
+              info: {...userEdit.info, about: n},
+            })
+          }
+          maxLength={300}
+          multiline
+          value={userEdit.info.about}
+          keyboardType="default"
+          placeholderTextColor={"#ffffff"}
+          className="flex justify-center align-middle  m-auto h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+        />
                 </View>
               )}
               {userEdit &&

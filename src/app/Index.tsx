@@ -30,6 +30,7 @@ import {
   callAPI,
   isDoctorSignupInfo,
   isPatientSignupInfo,
+  verifyPassword,
 } from "components/utils/Functions";
 import Spinner from "react-native-loading-spinner-overlay";
 import CryptoJS from "crypto-es";
@@ -185,6 +186,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           passwordchk: "",
           countryCode: "+57",
           identification: 0,
+          number: "",
           dob: Date.now(), // Required for patient signup
           weight: 0, // Required for patient signup
           height: 0, // Required for patient signup
@@ -242,6 +244,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     //   // need to update wth localizations
     //   return Alert.alert("Error", v.status);
     // }
+    console.log(loginInfo)
     const res = await callAPI(`/users/keys`, "POST", {
       number,
       id: loginInfo.identification,
@@ -250,7 +253,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     if (res.status == STATUS_CODES.USER_NOT_FOUND) {
       setLoading(false);
       // need to update wth localizations
-      return Alert.alert("Error", "User Not found with that ID");
+      return Alert.alert("Error", "User not found with that ID");
     } else if (res.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
       // need to update wth localizations
@@ -411,9 +414,9 @@ export default function Index({ setIsLogged }: IndexProps) {
                             ? "The passwords do not match!"
                             : "Please fill out the information!",
                         )
-                      : !isLogin
+                      : (!isLogin ? verifyPassword(signUpInfo.password) : true) ? !isLogin
                         ? signup()
-                        : checkLogin("7", "8")
+                        : checkLogin("7", "8") : 0
                   }
                   className={
                     "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "

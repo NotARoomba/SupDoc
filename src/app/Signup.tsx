@@ -942,7 +942,7 @@ export default function Signup({
             </TouchableOpacity>
           </Animated.ScrollView>
         </Animated.View>
-      ) : index == 6 ? (
+      ) : index == 7 ? (
         <Animated.View entering={FadeIn.duration(500)}>
           <Text className="text-center text-lg text-ivory mb-3  font-semibold">
             Upload a profile photo

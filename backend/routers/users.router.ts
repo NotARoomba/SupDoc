@@ -68,49 +68,55 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
   const number: string = req.body.number;
   const userType: UserType = req.body.userType;
+  // try {
+  //   await createKey([
+  //     id.toString(2),
+  //     number
+  //       .split("")
+  //       .map((bin) => String.fromCharCode(parseInt(bin, 2)))
+  //       .join(""),
+  //   ]);
+  // } catch {}
   try {
-    await createKey([
-      id.toString(2),
-      number
-        .split("")
-        .map((bin) => String.fromCharCode(parseInt(bin, 2)))
-        .join(""),
-    ]);
-  } catch {}
-  try {
-    let idUser: User;
-    let numberUser: User;
+    let user: User;
     if (collections.patients && collections.doctors) {
-      idUser = (userType == UserType.PATIENT
-        ? await collections.patients.findOne({
-            identification: {
-              number: await encryption.encrypt(id, {
+      user =
+        (await collections.doctors.findOne({
+          $or: [
+            {
+              identification: {
+                number: id,
+              },
+            },
+            {
+              number: number ?? "",
+            },
+          ],
+        })) ??
+        ((await collections.patients.findOne({
+          $or: [
+            {
+              identification: {
+                number: await encryption.encrypt(id, {
+                  algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                  keyAltName: id.toString(2),
+                }),
+              },
+            },
+            {
+              number: await encryption.encrypt(number ?? "", {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                 keyAltName: id.toString(2),
               }),
             },
-          })
-        : await collections.doctors.findOne({
-            identification: {
-              number: id,
-            },
-          })) as unknown as User;
-      numberUser = (userType == UserType.PATIENT
-        ? await collections.patients.findOne({
-            number: await encryption.encrypt(number, {
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-              keyAltName: id.toString(2),
-            }),
-          })
-        : await collections.doctors.findOne({
-            number,
-          })) as unknown as User;
-      if (!numberUser && !idUser)
+          ],
+        })) as User);
+      if (!user)
         return res.status(200).send({ status: STATUS_CODES.USER_NOT_FOUND });
       res.status(200).send({
         status: STATUS_CODES.SUCCESS,
-        private: idUser ? idUser.privateKey : numberUser.privateKey,
-        public: idUser ? idUser.publicKey : numberUser.publicKey,
+        private: user.privateKey,
+        public: user.publicKey,
       });
     }
   } catch (error) {
