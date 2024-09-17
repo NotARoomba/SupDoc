@@ -1,5 +1,4 @@
-import { Binary, ObjectId } from "mongodb";
-import { ApplyConditionalType } from "./util";
+import { ObjectId } from "mongodb";
 
 enum REPORT_REASONS {
   INNAPROPRIATE_BEHAVIOUR,

@@ -1,14 +1,12 @@
 import express, { Request, Response } from "express";
+import Patient from "../models/patient";
+import { STATUS_CODES } from "../models/util";
 import {
   collections,
   createKey,
   encryption,
   env,
 } from "../services/database.service";
-import { STATUS_CODES } from "../models/util";
-import { MongoCryptError, ObjectId } from "mongodb";
-import Patient from "../models/patient";
-import { createWorker } from "tesseract.js";
 import { encrypt } from "../services/encryption.service";
 
 export const patientsRouter = express.Router();

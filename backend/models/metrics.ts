@@ -1,7 +1,3 @@
-import { Binary } from "mongodb";
-import { ApplyConditionalType } from "./util";
-import { Specialty } from "./specialty";
-
 export interface PatientMetrics {
   age: number;
   height: number;
@@ -18,5 +14,5 @@ export interface PatientMetrics {
 export interface DoctorMetrics {
   specialty: string;
   experience: string;
-  about: string
+  about: string;
 }

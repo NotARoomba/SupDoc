@@ -1,6 +1,4 @@
-import { Binary, ObjectId } from "mongodb";
-import Comment from "./comment";
-import { ApplyConditionalType } from "./util";
+import { ObjectId } from "mongodb";
 
 export default interface Post {
   _id?: ObjectId;

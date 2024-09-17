@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
-import { collections } from "../services/database.service";
-import { STATUS_CODES } from "../models/util";
 import { Doctor } from "../models/doctor";
+import { STATUS_CODES } from "../models/util";
+import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 
 export const doctorsRouter = express.Router();
@@ -88,8 +88,8 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
             number: data.number,
             picture: data.picture,
             info: {
-              ...data.info
-            }
+              ...data.info,
+            },
           },
         },
         { returnDocument: "after" },

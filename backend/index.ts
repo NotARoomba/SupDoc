@@ -1,17 +1,14 @@
+import cors from "cors";
 import express, { Request, Response } from "express";
-import cors, { CorsOptions } from "cors";
-import { connectToDatabase, env } from "./services/database.service";
-import { decryptionMiddleware } from "./services/encryption.service";
-import { verifyRouter } from "./routers/verify.router";
-import { patientsRouter } from "./routers/patients.router";
-import { Server, Socket } from "socket.io";
 import { createServer } from "http";
-import CryptoJS from "crypto-js";
-import { postsRouter } from "./routers/posts.router";
 import { doctorsRouter } from "./routers/doctors.router";
-import { usersRouter } from "./routers/users.router";
 import { factsRouter } from "./routers/facts.router";
-import NodeRSA from "node-rsa";
+import { patientsRouter } from "./routers/patients.router";
+import { postsRouter } from "./routers/posts.router";
+import { usersRouter } from "./routers/users.router";
+import { verifyRouter } from "./routers/verify.router";
+import { connectToDatabase } from "./services/database.service";
+import { decryptionMiddleware } from "./services/encryption.service";
 
 export const app = express();
 const httpServer = createServer(app);

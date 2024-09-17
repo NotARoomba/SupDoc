@@ -1,6 +1,4 @@
-import { Binary, ObjectId } from "mongodb";
-import { ApplyConditionalType } from "./util";
-import Report from "./report";
+import { ObjectId } from "mongodb";
 
 export default interface Fact {
   _id?: ObjectId;

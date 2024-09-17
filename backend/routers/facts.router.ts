@@ -1,14 +1,8 @@
 import express, { Request, Response } from "express";
-import {
-  collections,
-  createKey,
-  encryption,
-  env,
-} from "../services/database.service";
-import { STATUS_CODES, UserType } from "../models/util";
-import { User } from "../models/user";
-import Fact from "../models/fact";
 import { ObjectId } from "mongodb";
+import Fact from "../models/fact";
+import { STATUS_CODES } from "../models/util";
+import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 
 export const factsRouter = express.Router();

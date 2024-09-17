@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
-import Post from "../models/post";
-import { collections, encryption } from "../services/database.service";
-import { Binary, ObjectId } from "mongodb";
-import { STATUS_CODES } from "../models/util";
+import { ObjectId } from "mongodb";
 import Comment from "../models/comment";
+import Post from "../models/post";
+import { STATUS_CODES } from "../models/util";
+import { collections, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 
 export const postsRouter = express.Router();

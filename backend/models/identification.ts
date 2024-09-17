@@ -1,10 +1,3 @@
-import { Binary } from "mongodb";
-import { ApplyConditionalType } from "./util";
-
-enum IdentificationType {
-  TI,
-  CEDULA,
-}
 export interface Identification {
   // type: number; // D
   number: number; // D

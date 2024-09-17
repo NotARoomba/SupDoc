@@ -1,7 +1,6 @@
-import { Binary, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { Doctor } from "./doctor";
 import Patient from "./patient";
-import { ApplyConditionalType } from "./util";
 
 export interface UserBase {
   _id?: ObjectId;
