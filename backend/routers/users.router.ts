@@ -53,7 +53,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
           ],
         })) as User) : null;
     }
-    if (!user) res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
+    if (!user) return res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
     else if (user.identification.number == id) return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
     else if (user.number == number) res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
   } catch (error) {
@@ -66,7 +66,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
 
 usersRouter.post("/keys", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
-  const number: string = req.body.number;
+  // const number: string = req.body.number;
   // try {
   //   await createKey([
   //     id.toString(2),
@@ -81,38 +81,20 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
     if (collections.patients && collections.doctors) {
       user =
         (await collections.doctors.findOne({
-          $or: [
-            {
               identification: {
                 number: id,
               },
-            },
-            {
-              number: number ?? "",
-            },
-          ],
         })) ?? (await encryption.getKeyByAltName(id.toString(2))) ?
         ((await collections.patients.findOne({
-          $or: [
-            {
               identification: {
                 number: await encryption.encrypt(id, {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                   keyAltName: id.toString(2),
                 }),
               },
-            },
-            {
-              number: await encryption.encrypt(number ?? "", {
-                algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                keyAltName: id.toString(2),
-              }),
-            },
-          ],
         })) as User) : null;
         console.log(user)
-      if (!user)
-        return res.status(200).send({ status: STATUS_CODES.USER_NOT_FOUND });
+      if (!user)return res.status(200).send({ status: STATUS_CODES.USER_NOT_FOUND });
       res.status(200).send({
         status: STATUS_CODES.SUCCESS,
         private: user.privateKey,
