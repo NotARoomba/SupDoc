@@ -2,13 +2,7 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { LoginProps } from "../components/utils/Types";
 import Animated, { FadeIn } from "react-native-reanimated";
 
-export default function Login({
-  info,
-  setIsLogged,
-  userType,
-  setInfo,
-  index,
-}: LoginProps) {
+export default function Login({ info, setInfo, index }: LoginProps) {
   return (
     <Animated.View entering={FadeIn.duration(500)} className="h-full ">
       <Animated.Text

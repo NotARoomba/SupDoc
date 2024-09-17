@@ -51,7 +51,6 @@ export default function Index({ setIsLogged }: IndexProps) {
   >({} as LoginInfo<UserType.PATIENT>);
   const [pageIndex, setIndex] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [cameraOpen, setCameraOpen] = useState(false);
   useEffect(() => {
     // check if key if not then create one and if theres a key check if it exists and login
     const onLoad = async () => {
@@ -329,7 +328,6 @@ export default function Index({ setIsLogged }: IndexProps) {
           <>
             {isLogin ? (
               <Login
-                setIsLogged={setIsLogged}
                 setIndex={setIndex}
                 index={pageIndex}
                 setInfo={setLoginInfo}
@@ -347,8 +345,6 @@ export default function Index({ setIsLogged }: IndexProps) {
                 index={pageIndex}
                 userType={userType ?? UserType.PATIENT}
                 setInfo={setSignUpInfo}
-                cameraOpen={cameraOpen}
-                setCameraOpen={setCameraOpen}
                 info={
                   userType
                     ? (signUpInfo as SignupInfo<typeof userType>)
@@ -358,137 +354,133 @@ export default function Index({ setIsLogged }: IndexProps) {
             )}
           </>
         )}
-        {!cameraOpen && (
-          <View
-            className={
-              "flex flex-col absolute gap-y-4 w-full z-10 " +
-              (Platform.OS === "android" ? " bottom-4 " : "bottom-24")
-            }
-          >
-            {pageIndex > 0 && (
-              <Animated.View
-                entering={FadeIn.duration(500)}
-                exiting={FadeOut.duration(500)}
+        <View
+          className={
+            "flex flex-col absolute gap-y-4 w-full z-10 " +
+            (Platform.OS === "android" ? " bottom-4 " : "bottom-24")
+          }
+        >
+          {pageIndex > 0 && (
+            <Animated.View
+              entering={FadeIn.duration(500)}
+              exiting={FadeOut.duration(500)}
+            >
+              <TouchableOpacity
+                onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
+                className={
+                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
+                }
               >
-                <TouchableOpacity
-                  onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
-                  className={
-                    "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
-                  }
-                >
-                  <Text className="text-xl  text-ivory font-medium text-center">
-                    Back
-                  </Text>
-                </TouchableOpacity>
-              </Animated.View>
-            )}
-            {/* Check for the other 4 routes that are possible */}
-            {(
-              !isLogin
-                ? (userType &&
-                    isPatientSignupInfo(userType, signUpInfo) &&
-                    (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
-                  (userType &&
-                    isDoctorSignupInfo(userType, signUpInfo) &&
-                    pageIndex == 8)
-                : pageIndex == 2
-            ) ? (
-              <Animated.View
-                entering={FadeIn.duration(500)}
-                exiting={FadeOut.duration(500)}
-              >
-                <TouchableOpacity
-                  onPress={() =>
-                    (
-                      !isLogin
-                        ? signUpInfo.passwordchk.length == 0 ||
-                          signUpInfo.passwordchk !== signUpInfo.password
-                        : loginInfo.identification == 0 ||
-                          loginInfo.password.length == 0
-                    )
-                      ? Alert.alert(
-                          "Error",
-                          !isLogin
-                            ? "The passwords do not match!"
-                            : "Please fill out the information!",
-                        )
-                      : (!isLogin ? verifyPassword(signUpInfo.password) : true)
-                        ? !isLogin
-                          ? signup()
-                          : checkLogin("7", "8")
-                        : 0
-                  }
-                  className={
-                    "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
-                  }
-                >
-                  <Text className="text-xl  text-ivory font-medium text-center">
-                    Finish
-                  </Text>
-                </TouchableOpacity>
-              </Animated.View>
-            ) : (
+                <Text className="text-xl  text-ivory font-medium text-center">
+                  Back
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+          {/* Check for the other 4 routes that are possible */}
+          {(
+            !isLogin
+              ? (userType &&
+                  isPatientSignupInfo(userType, signUpInfo) &&
+                  (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
+                (userType &&
+                  isDoctorSignupInfo(userType, signUpInfo) &&
+                  pageIndex == 8)
+              : pageIndex == 2
+          ) ? (
+            <Animated.View
+              entering={FadeIn.duration(500)}
+              exiting={FadeOut.duration(500)}
+            >
               <TouchableOpacity
                 onPress={() =>
                   (
                     !isLogin
-                      ? (pageIndex == 1 && !userType) ||
-                        (pageIndex == 2 &&
-                          (!signUpInfo.number || !signUpInfo.identification)) ||
-                        (pageIndex == 3 &&
-                          userType &&
-                          isPatientSignupInfo(userType, signUpInfo) &&
-                          (!signUpInfo.height || !signUpInfo.weight)) ||
-                        (pageIndex == 4 &&
-                          userType &&
-                          isPatientSignupInfo(userType, signUpInfo) &&
-                          (signUpInfo.trans == undefined || signUpInfo.trans
-                            ? signUpInfo.hormones == undefined ||
-                              signUpInfo.surgery == undefined
-                            : false)) ||
-                        (userType &&
-                          isPatientSignupInfo(userType, signUpInfo) &&
-                          (signUpInfo.trans
-                            ? pageIndex == 6
-                            : pageIndex == 5) &&
-                          (!signUpInfo.password || !signUpInfo.passwordchk)) ||
-                        (pageIndex == 3 &&
-                          userType &&
-                          isDoctorSignupInfo(userType, signUpInfo) &&
-                          (!signUpInfo.firstNames || !signUpInfo.lastNames)) ||
-                        (pageIndex == 4 &&
-                          userType &&
-                          isDoctorSignupInfo(userType, signUpInfo) &&
-                          (!signUpInfo.specialty || !signUpInfo.experience)) ||
-                        (pageIndex == 5 &&
-                          userType &&
-                          isDoctorSignupInfo(userType, signUpInfo) &&
-                          !signUpInfo.about) ||
-                        (pageIndex == 6 &&
-                          userType &&
-                          isDoctorSignupInfo(userType, signUpInfo) &&
-                          signUpInfo.license.length == 0) ||
-                        (pageIndex == 7 &&
-                          userType &&
-                          isDoctorSignupInfo(userType, signUpInfo) &&
-                          !signUpInfo.picture)
-                      : pageIndex == 1 && !userType
+                      ? signUpInfo.passwordchk.length == 0 ||
+                        signUpInfo.passwordchk !== signUpInfo.password
+                      : loginInfo.identification == 0 ||
+                        loginInfo.password.length == 0
                   )
                     ? Alert.alert(
-                        "Missing Info",
-                        "Please fill out the information!",
+                        "Error",
+                        !isLogin
+                          ? "The passwords do not match!"
+                          : "Please fill out the information!",
                       )
-                    : setIndex(pageIndex + 1)
+                    : (!isLogin ? verifyPassword(signUpInfo.password) : true)
+                      ? !isLogin
+                        ? signup()
+                        : checkLogin("7", "8")
+                      : 0
                 }
-                className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
+                className={
+                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
+                }
               >
-                <Text className="text-xl text-ivory font-medium text-center">
-                  Next
+                <Text className="text-xl  text-ivory font-medium text-center">
+                  Finish
                 </Text>
               </TouchableOpacity>
-            )}
-          </View>
-        )}
+            </Animated.View>
+          ) : (
+            <TouchableOpacity
+              onPress={() =>
+                (
+                  !isLogin
+                    ? (pageIndex == 1 && !userType) ||
+                      (pageIndex == 2 &&
+                        (!signUpInfo.number || !signUpInfo.identification)) ||
+                      (pageIndex == 3 &&
+                        userType &&
+                        isPatientSignupInfo(userType, signUpInfo) &&
+                        (!signUpInfo.height || !signUpInfo.weight)) ||
+                      (pageIndex == 4 &&
+                        userType &&
+                        isPatientSignupInfo(userType, signUpInfo) &&
+                        (signUpInfo.trans == undefined || signUpInfo.trans
+                          ? signUpInfo.hormones == undefined ||
+                            signUpInfo.surgery == undefined
+                          : false)) ||
+                      (userType &&
+                        isPatientSignupInfo(userType, signUpInfo) &&
+                        (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5) &&
+                        (!signUpInfo.password || !signUpInfo.passwordchk)) ||
+                      (pageIndex == 3 &&
+                        userType &&
+                        isDoctorSignupInfo(userType, signUpInfo) &&
+                        (!signUpInfo.firstNames || !signUpInfo.lastNames)) ||
+                      (pageIndex == 4 &&
+                        userType &&
+                        isDoctorSignupInfo(userType, signUpInfo) &&
+                        (!signUpInfo.specialty || !signUpInfo.experience)) ||
+                      (pageIndex == 5 &&
+                        userType &&
+                        isDoctorSignupInfo(userType, signUpInfo) &&
+                        !signUpInfo.about) ||
+                      (pageIndex == 6 &&
+                        userType &&
+                        isDoctorSignupInfo(userType, signUpInfo) &&
+                        signUpInfo.license.length == 0) ||
+                      (pageIndex == 7 &&
+                        userType &&
+                        isDoctorSignupInfo(userType, signUpInfo) &&
+                        !signUpInfo.picture)
+                    : pageIndex == 1 && !userType
+                )
+                  ? Alert.alert(
+                      "Missing Info",
+                      "Please fill out the information!",
+                    )
+                  : setIndex(pageIndex + 1)
+              }
+              className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
+            >
+              <Text className="text-xl text-ivory font-medium text-center">
+                Next
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
         <Spinner
           visible={loading}
           overlayColor="#000000cc"

@@ -78,7 +78,6 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
 doctorsRouter.post("/update", async (req: Request, res: Response) => {
   //TODO: COOLDOWN ON UPDATING STUFF
   const data: Doctor = req.body;
-  console.log(data.info)
   try {
     if (collections.doctors) {
       const upd = await collections.doctors.findOneAndUpdate(

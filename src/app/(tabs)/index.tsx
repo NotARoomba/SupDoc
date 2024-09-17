@@ -3,8 +3,9 @@ import FunFact from "components/misc/FunFact";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Platform, Animated } from "react-native";
 import useFade from "components/misc/useFade";
+import { HomeProps, IndexProps } from "components/utils/Types";
 
-export default function Index() {
+export default function Index({ userType }: HomeProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const fadeAnim = useFade();
   return (

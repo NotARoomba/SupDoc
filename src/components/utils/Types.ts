@@ -118,8 +118,6 @@ export interface SignupProps {
   userType: UserType;
   setIndex: (v: number) => void;
   setIsLogged: (v: boolean) => void;
-  cameraOpen: boolean;
-  setCameraOpen: (v: boolean) => void;
 }
 
 export interface LoginProps {
@@ -128,7 +126,6 @@ export interface LoginProps {
   index: number;
   userType: UserType;
   setIndex: (v: number) => void;
-  setIsLogged: (v: boolean) => void;
 }
 export interface LoadingScreenProps {
   show: boolean;
@@ -140,4 +137,8 @@ export interface ImageUploadProps {
   removeImage: (v: string) => void;
   activeDelete: boolean;
   setActiveDelete: (v: string) => void;
+}
+
+export interface HomeProps {
+  userType: UserType
 }

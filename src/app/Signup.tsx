@@ -72,8 +72,6 @@ export default function Signup({
   userType,
   setInfo,
   setIndex,
-  cameraOpen,
-  setCameraOpen,
 }: SignupProps) {
   /// setInfo({...info, info.(PROPIEDAD Q QUIERES CAMBIAR)})
   const [show, setShow] = useState(false);
