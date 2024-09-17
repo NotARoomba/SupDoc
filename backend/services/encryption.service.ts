@@ -1,8 +1,7 @@
-import { NextFunction, Request, Response, Send } from "express";
-import NodeRSA from "node-rsa";
-import { collections, encryption, env } from "./database.service";
 import CryptoJS from "crypto-js";
-import * as express from "express";
+import { NextFunction, Request, Response } from "express";
+import NodeRSA from "node-rsa";
+import { collections, env } from "./database.service";
 const nodeRSA = new NodeRSA(env.SERVER_PRIVATE, "pkcs1", {
   encryptionScheme: "pkcs1",
   environment: "browser",

@@ -1,9 +1,6 @@
 import * as mongoDB from "mongodb";
 import * as dotenv from "ts-dotenv";
-import Patient from "../models/patient";
 import { Doctor } from "../models/doctor";
-import Post from "../models/post";
-import Comment from "../models/comment";
 import Fact from "../models/fact";
 
 export const env = dotenv.load({

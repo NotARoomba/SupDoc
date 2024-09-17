@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
-import { Twilio } from "twilio";
 import { load } from "ts-dotenv";
+import { Twilio } from "twilio";
 import { STATUS_CODES, UserType } from "../models/util";
 import { collections, encryption } from "../services/database.service";
 
