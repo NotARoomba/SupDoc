@@ -240,8 +240,8 @@ export default function Index({ setIsLogged }: IndexProps) {
     //   return Alert.alert("Error", v.status);
     // }
     const res = await callAPI(`/users/keys`, "POST", {
-      number,
       id: loginInfo.identification,
+      userType
     });
     if (res.status == STATUS_CODES.USER_NOT_FOUND) {
       setLoading(false);

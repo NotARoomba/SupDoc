@@ -66,6 +66,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
 
 usersRouter.post("/keys", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
+  const userType: UserType = req.body.userType
   // const number: string = req.body.number;
   // try {
   //   await createKey([
@@ -80,11 +81,11 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
     let user: User | null;
     if (collections.patients && collections.doctors) {
       user =
-        (await collections.doctors.findOne({
+      userType == UserType.DOCTOR ? (await collections.doctors.findOne({
               identification: {
                 number: id,
               },
-        })) ?? (await encryption.getKeyByAltName(id.toString(2))) ?
+        })) : ((await encryption.getKeyByAltName(id.toString(2))) ?
         ((await collections.patients.findOne({
               identification: {
                 number: await encryption.encrypt(id, {
@@ -92,7 +93,7 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
                   keyAltName: id.toString(2),
                 }),
               },
-        })) as User) : null;
+        })) as User) : null);
         console.log(user)
       if (!user)return res.status(200).send({ status: STATUS_CODES.USER_NOT_FOUND });
       res.status(200).send({
