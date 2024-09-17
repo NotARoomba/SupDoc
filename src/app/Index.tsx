@@ -244,11 +244,9 @@ export default function Index({ setIsLogged }: IndexProps) {
     //   // need to update wth localizations
     //   return Alert.alert("Error", v.status);
     // }
-    console.log(loginInfo)
     const res = await callAPI(`/users/keys`, "POST", {
       number,
       id: loginInfo.identification,
-      userType,
     });
     if (res.status == STATUS_CODES.USER_NOT_FOUND) {
       setLoading(false);

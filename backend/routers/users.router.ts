@@ -67,7 +67,6 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
 usersRouter.post("/keys", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
   const number: string = req.body.number;
-  const userType: UserType = req.body.userType;
   // try {
   //   await createKey([
   //     id.toString(2),
@@ -111,6 +110,7 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
             },
           ],
         })) as User);
+        console.log(user)
       if (!user)
         return res.status(200).send({ status: STATUS_CODES.USER_NOT_FOUND });
       res.status(200).send({
