@@ -13,4 +13,5 @@ export interface Doctor extends UserBase {
   identification: DoctorIdentification; // M
   comments: string[]; // R
   reports: Report[]; // D
+  saved: string[];
 }

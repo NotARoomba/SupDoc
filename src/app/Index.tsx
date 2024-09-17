@@ -34,6 +34,7 @@ import {
 } from "../components/utils/Types";
 import Login from "./Login";
 import Signup from "./Signup";
+import { useTranslation } from "react-i18next";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
@@ -47,6 +48,7 @@ export default function Index({ setIsLogged }: IndexProps) {
   >({} as LoginInfo<UserType.PATIENT>);
   const [pageIndex, setIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
   useEffect(() => {
     // check if key if not then create one and if theres a key check if it exists and login
     const onLoad = async () => {
@@ -368,7 +370,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                 }
               >
                 <Text className="text-xl  text-ivory font-medium text-center">
-                  Back
+                {t('buttons.back')}
                 </Text>
               </TouchableOpacity>
             </Animated.View>
@@ -414,7 +416,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                 }
               >
                 <Text className="text-xl  text-ivory font-medium text-center">
-                  Finish
+                {t('buttons.finish')}
                 </Text>
               </TouchableOpacity>
             </Animated.View>
@@ -472,7 +474,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
             >
               <Text className="text-xl text-ivory font-medium text-center">
-                Next
+                {t('buttons.next')}
               </Text>
             </TouchableOpacity>
           )}

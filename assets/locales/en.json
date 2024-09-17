@@ -1,4 +1,7 @@
 {
+    "CFBundleDisplayName": "SupDoc",
+    "NSCameraUsageDescription": "SupDoc needs your camara to take photos!",
+    "NSPhotoLibraryUsageDescription": "SupDoc needs access to your gallery to upload photos!",
     "success": "Success",
     "error": "Error",
     "cancel": "Cancel",

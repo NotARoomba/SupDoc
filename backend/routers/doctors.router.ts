@@ -66,6 +66,7 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
         identification: { ...data.identification, isVerified: false },
         comments: [],
         reports: [],
+        saved: [],
       });
       res.send({ status: STATUS_CODES.SUCCESS });
     }

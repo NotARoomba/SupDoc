@@ -1,3 +1,93 @@
 {
-    "hello": "Hola"
+    "CFBundleDisplayName": "SupDoc",
+    "NSCameraUsageDescription": "¡SupDoc necesita tu cámara para tomar fotos!",
+    "NSPhotoLibraryUsageDescription": "¡SupDoc necesita acceso a tu galería para subir fotos!",
+    "success": "Éxito",
+    "error": "Error",
+    "cancel": "Cancelar",
+    "settings": "Configuraciones",
+    "loading": "Cargando",
+    "yes": "Sí",
+    "no": "No",
+    "inputs": {
+        "first": "Nombres",
+        "last": "Apellidos",
+        "number": "Número de Teléfono",
+        "identification": "Identificación",
+        "dob": "Fecha de Nacimiento",
+        "height": "Altura (cm)",
+        "blood": "Tipo de Sangre",
+        "weight": "Peso (kg)",
+        "sex": "Sexo",
+        "pregnant": "Embarazada",
+        "trans": "¿Te identificas con un sexo diferente al de tu nacimiento?",
+        "hormones": "¿Tomas hormonas?",
+        "surgery": "¿Has tenido una cirugía de cambio de sexo?",
+        "altSex": "¿Con qué sexo te identificas?",
+        "password": "Contraseña",
+        "passwordChk": "Reingresa la Contraseña",
+        "specialty": "Especialidad",
+        "experience": "Experiencia",
+        "bio": "Biografía",
+        "license": "Sube tu licencia médica o título",
+        "picture": "Sube una foto de perfil"
+    },
+    "posts": {
+        "none": "(Aún no has publicado nada)"
+    },
+    "titles": {
+        "login": "Iniciar Sesión",
+        "signup": "Registrarse",
+        "register": "Registrar",
+        "personal": "Información Personal",
+        "fact": "Dato Curioso",
+        "posts": "Tus Publicaciones"
+    },
+    "images": {
+        "gallery": "Galería",
+        "camera": "Cámara",
+        "readingTitle": "Error de Imagen",
+        "readingDescription": "Error al leer la imagen",
+        "galleryTitle": "Permitir Acceso a la Galería",
+        "galleryDescription": "Necesitas permitir permisos de la galería para que esto funcione",
+        "cameraTitle": "Permitir Acceso a la Cámara",
+        "cameraDescription": "Necesitas permitir permisos de la cámara para que esto funcione",
+        "remove": "Eliminar",
+        "removeTitle": "Eliminar Imagen",
+        "removeDescription": "¿Estás seguro de que deseas eliminar esta imagen?"
+    },
+    "buttons": {
+        "back": "Atrás",
+        "next": "Siguiente",
+        "finish": "Finalizar"
+    },
+    "successMsg": {
+        "login": "Has iniciado sesión",
+        "signup": "Te has registrado"
+    },
+    "errorMsg": {
+        "createUser": "Hubo un error al crear un usuario",
+        "loginNotFound": "{{userType}} no encontrado con esa identificación",
+        "wrongPassword": "La contraseña ingresada es incorrecta",
+        "GENERIC_ERROR": "Ha ocurrido un error",
+        "USER_NOT_FOUND": "Ese usuario no existe",
+        "INVALID_NUMBER": "El número de teléfono es inválido",
+        "SENT_CODE": "Ya se ha enviado un código a {{number}}",
+        "NUMBER_NOT_EXIST": "Ese número no existe",
+        "ERROR_SENDING_CODE": "Hubo un error al enviar el código",
+        "TOO_MANY_ATTEMPTS": "Has intentado demasiadas veces, espera 5 minutos",
+        "CODE_DENIED": "El código es incorrecto",
+        "CODE_EXPIRED": "El código ha expirado",
+        "CODE_FAILED": "Hubo un error al enviar el código",
+        "NO_CONNECTION": "Hubo un error al conectar con el servidor, revisa tu conexión a internet.",
+        "ID_IN_USE": "La identificación proporcionada ya está en uso",
+        "NUMBER_IN_USE": "El número de teléfono proporcionado ya está en uso",
+        "INVALID_IDENTITY": "La identificación proporcionada es inválida",
+        "COMMENT_LIMIT_REACHED": "La publicación ha alcanzado el límite máximo de comentarios permitidos",
+        "DOES_NOT_EXIST": "El recurso solicitado no existe"
+    },
+    "verification": {
+        "title": "Ingresa el Código de Verificación",
+        "description": "Ingresa el código de verificación enviado a: "
+    }
 }

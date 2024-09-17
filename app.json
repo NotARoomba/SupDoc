@@ -5,17 +5,27 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "supdoc",
+    "privacy": "public",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#020912"
     },
+    "locales": {
+      "en": "./assets/locales/en.json",
+      "es": "./assets/locales/es.json"
+    },
     "ios": {
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true,
+        "CFBundleLocalizations": ["en", "es", "zh", "hi", "pt", "ar", "fr", "de", "ru", "ja", "ko", "it"],
+        "CFBundleDevelopmentRegion": "en"
       },
       "bundleIdentifier": "com.notaroomba.supdoc"
     },
