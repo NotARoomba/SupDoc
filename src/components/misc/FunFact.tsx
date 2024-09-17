@@ -1,5 +1,5 @@
-import { View, Text } from "react-native";
 import Icons from "@expo/vector-icons/Octicons";
+import { Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 export default function FunFact() {
   return (

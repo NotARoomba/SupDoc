@@ -1,70 +1,49 @@
-import {
-  Alert,
-  Dimensions,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
-import Icons from "@expo/vector-icons/Octicons";
-import CryptoJS from "crypto-es";
-import {
-  BirthSex,
-  Sex,
-  SignupInfo,
-  SignupProps,
-  UserType,
-} from "../components/utils/Types";
-import React, { createRef, useEffect, useState } from "react";
-import { CountryPicker } from "react-native-country-codes-picker";
-import {
-  callAPI,
-  isDoctorSignupInfo,
-  isPatientSignupInfo,
-} from "../components/utils/Functions";
-import Spinner from "react-native-loading-spinner-overlay";
-import Loader from "components/misc/Loader";
+import { Specialty } from "@/backend/models/specialty";
 import { STATUS_CODES } from "@/backend/models/util";
+import Icons from "@expo/vector-icons/Octicons";
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
-import { Picker, PickerIOS } from "@react-native-picker/picker";
+import { Picker } from "@react-native-picker/picker";
 import Slider from "components/buttons/Slider";
+import ImageUpload from "components/misc/ImageUpload";
+import Loader from "components/misc/Loader";
+import useCamera from "components/misc/useCamera";
+import useGallery from "components/misc/useGallery";
+import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Dimensions,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { CountryPicker } from "react-native-country-codes-picker";
+import DropDownPicker from "react-native-dropdown-picker";
+import Spinner from "react-native-loading-spinner-overlay";
 import Animated, {
   FadeIn,
   FadeInLeft,
   FadeInUp,
   FadeOut,
-  FadeOutDown,
   FadeOutLeft,
-  SlideInLeft,
-  SlideOutDown,
-  SlideOutRight,
-  ZoomOut,
 } from "react-native-reanimated";
-import * as ImagePicker from "expo-image-picker";
-import { Camera, CameraView, PermissionStatus } from "expo-camera";
-import * as Linking from "expo-linking";
-import { Ionicons } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system";
-import { rgbaColor } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 import {
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
-import DropDownPicker from "react-native-dropdown-picker";
-import prompt from "@powerdesigninc/react-native-prompt";
-import { Specialty } from "@/backend/models/specialty";
-import ImageUpload from "components/misc/ImageUpload";
-import useCamera from "components/misc/useCamera";
-import useGallery from "components/misc/useGallery";
-import { Image } from "expo-image";
+  callAPI,
+  isDoctorSignupInfo,
+  isPatientSignupInfo,
+} from "../components/utils/Functions";
+import {
+  BirthSex,
+  Sex,
+  SignupProps,
+  UserType,
+} from "../components/utils/Types";
 
 export default function Signup({
   info,

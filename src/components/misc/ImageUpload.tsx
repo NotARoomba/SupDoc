@@ -1,26 +1,7 @@
-import { ImageUploadProps } from "components/utils/Types";
-import { useState } from "react";
-import {
-  Alert,
-  Image,
-  Pressable,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Vibration,
-  View,
-} from "react-native";
 import Icons from "@expo/vector-icons/Octicons";
-import prompt from "@powerdesigninc/react-native-prompt";
-import Animated, {
-  FadeIn,
-  FadeInUp,
-  FadeOut,
-  FadeOutDown,
-  FadeOutUp,
-  StretchInY,
-  StretchOutX,
-  ZoomOut,
-} from "react-native-reanimated";
+import { ImageUploadProps } from "components/utils/Types";
+import { Alert, Image, Pressable, TouchableOpacity } from "react-native";
+import Animated, { FadeIn, FadeInUp, FadeOut } from "react-native-reanimated";
 
 export default function ImageUpload({
   image,

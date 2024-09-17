@@ -1,17 +1,9 @@
 import "expo-dev-client";
-import { Stack } from "expo-router";
-import { useEffect, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  View,
-} from "react-native";
-import Index from "./Index";
-import { SplashScreen } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import Animated, { FadeIn } from "react-native-reanimated";
-import { logout } from "components/utils/Functions";
+import { useEffect, useState } from "react";
+import { SafeAreaView, View } from "react-native";
+import Index from "./Index";
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {

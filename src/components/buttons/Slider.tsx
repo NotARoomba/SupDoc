@@ -1,20 +1,18 @@
+import React, { createRef, useEffect } from "react";
 import {
-  Button,
   GestureResponderEvent,
   LayoutChangeEvent,
-  Pressable,
-  Touchable,
-  TouchableHighlight,
   Text,
-  View,
+  TouchableHighlight,
   TouchableOpacity,
-  Platform,
+  View,
 } from "react-native";
+import Animated, {
+  WithSpringConfig,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { SliderProps } from "../utils/Types";
-import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
-import { createRef, useEffect, useState } from "react";
-import { WithSpringConfig } from "react-native-reanimated";
-import React from "react";
 
 export default function Slider({ options, setOption, selected }: SliderProps) {
   const pos = useSharedValue(0);

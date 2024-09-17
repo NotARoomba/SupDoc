@@ -1,9 +1,9 @@
 import Post from "@/backend/models/post";
 import FunFact from "components/misc/FunFact";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, Platform, Animated } from "react-native";
 import useFade from "components/misc/useFade";
-import { HomeProps, IndexProps } from "components/utils/Types";
+import { HomeProps } from "components/utils/Types";
+import { useState } from "react";
+import { Animated, Platform, Text, View } from "react-native";
 
 export default function Index({ userType }: HomeProps) {
   const [posts, setPosts] = useState<Post[]>([]);

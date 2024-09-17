@@ -1,16 +1,15 @@
+import { Doctor } from "@/backend/models/doctor";
+import Patient from "@/backend/models/patient";
+import { User } from "@/backend/models/user";
 import { STATUS_CODES } from "@/backend/models/util";
-import CryptoJS from "crypto-es";
-import { RSA } from "react-native-rsa-native";
-import * as SecureStore from "expo-secure-store";
 import axios from "axios";
-import { SignupInfo, UserType } from "./Types";
+import CryptoJS from "crypto-es";
 import { Base64 } from "crypto-es/lib/enc-base64";
 import { reloadAppAsync } from "expo";
-import { User } from "@/backend/models/user";
-import Patient from "@/backend/models/patient";
-import { SplashScreen } from "expo-router";
-import { Doctor } from "@/backend/models/doctor";
+import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
+import { RSA } from "react-native-rsa-native";
+import { SignupInfo, UserType } from "./Types";
 
 export async function callAPI(
   endpoint: string,

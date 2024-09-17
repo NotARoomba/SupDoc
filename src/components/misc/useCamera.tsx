@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { Alert, Linking } from "react-native";

@@ -1,4 +1,12 @@
+import { User } from "@/backend/models/user";
 import { STATUS_CODES } from "@/backend/models/util";
+import Icons from "@expo/vector-icons/Octicons";
+import prompt from "@powerdesigninc/react-native-prompt";
+import Slider from "components/buttons/Slider";
+import Loader from "components/misc/Loader";
+import useCamera from "components/misc/useCamera";
+import useFade from "components/misc/useFade";
+import useGallery from "components/misc/useGallery";
 import {
   callAPI,
   isDoctorInfo,
@@ -6,37 +14,26 @@ import {
   logout,
 } from "components/utils/Functions";
 import { BirthSex, UserType } from "components/utils/Types";
+import * as FileSystem from "expo-file-system";
+import { Image } from "expo-image";
+import * as SecureStore from "expo-secure-store";
+import parsePhoneNumber from "libphonenumber-js";
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
   Alert,
-  TouchableOpacity,
-  TextInput,
-  Keyboard,
-  TouchableWithoutFeedback,
-  Platform,
   Animated,
+  Keyboard,
   Pressable,
   ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
-import * as SecureStore from "expo-secure-store";
-import { User } from "@/backend/models/user";
-import { SplashScreen } from "expo-router";
-import Loader from "components/misc/Loader";
-import Icons from "@expo/vector-icons/Octicons";
-import Spinner from "react-native-loading-spinner-overlay";
 import { CountryPicker } from "react-native-country-codes-picker";
-import parsePhoneNumber from "libphonenumber-js";
-import Patient from "@/backend/models/patient";
-import Slider from "components/buttons/Slider";
+import Spinner from "react-native-loading-spinner-overlay";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
-import prompt from "@powerdesigninc/react-native-prompt";
-import useFade from "components/misc/useFade";
-import { Image } from "expo-image";
-import useCamera from "components/misc/useCamera";
-import useGallery from "components/misc/useGallery";
-import * as FileSystem from "expo-file-system";
 
 export default function Profile() {
   const camera = useCamera();

@@ -1,6 +1,6 @@
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { LoginProps } from "../components/utils/Types";
+import { Text, TextInput, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { LoginProps } from "../components/utils/Types";
 
 export default function Login({ info, setInfo, index }: LoginProps) {
   return (

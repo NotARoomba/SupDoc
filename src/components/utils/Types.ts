@@ -1,7 +1,5 @@
 /// <reference types="nativewind/types" />
 
-import { Specialty } from "@/backend/models/specialty";
-
 export interface IndexProps {
   setIsLogged: (v: boolean) => void;
 }
@@ -140,5 +138,5 @@ export interface ImageUploadProps {
 }
 
 export interface HomeProps {
-  userType: UserType
+  userType: UserType;
 }

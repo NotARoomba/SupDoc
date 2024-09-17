@@ -1,5 +1,5 @@
 import { useIsFocused } from "@react-navigation/native";
-import { useRef, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Animated } from "react-native";
 
 export default function useFade() {

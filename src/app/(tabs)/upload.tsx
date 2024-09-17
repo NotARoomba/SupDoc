@@ -1,7 +1,5 @@
-import { useIsFocused } from "@react-navigation/native";
 import useFade from "components/misc/useFade";
-import { useRef, useCallback, useEffect } from "react";
-import { View, Text, Animated } from "react-native";
+import { Animated, Text } from "react-native";
 
 export default function Upload() {
   const fadeAnim = useFade();

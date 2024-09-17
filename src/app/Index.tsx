@@ -1,30 +1,6 @@
-import {
-  Alert,
-  Button,
-  Keyboard,
-  Platform,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
-import {
-  IndexProps,
-  LoginInfo,
-  PatientSignupInfo,
-  SignupInfo,
-  UserType,
-} from "../components/utils/Types";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { useEffect, useState } from "react";
-import { Image } from "expo-image";
-import Slider from "../components/buttons/Slider";
-import Login from "./Login";
-import { RSA } from "react-native-rsa-native";
-import * as SecureStore from "expo-secure-store";
-import Signup from "./Signup";
+import { Doctor } from "@/backend/models/doctor";
 import { STATUS_CODES } from "@/backend/models/util";
+import prompt from "@powerdesigninc/react-native-prompt";
 import Loader from "components/misc/Loader";
 import {
   callAPI,
@@ -32,12 +8,32 @@ import {
   isPatientSignupInfo,
   verifyPassword,
 } from "components/utils/Functions";
-import Spinner from "react-native-loading-spinner-overlay";
 import CryptoJS from "crypto-es";
-import prompt from "@powerdesigninc/react-native-prompt";
-import Patient from "@/backend/models/patient";
-import { Doctor } from "@/backend/models/doctor";
 import * as FileSystem from "expo-file-system";
+import { Image } from "expo-image";
+import * as SecureStore from "expo-secure-store";
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  Keyboard,
+  Platform,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { RSA } from "react-native-rsa-native";
+import Slider from "../components/buttons/Slider";
+import {
+  IndexProps,
+  LoginInfo,
+  SignupInfo,
+  UserType,
+} from "../components/utils/Types";
+import Login from "./Login";
+import Signup from "./Signup";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
