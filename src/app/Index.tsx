@@ -246,7 +246,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     if (res.status == STATUS_CODES.USER_NOT_FOUND) {
       setLoading(false);
       // need to update wth localizations
-      return Alert.alert("Error", "User not found with that ID");
+      return Alert.alert("Error", `${userType} not found with that ID`);
     } else if (res.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
       // need to update wth localizations

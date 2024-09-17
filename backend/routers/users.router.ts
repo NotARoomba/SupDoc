@@ -80,6 +80,11 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
   try {
     let user: User | null;
     if (collections.patients && collections.doctors) {
+      console.log("ASDASDASD",  (await collections.doctors.findOne({
+        identification: {
+          number: id,
+        },
+  })))
       user =
       userType == UserType.DOCTOR ? (await collections.doctors.findOne({
               identification: {
