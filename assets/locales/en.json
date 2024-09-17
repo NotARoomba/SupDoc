@@ -62,7 +62,7 @@
         "login": "You are now logged in",
         "signup": "You are now registered"
     },
-    "errorMsg": {
+    "errors": {
         "createUser": "There was an error creating a user",
         "loginNotFound": "{{userType}} not found with that ID",
         "wrongPassword": "The password entered is incorrect",
