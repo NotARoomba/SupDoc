@@ -880,7 +880,7 @@ export default function Signup({
             ))}
             <TouchableOpacity
               onPress={() =>
-                Alert.alert("Please choose", undefined, [
+                Alert.alert(t("images.choose"), undefined, [
                   {
                     text: t("images.gallery"),
                     onPress: async () => {
@@ -916,7 +916,7 @@ export default function Signup({
           {info.picture.length == 0 ? (
             <TouchableOpacity
               onPress={() =>
-                Alert.alert("Please choose", undefined, [
+                Alert.alert(t("images.choose"), undefined, [
                   {
                     text: t("images.gallery"),
                     onPress: async () =>
@@ -964,7 +964,7 @@ export default function Signup({
                   >
                     <TouchableOpacity
                       onPress={() =>
-                        Alert.alert("Please choose", undefined, [
+                        Alert.alert(t("images.choose"), undefined, [
                           {
                             text: t("images.gallery"),
                             onPress: async () =>
