@@ -33,6 +33,7 @@ export async function decryptionMiddleware(
       "/users/keys",
       "/verify/code/send",
       "/verify/code/check",
+      "/verify/doctor",
     ].includes(req.originalUrl)
   )
     return res.sendStatus(401);

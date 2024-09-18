@@ -1,18 +1,58 @@
+import axios from "axios";
+import * as cheerio from "cheerio";
 import express, { Request, Response } from "express";
-import { load } from "ts-dotenv";
 import { Twilio } from "twilio";
 import { STATUS_CODES, UserType } from "../models/util";
-import { collections, encryption } from "../services/database.service";
-
-const env = load({
-  TW_SID: String,
-  TW_VSID: String,
-  TW_TOKEN: String,
-});
+import { collections, encryption, env } from "../services/database.service";
 
 const twilio: Twilio = new Twilio(env.TW_SID, env.TW_TOKEN);
 
 export const verifyRouter = express.Router();
+
+function parseDoctorData(data: string) {
+  // Load the HTML content into cheerio
+  const $ = cheerio.load(data);
+
+  // Extract the doctor's names
+  const firstName =
+    $("#ctl00_cntContenido_grdResultadosBasicos td:nth-child(3)")
+      .text()
+      .trim() || "";
+  const secondName =
+    $("#ctl00_cntContenido_grdResultadosBasicos td:nth-child(4)")
+      .text()
+      .trim() || "";
+  const firstLastName =
+    $("#ctl00_cntContenido_grdResultadosBasicos td:nth-child(5)")
+      .text()
+      .trim() || "";
+  const secondLastName =
+    $("#ctl00_cntContenido_grdResultadosBasicos td:nth-child(6)")
+      .text()
+      .trim() || "";
+
+  // Extract specialty from academic table
+  const specialty =
+    $("#ctl00_cntContenido_grdResultadosAcademicos td:nth-child(3)")
+      .first()
+      .text()
+      .trim() || "";
+
+  // Extract status (Vigente or not)
+  const status =
+    $("#ctl00_cntContenido_grdResultadosBasicos td:nth-child(7)")
+      .text()
+      .trim() || "";
+
+  return {
+    firstName,
+    secondName,
+    firstLastName,
+    secondLastName,
+    specialty,
+    status,
+  };
+}
 
 verifyRouter.use(express.json());
 // NEED VERIFY FOR ID AND DOCTOR
@@ -119,5 +159,78 @@ verifyRouter.post("/code/check", async (req: Request, res: Response) => {
       });
     }
     res.send({ status: STATUS_CODES.CODE_FAILED });
+  }
+});
+
+verifyRouter.post("/doctor", async (req: Request, res: Response) => {
+  let id: number = parseInt(req?.body?.id);
+  const name: string = req.body.name;
+  const [firstName, lastName] = name.split(" ");
+  try {
+    const firstResponse = await axios.post(
+      env.VERIFY_URL,
+      env.VERIFY_BODY_1.replace("{{ID}}", id.toString())
+        .replace("{{FIRST_NAME}}", firstName)
+        .replace("{{LAST_NAME}}", lastName),
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
+          Accept: "*/*",
+          "Accept-Language": "en-US,en;q=0.5",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-MicrosoftAjax": "Delta=true",
+          "Cache-Control": "no-cache",
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+          "Sec-Fetch-Dest": "empty",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Site": "same-origin",
+          Priority: "u=0",
+        },
+        withCredentials: true,
+      },
+    );
+    const $ = cheerio.load(firstResponse.data);
+    const noDoctorFoundMessage = $(
+      "span#ctl00_cntContenido_LblResultado",
+    ).text();
+    if (noDoctorFoundMessage.includes(env.VERIFY_NONE))
+      return res.send({ status: STATUS_CODES.DOES_NOT_EXIST });
+    const newViewState = $("body")
+      .text()
+      .match(/\|__VIEWSTATE\|([^\|]*)\|/);
+    if (!newViewState) return res.send({ status: STATUS_CODES.GENERIC_ERROR });
+    const finalResponse = await axios.post(
+      env.VERIFY_URL,
+      env.VERIFY_BODY_2.replace("{{ID}}", id.toString())
+        .replace("{{FIRST_NAME}}", firstName)
+        .replace("{{LAST_NAME}}", lastName)
+        .replace(
+          "{{VIEWSTATE}}",
+          encodeURIComponent(newViewState[1] as string),
+        ),
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
+          Accept: "*/*",
+          "Accept-Language": "en-US,en;q=0.5",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-MicrosoftAjax": "Delta=true",
+          "Cache-Control": "no-cache",
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+          "Sec-Fetch-Dest": "empty",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Site": "same-origin",
+          Priority: "u=0",
+        },
+        withCredentials: true,
+      },
+    );
+    const parsed = parseDoctorData(finalResponse.data);
+    res.send({ data: parsed, status: STATUS_CODES.SUCCESS });
+  } catch (e) {
+    console.log(e);
+    res.send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
