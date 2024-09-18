@@ -882,7 +882,7 @@ export default function Signup({
               onPress={() =>
                 Alert.alert("Please choose", undefined, [
                   {
-                    text: "Gallery",
+                    text: t("images.gallery"),
                     onPress: async () => {
                       const i = await selectImage("gallery");
                       if (i)
@@ -890,14 +890,14 @@ export default function Signup({
                     },
                   },
                   {
-                    text: "Camera",
+                    text: t("images.camera"),
                     onPress: async () => {
                       const i = await selectImage("camera");
                       if (i)
                         setInfo({ ...info, license: [...info.license, i] });
                     },
                   },
-                  { text: "Cancel", style: "cancel" },
+                  { text: t("cancel"), style: "cancel" },
                 ])
               }
               className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
@@ -911,14 +911,14 @@ export default function Signup({
       ) : index == 7 ? (
         <Animated.View entering={FadeIn.duration(500)}>
           <Text className="text-center text-lg text-ivory mb-3  font-semibold">
-            Upload a profile photo
+            {t("inputs.picture")}
           </Text>
           {info.picture.length == 0 ? (
             <TouchableOpacity
               onPress={() =>
                 Alert.alert("Please choose", undefined, [
                   {
-                    text: "Gallery",
+                    text: t("images.gallery"),
                     onPress: async () =>
                       setInfo({
                         ...info,
@@ -926,14 +926,14 @@ export default function Signup({
                       }),
                   },
                   {
-                    text: "Camera",
+                    text: t("images.camera"),
                     onPress: async () =>
                       setInfo({
                         ...info,
                         picture: (await selectImage("camera")) ?? info.picture,
                       }),
                   },
-                  { text: "Cancel", style: "cancel" },
+                  { text: t("cancel"), style: "cancel" },
                 ])
               }
               className=" w-64 h-64 mx-auto  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
@@ -966,7 +966,7 @@ export default function Signup({
                       onPress={() =>
                         Alert.alert("Please choose", undefined, [
                           {
-                            text: "Gallery",
+                            text: t("images.gallery"),
                             onPress: async () =>
                               setInfo({
                                 ...info,
@@ -976,7 +976,7 @@ export default function Signup({
                               }),
                           },
                           {
-                            text: "Camera",
+                            text: t("images.camera"),
                             onPress: async () =>
                               setInfo({
                                 ...info,
@@ -984,7 +984,7 @@ export default function Signup({
                                   (await selectImage("camera")) ?? info.picture,
                               }),
                           },
-                          { text: "Cancel", style: "cancel" },
+                          { text: t("cancel"), style: "cancel" },
                         ])
                       }
                       className="m-auto p-4"
