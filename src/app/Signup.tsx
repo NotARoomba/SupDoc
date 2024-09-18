@@ -174,10 +174,13 @@ export default function Signup({
           id: info.identification,
           name: info.firstName + " " + info.lastName,
         });
+        console.log(res)
         if (res.status  !== STATUS_CODES.SUCCESS) {
           setIsLoading(false);
-          Alert.alert(t('error'), t(`errors.${STATUS_CODES[res.status]}`));
+          setIndex(index - 1);
+          return Alert.alert(t('error'), t(`errors.${STATUS_CODES[res.status]}`));
         }
+        setIsLoading(false);
       }
     };
     doChecks();
