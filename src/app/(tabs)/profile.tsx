@@ -44,6 +44,7 @@ export default function Profile() {
   const [user, setUser] = useState<User>();
   const [userEdit, setUserEdit] = useState<User>();
   const [loading, setLoading] = useState(false);
+  const [trans, setTrans] = useState(false);
   const [activeChange, setActiveChange] = useState(false);
   const fadeAnim = useFade();
   useEffect(() => {
@@ -68,6 +69,7 @@ export default function Profile() {
         ...res.user,
         number: parsePhoneNumber(res.user.number)?.nationalNumber,
       });
+      if (isPatientInfo(ut, res.user)) setTrans(res.user.info.sex !== res.user.info.altSex)
       console.log("ASDASDASD");
       setUserType(ut);
       setLoading(false);
@@ -433,7 +435,51 @@ export default function Profile() {
                           />
                         </View>
                       )}
+                      
                     </View>
+                    <Text className="text-center w-10/12 mx-auto text-lg mb-4 text-ivory font-semibold">
+              Do you identify as a different sex than your birth sex?
+            </Text>
+            <Slider
+              options={["Yes", "No"]}
+              setOption={(v) => {
+                setTrans(v == "Yes")}}
+              selected={
+                trans ? "Yes" : trans != undefined ? "No" : undefined
+              }
+            />
+            {trans && (
+              <Reanimated.View entering={FadeIn.duration(500)}>
+                <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
+                  Do you take hormones?
+                </Text>
+                <Slider
+                  options={["Yes", "No"]}
+                  setOption={(v) => setUserEdit({ ...userEdit, info: {...userEdit.info, hormones: v == "Yes"} })}
+                  selected={
+                    userEdit.info.hormones
+                      ? "Yes"
+                      : userEdit.info.hormones != undefined
+                        ? "No"
+                        : undefined
+                  }
+                />
+                <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
+                  Have you had a sex-changing surgery?
+                </Text>
+                <Slider
+                  options={["Yes", "No"]}
+                  setOption={(v) => setUserEdit({ ...userEdit, info: {...userEdit.info, surgery: v == "Yes"} })}
+                  selected={
+                    userEdit.info.surgery
+                      ? "Yes"
+                      : userEdit.info.surgery != undefined
+                        ? "No"
+                        : undefined
+                  }
+                />
+              </Reanimated.View>
+            )}
                   </View>
                 ) : (
                   userEdit &&
