@@ -72,7 +72,7 @@ export default function Slider({ options, setOption, selected }: SliderProps) {
           >
             <Text
               suppressHighlighting
-              className="text-2xl font-semibold w-44 px-12 h-fit text-ivory text-center"
+              className="text-2xl font-semibold w-44 px-2 h-fit text-ivory text-center"
             >
               {v}
             </Text>

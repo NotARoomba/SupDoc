@@ -305,9 +305,9 @@ export default function Index({ setIsLogged }: IndexProps) {
             className="flex mt-4 "
           >
             <Slider
-              options={["Login", "Signup"]}
-              setOption={(v) => setIsLogin(v == "Login")}
-              selected={isLogin ? "Login" : "Signup"}
+              options={[t("titles.login"), t("titles.register")]}
+              setOption={(v) => setIsLogin(v ==  t("titles.login"))}
+              selected={isLogin ? t("titles.login") : t("titles.register")}
             />
           </Animated.View>
         ) : pageIndex == 1 ? (
@@ -317,8 +317,8 @@ export default function Index({ setIsLogged }: IndexProps) {
             className="flex mt-4 "
           >
             <Slider
-              options={["Doctor", "Patient"]}
-              setOption={(v) => setUserType(v as UserType)}
+              options={[t("doctor"), t("patient")]}
+              setOption={(v) => v ==  t("doctor") ? setUserType(UserType.DOCTOR) :setUserType(UserType.PATIENT) }
               selected={userType}
             />
           </Animated.View>
@@ -400,10 +400,10 @@ export default function Index({ setIsLogged }: IndexProps) {
                         loginInfo.password.length == 0
                   )
                     ? Alert.alert(
-                        "Error",
+                        t("error"),
                         !isLogin
-                          ? "The passwords do not match!"
-                          : "Please fill out the information!",
+                          ? t("errors.mismatchPassword")
+                          : t("errors.missingInfo"),
                       )
                     : (!isLogin ? verifyPassword(signUpInfo.password) : true)
                       ? !isLogin

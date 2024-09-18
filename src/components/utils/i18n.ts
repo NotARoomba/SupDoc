@@ -4,6 +4,8 @@ import i18n from "i18next";
 import "intl-pluralrules";
 import {getLocales} from 'expo-localization'
 import { initReactI18next } from "react-i18next";
+import { AppState, AppStateStatus } from "react-native";
+import { useEffect, useRef, useState } from "react";
 
 const resources = {
   en: {
@@ -22,6 +24,32 @@ i18n.use(initReactI18next).init({
     escapeValue: false,
   },
   cleanCode: true,
-}); 
+});
 
-export default i18n;
+const useLanguageUpdater = () => {
+  const appState = useRef(AppState.currentState);
+  const [currentLang, setCurrentLang] = useState(getLocales()[0].languageCode);
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        const newLang = getLocales()[0].languageCode;
+        if (newLang !== currentLang) {
+          i18n.changeLanguage(newLang ?? undefined);
+          setCurrentLang(newLang);
+        }
+      }
+      appState.current = nextAppState;
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      subscription.remove();
+    };
+  }, [currentLang]);
+
+  return null;
+};
+
+export { i18n, useLanguageUpdater };
