@@ -118,7 +118,7 @@ export default function Index({ setIsLogged }: IndexProps) {
             },
           }
         : ({
-            name: signUpInfo.firstNames + " " + signUpInfo.lastNames,
+            name: signUpInfo.firstName + " " + signUpInfo.lastName,
             ...sharedData,
             picture: await FileSystem.readAsStringAsync(signUpInfo.picture, {
               encoding: "base64",
@@ -165,8 +165,8 @@ export default function Index({ setIsLogged }: IndexProps) {
       if (userType === UserType.DOCTOR) {
         setSignUpInfo({
           password: "",
-          firstNames: "",
-          lastNames: "",
+          firstName: "",
+          lastName: "",
           specialty: "",
           experience: "",
           about: "",
@@ -446,7 +446,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                       (pageIndex == 3 &&
                         userType &&
                         isDoctorSignupInfo(userType, signUpInfo) &&
-                        (!signUpInfo.firstNames || !signUpInfo.lastNames)) ||
+                        (!signUpInfo.firstName || !signUpInfo.lastName)) ||
                       (pageIndex == 4 &&
                         userType &&
                         isDoctorSignupInfo(userType, signUpInfo) &&
