@@ -9,6 +9,8 @@
     "loading": "Cargando",
     "yes": "Sí",
     "no": "No",
+    "doctor": "Doctor",
+    "patient": "Paciente",
     "inputs": {
         "first": "Nombres",
         "last": "Apellidos",
@@ -44,6 +46,7 @@
         "posts": "Tus Publicaciones"
     },
     "images": {
+        "choose": "",
         "gallery": "Galería",
         "camera": "Cámara",
         "readingTitle": "Error de Imagen",
@@ -69,6 +72,9 @@
         "createUser": "Hubo un error al crear un usuario",
         "loginNotFound": "{{userType}} no encontrado con esa identificación",
         "wrongPassword": "La contraseña ingresada es incorrecta",
+        "mismatchPassword": "Las contraseñas no coinciden",
+        "missing": "Informacion Faltante",
+        "missingInfo": "Por favor, llenar todas las casillas",
         "GENERIC_ERROR": "Ha ocurrido un error",
         "USER_NOT_FOUND": "Ese usuario no existe",
         "INVALID_NUMBER": "El número de teléfono es inválido",

@@ -466,8 +466,8 @@ export default function Index({ setIsLogged }: IndexProps) {
                     : pageIndex == 1 && !userType
                 )
                   ? Alert.alert(
-                      "Missing Info",
-                      "Please fill out the information!",
+                    t("errors.missing"),
+                      t("errors.missingInfo"),
                     )
                   : setIndex(pageIndex + 1)
               }
@@ -482,7 +482,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         <Spinner
           visible={loading}
           overlayColor="#000000cc"
-          textContent={"Loading"}
+          textContent={t("loading")}
           customIndicator={<Loader />}
           textStyle={{ color: "#fbfff1", marginTop: -25 }}
           animation="fade"

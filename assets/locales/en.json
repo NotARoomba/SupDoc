@@ -46,6 +46,7 @@
         "posts": "Your Posts"
     },
     "images": {
+        "choose": "Please choose",
         "gallery": "Gallery",
         "camera": "Camera",
         "readingTitle": "Image Error",
@@ -72,6 +73,7 @@
         "loginNotFound": "{{userType}} not found with that ID",
         "wrongPassword": "The password entered is incorrect",
         "mismatchPassword": "The passwords do not match",
+        "missing": "Missing Info",
         "missingInfo": "Please fill out the information",
         "GENERIC_ERROR": "An error has occured",
         "USER_NOT_FOUND": "That user does not exist",
