@@ -11,7 +11,7 @@ export default function Login({ info, setInfo, index, userType }: LoginProps) {
         key={index}
         className="text-5xl text-ivory font-bold text-center mb-8"
       >
-        {t("titles.login")}
+        {("titles.login")}
       </Animated.Text>
       {/* needs to show a text box to input a phone number and identificatio number */}
       <View>
