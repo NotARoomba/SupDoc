@@ -196,7 +196,7 @@ verifyRouter.post("/doctor", async (req: Request, res: Response) => {
       "span#ctl00_cntContenido_LblResultado",
     ).text();
     if (noDoctorFoundMessage.includes(env.VERIFY_NONE))
-      return res.send({ status: STATUS_CODES.DOES_NOT_EXIST });
+      return res.send({ status: STATUS_CODES.DOCTOR_INVALID });
     const newViewState = $("body")
       .text()
       .match(/\|__VIEWSTATE\|([^\|]*)\|/);
