@@ -1,6 +1,7 @@
 import { Text, TextInput, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { LoginProps, UserType } from "../components/utils/Types";
+import { useTranslation } from "react-i18next";
 
 export default function Login({ info, setInfo, index, userType }: LoginProps) {
   return (
@@ -10,7 +11,7 @@ export default function Login({ info, setInfo, index, userType }: LoginProps) {
         key={index}
         className="text-5xl text-ivory font-bold text-center mb-8"
       >
-        Login
+        {t("titles.login")}
       </Animated.Text>
       {/* needs to show a text box to input a phone number and identificatio number */}
       <View>
