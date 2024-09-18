@@ -12,8 +12,8 @@
     "doctor": "Doctor",
     "patient": "Paciente",
     "inputs": {
-        "first": "Nombres",
-        "last": "Apellidos",
+        "first": "Primer Nombre",
+        "last": "Primer Apellido",
         "number": "Número de Teléfono",
         "identification": "Identificación",
         "dob": "Fecha de Nacimiento",

@@ -57,7 +57,7 @@ export default function Profile() {
         `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
         "GET",
       );
-      if (res.status == STATUS_CODES.USER_NOT_FOUND) {
+      if (res.status == STATUS_CODES.USER_NOT_FOUND || res.status == STATUS_CODES.UNAUTHORIZED) {
         setLoading(false);
         return await logout();
       } else if (res.status == STATUS_CODES.GENERIC_ERROR) {

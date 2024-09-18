@@ -65,8 +65,8 @@ export type SignupInfo<T extends UserType = UserType> = BaseSignupInfo &
 
 // Fields required for Doctor signup
 export interface DoctorSignupInfo {
-  firstNames: string;
-  lastNames: string;
+  firstName: string;
+  lastName: string;
   specialty: string;
   experience: string;
   about: string;

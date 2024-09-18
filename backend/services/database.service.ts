@@ -24,6 +24,13 @@ export const env = dotenv.load({
   SERVER_PUBLIC: String,
   SERVER_PRIVATE: String,
   LIMITED_AUTH: String,
+  TW_SID: String,
+  TW_VSID: String,
+  TW_TOKEN: String,
+  VERIFY_NONE: String,
+  VERIFY_URL: String,
+  VERIFY_BODY_1: String,
+  VERIFY_BODY_2: String,
 });
 
 export const collections: {

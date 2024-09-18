@@ -167,6 +167,20 @@ export default function Signup({
           // }
         }
         setIsLoading(false);
+      } else if (index == 4 && userType == UserType.DOCTOR && isDoctorSignupInfo(userType, info)) {
+        setIsLoading(true);
+        console.log(`STATUS: ${STATUS_CODES[0]}`)
+        const res = await callAPI(`/verify/doctor`, "POST", {
+          id: info.identification,
+          name: info.firstName + " " + info.lastName,
+        });
+        console.log(res)
+        if (res.status  !== STATUS_CODES.SUCCESS) {
+          setIsLoading(false);
+          setIndex(index - 1);
+          return Alert.alert(t('error'), t(`errors.${STATUS_CODES[res.status]}`));
+        }
+        setIsLoading(false);
       }
     };
     doChecks();
@@ -705,10 +719,10 @@ export default function Signup({
             onChangeText={(n) =>
               setInfo({
                 ...info,
-                firstNames: n,
+                firstName: n,
               })
             }
-            value={info.firstNames}
+            value={info.firstName}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
@@ -720,10 +734,10 @@ export default function Signup({
             onChangeText={(n) =>
               setInfo({
                 ...info,
-                lastNames: n,
+                lastName: n,
               })
             }
-            value={info.lastNames}
+            value={info.lastName}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
@@ -776,22 +790,7 @@ export default function Signup({
           className="flex flex-col w-full"
           entering={FadeIn.duration(500)}
         >
-          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            {t("inputs.specialty")}
-          </Text>
-          <TextInput
-            onChangeText={(n) =>
-              setInfo({
-                ...info,
-                specialty: n,
-              })
-            }
-            value={info.specialty}
-            keyboardType="default"
-            placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-          />
-          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
             {t("inputs.experience")}
           </Text>
           <TextInput
