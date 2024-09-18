@@ -116,7 +116,7 @@ export default function Signup({
         if (res.status !== STATUS_CODES.SUCCESS) {
           setIndex(index - 1);
           setIsLoading(false);
-          return Alert.alert(t('error'), "That number/ID already exists!");
+          return Alert.alert(t('error'), t("errors.ID_IN_USE"));
         }
         if (!verified) {
           const isValid =
@@ -126,7 +126,7 @@ export default function Signup({
           if (!isValid) {
             setIndex(index - 1);
             setIsLoading(false);
-            return Alert.alert("Error", "That is not a valid phone number");
+            return Alert.alert(("error"), t("errors.INVALID_NUMBER"));
           }
           // const verify = await callAPI("/verify/code/send", "POST", {
           //   number: info.countryCode + info.number,
@@ -195,7 +195,7 @@ export default function Signup({
       setActiveChange(false);
       return result.assets ? result.assets[0].uri : null;
     } catch (error) {
-      Alert.alert("Image error", "Error reading image");
+      Alert.alert(t("images.readingTitle"), t("images.readingDescription"));
       console.log(error);
     }
   };
@@ -215,7 +215,7 @@ export default function Signup({
         <Animated.View entering={FadeIn.duration(500)}>
           {/* needs to show a text box to input a phone number and identificatio number */}
           <Text className="text-center text-lg text-ivory -mb-3 font-semibold">
-            Phone Number
+            {t("inputs.number")}
           </Text>
           <View className="flex flex-row justify-center m-auto align-middle  ">
             <TouchableOpacity
@@ -303,7 +303,7 @@ export default function Signup({
             <View className="flex w-full flex-row">
               <View className="w-1/2 flex flex-col">
                 <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-                  Height (cm)
+                  {t("inputs.height")}
                 </Text>
 
                 <TextInput
@@ -320,7 +320,7 @@ export default function Signup({
                   className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
                 />
                 <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-                  Blood Type
+                  {t("inputs.blood")}
                 </Text>
                 <View className="flex flex-row justify-center mx-auto -mt-6">
                   {Platform.OS == "ios" ? (
@@ -431,7 +431,7 @@ export default function Signup({
               </View>
               <View className="w-1/2 flex flex-col">
                 <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-                  Weight (kg)
+                  {t("inputs.weight")}
                 </Text>
 
                 <TextInput
@@ -450,7 +450,7 @@ export default function Signup({
                 <View className="justify-around flex flex-row">
                   <View className="flex justify-center">
                     <Text className="text-center w-24 text-lg text-ivory  font-semibold">
-                      Sex
+                      {t("inputs.sex")}
                     </Text>
                     <View className="flex flex-row justify-center -mt-6">
                       {Platform.OS == "ios" ? (
@@ -511,7 +511,7 @@ export default function Signup({
                       className="flex justify-center"
                     >
                       <Text className="text-center w-24 text-lg text-ivory   font-semibold">
-                        Pregnant
+                        {t("inputs.pregnant")}
                       </Text>
                       <View className="flex flex-row justify-center -mt-6">
                         {Platform.OS == "ios" ? (
@@ -526,13 +526,13 @@ export default function Signup({
                             <Picker.Item
                               color="#fbfff1"
                               style={{ backgroundColor: "#041225" }}
-                              label="Yes"
+                              label={t("yes")}
                               value={true}
                             />
                             <Picker.Item
                               color="#fbfff1"
                               style={{ backgroundColor: "#041225" }}
-                              label="No"
+                              label={t("no")}
                               value={false}
                             />
                           </Picker>
@@ -569,49 +569,49 @@ export default function Signup({
         ) : index == 4 ? (
           <Animated.View entering={FadeIn.duration(500)}>
             <Text className="text-center w-10/12 mx-auto text-lg mb-4 text-ivory font-semibold">
-              Do you identify as a different sex than your birth sex?
+              {t("inputs.trans")}
             </Text>
             <Slider
-              options={["Yes", "No"]}
+              options={[t("yes"), t("no")]}
               setOption={(v) => {
                 setInfo({
                   ...info,
-                  trans: v == "Yes",
-                  hormones: v == "No" ? undefined : info.hormones,
-                  surgery: v == "No" ? undefined : info.surgery,
+                  trans: v == t("yes"),
+                  hormones: v == t("no") ? undefined : info.hormones,
+                  surgery: v == t("no") ? undefined : info.surgery,
                 });
               }}
               selected={
-                info.trans ? "Yes" : info.trans != undefined ? "No" : undefined
+                info.trans ? t("yes") : info.trans != undefined ? t("no") : undefined
               }
             />
             {info.trans && (
               <Animated.View entering={FadeIn.duration(500)}>
                 <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
-                  Do you take hormones?
+                  {t("inputs.hormones")}
                 </Text>
                 <Slider
-                  options={["Yes", "No"]}
-                  setOption={(v) => setInfo({ ...info, hormones: v == "Yes" })}
+                  options={[t("yes"), t("no")]}
+                  setOption={(v) => setInfo({ ...info, hormones: v == t("yes") })}
                   selected={
                     info.hormones
-                      ? "Yes"
+                      ? t("yes")
                       : info.hormones != undefined
-                        ? "No"
+                        ? t("no")
                         : undefined
                   }
                 />
                 <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
-                  Have you had a sex-changing surgery?
+                  {t("inputs.surgery")}
                 </Text>
                 <Slider
-                  options={["Yes", "No"]}
-                  setOption={(v) => setInfo({ ...info, surgery: v == "Yes" })}
+                  options={[t("yes"), t("no")]}
+                  setOption={(v) => setInfo({ ...info, surgery: v == t("yes") })}
                   selected={
                     info.surgery
-                      ? "Yes"
+                      ? t("yes")
                       : info.surgery != undefined
-                        ? "No"
+                        ? t("no")
                         : undefined
                   }
                 />
@@ -621,7 +621,7 @@ export default function Signup({
         ) : index == 5 && info.trans ? (
           <Animated.View entering={FadeIn.duration(500)}>
             <Text className="text-center w-10/12 mx-auto text-lg mb-4 text-ivory font-semibold">
-              What sex do you identify with?
+              {t("inputs.altSex")}
             </Text>
             <View className="flex flex-row justify-center -mt-6">
               {Platform.OS == "ios" ? (
@@ -668,7 +668,7 @@ export default function Signup({
         ) : (
           <Animated.View entering={FadeIn.duration(500)}>
             <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-              Password
+              {t("inputs.password")}
             </Text>
             <TextInput
               onChangeText={(pw) => setInfo({ ...info, password: pw })}
@@ -680,7 +680,7 @@ export default function Signup({
               className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
             />
             <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-              Re-enter Password
+              {t("inputs.passwordChk")}
             </Text>
             <TextInput
               onChangeText={(pw) => setInfo({ ...info, passwordchk: pw })}
@@ -699,7 +699,7 @@ export default function Signup({
           entering={FadeIn.duration(500)}
         >
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            First Names
+            {t("inputs.first")}
           </Text>
           <TextInput
             onChangeText={(n) =>
@@ -714,7 +714,7 @@ export default function Signup({
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            Last Names
+            {t("last")}
           </Text>
           <TextInput
             onChangeText={(n) =>
@@ -777,7 +777,7 @@ export default function Signup({
           entering={FadeIn.duration(500)}
         >
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            Specialty
+            {t("inputs.specialty")}
           </Text>
           <TextInput
             onChangeText={(n) =>
@@ -792,7 +792,7 @@ export default function Signup({
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            Experience
+            {t("inputs.experience")}
           </Text>
           <TextInput
             onChangeText={(n) =>
@@ -813,7 +813,7 @@ export default function Signup({
           entering={FadeIn.duration(500)}
         >
           <Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
-            Bio ({info.about.length}/300)
+            {t("inputs.bio")} ({info.about.length}/300)
           </Text>
           <TextInput
             onChangeText={(n) =>
@@ -836,7 +836,7 @@ export default function Signup({
           entering={FadeIn.duration(500)}
         >
           <Text className="text-center text-lg text-ivory  font-semibold">
-            Upload your doctor's license or degree
+            {t("inputs.license")}
           </Text>
           {/* <TouchableOpacity
             className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-4 "
