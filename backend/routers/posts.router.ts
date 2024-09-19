@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
+import { ObjectId, PushOperator } from "mongodb";
 import Comment from "../models/comment";
 import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
@@ -96,6 +96,9 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
         reports: [],
       });
       if (postInsert.acknowledged) {
+        await collections.patients?.updateOne({
+          publicKey: req.headers.authorization,
+        }, {$push: {posts: postInsert.insertedId.toString()} as PushOperator<Document>});
         res
           .status(200)
           .send(

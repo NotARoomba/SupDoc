@@ -1,24 +1,38 @@
 import Post from "@/backend/models/post";
-import { UserType } from "@/backend/models/util";
+import { STATUS_CODES, UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import FunFact from "components/misc/FunFact";
+import Loader from "components/misc/Loader";
 import useFade from "components/misc/useFade";
+import { callAPI, logout } from "components/utils/Functions";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Animated, Platform, Text, View } from "react-native";
+import { Alert, Animated, Platform, Text, View } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [userType, setUserType] = useState<UserType>(UserType.PATIENT);
+  const [loading, setLoading] = useState(false);
   const fadeAnim = useFade();
   const { t } = useTranslation();
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
+      const ut = (await SecureStore.getItemAsync(
+        process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
+      )) as UserType
       setUserType(
-        (await SecureStore.getItemAsync(
-          process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
-        )) as UserType,
+        ut,
       );
+      const res = await callAPI(
+        `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/posts`,
+        "GET",
+      );
+      if (res.status !== STATUS_CODES.SUCCESS) return res.status == STATUS_CODES.UNAUTHORIZED ? await logout() : Alert.alert(t('error'), t(STATUS_CODES[res.status]));
+      setPosts(res.posts);
+      console.log(res);
+      setLoading(false);
     };
     fetchData();
   }, []);
@@ -59,6 +73,14 @@ export default function Index() {
           />
         </View>
       )}
+      <Spinner
+        visible={loading}
+        overlayColor="#00000099"
+        textContent={"Loading"}
+        customIndicator={<Loader />}
+        textStyle={{ color: "#fff", marginTop: -25 }}
+        animation="fade"
+      />
     </Animated.View>
   );
 }
