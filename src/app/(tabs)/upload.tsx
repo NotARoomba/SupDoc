@@ -37,9 +37,12 @@ export default function Upload() {
     if (!postData) return;
     let images = [];
     for (let i = 0; i < postData.images.length; i++)
-      images[i] = await FileSystem.readAsStringAsync(postData.images[i], {
-        encoding: "base64",
-      });
+      images[i] = `data:image/png;base64,${await FileSystem.readAsStringAsync(
+        postData.images[i],
+        {
+          encoding: "base64",
+        },
+      )}`;
     const res = await callAPI(`/posts/create`, "POST", {
       ...postData,
     });

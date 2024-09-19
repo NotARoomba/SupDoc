@@ -10,7 +10,14 @@ import { SplashScreen, useFocusEffect } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Animated, Platform, ScrollView, Text, View } from "react-native";
+import {
+  Alert,
+  Animated,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -33,7 +40,7 @@ export default function Index() {
         ? await logout()
         : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     setPosts(res.posts);
-    console.log(res.posts.length)
+    console.log(res.posts.length);
     setLoading(false);
     await SplashScreen.hideAsync();
   };
@@ -62,7 +69,14 @@ export default function Index() {
             <Text className=" text-center text-powder_blue/80">
               {t("posts.none")}
             </Text>
-          ) : <ScrollView className="flex">{(posts.map((v, i) => <PostBlock key={i} post={v} />))}<View className="h-32" /></ScrollView>}
+          ) : (
+            <ScrollView className="flex">
+              {posts.map((v, i) => (
+                <PostBlock key={i} post={v} userType={userType} />
+              ))}
+              <View className="h-32" />
+            </ScrollView>
+          )}
         </View>
       ) : (
         <View className="h-full">

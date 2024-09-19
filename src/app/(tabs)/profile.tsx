@@ -90,9 +90,12 @@ export default function Profile() {
       isDoctorInfo(userType, user) &&
       userEdit.picture !== user.picture
         ? {
-            picture: await FileSystem.readAsStringAsync(userEdit.picture, {
-              encoding: "base64",
-            }),
+            picture: `data:image/png;base64,${await FileSystem.readAsStringAsync(
+              userEdit.picture,
+              {
+                encoding: "base64",
+              },
+            )}`,
           }
         : {};
     const res = await callAPI(

@@ -151,4 +151,6 @@ export interface HomeProps {
 
 export interface PostBlockProps {
   post: Post;
+  userType: UserType;
+  saved?: boolean;
 }

@@ -91,10 +91,11 @@ export default function Index({ setIsLogged }: IndexProps) {
     };
     if (isDoctorSignupInfo(userType, signUpInfo))
       for (let i = 0; i < signUpInfo.license.length; i++)
-        signUpInfo.license[i] = await FileSystem.readAsStringAsync(
-          signUpInfo.license[i],
-          { encoding: "base64" },
-        );
+        signUpInfo.license[i] =
+          `data:image/png;base64,${await FileSystem.readAsStringAsync(
+            signUpInfo.license[i],
+            { encoding: "base64" },
+          )}`;
     if (isDoctorSignupInfo(userType, signUpInfo))
       console.log(signUpInfo.license[0].length / 1000);
     const create = await callAPI(
@@ -120,9 +121,12 @@ export default function Index({ setIsLogged }: IndexProps) {
         : ({
             name: signUpInfo.firstName + " " + signUpInfo.lastName,
             ...sharedData,
-            picture: await FileSystem.readAsStringAsync(signUpInfo.picture, {
-              encoding: "base64",
-            }),
+            picture: `data:image/png;base64,${await FileSystem.readAsStringAsync(
+              signUpInfo.picture,
+              {
+                encoding: "base64",
+              },
+            )}`,
             info: {
               specialty: signUpInfo.specialty,
               experience: signUpInfo.experience,
