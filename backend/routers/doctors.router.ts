@@ -122,3 +122,25 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
     res.send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
+
+doctorsRouter.get("/posts", async (req: Request, res: Response) => {
+  try {
+    if (collections.posts) {
+        const posts = await collections.posts.find().sort({_id:-1}).limit(8).toArray();
+      res.send(
+        encrypt(
+          { posts, status: STATUS_CODES.SUCCESS },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res.send(
+      encrypt(
+        { status: STATUS_CODES.GENERIC_ERROR },
+        req.headers.authorization,
+      ),
+    );
+  }
+});
