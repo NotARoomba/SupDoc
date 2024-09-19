@@ -13,7 +13,6 @@ function parseDoctorData(data: string) {
   // Load the HTML content into cheerio
   const $ = cheerio.load(data);
 
-  // Extract the doctor's names
   const firstName =
     $("#ctl00_cntContenido_grdResultadosBasicos td:nth-child(3)")
       .text()
@@ -31,14 +30,12 @@ function parseDoctorData(data: string) {
       .text()
       .trim() || "";
 
-  // Extract specialty from academic table
   const specialty =
     $("#ctl00_cntContenido_grdResultadosAcademicos td:nth-child(3)")
       .first()
       .text()
       .trim() || "";
 
-  // Extract status (Vigente or not)
   const status =
     $("#ctl00_cntContenido_grdResultadosBasicos td:nth-child(7)")
       .text()
@@ -166,7 +163,7 @@ verifyRouter.post("/doctor", async (req: Request, res: Response) => {
   let id: number = parseInt(req?.body?.id);
   const name: string = req.body.name;
   const [firstName, lastName] = name.split(" ");
-  console.log(id, name)
+  console.log(id, name);
   try {
     const firstResponse = await axios.post(
       env.VERIFY_URL,
@@ -229,7 +226,7 @@ verifyRouter.post("/doctor", async (req: Request, res: Response) => {
       },
     );
     const parsed = parseDoctorData(finalResponse.data);
-    console.log(parsed)
+    console.log(parsed);
     res.send({ data: parsed, status: STATUS_CODES.SUCCESS });
   } catch (e) {
     console.log(e);

@@ -6,13 +6,13 @@ import {
   callAPI,
   isDoctorSignupInfo,
   isPatientSignupInfo,
-  verifyPassword,
 } from "components/utils/Functions";
 import CryptoJS from "crypto-es";
 import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Alert,
   Keyboard,
@@ -34,7 +34,6 @@ import {
 } from "../components/utils/Types";
 import Login from "./Login";
 import Signup from "./Signup";
-import { useTranslation } from "react-i18next";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
@@ -86,7 +85,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     const sharedData = {
       number: signUpInfo.countryCode + signUpInfo.number,
       dateJoined: new Date().getTime(), // D
-      publicKey: keys.public, // R
+      publicKey: keys.public.replaceAll("RSA PUBLIC KEY", "PUBLIC KEY"), // R
       privateKey: encPriv.toString(), // R
     };
     if (isDoctorSignupInfo(userType, signUpInfo))
@@ -135,14 +134,14 @@ export default function Index({ setIsLogged }: IndexProps) {
           } as Doctor),
     );
     if (create.status === STATUS_CODES.SUCCESS) {
-      Alert.alert("Success", "You are now registered!");
+      Alert.alert(t("success"), t("successMsg.signup"));
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
         keys.private,
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
-        keys.public,
+        keys.public.replaceAll("RSA PUBLIC KEY", "PUBLIC KEY"),
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
@@ -156,7 +155,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     } else {
       console.log(create);
       setLoading(false);
-      return Alert.alert("Error", "There was an error creating a user!");
+      return Alert.alert(t("error"), t("errors.createUser"));
     }
   };
   useEffect(() => {
@@ -207,7 +206,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       id: loginInfo.identification,
     });
     if (doesExist.status !== STATUS_CODES.ID_IN_USE) {
-      Alert.alert("Error", "There is no user with that ID!");
+      Alert.alert(t("error"), t("errors.INVALID_IDENTITY"));
       return setLoading(false);
     }
     const res = await callAPI("/verify/code/send", "POST", {
@@ -215,12 +214,12 @@ export default function Index({ setIsLogged }: IndexProps) {
     });
     setLoading(false);
     if (res.status === STATUS_CODES.ERROR_SENDING_CODE)
-      return Alert.alert("Error", "There was an error sending the code!");
+      return Alert.alert(t("error"), "errors.CODE_FAILED");
     else {
       setTimeout(() => {
         return prompt(
-          "Enter Verification Code",
-          "Enter the verification code sent to: " + res.number,
+          t("verification.title"),
+          t("verification.description") + res.number,
           async (input) => await checkLogin(input, res.number),
           "plain-text",
           "",
@@ -248,11 +247,16 @@ export default function Index({ setIsLogged }: IndexProps) {
     if (res.status == STATUS_CODES.USER_NOT_FOUND) {
       setLoading(false);
       // need to update wth localizations
-      return Alert.alert("Error", `${userType} not found with that ID`);
+      return Alert.alert(
+        t("error"),
+        t("errors.loginNotFound", {
+          userType: userType == UserType.DOCTOR ? t("doctor") : t("patient"),
+        }),
+      );
     } else if (res.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
       // need to update wth localizations
-      return Alert.alert("Error", "Wrong password");
+      return Alert.alert(t("error"), t("errors.password.wrong"));
     }
     const test = await RSA.encrypt(
       process.env.EXPO_PUBLIC_LIMITED_AUTH,
@@ -266,7 +270,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       const isValid =
         (await RSA.decrypt(test, decrypted)) ==
         process.env.EXPO_PUBLIC_LIMITED_AUTH;
-      if (!isValid) return Alert.alert("Error", "Wrong password!");
+      if (!isValid) return Alert.alert(t("error"), t("errors.password.wrong"));
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
         decrypted,
@@ -284,12 +288,46 @@ export default function Index({ setIsLogged }: IndexProps) {
         loginInfo.password,
       );
       setLoading(false);
-      Alert.alert("Success!", "You are now signed in!");
+      Alert.alert(t("success"), t("successMsg.signup"));
       return setIsLogged(true);
     } catch (e) {
       setLoading(false);
-      return Alert.alert("Error", "Wrong password!");
+      return Alert.alert(t("error"), t("errors.password.wrong"));
     }
+  };
+  const verifyPassword = (password: string): boolean => {
+    // Check for at least one uppercase letter
+    const hasUpperCase = /[A-Z]/.test(password);
+    if (!hasUpperCase) {
+      Alert.alert(t("error"), t("errors.password.uppercase"));
+      return false;
+    }
+
+    // Check for at least one number
+    const hasNumber = /\d/.test(password);
+    if (!hasNumber) {
+      Alert.alert(t("error"), t("errors.password.number"));
+      return false;
+    }
+
+    // Check for at least one special character
+    const hasSpecialChar = /[!@#$%^&*()_\-+=~`{}[\]:;"'<>,.?/\\|]/.test(
+      password,
+    );
+    if (!hasSpecialChar) {
+      Alert.alert(t("error"), t("errors.password.special"));
+      return false;
+    }
+
+    // Check for minimum length of 8 characters
+    const hasMinLength = password.length >= 8;
+    if (!hasMinLength) {
+      Alert.alert(t("error"), t("errors.password.minChrtr"));
+      return false;
+    }
+
+    // If all checks pass, return true
+    return true;
   };
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
@@ -306,7 +344,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           >
             <Slider
               options={[t("titles.login"), t("titles.register")]}
-              setOption={(v) => setIsLogin(v ==  t("titles.login"))}
+              setOption={(v) => setIsLogin(v == t("titles.login"))}
               selected={isLogin ? t("titles.login") : t("titles.register")}
             />
           </Animated.View>
@@ -318,7 +356,11 @@ export default function Index({ setIsLogged }: IndexProps) {
           >
             <Slider
               options={[t("doctor"), t("patient")]}
-              setOption={(v) => v ==  t("doctor") ? setUserType(UserType.DOCTOR) :setUserType(UserType.PATIENT) }
+              setOption={(v) =>
+                v == t("doctor")
+                  ? setUserType(UserType.DOCTOR)
+                  : setUserType(UserType.PATIENT)
+              }
               selected={userType}
             />
           </Animated.View>
@@ -370,7 +412,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                 }
               >
                 <Text className="text-xl  text-ivory font-medium text-center">
-                {t('buttons.back')}
+                  {t("buttons.back")}
                 </Text>
               </TouchableOpacity>
             </Animated.View>
@@ -383,7 +425,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                   (signUpInfo.trans ? pageIndex == 6 : pageIndex == 5)) ||
                 (userType &&
                   isDoctorSignupInfo(userType, signUpInfo) &&
-                  pageIndex == 8)
+                  pageIndex == 7)
               : pageIndex == 2
           ) ? (
             <Animated.View
@@ -402,7 +444,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                     ? Alert.alert(
                         t("error"),
                         !isLogin
-                          ? t("errors.mismatchPassword")
+                          ? t("errors.password.mismatch")
                           : t("errors.missingInfo"),
                       )
                     : (!isLogin ? verifyPassword(signUpInfo.password) : true)
@@ -416,7 +458,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                 }
               >
                 <Text className="text-xl  text-ivory font-medium text-center">
-                {t('buttons.finish')}
+                  {t("buttons.finish")}
                 </Text>
               </TouchableOpacity>
             </Animated.View>
@@ -450,31 +492,24 @@ export default function Index({ setIsLogged }: IndexProps) {
                       (pageIndex == 4 &&
                         userType &&
                         isDoctorSignupInfo(userType, signUpInfo) &&
-                        (!signUpInfo.specialty || !signUpInfo.experience)) ||
+                        !signUpInfo.about) ||
                       (pageIndex == 5 &&
                         userType &&
                         isDoctorSignupInfo(userType, signUpInfo) &&
-                        !signUpInfo.about) ||
-                      (pageIndex == 6 &&
-                        userType &&
-                        isDoctorSignupInfo(userType, signUpInfo) &&
                         signUpInfo.license.length == 0) ||
-                      (pageIndex == 7 &&
+                      (pageIndex == 6 &&
                         userType &&
                         isDoctorSignupInfo(userType, signUpInfo) &&
                         !signUpInfo.picture)
                     : pageIndex == 1 && !userType
                 )
-                  ? Alert.alert(
-                    t("errors.missing"),
-                      t("errors.missingInfo"),
-                    )
+                  ? Alert.alert(t("errors.missing"), t("errors.missingInfo"))
                   : setIndex(pageIndex + 1)
               }
               className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
             >
               <Text className="text-xl text-ivory font-medium text-center">
-                {t('buttons.next')}
+                {t("buttons.next")}
               </Text>
             </TouchableOpacity>
           )}

@@ -57,7 +57,10 @@ export default function Profile() {
         `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
         "GET",
       );
-      if (res.status == STATUS_CODES.USER_NOT_FOUND || res.status == STATUS_CODES.UNAUTHORIZED) {
+      if (
+        res.status == STATUS_CODES.USER_NOT_FOUND ||
+        res.status == STATUS_CODES.UNAUTHORIZED
+      ) {
         setLoading(false);
         return await logout();
       } else if (res.status == STATUS_CODES.GENERIC_ERROR) {
@@ -69,7 +72,8 @@ export default function Profile() {
         ...res.user,
         number: parsePhoneNumber(res.user.number)?.nationalNumber,
       });
-      if (isPatientInfo(ut, res.user)) setTrans(res.user.info.sex !== res.user.info.altSex)
+      if (isPatientInfo(ut, res.user))
+        setTrans(res.user.info.sex !== res.user.info.altSex);
       console.log("ASDASDASD");
       setUserType(ut);
       setLoading(false);
@@ -357,7 +361,7 @@ export default function Profile() {
                 className=" h-48 mt-4"
               >
                 {userEdit && isPatientInfo(userType, userEdit) ? (
-                  <View className="flex w-full flex-row px-8">
+                  <ScrollView className="flex w-screen pb- flex-row px-8">
                     <View>
                       <View className="flex w-full flex-row h-fit ">
                         <View className="w-1/2 flex flex-col">
@@ -435,71 +439,71 @@ export default function Profile() {
                           />
                         </View>
                       )}
-                      
                     </View>
-                    <Text className="text-center w-10/12 mx-auto text-lg mb-4 text-ivory font-semibold">
-              Do you identify as a different sex than your birth sex?
-            </Text>
-            <Slider
-              options={["Yes", "No"]}
-              setOption={(v) => {
-                setTrans(v == "Yes")}}
-              selected={
-                trans ? "Yes" : trans != undefined ? "No" : undefined
-              }
-            />
-            {trans && (
-              <Reanimated.View entering={FadeIn.duration(500)}>
-                <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
-                  Do you take hormones?
-                </Text>
-                <Slider
-                  options={["Yes", "No"]}
-                  setOption={(v) => setUserEdit({ ...userEdit, info: {...userEdit.info, hormones: v == "Yes"} })}
-                  selected={
-                    userEdit.info.hormones
-                      ? "Yes"
-                      : userEdit.info.hormones != undefined
-                        ? "No"
-                        : undefined
-                  }
-                />
-                <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
-                  Have you had a sex-changing surgery?
-                </Text>
-                <Slider
-                  options={["Yes", "No"]}
-                  setOption={(v) => setUserEdit({ ...userEdit, info: {...userEdit.info, surgery: v == "Yes"} })}
-                  selected={
-                    userEdit.info.surgery
-                      ? "Yes"
-                      : userEdit.info.surgery != undefined
-                        ? "No"
-                        : undefined
-                  }
-                />
-              </Reanimated.View>
-            )}
-                  </View>
+                    <View className="mx-auto flex">
+                      <Text className="text-center w-10/12 flex-wrap mx-auto text-lg mb-4 text-ivory font-semibold">
+                        Do you identify as a different sex than your birth sex?
+                      </Text>
+                      <Slider
+                        options={["Yes", "No"]}
+                        setOption={(v) => {
+                          setTrans(v == "Yes");
+                        }}
+                        selected={
+                          trans ? "Yes" : trans != undefined ? "No" : undefined
+                        }
+                      />
+                      {trans && (
+                        <Reanimated.View entering={FadeIn.duration(500)}>
+                          <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
+                            Do you take hormones?
+                          </Text>
+                          <Slider
+                            options={["Yes", "No"]}
+                            setOption={(v) =>
+                              setUserEdit({
+                                ...userEdit,
+                                info: {
+                                  ...userEdit.info,
+                                  hormones: v == "Yes",
+                                },
+                              })
+                            }
+                            selected={
+                              userEdit.info.hormones
+                                ? "Yes"
+                                : userEdit.info.hormones != undefined
+                                  ? "No"
+                                  : undefined
+                            }
+                          />
+                          <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
+                            Have you had a sex-changing surgery?
+                          </Text>
+                          <Slider
+                            options={["Yes", "No"]}
+                            setOption={(v) =>
+                              setUserEdit({
+                                ...userEdit,
+                                info: { ...userEdit.info, surgery: v == "Yes" },
+                              })
+                            }
+                            selected={
+                              userEdit.info.surgery
+                                ? "Yes"
+                                : userEdit.info.surgery != undefined
+                                  ? "No"
+                                  : undefined
+                            }
+                          />
+                        </Reanimated.View>
+                      )}
+                    </View>
+                  </ScrollView>
                 ) : (
                   userEdit &&
                   isDoctorInfo(userType, userEdit) && (
                     <View className="flex">
-                      <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                        Specialty
-                      </Text>
-                      <TextInput
-                        onChangeText={(n) =>
-                          setUserEdit({
-                            ...userEdit,
-                            info: { ...userEdit.info, specialty: n },
-                          })
-                        }
-                        value={userEdit.info.specialty}
-                        keyboardType="default"
-                        placeholderTextColor={"#ffffff"}
-                        className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-                      />
                       <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
                         Experience
                       </Text>

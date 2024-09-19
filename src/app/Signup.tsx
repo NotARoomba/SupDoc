@@ -13,6 +13,7 @@ import useGallery from "components/misc/useGallery";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Alert,
   Dimensions,
@@ -45,7 +46,6 @@ import {
   SignupProps,
   UserType,
 } from "../components/utils/Types";
-import { useTranslation } from "react-i18next";
 
 export default function Signup({
   info,
@@ -93,8 +93,8 @@ export default function Signup({
   const [isPregnantValue, setIsPregnantValue] = useState(false);
   const [isPregnantOpen, setIsPregnantOpen] = useState(false);
   const [isPregnantItems, setIsPregnantItems] = useState([
-    { label: t('yes'), value: true },
-    { label: t('no'), value: false },
+    { label: t("yes"), value: true },
+    { label: t("no"), value: false },
   ]);
 
   const [specialtyValue, setSpecialtyValue] = useState(
@@ -116,7 +116,10 @@ export default function Signup({
         if (res.status !== STATUS_CODES.SUCCESS) {
           setIndex(index - 1);
           setIsLoading(false);
-          return Alert.alert(t('error'), t("errors.ID_IN_USE"));
+          return Alert.alert(
+            t("error"),
+            t(`errors.${STATUS_CODES[res.status]}`),
+          );
         }
         if (!verified) {
           const isValid =
@@ -126,7 +129,7 @@ export default function Signup({
           if (!isValid) {
             setIndex(index - 1);
             setIsLoading(false);
-            return Alert.alert(("error"), t("errors.INVALID_NUMBER"));
+            return Alert.alert(t("error"), t("errors.INVALID_NUMBER"));
           }
           // const verify = await callAPI("/verify/code/send", "POST", {
           //   number: info.countryCode + info.number,
@@ -167,18 +170,24 @@ export default function Signup({
           // }
         }
         setIsLoading(false);
-      } else if (index == 4 && userType == UserType.DOCTOR && isDoctorSignupInfo(userType, info)) {
+      } else if (
+        index == 4 &&
+        userType == UserType.DOCTOR &&
+        isDoctorSignupInfo(userType, info)
+      ) {
+        // MAKE THIS HAPPEN IN THE BACKGROUND WITH NOTIFICATIONS
         setIsLoading(true);
-        console.log(`STATUS: ${STATUS_CODES[0]}`)
         const res = await callAPI(`/verify/doctor`, "POST", {
           id: info.identification,
           name: info.firstName + " " + info.lastName,
         });
-        console.log(res)
-        if (res.status  !== STATUS_CODES.SUCCESS) {
+        if (res.status !== STATUS_CODES.SUCCESS) {
           setIsLoading(false);
-          setIndex(index - 1);
-          return Alert.alert(t('error'), t(`errors.${STATUS_CODES[res.status]}`));
+          setIndex(3);
+          return Alert.alert(
+            t("error"),
+            t(`errors.${STATUS_CODES[res.status]}`),
+          );
         }
         setIsLoading(false);
       }
@@ -223,7 +232,7 @@ export default function Signup({
         key={index}
         className="text-5xl text-ivory font-bold text-center mb-4"
       >
-        {index == 2 ? "Register" : "Personal Information"}
+        {index == 2 ? t("titles.register") : t("titles.personal")}
       </Animated.Text>
       {index == 2 ? (
         <Animated.View entering={FadeIn.duration(500)}>
@@ -276,7 +285,7 @@ export default function Signup({
             className={"h-full flex flex-col"}
           >
             <Text className="text-center text-lg text-ivory mb-2 mt-0 font-semibold">
-              Date of Birth
+              {t("inputs.dob")}
             </Text>
             <View className="flex w-full justify-center">
               {Platform.OS == "ios" ? (
@@ -524,7 +533,7 @@ export default function Signup({
                       exiting={FadeOutLeft.duration(500)}
                       className="flex justify-center"
                     >
-                      <Text className="text-center w-24 text-lg text-ivory   font-semibold">
+                      <Text className="text-center w-28 mr-2 text-lg text-ivory   font-semibold">
                         {t("inputs.pregnant")}
                       </Text>
                       <View className="flex flex-row justify-center -mt-6">
@@ -596,7 +605,11 @@ export default function Signup({
                 });
               }}
               selected={
-                info.trans ? t("yes") : info.trans != undefined ? t("no") : undefined
+                info.trans
+                  ? t("yes")
+                  : info.trans != undefined
+                    ? t("no")
+                    : undefined
               }
             />
             {info.trans && (
@@ -606,7 +619,9 @@ export default function Signup({
                 </Text>
                 <Slider
                   options={[t("yes"), t("no")]}
-                  setOption={(v) => setInfo({ ...info, hormones: v == t("yes") })}
+                  setOption={(v) =>
+                    setInfo({ ...info, hormones: v == t("yes") })
+                  }
                   selected={
                     info.hormones
                       ? t("yes")
@@ -620,7 +635,9 @@ export default function Signup({
                 </Text>
                 <Slider
                   options={[t("yes"), t("no")]}
-                  setOption={(v) => setInfo({ ...info, surgery: v == t("yes") })}
+                  setOption={(v) =>
+                    setInfo({ ...info, surgery: v == t("yes") })
+                  }
                   selected={
                     info.surgery
                       ? t("yes")
@@ -728,7 +745,7 @@ export default function Signup({
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            {t("last")}
+            {t("inputs.last")}
           </Text>
           <TextInput
             onChangeText={(n) =>
@@ -790,7 +807,7 @@ export default function Signup({
           className="flex flex-col w-full"
           entering={FadeIn.duration(500)}
         >
-        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
             {t("inputs.experience")}
           </Text>
           <TextInput
@@ -805,12 +822,6 @@ export default function Signup({
             placeholderTextColor={"#ffffff"}
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
-        </Animated.View>
-      ) : index == 5 ? (
-        <Animated.View
-          className="flex flex-col w-full"
-          entering={FadeIn.duration(500)}
-        >
           <Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
             {t("inputs.bio")} ({info.about.length}/300)
           </Text>
@@ -829,7 +840,7 @@ export default function Signup({
             className="flex justify-center align-middle  m-auto h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
         </Animated.View>
-      ) : index == 6 ? (
+      ) : index == 5 ? (
         <Animated.View
           className="flex flex-col w-full"
           entering={FadeIn.duration(500)}
@@ -861,12 +872,13 @@ export default function Signup({
             </Text>
           </TouchableOpacity> */}
           <Animated.ScrollView
+            centerContent
             horizontal
             entering={FadeIn.duration(500)}
             // exiting={FadeOut.duration(0)}
             contentContainerStyle={{ justifyContent: "space-between" }}
             style={{ width: Dimensions.get("window").width }}
-            className="flex flex-row h-fit m-auto p-4"
+            className="flex flex-row h-fit m-auto py-4"
           >
             {info.license.map((v, i) => (
               <ImageUpload
@@ -907,7 +919,7 @@ export default function Signup({
             </TouchableOpacity>
           </Animated.ScrollView>
         </Animated.View>
-      ) : index == 7 ? (
+      ) : index == 6 ? (
         <Animated.View entering={FadeIn.duration(500)}>
           <Text className="text-center text-lg text-ivory mb-3  font-semibold">
             {t("inputs.picture")}

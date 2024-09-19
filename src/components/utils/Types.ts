@@ -39,7 +39,6 @@ export enum BirthSex {
 export enum Sex {
   MALE = "M",
   FEMALE = "F",
-  INTERSEX = "IS",
   NONBINARY = "NB",
   OTHER = "O",
 }

@@ -52,6 +52,7 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
 
 doctorsRouter.post("/create", async (req: Request, res: Response) => {
   const data: Doctor = req.body;
+  // run check with doctor database again
   // verification of id
   // const worker = await createWorker("eng");
   // const ret = await worker.recognize(data.identification.image);

@@ -1,7 +1,7 @@
+import { useTranslation } from "react-i18next";
 import { Text, TextInput, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { LoginProps, UserType } from "../components/utils/Types";
-import { useTranslation } from "react-i18next";
 
 export default function Login({ info, setInfo, index, userType }: LoginProps) {
   const { t } = useTranslation();
@@ -17,7 +17,8 @@ export default function Login({ info, setInfo, index, userType }: LoginProps) {
       {/* needs to show a text box to input a phone number and identificatio number */}
       <View>
         <Text className="text-center text-lg text-ivory -mb-2 mt-4 font-semibold">
-          {t("inputs.identification")}{userType == UserType.PATIENT && "/TI"}
+          {t("inputs.identification")}
+          {userType == UserType.PATIENT && "/" + t("inputs.TI")}
         </Text>
         <TextInput
           onChangeText={(id) =>
