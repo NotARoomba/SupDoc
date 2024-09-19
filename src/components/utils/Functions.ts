@@ -28,7 +28,6 @@ export async function callAPI(
     const publicKey = await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
     );
-    console.log(publicKey);
     const privateKey = await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
     );

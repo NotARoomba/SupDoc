@@ -85,7 +85,8 @@ export default function Index({ setIsLogged }: IndexProps) {
     const sharedData = {
       number: signUpInfo.countryCode + signUpInfo.number,
       dateJoined: new Date().getTime(), // D
-      publicKey: keys.public.replaceAll("RSA PUBLIC KEY", "PUBLIC KEY"), // R
+      // publicKey: keys.public.replaceAll("RSA PUBLIC KEY", "PUBLIC KEY"), // R
+      publicKey: keys.public, // R
       privateKey: encPriv.toString(), // R
     };
     if (isDoctorSignupInfo(userType, signUpInfo))
@@ -141,7 +142,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
-        keys.public.replaceAll("RSA PUBLIC KEY", "PUBLIC KEY"),
+        keys.public,
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
