@@ -3,12 +3,14 @@ import { STATUS_CODES, UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import FunFact from "components/misc/FunFact";
 import Loader from "components/misc/Loader";
+import PostBlock from "components/misc/PostBlock";
 import useFade from "components/misc/useFade";
 import { callAPI, logout } from "components/utils/Functions";
+import { SplashScreen, useFocusEffect } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Animated, Platform, Text, View } from "react-native";
+import { Alert, Animated, Platform, ScrollView, Text, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -16,24 +18,32 @@ export default function Index() {
   const [loading, setLoading] = useState(false);
   const fadeAnim = useFade();
   const { t } = useTranslation();
+  const fetchData = async () => {
+    setLoading(true);
+    const ut = (await SecureStore.getItemAsync(
+      process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
+    )) as UserType;
+    setUserType(ut);
+    const res = await callAPI(
+      `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/posts`,
+      "GET",
+    );
+    if (res.status !== STATUS_CODES.SUCCESS)
+      return res.status == STATUS_CODES.UNAUTHORIZED
+        ? await logout()
+        : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+    setPosts(res.posts);
+    console.log(res.posts.length)
+    setLoading(false);
+    await SplashScreen.hideAsync();
+  };
+  // REPLACE WITH WEBHOOK
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, []),
+  );
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      const ut = (await SecureStore.getItemAsync(
-        process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
-      )) as UserType
-      setUserType(
-        ut,
-      );
-      const res = await callAPI(
-        `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/posts`,
-        "GET",
-      );
-      if (res.status !== STATUS_CODES.SUCCESS) return res.status == STATUS_CODES.UNAUTHORIZED ? await logout() : Alert.alert(t('error'), t(STATUS_CODES[res.status]));
-      setPosts(res.posts);
-      console.log(res);
-      setLoading(false);
-    };
     fetchData();
   }, []);
   return (
@@ -52,9 +62,7 @@ export default function Index() {
             <Text className=" text-center text-powder_blue/80">
               {t("posts.none")}
             </Text>
-          ) : (
-            posts.map((v, i) => <View key={i} />)
-          )}
+          ) : <ScrollView className="flex">{(posts.map((v, i) => <PostBlock key={i} post={v} />))}<View className="h-32" /></ScrollView>}
         </View>
       ) : (
         <View className="h-full">

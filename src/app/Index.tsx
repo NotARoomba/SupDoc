@@ -362,7 +362,9 @@ export default function Index({ setIsLogged }: IndexProps) {
                   ? setUserType(UserType.DOCTOR)
                   : setUserType(UserType.PATIENT)
               }
-              selected={userType == UserType.DOCTOR ? t("doctor") : t("patient")}
+              selected={
+                userType == UserType.DOCTOR ? t("doctor") : t("patient")
+              }
             />
           </Animated.View>
         ) : (

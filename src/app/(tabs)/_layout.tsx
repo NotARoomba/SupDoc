@@ -10,7 +10,6 @@ export default function TabLayout() {
 
   // const [user, setUser] = useState<User>();
   useEffect(() => {
-    console.log("ASD")
     const updateData = async () => {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,

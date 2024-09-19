@@ -49,7 +49,7 @@ export default function Upload() {
       resetPostData();
       router.replace("/");
       setLoading(false);
-      Alert.alert("Success", "Sucessfully uploaded your post!")
+      Alert.alert("Success", "Sucessfully uploaded your post!");
     }
   };
   const [activeChange, setActiveChange] = useState(false);
