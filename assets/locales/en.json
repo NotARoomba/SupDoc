@@ -43,7 +43,12 @@
         "register": "Register",
         "personal": "Personal Information",
         "fact": "Fun Fact",
-        "posts": "Your Posts"
+        "posts": "Your Posts",
+        "index": "index",
+        "pins": "pins",
+        "upload": "upload",
+        "settings": "settings",
+        "profile": "profile"
     },
     "images": {
         "choose": "Please choose",

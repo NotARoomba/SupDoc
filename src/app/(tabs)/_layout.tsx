@@ -4,8 +4,10 @@ import { SplashScreen, Tabs } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
+import { useTranslation } from "react-i18next";
 
 export default function TabLayout() {
+  const { t } = useTranslation();
   const [userType, setUserType] = useState<UserType>();
 
   // const [user, setUser] = useState<User>();
@@ -59,7 +61,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name={t("index")}
         options={{
           tabBarIcon: ({ color }) => (
             <Icons size={38} name="home" color={color} />
@@ -68,7 +70,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="pins"
+        name={t("pins")}
         options={{
           href: userType == UserType.DOCTOR ? "/(tabs)/pins" : null,
           tabBarIcon: ({ color }) => (
@@ -78,7 +80,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="upload"
+        name={t("upload")}
         options={{
           href: userType != UserType.DOCTOR ? "/(tabs)/upload" : null,
           tabBarIcon: ({ color }) => (
@@ -87,7 +89,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name={t("settings")}
         options={{
           href: null,
           tabBarIcon: ({ color }) => (
@@ -96,7 +98,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name={t("profile")}
         options={{
           tabBarIcon: ({ color }) => (
             <Icons size={38} name="person" color={color} />
