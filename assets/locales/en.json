@@ -10,7 +10,9 @@
     "yes": "Yes",
     "no": "No",
     "doctor": "Doctor",
+    "doctors": "Doctors",
     "patient": "Patient",
+    "patients": "Patients",
     "inputs": {
         "first": "First Name",
         "last": "Last Name",
@@ -36,6 +38,7 @@
         "picture": "Upload a profile photo"
     },
     "posts": {
+        "posts": "posts",
         "none": "(You have not posted anything yet)"
     },
     "titles": {
@@ -47,6 +50,7 @@
         "posts": "Your Posts",
         "index": "index",
         "pins": "pins",
+        "Pins": "Pins",
         "upload": "upload",
         "settings": "settings",
         "profile": "profile"

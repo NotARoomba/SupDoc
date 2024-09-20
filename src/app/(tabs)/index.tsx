@@ -32,7 +32,7 @@ export default function Index() {
     )) as UserType;
     setUserType(ut);
     const res = await callAPI(
-      `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/posts`,
+      `/${ut == UserType.DOCTOR ? t("doctors") : t("patients")}/posts`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS)
@@ -81,7 +81,7 @@ export default function Index() {
       ) : (
         <View className="h-full">
           <Text className="text-6xl font-bold text-center text-ivory">
-            Posts
+            {t("posts.posts")}
           </Text>
           <FlashList
             estimatedItemSize={70}
