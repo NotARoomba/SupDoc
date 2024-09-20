@@ -1,5 +1,7 @@
 /// <reference types="nativewind/types" />
 
+import Post from "@/backend/models/post";
+
 export interface IndexProps {
   setIsLogged: (v: boolean) => void;
 }
@@ -39,7 +41,6 @@ export enum BirthSex {
 export enum Sex {
   MALE = "M",
   FEMALE = "F",
-  INTERSEX = "IS",
   NONBINARY = "NB",
   OTHER = "O",
 }
@@ -146,4 +147,10 @@ export interface ImageUploadProps {
 
 export interface HomeProps {
   userType: UserType;
+}
+
+export interface PostBlockProps {
+  post: Post;
+  userType: UserType;
+  saved?: boolean;
 }

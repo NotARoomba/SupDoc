@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
+import { ObjectId, PushOperator } from "mongodb";
 import Comment from "../models/comment";
 import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
@@ -55,6 +55,19 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
 
 postsRouter.post("/create", async (req: Request, res: Response) => {
   const data: Post = req.body;
+  if (!data.patient) {
+    const patient = await collections.patients?.findOne({
+      publicKey: req.headers.authorization,
+    });
+    if (patient) data.patient = patient.identification.number;
+    else
+      return res.send(
+        encrypt(
+          { status: STATUS_CODES.USER_NOT_FOUND },
+          req.headers.authorization,
+        ),
+      );
+  }
   const keyAltName = data.patient.toString(2);
   try {
     if (collections.posts) {
@@ -64,7 +77,7 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
           keyAltName,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
-        images: [],
+        images: data.images,
         description: await encryption.encrypt(data.description, {
           keyAltName,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
@@ -83,6 +96,9 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
         reports: [],
       });
       if (postInsert.acknowledged) {
+        await collections.patients?.updateOne({
+          publicKey: req.headers.authorization,
+        }, {$push: {posts: postInsert.insertedId.toString()} as PushOperator<Document>});
         res
           .status(200)
           .send(
@@ -96,7 +112,7 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
           encrypt(
             {
               post: null,
-              status: STATUS_CODES.USER_NOT_FOUND,
+              status: STATUS_CODES.GENERIC_ERROR,
             },
             req.headers.authorization,
           ),
@@ -163,7 +179,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
 
       children: [],
 
-      timestamp: await encryption.encrypt(comment.timestamp, {
+      timestamp: await encryption.encrypt(Date.now(), {
         keyAltName,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),

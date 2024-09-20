@@ -3,12 +3,12 @@ import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { Platform, SafeAreaView, View } from "react-native";
-import {useLanguageUpdater} from "../components/utils/i18n";
+import { useLanguageUpdater } from "../components/utils/i18n";
 import Index from "./Index";
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
-  if (Platform.OS == 'android') useLanguageUpdater();
+  if (Platform.OS == "android") useLanguageUpdater();
   const [isLogged, setIsLogged] = useState(false);
   useEffect(() => {
     const updateData = async () => {

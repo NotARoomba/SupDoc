@@ -7,7 +7,6 @@ import CryptoJS from "crypto-es";
 import { Base64 } from "crypto-es/lib/enc-base64";
 import { reloadAppAsync } from "expo";
 import * as SecureStore from "expo-secure-store";
-import { Alert } from "react-native";
 import { RSA } from "react-native-rsa-native";
 import { SignupInfo, UserType } from "./Types";
 
@@ -139,43 +138,4 @@ export async function logout() {
   await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_TYPE);
   await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PASS);
   reloadAppAsync();
-}
-
-export function verifyPassword(password: string): boolean {
-  // Check for at least one uppercase letter
-  const hasUpperCase = /[A-Z]/.test(password);
-  if (!hasUpperCase) {
-    Alert.alert(
-      "Error",
-      "Password must contain at least one uppercase letter.",
-    );
-    return false;
-  }
-
-  // Check for at least one number
-  const hasNumber = /\d/.test(password);
-  if (!hasNumber) {
-    Alert.alert("Error", "Password must contain at least one number.");
-    return false;
-  }
-
-  // Check for at least one special character
-  const hasSpecialChar = /[!@#$%^&*()_\-+=~`{}[\]:;"'<>,.?/\\|]/.test(password);
-  if (!hasSpecialChar) {
-    Alert.alert(
-      "Error",
-      "Password must contain at least one special character.",
-    );
-    return false;
-  }
-
-  // Check for minimum length of 8 characters
-  const hasMinLength = password.length >= 8;
-  if (!hasMinLength) {
-    Alert.alert("Error", "Password must be at least 8 characters long.");
-    return false;
-  }
-
-  // If all checks pass, return true
-  return true;
 }

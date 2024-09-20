@@ -8,6 +8,7 @@ import {
   env,
 } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
+import { ObjectId } from "mongodb";
 
 export const patientsRouter = express.Router();
 
@@ -218,6 +219,32 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
       res.send(
         encrypt(
           { user: upd, status: STATUS_CODES.SUCCESS },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res.send(
+      encrypt(
+        { status: STATUS_CODES.GENERIC_ERROR },
+        req.headers.authorization,
+      ),
+    );
+  }
+});
+
+patientsRouter.get("/posts", async (req: Request, res: Response) => {
+  try {
+    if (collections.patients && collections.posts) {
+      const postIDs = (await collections.patients.findOne(
+        { publicKey: req.headers.authorization }) as Patient).posts;
+        const posts = await collections.posts.find({_id: {
+          $in: postIDs.map(v => new ObjectId(v))
+        }}).toArray();
+      res.send(
+        encrypt(
+          { posts, status: STATUS_CODES.SUCCESS },
           req.headers.authorization,
         ),
       );

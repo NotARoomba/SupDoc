@@ -15,7 +15,8 @@
         "first": "Primer Nombre",
         "last": "Primer Apellido",
         "number": "Número de Teléfono",
-        "identification": "Identificación",
+        "identification": "Cédula",
+        "TI": "TI",
         "dob": "Fecha de Nacimiento",
         "height": "Altura (cm)",
         "blood": "Tipo de Sangre",
@@ -46,7 +47,7 @@
         "posts": "Tus Publicaciones"
     },
     "images": {
-        "choose": "",
+        "choose": "Selecciona uno",
         "gallery": "Galería",
         "camera": "Cámara",
         "readingTitle": "Error de Imagen",
@@ -68,11 +69,17 @@
         "login": "Has iniciado sesión",
         "signup": "Te has registrado"
     },
-    "errorMsg": {
+    "errors": {
         "createUser": "Hubo un error al crear un usuario",
-        "loginNotFound": "{{userType}} no encontrado con esa identificación",
-        "wrongPassword": "La contraseña ingresada es incorrecta",
-        "mismatchPassword": "Las contraseñas no coinciden",
+        "loginNotFound": "No se ha encontrado un {{userType, lowercase}} con ese número de identificación.",
+        "password": {
+            "wrong": "La contraseña ingresada es incorrecta.",
+            "mismatch": "Las contraseñas no coinciden.",
+            "uppercase": "La contraseña debe contener al menos una letra en mayúscula.",
+            "number": "La contraseña debe contener al menos un número.",
+            "special": "La contraseña debe contener al menos un caracter especial.",
+            "minChrtr": "La contraseña debe contener un minimo de 8 caracteres."
+        },
         "missing": "Informacion Faltante",
         "missingInfo": "Por favor, llenar todas las casillas",
         "GENERIC_ERROR": "Ha ocurrido un error",
