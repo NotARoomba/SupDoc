@@ -192,6 +192,19 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
         .join(""),
     ]);
     if (collections.patients) {
+      const sexData =  data.info.altSex ? {"info.altSex": await encryption.encrypt(data.info.altSex, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+      }),"info.hormones": await encryption.encrypt(data.info.hormones, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+      }),"info.surgery": await encryption.encrypt(data.info.surgery, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+      }),"info.pregnant": await encryption.encrypt(data.info.pregnant, {
+        keyAltName,
+        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+      }),} : {}
       const upd = await collections.patients.findOneAndUpdate(
         { publicKey: data.publicKey },
         {
@@ -212,6 +225,7 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
               keyAltName,
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
             }),
+            ...sexData
           },
         },
         { returnDocument: "after" },

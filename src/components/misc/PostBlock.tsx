@@ -2,12 +2,13 @@ import Icons from "@expo/vector-icons/Octicons";
 import { PostBlockProps } from "components/utils/Types";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
-import { Animated, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Animated, Text, TouchableOpacity, View } from "react-native";
 import useFade from "./useFade";
-import { UserType } from "@/backend/models/util";
+import { STATUS_CODES, UserType } from "@/backend/models/util";
 import { BlurView } from 'expo-blur';
 import { useState } from "react";
 import Reanimated, { useAnimatedStyle, useSharedValue, withSpring, useAnimatedProps } from "react-native-reanimated";
+import { callAPI } from "components/utils/Functions";
 
 export default function PostBlock({ post, userType, saved, blur }: PostBlockProps) {
   const fadeAnim = useFade();
@@ -18,8 +19,10 @@ export default function PostBlock({ post, userType, saved, blur }: PostBlockProp
     intensity: withSpring(blurIntensity.value, { damping: 15, stiffness: 90 }),
   }));
 
-  const savePost = () => {
-    console.log("save Post");
+  const savePost = async () => {
+    const res = await callAPI('/posts/save',"GET");
+    if (res.status !== STATUS_CODES.SUCCESS)
+      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
   };
 
   return (

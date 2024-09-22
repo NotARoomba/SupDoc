@@ -56,7 +56,7 @@ export default function Index() {
   return (
     <Animated.View
       style={{ opacity: fadeAnim }}
-      className={"h-full pt-6 " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}
+      className={"h-full " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}
     >
       {userType == UserType.PATIENT ? (
         <ScrollView className="h-full flex">

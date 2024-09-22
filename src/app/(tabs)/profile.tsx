@@ -2,6 +2,7 @@ import { User } from "@/backend/models/user";
 import { STATUS_CODES } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import prompt from "@powerdesigninc/react-native-prompt";
+import { Picker } from "@react-native-picker/picker";
 import Slider from "components/buttons/Slider";
 import Loader from "components/misc/Loader";
 import useCamera from "components/misc/useCamera";
@@ -13,16 +14,17 @@ import {
   isPatientInfo,
   logout,
 } from "components/utils/Functions";
-import { BirthSex, UserType } from "components/utils/Types";
+import { BirthSex, Sex, UserType } from "components/utils/Types";
 import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import * as SecureStore from "expo-secure-store";
 import parsePhoneNumber from "libphonenumber-js";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
   Keyboard,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -32,6 +34,7 @@ import {
   View,
 } from "react-native";
 import { CountryPicker } from "react-native-country-codes-picker";
+import DropDownPicker from "react-native-dropdown-picker";
 import Spinner from "react-native-loading-spinner-overlay";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 
@@ -46,6 +49,12 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [trans, setTrans] = useState(false);
   const [activeChange, setActiveChange] = useState(false);
+  const [altSexValue, setAltSexValue] = useState(Sex.MALE);
+  const [altSexOpen, setAltSexOpen] = useState(false);
+  const scrollRef = useRef<ScrollView | null>(null)
+  const [altSexItems, setAltSexItems] = useState(
+    Object.values(Sex).map((s) => ({ label: s, value: s })),
+  );
   const fadeAnim = useFade();
   useEffect(() => {
     const fetchData = async () => {
@@ -72,8 +81,10 @@ export default function Profile() {
         ...res.user,
         number: parsePhoneNumber(res.user.number)?.nationalNumber,
       });
-      if (isPatientInfo(ut, res.user))
-        setTrans(res.user.info.sex !== res.user.info.altSex);
+      if (isPatientInfo(ut, res.user)) {
+        setTrans(res.user.info.sex !== res.user.info.altSex && res.user.info.altSex);
+        setAltSexValue(res.user.info.sex)
+      }
       console.log("ASDASDASD");
       setUserType(ut);
       setLoading(false);
@@ -359,13 +370,15 @@ export default function Profile() {
                 </>
               )}
               <ScrollView
-                onScrollBeginDrag={Keyboard.dismiss}
-                onScrollEndDrag={Keyboard.dismiss}
-                className=" h-48 mt-4"
+                ref={scrollRef}
+                // onScrollBeginDrag={Keyboard.dismiss}
+                // onScrollEndDrag={Keyboard.dismiss}
+                className=" h-48 mt-4 mx-auto flex"
               >
                 {userEdit && isPatientInfo(userType, userEdit) ? (
-                  <ScrollView className="flex w-screen pb- flex-row px-8">
-                    <View>
+                  <View className="pb-56">
+                  {/* <ScrollView contentContainerStyle={{justifyContent: "center", flex: 1}} className="flex w-full flex-row"> */}
+                    <View>  
                       <View className="flex w-full flex-row h-fit ">
                         <View className="w-1/2 flex flex-col">
                           <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
@@ -443,21 +456,62 @@ export default function Profile() {
                         </View>
                       )}
                     </View>
-                    <View className="mx-auto flex">
-                      <Text className="text-center w-10/12 flex-wrap mx-auto text-lg mb-4 text-ivory font-semibold">
+                    <View className="mx-auto flex mt-4 ">
+                      <Text className=" w-96 text-center mx-auto flex-shrink text-lg mb-4  text-ivory font-semibold">
                         Do you identify as a different sex than your birth sex?
                       </Text>
                       <Slider
                         options={["Yes", "No"]}
                         setOption={(v) => {
-                          setTrans(v == "Yes");
+                          setTrans(v == "Yes");setUserEdit({...userEdit, info: {...userEdit.info, altSex: undefined, hormones: undefined, surgery: undefined}})
                         }}
                         selected={
-                          trans ? "Yes" : trans != undefined ? "No" : undefined
+                          trans ? "Yes" : "No"
                         }
                       />
                       {trans && (
                         <Reanimated.View entering={FadeIn.duration(500)}>
+                          <View className="flex flex-row justify-center w-fit mx-auto ">
+              {Platform.OS == "ios" ? (
+                <Picker
+                  selectedValue={userEdit.info.altSex}
+                  style={{ width: 100 }}
+                  onValueChange={(v) => setUserEdit({ ...userEdit, info: {...userEdit.info, altSex: v} })}
+                >
+                  <Picker.Item
+                    style={{ backgroundColor: "#041225" }}
+                    color="#fbfff1"
+                    label="M"
+                    value={Sex.MALE}
+                  />
+                  <Picker.Item color="#fbfff1" label="F" value={Sex.FEMALE} />
+                  <Picker.Item
+                    color="#fbfff1"
+                    label="NB"
+                    value={Sex.NONBINARY}
+                  />
+                  <Picker.Item color="#fbfff1" label="O" value={Sex.OTHER} />
+                </Picker>
+              ) : (
+                <DropDownPicker
+                  open={altSexOpen}
+                  value={altSexValue}
+                  items={altSexItems}
+                  setOpen={setAltSexOpen}
+                  setValue={setAltSexValue}
+                  onChangeValue={(v) => {setUserEdit({ ...userEdit, info: {...userEdit.info, altSex: v as Sex} });scrollRef.current?.scrollToEnd()}}
+                  theme="DARK"
+                  textStyle={{ color: "#fbfff1" }}
+                  style={{ backgroundColor: "#041225" }}
+                  badgeColors={"#fbfff1"}
+                  labelStyle={{ textAlign: "center" }}
+                  containerStyle={{ width: 80, marginTop: 32 }}
+                  listParentContainerStyle={{ height: 36 }}
+                  listItemContainerStyle={{ backgroundColor: "#041225" }}
+                  setItems={setAltSexItems}
+                />
+              )}
+            </View>
                           <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
                             Do you take hormones?
                           </Text>
@@ -475,9 +529,7 @@ export default function Profile() {
                             selected={
                               userEdit.info.hormones
                                 ? "Yes"
-                                : userEdit.info.hormones != undefined
-                                  ? "No"
-                                  : undefined
+                                  : "No"
                             }
                           />
                           <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
@@ -493,16 +545,15 @@ export default function Profile() {
                             }
                             selected={
                               userEdit.info.surgery
-                                ? "Yes"
-                                : userEdit.info.surgery != undefined
-                                  ? "No"
-                                  : undefined
+                              ? "Yes"
+                              : "No"
                             }
                           />
                         </Reanimated.View>
                       )}
                     </View>
-                  </ScrollView>
+                  </View>
+                  // </ScrollView>
                 ) : (
                   userEdit &&
                   isDoctorInfo(userType, userEdit) && (
@@ -543,11 +594,11 @@ export default function Profile() {
                   )
                 )}
               </ScrollView>
-              {userEdit &&
+              {(userEdit &&
                 JSON.stringify({
                   ...userEdit,
                   number: countryCode.slice(4) + userEdit.number,
-                } as User) != JSON.stringify(user) && (
+                } as User) != JSON.stringify(user)) && (
                   <View
                     className={
                       "flex flex-col absolute gap-y-4 w-full z-10 left-0 bottom-32"

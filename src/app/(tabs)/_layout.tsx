@@ -61,7 +61,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name={t("index")}
+        name={"index"}
         options={{
           tabBarIcon: ({ color }) => (
             <Icons size={38} name="home" color={color} />
@@ -70,7 +70,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name={t("pins")}
+        name={"pins"}
         options={{
           href: userType == UserType.DOCTOR ? "/(tabs)/pins" : null,
           tabBarIcon: ({ color }) => (
@@ -80,7 +80,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name={t("upload")}
+        name={"upload"}
         options={{
           href: userType != UserType.DOCTOR ? "/(tabs)/upload" : null,
           tabBarIcon: ({ color }) => (
@@ -89,7 +89,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name={t("settings")}
+        name={"settings"}
         options={{
           href: null,
           tabBarIcon: ({ color }) => (
@@ -98,7 +98,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name={t("profile")}
+        name={"profile"}
         options={{
           tabBarIcon: ({ color }) => (
             <Icons size={38} name="person" color={color} />
