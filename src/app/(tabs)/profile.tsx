@@ -1,3 +1,4 @@
+import { PatientMetrics } from "@/backend/models/metrics";
 import { User } from "@/backend/models/user";
 import { STATUS_CODES } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
@@ -93,6 +94,7 @@ export default function Profile() {
   }, []);
   const updateUser = async () => {
     // NEED TO CHECK IF PATIENT WITH THE USEREDIT
+    console.log(user, userEdit);
     const doctorStuff =
       userType &&
       userEdit &&
@@ -463,7 +465,7 @@ export default function Profile() {
                       <Slider
                         options={["Yes", "No"]}
                         setOption={(v) => {
-                          setTrans(v == "Yes");setUserEdit({...userEdit, info: {...userEdit.info, altSex: undefined, hormones: undefined, surgery: undefined}})
+                          setTrans(v == "Yes");setUserEdit({...userEdit, info: v == "Yes" ? {...userEdit?.info as PatientMetrics} : {...userEdit.info, altSex: undefined, hormones: undefined, surgery: undefined, pregnant: userEdit.info.sex == BirthSex.FEMALE ? userEdit.info.pregnant : false}})
                         }}
                         selected={
                           trans ? "Yes" : "No"
