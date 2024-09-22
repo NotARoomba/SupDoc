@@ -301,3 +301,45 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     }
   }
 });
+
+postsRouter.get("/:id/save", async (req: Request, res: Response) => {
+  //check if doctor
+  const id = req?.params?.id;
+  try {
+    if (collections.posts && collections.doctors) {
+      const post = (await collections.posts.findOne({
+        _id: new ObjectId(id),
+      })) as unknown as Post;
+      const updated = await collections.doctors.updateOne({publicKey: req.headers.authorization}, {$push: {saved: post._id?.toString()}})
+    if (updated.acknowledged) {
+      res
+        .status(200)
+        .send(
+          encrypt(
+            { post, status: STATUS_CODES.SUCCESS },
+            req.headers.authorization,
+          ),
+        );
+    } else {
+      res.status(404).send(
+        encrypt(
+          {
+            post: null,
+            status: STATUS_CODES.GENERIC_ERROR,
+          },
+          req.headers.authorization,
+        ),
+      );
+    }    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+  }
+});

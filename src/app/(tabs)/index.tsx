@@ -59,7 +59,7 @@ export default function Index() {
       className={"h-full pt-6 " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}
     >
       {userType == UserType.PATIENT ? (
-        <View className="h-full">
+        <ScrollView className="h-full flex">
           <FunFact />
           <View className="h-0.5 rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
           <Text className="text-4xl font-bold text-center text-ivory">
@@ -70,14 +70,15 @@ export default function Index() {
               {t("posts.none")}
             </Text>
           ) : (
-            <ScrollView className="flex">
+            <View className="flex">
+              <View className="h-8" />
               {posts.map((v, i) => (
                 <PostBlock key={i} post={v} userType={userType} />
               ))}
               <View className="h-32" />
-            </ScrollView>
+            </View>
           )}
-        </View>
+        </ScrollView>
       ) : (
         <View className="h-full">
           <Text className="text-6xl font-bold text-center text-ivory">
