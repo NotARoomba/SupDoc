@@ -259,11 +259,11 @@ patientsRouter.get("/posts", async (req: Request, res: Response) => {
           _id: {
             $in: postIDs.map((v) => new ObjectId(v)),
           },
-        })
+        }).sort({_id: -1})
         .toArray();
       res.send(
         encrypt(
-          { posts: posts.reverse(), status: STATUS_CODES.SUCCESS },
+          { posts, status: STATUS_CODES.SUCCESS },
           req.headers.authorization,
         ),
       );
