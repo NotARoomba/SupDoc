@@ -34,7 +34,7 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
         encrypt(
           {
             post: null,
-            status: STATUS_CODES.USER_NOT_FOUND,
+            status: STATUS_CODES.POST_NOT_FOUND,
           },
           req.headers.authorization,
         ),

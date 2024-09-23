@@ -31,8 +31,16 @@ export default function RootLayout() {
       <SafeAreaView className="bg-richer_black" />
       {isLogged ? (
         // <Animated.View entering={FadeIn.duration(500)}>
-        <Stack>
+        <Stack screenOptions={{ contentStyle: { backgroundColor: "#020912" } }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Post"
+            options={{
+              headerShown: false,
+              presentation: "modal",
+              
+            }}
+          />
         </Stack>
       ) : (
         // </Animated.View>

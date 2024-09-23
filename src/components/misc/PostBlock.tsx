@@ -1,17 +1,26 @@
+import { STATUS_CODES, UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
+import { callAPI } from "components/utils/Functions";
 import { PostBlockProps } from "components/utils/Types";
+import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Alert, Animated, Text, TouchableOpacity, View } from "react-native";
+import Reanimated, {
+  useAnimatedProps,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import useFade from "./useFade";
-import { STATUS_CODES, UserType } from "@/backend/models/util";
-import { BlurView } from 'expo-blur';
-import { useState } from "react";
-import Reanimated, { useAnimatedStyle, useSharedValue, withSpring, useAnimatedProps } from "react-native-reanimated";
-import { callAPI } from "components/utils/Functions";
 
-export default function PostBlock({ post, userType, saved, blur }: PostBlockProps) {
-  const fadeAnim = useFade();
+export default function PostBlock({
+  post,
+  userType,
+  saved,
+  blur,
+}: PostBlockProps) {
+  const fadeAnim = useFade(true);
   const { t } = useTranslation();
   const ReanimatedBlurView = Reanimated.createAnimatedComponent(BlurView);
   const blurIntensity = useSharedValue(50);
@@ -20,7 +29,7 @@ export default function PostBlock({ post, userType, saved, blur }: PostBlockProp
   }));
 
   const savePost = async () => {
-    const res = await callAPI('/posts/save',"GET");
+    const res = await callAPI("/posts/save", "GET");
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
   };
@@ -29,7 +38,7 @@ export default function PostBlock({ post, userType, saved, blur }: PostBlockProp
     <Animated.View
       style={{ opacity: fadeAnim }}
       className={
-        "h-fit flex w-11/12 bg-midnight_green-500/60 my-2 p-4 pt-0 gap-y-4 rounded-2xl mx-auto "
+        "h-fit flex w-11/12 bg-midnight_green-500/60 my-8 p-4 pt-0 gap-y-4 rounded-2xl mx-auto "
       }
     >
       <View className="justify-between flex flex-row">
@@ -52,8 +61,8 @@ export default function PostBlock({ post, userType, saved, blur }: PostBlockProp
               blurIntensity.value = blurIntensity.value === 50 ? 0 : 50;
             }}
           >
-            <ReanimatedBlurView 
-              animatedProps={animatedBlurProps} 
+            <ReanimatedBlurView
+              animatedProps={animatedBlurProps}
               className="h-full absolute w-full z-50"
             />
             <Image
@@ -68,7 +77,14 @@ export default function PostBlock({ post, userType, saved, blur }: PostBlockProp
           </Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => console.log("Navigate to big post Page")}>
+      <TouchableOpacity
+        onPress={() =>
+          router.navigate({
+            pathname: "/Post",
+            params: { id: post._id?.toString() },
+          })
+        }
+      >
         <View className="flex flex-row rounded-xl bg-powder_blue/30 p-1 px-2 justify-between">
           <Text className="text-ivory text-lg my-auto font-medium">
             {post.comments.length}/3 Doctors have commented

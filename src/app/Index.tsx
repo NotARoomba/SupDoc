@@ -1,7 +1,7 @@
 import { Doctor } from "@/backend/models/doctor";
 import { STATUS_CODES } from "@/backend/models/util";
 import prompt from "@powerdesigninc/react-native-prompt";
-import Loader from "components/misc/Loader";
+import useLoading from "components/misc/useLoading";
 import {
   callAPI,
   isDoctorSignupInfo,
@@ -22,7 +22,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Spinner from "react-native-loading-spinner-overlay";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { RSA } from "react-native-rsa-native";
 import Slider from "../components/buttons/Slider";
@@ -39,6 +38,7 @@ export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [userType, setUserType] = useState<UserType>();
+  const { loading } = useLoading();
   const [signUpInfo, setSignUpInfo] = useState<
     SignupInfo<UserType.DOCTOR> | SignupInfo<UserType.PATIENT>
   >({} as SignupInfo<UserType.PATIENT>);
@@ -46,7 +46,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     LoginInfo<UserType.DOCTOR> | LoginInfo<UserType.PATIENT>
   >({} as LoginInfo<UserType.PATIENT>);
   const [pageIndex, setIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const { setLoading } = useLoading();
   const { t } = useTranslation();
   useEffect(() => {
     // check if key if not then create one and if theres a key check if it exists and login
@@ -521,14 +521,6 @@ export default function Index({ setIsLogged }: IndexProps) {
             </TouchableOpacity>
           )}
         </View>
-        <Spinner
-          visible={loading}
-          overlayColor="#000000cc"
-          textContent={t("loading")}
-          customIndicator={<Loader />}
-          textStyle={{ color: "#fbfff1", marginTop: -25 }}
-          animation="fade"
-        />
       </View>
     </TouchableWithoutFeedback>
   );

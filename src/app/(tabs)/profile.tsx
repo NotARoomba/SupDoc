@@ -5,10 +5,11 @@ import Icons from "@expo/vector-icons/Octicons";
 import prompt from "@powerdesigninc/react-native-prompt";
 import { Picker } from "@react-native-picker/picker";
 import Slider from "components/buttons/Slider";
-import Loader from "components/misc/Loader";
+import LoaderView from "components/misc/LoaderView";
 import useCamera from "components/misc/useCamera";
 import useFade from "components/misc/useFade";
 import useGallery from "components/misc/useGallery";
+import useLoading from "components/misc/useLoading";
 import {
   callAPI,
   isDoctorInfo,
@@ -36,7 +37,6 @@ import {
 } from "react-native";
 import { CountryPicker } from "react-native-country-codes-picker";
 import DropDownPicker from "react-native-dropdown-picker";
-import Spinner from "react-native-loading-spinner-overlay";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 export default function Profile() {
@@ -47,12 +47,12 @@ export default function Profile() {
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
   const [user, setUser] = useState<User>();
   const [userEdit, setUserEdit] = useState<User>();
-  const [loading, setLoading] = useState(false);
+  const { setLoading } = useLoading();
   const [trans, setTrans] = useState(false);
   const [activeChange, setActiveChange] = useState(false);
   const [altSexValue, setAltSexValue] = useState(Sex.MALE);
   const [altSexOpen, setAltSexOpen] = useState(false);
-  const scrollRef = useRef<ScrollView | null>(null)
+  const scrollRef = useRef<ScrollView | null>(null);
   const [altSexItems, setAltSexItems] = useState(
     Object.values(Sex).map((s) => ({ label: s, value: s })),
   );
@@ -83,8 +83,10 @@ export default function Profile() {
         number: parsePhoneNumber(res.user.number)?.nationalNumber,
       });
       if (isPatientInfo(ut, res.user)) {
-        setTrans(res.user.info.sex !== res.user.info.altSex && res.user.info.altSex);
-        setAltSexValue(res.user.info.sex)
+        setTrans(
+          res.user.info.sex !== res.user.info.altSex && res.user.info.altSex,
+        );
+        setAltSexValue(res.user.info.sex);
       }
       console.log("ASDASDASD");
       setUserType(ut);
@@ -252,135 +254,140 @@ export default function Profile() {
           <Icons name="sign-out" size={38} color={"#fbfff1"} />
         </TouchableOpacity>
       </View>
-      {userType && (
-        <TouchableWithoutFeedback
+      {userType ? (
+        <Reanimated.ScrollView
+          entering={FadeIn.duration(500)}
+          exiting={FadeOut.duration(500)}
           className="h-full w-full"
-          onPress={Keyboard.dismiss}
         >
-          <View className="w-full">
-            <View className="flex mx-auto pt-8  h-full w-full">
-              <View className="mx-auto bg-transparent w-48 h-48 rounded-full">
-                <View className=" m-auto">
-                  {userType == UserType.PATIENT ? (
-                    <Icons name="person" size={150} color={"#fbfff1"} />
-                  ) : (
-                    user &&
-                    userEdit &&
-                    isDoctorInfo(userType, user) &&
-                    isDoctorInfo(userType, userEdit) && (
-                      <TouchableOpacity className=" w-48 h-48  aspect-square flex border-dashed border border-ivory/80 rounded-xl">
-                        <View className="m-auto">
-                          <Image
-                            className="rounded-xl h-full aspect-square"
-                            source={{
-                              uri: `${userEdit.picture !== user.picture ? userEdit.picture : `data:image/png;base64,${userEdit.picture}`}`,
-                            }}
-                          />
-                          <Pressable
-                            onPress={() => setActiveChange(!activeChange)}
-                            className="absolute rounded-xl w-48 h-48  z-50  flex"
-                          >
-                            {activeChange && (
-                              <Reanimated.View
-                                entering={FadeIn.duration(250)}
-                                exiting={FadeOut.duration(250)}
-                                className="h-full rounded-xl w-full bg-ivory/50"
-                              >
-                                <TouchableOpacity
-                                  onPress={() =>
-                                    Alert.alert("Please choose", undefined, [
-                                      {
-                                        text: "Gallery",
-                                        onPress: async () =>
-                                          setUserEdit({
-                                            ...userEdit,
-                                            picture:
-                                              (await selectImage("gallery")) ??
-                                              userEdit.picture,
-                                          }),
-                                      },
-                                      {
-                                        text: "Camera",
-                                        onPress: async () =>
-                                          setUserEdit({
-                                            ...userEdit,
-                                            picture:
-                                              (await selectImage("camera")) ??
-                                              userEdit.picture,
-                                          }),
-                                      },
-                                      { text: "Cancel", style: "cancel" },
-                                    ])
-                                  }
-                                  className="m-auto p-4"
+          <TouchableWithoutFeedback
+            className="h-full w-full"
+            onPress={Keyboard.dismiss}
+          >
+            <View className="w-full">
+              <View className="flex mx-auto pt-8  h-full w-full">
+                <View className="mx-auto bg-transparent w-48 h-48 rounded-full">
+                  <View className=" m-auto">
+                    {userType == UserType.PATIENT ? (
+                      <Icons name="person" size={150} color={"#fbfff1"} />
+                    ) : (
+                      user &&
+                      userEdit &&
+                      isDoctorInfo(userType, user) &&
+                      isDoctorInfo(userType, userEdit) && (
+                        <TouchableOpacity className=" w-48 h-48  aspect-square flex border-dashed border border-ivory/80 rounded-xl">
+                          <View className="m-auto">
+                            <Image
+                              className="rounded-xl h-full aspect-square"
+                              source={{
+                                uri: `${userEdit.picture !== user.picture ? userEdit.picture : `data:image/png;base64,${userEdit.picture}`}`,
+                              }}
+                            />
+                            <Pressable
+                              onPress={() => setActiveChange(!activeChange)}
+                              className="absolute rounded-xl w-48 h-48  z-50  flex"
+                            >
+                              {activeChange && (
+                                <Reanimated.View
+                                  entering={FadeIn.duration(250)}
+                                  exiting={FadeOut.duration(250)}
+                                  className="h-full rounded-xl w-full bg-ivory/50"
                                 >
-                                  <Icons
-                                    name="pencil"
-                                    size={60}
-                                    color={"#08254099"}
-                                  />
-                                </TouchableOpacity>
-                              </Reanimated.View>
-                            )}
-                          </Pressable>
-                        </View>
-                      </TouchableOpacity>
-                    )
-                  )}
-                </View>
-              </View>
-              {userEdit && (
-                <>
-                  {isDoctorInfo(userType, userEdit) && (
-                    <Text className="text-2xl mt-2 -mb-2 text-ivory font-semibold text-center">
-                      {userEdit.name}
-                    </Text>
-                  )}
-                  <Text
-                    className={
-                      " mt-2 text-ivory  text-center " +
-                      (isDoctorInfo(userType, userEdit)
-                        ? "text-xl font-medium"
-                        : "text-2xl font-semibold")
-                    }
-                  >
-                    {user?.identification.number}
-                  </Text>
-                  <View className="h-0.5 rounded-full w-72 mx-auto bg-powder_blue/50 my-4" />
-                  <Text className="text-center text-lg text-ivory  font-semibold">
-                    Phone Number
-                  </Text>
-                  <View className="flex flex-row justify-center align-middle -mt-3  ">
-                    <TouchableOpacity
-                      onPress={() => setCountryShow(!countryShow)}
-                      className=" bg-rich_black border border-powder_blue/20 border-r-0 text-center align-middle p-1 h-12 mt-3 w-3/12 rounded-l-xl"
-                    >
-                      <Text className="align-middle m-auto text-lg text-ivory font-semibold">
-                        {countryCode}
-                      </Text>
-                    </TouchableOpacity>
-                    <TextInput
-                      onChangeText={(n) => {
-                        setUserEdit({ ...userEdit, number: n } as User);
-                      }}
-                      value={userEdit.number}
-                      keyboardType="phone-pad"
-                      placeholderTextColor={"#ffffff"}
-                      className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-7/12   rounded-xl rounded-l-none bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
-                    />
+                                  <TouchableOpacity
+                                    onPress={() =>
+                                      Alert.alert("Please choose", undefined, [
+                                        {
+                                          text: "Gallery",
+                                          onPress: async () =>
+                                            setUserEdit({
+                                              ...userEdit,
+                                              picture:
+                                                (await selectImage(
+                                                  "gallery",
+                                                )) ?? userEdit.picture,
+                                            }),
+                                        },
+                                        {
+                                          text: "Camera",
+                                          onPress: async () =>
+                                            setUserEdit({
+                                              ...userEdit,
+                                              picture:
+                                                (await selectImage("camera")) ??
+                                                userEdit.picture,
+                                            }),
+                                        },
+                                        { text: "Cancel", style: "cancel" },
+                                      ])
+                                    }
+                                    className="m-auto p-4"
+                                  >
+                                    <Icons
+                                      name="pencil"
+                                      size={60}
+                                      color={"#08254099"}
+                                    />
+                                  </TouchableOpacity>
+                                </Reanimated.View>
+                              )}
+                            </Pressable>
+                          </View>
+                        </TouchableOpacity>
+                      )
+                    )}
                   </View>
-                </>
-              )}
-              <ScrollView
-                ref={scrollRef}
-                // onScrollBeginDrag={Keyboard.dismiss}
-                // onScrollEndDrag={Keyboard.dismiss}
+                </View>
+                {userEdit && (
+                  <>
+                    {isDoctorInfo(userType, userEdit) && (
+                      <Text className="text-2xl mt-2 -mb-2 text-ivory font-semibold text-center">
+                        {userEdit.name}
+                      </Text>
+                    )}
+                    <Text
+                      className={
+                        " mt-2 text-ivory  text-center " +
+                        (isDoctorInfo(userType, userEdit)
+                          ? "text-xl font-medium"
+                          : "text-2xl font-semibold")
+                      }
+                    >
+                      {user?.identification.number}
+                    </Text>
+                    <View className="h-0.5 rounded-full w-72 mx-auto bg-powder_blue/50 my-4" />
+                    <Text className="text-center text-lg text-ivory  font-semibold">
+                      Phone Number
+                    </Text>
+                    <View className="flex flex-row justify-center align-middle -mt-3  ">
+                      <TouchableOpacity
+                        onPress={() => setCountryShow(!countryShow)}
+                        className=" bg-rich_black border border-powder_blue/20 border-r-0 text-center align-middle p-1 h-12 mt-3 w-3/12 rounded-l-xl"
+                      >
+                        <Text className="align-middle m-auto text-lg text-ivory font-semibold">
+                          {countryCode}
+                        </Text>
+                      </TouchableOpacity>
+                      <TextInput
+                        onChangeText={(n) => {
+                          setUserEdit({ ...userEdit, number: n } as User);
+                        }}
+                        value={userEdit.number}
+                        keyboardType="phone-pad"
+                        placeholderTextColor={"#ffffff"}
+                        className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-7/12   rounded-xl rounded-l-none bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                      />
+                    </View>
+                  </>
+                )}
+                {/* <ScrollView
+                onScrollBeginDrag={Keyboard.dismiss}
+                onScrollEndDrag={Keyboard.dismiss}
                 className=" h-48 mt-4 mx-auto flex"
-              >
+              > */}
                 {userEdit && isPatientInfo(userType, userEdit) ? (
                   <View className="pb-56">
-                  {/* <ScrollView contentContainerStyle={{justifyContent: "center", flex: 1}} className="flex w-full flex-row"> */}
-                    <View>  
+                    {/* <ScrollView contentContainerStyle={{justifyContent: "center", flex: 1}} className="flex w-full flex-row"> */}
+                    <View>
                       <View className="flex w-full flex-row h-fit ">
                         <View className="w-1/2 flex flex-col">
                           <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
@@ -465,55 +472,93 @@ export default function Profile() {
                       <Slider
                         options={["Yes", "No"]}
                         setOption={(v) => {
-                          setTrans(v == "Yes");setUserEdit({...userEdit, info: v == "Yes" ? {...userEdit?.info as PatientMetrics} : {...userEdit.info, altSex: undefined, hormones: undefined, surgery: undefined, pregnant: userEdit.info.sex == BirthSex.FEMALE ? userEdit.info.pregnant : false}})
+                          setTrans(v == "Yes");
+                          setUserEdit({
+                            ...userEdit,
+                            info:
+                              v == "Yes"
+                                ? { ...(userEdit?.info as PatientMetrics) }
+                                : {
+                                    ...userEdit.info,
+                                    altSex: userEdit.info.sex,
+                                    hormones: false,
+                                    surgery: false,
+                                    pregnant:
+                                      userEdit.info.sex == BirthSex.FEMALE
+                                        ? userEdit.info.pregnant
+                                        : false,
+                                  },
+                          });
                         }}
-                        selected={
-                          trans ? "Yes" : "No"
-                        }
+                        selected={trans ? "Yes" : "No"}
                       />
                       {trans && (
                         <Reanimated.View entering={FadeIn.duration(500)}>
                           <View className="flex flex-row justify-center w-fit mx-auto ">
-              {Platform.OS == "ios" ? (
-                <Picker
-                  selectedValue={userEdit.info.altSex}
-                  style={{ width: 100 }}
-                  onValueChange={(v) => setUserEdit({ ...userEdit, info: {...userEdit.info, altSex: v} })}
-                >
-                  <Picker.Item
-                    style={{ backgroundColor: "#041225" }}
-                    color="#fbfff1"
-                    label="M"
-                    value={Sex.MALE}
-                  />
-                  <Picker.Item color="#fbfff1" label="F" value={Sex.FEMALE} />
-                  <Picker.Item
-                    color="#fbfff1"
-                    label="NB"
-                    value={Sex.NONBINARY}
-                  />
-                  <Picker.Item color="#fbfff1" label="O" value={Sex.OTHER} />
-                </Picker>
-              ) : (
-                <DropDownPicker
-                  open={altSexOpen}
-                  value={altSexValue}
-                  items={altSexItems}
-                  setOpen={setAltSexOpen}
-                  setValue={setAltSexValue}
-                  onChangeValue={(v) => {setUserEdit({ ...userEdit, info: {...userEdit.info, altSex: v as Sex} });scrollRef.current?.scrollToEnd()}}
-                  theme="DARK"
-                  textStyle={{ color: "#fbfff1" }}
-                  style={{ backgroundColor: "#041225" }}
-                  badgeColors={"#fbfff1"}
-                  labelStyle={{ textAlign: "center" }}
-                  containerStyle={{ width: 80, marginTop: 32 }}
-                  listParentContainerStyle={{ height: 36 }}
-                  listItemContainerStyle={{ backgroundColor: "#041225" }}
-                  setItems={setAltSexItems}
-                />
-              )}
-            </View>
+                            {Platform.OS == "ios" ? (
+                              <Picker
+                                selectedValue={userEdit.info.altSex}
+                                style={{ width: 100 }}
+                                onValueChange={(v) =>
+                                  setUserEdit({
+                                    ...userEdit,
+                                    info: { ...userEdit.info, altSex: v },
+                                  })
+                                }
+                              >
+                                <Picker.Item
+                                  style={{ backgroundColor: "#041225" }}
+                                  color="#fbfff1"
+                                  label="M"
+                                  value={Sex.MALE}
+                                />
+                                <Picker.Item
+                                  color="#fbfff1"
+                                  label="F"
+                                  value={Sex.FEMALE}
+                                />
+                                <Picker.Item
+                                  color="#fbfff1"
+                                  label="NB"
+                                  value={Sex.NONBINARY}
+                                />
+                                <Picker.Item
+                                  color="#fbfff1"
+                                  label="O"
+                                  value={Sex.OTHER}
+                                />
+                              </Picker>
+                            ) : (
+                              <DropDownPicker
+                                open={altSexOpen}
+                                value={altSexValue}
+                                items={altSexItems}
+                                setOpen={setAltSexOpen}
+                                setValue={setAltSexValue}
+                                onChangeValue={(v) => {
+                                  setUserEdit({
+                                    ...userEdit,
+                                    info: {
+                                      ...userEdit.info,
+                                      altSex: v as Sex,
+                                    },
+                                  });
+                                  scrollRef.current?.scrollToEnd();
+                                }}
+                                theme="DARK"
+                                textStyle={{ color: "#fbfff1" }}
+                                style={{ backgroundColor: "#041225" }}
+                                badgeColors={"#fbfff1"}
+                                labelStyle={{ textAlign: "center" }}
+                                containerStyle={{ width: 80, marginTop: 32 }}
+                                listParentContainerStyle={{ height: 36 }}
+                                listItemContainerStyle={{
+                                  backgroundColor: "#041225",
+                                }}
+                                setItems={setAltSexItems}
+                              />
+                            )}
+                          </View>
                           <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
                             Do you take hormones?
                           </Text>
@@ -528,11 +573,7 @@ export default function Profile() {
                                 },
                               })
                             }
-                            selected={
-                              userEdit.info.hormones
-                                ? "Yes"
-                                  : "No"
-                            }
+                            selected={userEdit.info.hormones ? "Yes" : "No"}
                           />
                           <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
                             Have you had a sex-changing surgery?
@@ -545,18 +586,14 @@ export default function Profile() {
                                 info: { ...userEdit.info, surgery: v == "Yes" },
                               })
                             }
-                            selected={
-                              userEdit.info.surgery
-                              ? "Yes"
-                              : "No"
-                            }
+                            selected={userEdit.info.surgery ? "Yes" : "No"}
                           />
                         </Reanimated.View>
                       )}
                     </View>
                   </View>
-                  // </ScrollView>
                 ) : (
+                  // </ScrollView>
                   userEdit &&
                   isDoctorInfo(userType, userEdit) && (
                     <View className="flex">
@@ -595,76 +632,72 @@ export default function Profile() {
                     </View>
                   )
                 )}
-              </ScrollView>
-              {(userEdit &&
-                JSON.stringify({
-                  ...userEdit,
-                  number: countryCode.slice(4) + userEdit.number,
-                } as User) != JSON.stringify(user)) && (
-                  <View
-                    className={
-                      "flex flex-col absolute gap-y-4 w-full z-10 left-0 bottom-32"
-                    }
-                  >
-                    <Reanimated.View
-                      entering={FadeIn.duration(500)}
-                      exiting={FadeOut.duration(500)}
-                      className="mt-5"
-                    >
-                      <TouchableOpacity
-                        onPress={parseUpdate}
-                        className={
-                          "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
-                        }
-                      >
-                        <Text className="text-xl  text-ivory font-medium text-center">
-                          Update
-                        </Text>
-                      </TouchableOpacity>
-                    </Reanimated.View>
-                  </View>
-                )}
+                {/* </ScrollView> */}
+              </View>
+
+              <CountryPicker
+                show={countryShow}
+                // when picker button press you will get the country object with dial code
+                pickerButtonOnPress={(item: { flag: any; dial_code: any }) => {
+                  setCountryCode(item.flag + item.dial_code);
+                  setCountryShow(!countryShow);
+                }}
+                // androidWindowSoftInputMode={"pan"}
+                onBackdropPress={() => setCountryShow(!countryShow)}
+                lang={"en"}
+                style={{
+                  modal: { height: "50%", backgroundColor: "#041225" },
+                  countryButtonStyles: {
+                    backgroundColor: "#041225",
+                    borderColor: "rgba(180, 197, 228, 0.1)",
+                    borderWidth: 1,
+                  },
+                  searchMessageText: { color: "#fbfff1" },
+                  textInput: {
+                    backgroundColor: "#041225",
+                    borderColor: "rgba(180, 197, 228, 0.3)",
+                    borderWidth: 1,
+                    paddingLeft: 10,
+                  },
+                  countryName: { color: "#fbfff1" },
+                  dialCode: { color: "#fbfff1" },
+                  line: { backgroundColor: "rgba(180, 197, 228, 0.2)" },
+                }}
+              />
             </View>
-            <CountryPicker
-              show={countryShow}
-              // when picker button press you will get the country object with dial code
-              pickerButtonOnPress={(item: { flag: any; dial_code: any }) => {
-                setCountryCode(item.flag + item.dial_code);
-                setCountryShow(!countryShow);
-              }}
-              // androidWindowSoftInputMode={"pan"}
-              onBackdropPress={() => setCountryShow(!countryShow)}
-              lang={"en"}
-              style={{
-                modal: { height: "50%", backgroundColor: "#041225" },
-                countryButtonStyles: {
-                  backgroundColor: "#041225",
-                  borderColor: "rgba(180, 197, 228, 0.1)",
-                  borderWidth: 1,
-                },
-                searchMessageText: { color: "#fbfff1" },
-                textInput: {
-                  backgroundColor: "#041225",
-                  borderColor: "rgba(180, 197, 228, 0.3)",
-                  borderWidth: 1,
-                  paddingLeft: 10,
-                },
-                countryName: { color: "#fbfff1" },
-                dialCode: { color: "#fbfff1" },
-                line: { backgroundColor: "rgba(180, 197, 228, 0.2)" },
-              }}
-            />
-          </View>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        </Reanimated.ScrollView>
+      ) : (
+        <LoaderView />
       )}
-      <Spinner
-        visible={loading}
-        overlayColor="#000000cc"
-        textContent={"Loading"}
-        customIndicator={<Loader />}
-        textStyle={{ color: "#fff", marginTop: -25 }}
-        animation="fade"
-      />
+      {userEdit &&
+        JSON.stringify({
+          ...userEdit,
+          number: countryCode.slice(4) + userEdit.number,
+        } as User) != JSON.stringify(user) && (
+          <View
+            className={
+              "flex flex-col absolute gap-y-4 w-full z-10 left-0 bottom-28"
+            }
+          >
+            <Reanimated.View
+              entering={FadeIn.duration(500)}
+              exiting={FadeOut.duration(500)}
+              className="mt-5"
+            >
+              <TouchableOpacity
+                onPress={parseUpdate}
+                className={
+                  "  bg-oxford_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
+                }
+              >
+                <Text className="text-xl  text-ivory font-medium text-center">
+                  Update
+                </Text>
+              </TouchableOpacity>
+            </Reanimated.View>
+          </View>
+        )}
     </Animated.View>
   );
 }

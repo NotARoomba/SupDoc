@@ -2,13 +2,13 @@ import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import FunFact from "components/misc/FunFact";
-import Loader from "components/misc/Loader";
 import PostBlock from "components/misc/PostBlock";
 import useFade from "components/misc/useFade";
+import useLoading from "components/misc/useLoading";
 import { callAPI, logout } from "components/utils/Functions";
-import { SplashScreen, useFocusEffect } from "expo-router";
+import { SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -18,12 +18,11 @@ import {
   Text,
   View,
 } from "react-native";
-import Spinner from "react-native-loading-spinner-overlay";
 export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [userType, setUserType] = useState<UserType>(UserType.PATIENT);
-  const [loading, setLoading] = useState(false);
-  const fadeAnim = useFade();
+  const { setLoading } = useLoading();
+  const fadeAnim = useFade(true);
   const { t } = useTranslation();
   const fetchData = async () => {
     setLoading(true);
@@ -45,11 +44,11 @@ export default function Index() {
     await SplashScreen.hideAsync();
   };
   // REPLACE WITH WEBHOOK
-  useFocusEffect(
-    useCallback(() => {
-      fetchData();
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchData();
+  //   }, []),
+  // );
   useEffect(() => {
     fetchData();
   }, []);
@@ -96,14 +95,6 @@ export default function Index() {
           />
         </View>
       )}
-      <Spinner
-        visible={loading}
-        overlayColor="#00000099"
-        textContent={"Loading"}
-        customIndicator={<Loader />}
-        textStyle={{ color: "#fff", marginTop: -25 }}
-        animation="fade"
-      />
     </Animated.View>
   );
 }

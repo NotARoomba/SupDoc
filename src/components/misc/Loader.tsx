@@ -50,7 +50,8 @@ export default function Loader() {
       <Svg
         scale={100}
         width="100%"
-        height="100%"
+        height="50px"
+        className="mx-auto"
         viewBox="0 0 50 31.25"
         preserveAspectRatio="xMidYMid meet"
       >

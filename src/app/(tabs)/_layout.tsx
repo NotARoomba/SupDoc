@@ -3,8 +3,8 @@ import { UserType } from "components/utils/Types";
 import { SplashScreen, Tabs } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
+import { Platform } from "react-native";
 
 export default function TabLayout() {
   const { t } = useTranslation();
@@ -68,7 +68,6 @@ export default function TabLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
         name={"pins"}
         options={{

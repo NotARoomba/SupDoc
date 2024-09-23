@@ -2,10 +2,10 @@ import Post from "@/backend/models/post";
 import { STATUS_CODES } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import ImageUpload from "components/misc/ImageUpload";
-import Loader from "components/misc/Loader";
 import useCamera from "components/misc/useCamera";
 import useFade from "components/misc/useFade";
 import useGallery from "components/misc/useGallery";
+import useLoading from "components/misc/useLoading";
 import { callAPI } from "components/utils/Functions";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
@@ -24,7 +24,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Spinner from "react-native-loading-spinner-overlay";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 export default function Upload() {
@@ -56,7 +55,7 @@ export default function Upload() {
     }
   };
   const [activeChange, setActiveChange] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { setLoading } = useLoading();
   const [activeDelete, setActiveDelete] = useState("");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const resetPostData = () => {
@@ -259,14 +258,6 @@ export default function Upload() {
               </View>
             </TouchableOpacity>
           </Reanimated.ScrollView>
-          <Spinner
-            visible={loading}
-            overlayColor="#000000cc"
-            textContent={"Loading"}
-            customIndicator={<Loader />}
-            textStyle={{ color: "#fff", marginTop: -25 }}
-            animation="fade"
-          />
         </Animated.View>
       ) : (
         <View />
