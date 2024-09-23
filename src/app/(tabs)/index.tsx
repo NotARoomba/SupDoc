@@ -92,7 +92,6 @@ export default function Index() {
             //https://shopify.github.io/flash-list/docs/guides/layout-animation/
             <FlashList
               keyExtractor={(p) => {
-                console.log(p._id, p.timestamp)
                 return p.timestamp.toString();
               }}
               ListFooterComponentStyle={{ height: 125 }}
