@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { ObjectId } from "mongodb";
 import Patient from "../models/patient";
 import { STATUS_CODES } from "../models/util";
 import {
@@ -8,7 +9,6 @@ import {
   env,
 } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
-import { ObjectId } from "mongodb";
 
 export const patientsRouter = express.Router();
 
@@ -215,10 +215,12 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
             "info.altSex": await encryption.encrypt(data.info.altSex, {
               keyAltName,
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-            }),"info.hormones": await encryption.encrypt(data.info.hormones, {
+            }),
+            "info.hormones": await encryption.encrypt(data.info.hormones, {
               keyAltName,
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-            }),"info.surgery": await encryption.encrypt(data.info.surgery, {
+            }),
+            "info.surgery": await encryption.encrypt(data.info.surgery, {
               keyAltName,
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
             }),
@@ -247,11 +249,18 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
 patientsRouter.get("/posts", async (req: Request, res: Response) => {
   try {
     if (collections.patients && collections.posts) {
-      const postIDs = (await collections.patients.findOne(
-        { publicKey: req.headers.authorization }) as Patient).posts;
-        const posts = await collections.posts.find({_id: {
-          $in: postIDs.map(v => new ObjectId(v))
-        }}).toArray();
+      const postIDs = (
+        (await collections.patients.findOne({
+          publicKey: req.headers.authorization,
+        })) as Patient
+      ).posts;
+      const posts = await collections.posts
+        .find({
+          _id: {
+            $in: postIDs.map((v) => new ObjectId(v)),
+          },
+        })
+        .toArray();
       res.send(
         encrypt(
           { posts, status: STATUS_CODES.SUCCESS },

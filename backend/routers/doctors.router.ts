@@ -126,7 +126,11 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
 doctorsRouter.get("/posts", async (req: Request, res: Response) => {
   try {
     if (collections.posts) {
-        const posts = await collections.posts.find().sort({_id:-1}).limit(8).toArray();
+      const posts = await collections.posts
+        .find()
+        .sort({ _id: -1 })
+        .limit(8)
+        .toArray();
       res.send(
         encrypt(
           { posts, status: STATUS_CODES.SUCCESS },

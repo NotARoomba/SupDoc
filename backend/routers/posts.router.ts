@@ -58,18 +58,15 @@ postsRouter.get("/:id/delete", async (req: Request, res: Response) => {
   try {
     let post: DeleteResult | null = null;
     if (collections.posts) {
-      post = (await collections.posts.deleteOne({
+      post = await collections.posts.deleteOne({
         _id: new ObjectId(id),
-      }));
+      });
     }
     if (post && post.acknowledged) {
       res
         .status(200)
         .send(
-          encrypt(
-            { status: STATUS_CODES.SUCCESS },
-            req.headers.authorization,
-          ),
+          encrypt({ status: STATUS_CODES.SUCCESS }, req.headers.authorization),
         );
     } else {
       res.status(404).send(
@@ -137,9 +134,16 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
         reports: [],
       });
       if (postInsert.acknowledged) {
-        await collections.patients?.updateOne({
-          publicKey: req.headers.authorization,
-        }, {$push: {posts: postInsert.insertedId.toString()} as PushOperator<Document>});
+        await collections.patients?.updateOne(
+          {
+            publicKey: req.headers.authorization,
+          },
+          {
+            $push: {
+              posts: postInsert.insertedId.toString(),
+            } as PushOperator<Document>,
+          },
+        );
         res
           .status(200)
           .send(
@@ -351,27 +355,31 @@ postsRouter.get("/:id/save", async (req: Request, res: Response) => {
       const post = (await collections.posts.findOne({
         _id: new ObjectId(id),
       })) as unknown as Post;
-      const updated = await collections.doctors.updateOne({publicKey: req.headers.authorization}, {$push: {saved: post._id?.toString()}})
-    if (updated.acknowledged) {
-      res
-        .status(200)
-        .send(
+      const updated = await collections.doctors.updateOne(
+        { publicKey: req.headers.authorization },
+        { $push: { saved: post._id?.toString() } },
+      );
+      if (updated.acknowledged) {
+        res
+          .status(200)
+          .send(
+            encrypt(
+              { post, status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
+      } else {
+        res.status(404).send(
           encrypt(
-            { post, status: STATUS_CODES.SUCCESS },
+            {
+              post: null,
+              status: STATUS_CODES.GENERIC_ERROR,
+            },
             req.headers.authorization,
           ),
         );
-    } else {
-      res.status(404).send(
-        encrypt(
-          {
-            post: null,
-            status: STATUS_CODES.GENERIC_ERROR,
-          },
-          req.headers.authorization,
-        ),
-      );
-    }    }
+      }
+    }
   } catch (error) {
     console.log(error);
     res

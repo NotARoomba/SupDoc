@@ -88,7 +88,6 @@ export default function Profile() {
         );
         setAltSexValue(res.user.info.sex);
       }
-      console.log("ASDASDASD");
       setUserType(ut);
       setLoading(false);
     };
@@ -96,7 +95,6 @@ export default function Profile() {
   }, []);
   const updateUser = async () => {
     // NEED TO CHECK IF PATIENT WITH THE USEREDIT
-    console.log(user, userEdit);
     const doctorStuff =
       userType &&
       userEdit &&
