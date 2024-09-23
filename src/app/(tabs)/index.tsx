@@ -13,11 +13,12 @@ import {
   useLocalSearchParams,
 } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
   Animated,
+  LayoutAnimation,
   Platform,
   ScrollView,
   Text,
@@ -25,6 +26,7 @@ import {
 } from "react-native";
 export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const list = useRef<FlashList<Post> | null>(null);
   const [userType, setUserType] = useState<UserType | null>(null);
   // const [loading, setLoading] = useState(false);
   const fadeAnim = useFade(true);
@@ -46,6 +48,9 @@ export default function Index() {
     setPosts(res.posts);
     setUserType(ut);
     // setLoading(false);
+    list.current?.prepareForLayoutAnimationRender();
+    // After removing the item, we can start the animation.
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await SplashScreen.hideAsync();
   };
   // REPLACE WITH WEBHOOK
@@ -84,7 +89,12 @@ export default function Index() {
               </Text>
             )
           ) : (
+            //https://shopify.github.io/flash-list/docs/guides/layout-animation/
             <FlashList
+              keyExtractor={(p) => {
+                console.log(p._id, p.timestamp)
+                return p.timestamp.toString();
+              }}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
               data={posts}
