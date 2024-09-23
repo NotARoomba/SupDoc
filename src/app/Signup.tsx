@@ -9,7 +9,7 @@ import Slider from "components/buttons/Slider";
 import ImageUpload from "components/misc/ImageUpload";
 import useCamera from "components/misc/useCamera";
 import useGallery from "components/misc/useGallery";
-import useLoading from "components/misc/useLoading";
+import { useLoading } from "components/misc/useLoading";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
@@ -58,7 +58,7 @@ export default function Signup({
   const camera = useCamera();
   const gallery = useGallery();
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
-  const { loading, setLoading } = useLoading();
+  const { setLoading } = useLoading();
   const [gsValue, setGSValue] = useState(GS.O);
   const [gsOpen, setGSOpen] = useState(false);
   const [verified, setIsVerified] = useState(false);
@@ -206,11 +206,11 @@ export default function Signup({
       if (pickerType === "camera") {
         result = await camera.takePhoto({
           allowsEditing: true,
-          quality: 0.5,
+          quality: 1,
         } as ImagePicker.ImagePickerOptions);
       } else {
         result = await gallery.selectImage({
-          quality: 0.5,
+          quality: 1,
           allowsEditing: true,
         });
       }

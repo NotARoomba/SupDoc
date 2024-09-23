@@ -9,7 +9,7 @@ import LoaderView from "components/misc/LoaderView";
 import useCamera from "components/misc/useCamera";
 import useFade from "components/misc/useFade";
 import useGallery from "components/misc/useGallery";
-import useLoading from "components/misc/useLoading";
+import { useLoading } from "components/misc/useLoading";
 import {
   callAPI,
   isDoctorInfo,
@@ -59,7 +59,7 @@ export default function Profile() {
   const fadeAnim = useFade();
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      // setLoading(true);
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
@@ -71,10 +71,10 @@ export default function Profile() {
         res.status == STATUS_CODES.USER_NOT_FOUND ||
         res.status == STATUS_CODES.UNAUTHORIZED
       ) {
-        setLoading(false);
+        // setLoading(false);
         return await logout();
       } else if (res.status == STATUS_CODES.GENERIC_ERROR) {
-        setLoading(false);
+        // setLoading(false);
         return Alert.alert("Error", "There was an error fetching your data!");
       }
       setUser(res.user);
@@ -89,7 +89,7 @@ export default function Profile() {
         setAltSexValue(res.user.info.sex);
       }
       setUserType(ut);
-      setLoading(false);
+      // setLoading(false);
     };
     fetchData();
   }, []);

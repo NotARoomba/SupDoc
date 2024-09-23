@@ -1,7 +1,7 @@
 import { Doctor } from "@/backend/models/doctor";
 import { STATUS_CODES } from "@/backend/models/util";
 import prompt from "@powerdesigninc/react-native-prompt";
-import useLoading from "components/misc/useLoading";
+import { useLoading } from "components/misc/useLoading";
 import {
   callAPI,
   isDoctorSignupInfo,

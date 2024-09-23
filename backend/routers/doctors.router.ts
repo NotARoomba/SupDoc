@@ -123,12 +123,13 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
   }
 });
 
-doctorsRouter.get("/posts", async (req: Request, res: Response) => {
+doctorsRouter.get("/posts/:timestamp", async (req: Request, res: Response) => {
+  const timestamp: number = parseInt(req.params.timestamp)
   try {
     if (collections.posts) {
       const posts = await collections.posts
-        .find()
-        .sort({ _id: -1 })
+        .find({timestamp : { $gt : timestamp } })
+        .sort({ timestamp: -1 })
         .limit(8)
         .toArray();
       res.send(

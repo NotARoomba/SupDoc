@@ -6,7 +6,7 @@ import Loader from "components/misc/Loader";
 import useCamera from "components/misc/useCamera";
 import useFade from "components/misc/useFade";
 import useGallery from "components/misc/useGallery";
-import useLoading from "components/misc/useLoading";
+import { useLoading } from "components/misc/useLoading";
 import { callAPI } from "components/utils/Functions";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
@@ -84,11 +84,11 @@ export default function Upload() {
       if (pickerType === "camera") {
         result = await camera.takePhoto({
           allowsEditing: true,
-          quality: 0.5,
+          quality: 1,
         } as ImagePicker.ImagePickerOptions);
       } else {
         result = await gallery.selectImage({
-          quality: 0.5,
+          quality: 1,
           allowsEditing: true,
         });
       }

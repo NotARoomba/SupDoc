@@ -2,9 +2,9 @@ import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import FunFact from "components/misc/FunFact";
+import LoaderView from "components/misc/LoaderView";
 import PostBlock from "components/misc/PostBlock";
 import useFade from "components/misc/useFade";
-import useLoading from "components/misc/useLoading";
 import { callAPI, logout } from "components/utils/Functions";
 import {
   SplashScreen,
@@ -25,17 +25,16 @@ import {
 } from "react-native";
 export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [userType, setUserType] = useState<UserType>(UserType.PATIENT);
-  const { setLoading } = useLoading();
+  const [userType, setUserType] = useState<UserType | null>(null);
+  // const [loading, setLoading] = useState(false);
   const fadeAnim = useFade();
   const { t } = useTranslation();
   const routes = useLocalSearchParams();
   const fetchData = async () => {
-    setLoading(true);
+    // setLoading(true);
     const ut = (await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
     )) as UserType;
-    setUserType(ut);
     const res = await callAPI(
       `/${ut == UserType.DOCTOR ? t("doctors") : t("patients")}/posts`,
       "GET",
@@ -45,8 +44,8 @@ export default function Index() {
         ? await logout()
         : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     setPosts(res.posts);
-    console.log(res.posts.length);
-    setLoading(false);
+    setUserType(ut);
+    // setLoading(false);
     await SplashScreen.hideAsync();
   };
   // REPLACE WITH WEBHOOK
@@ -75,9 +74,15 @@ export default function Index() {
             {t("titles.posts")}
           </Text>
           {posts.length == 0 ? (
-            <Text className=" text-center text-powder_blue/80">
-              {t("posts.none")}
-            </Text>
+            !userType ? (
+              <View>
+                <LoaderView />
+              </View>
+            ) : (
+              <Text className=" text-center text-powder_blue/80">
+                {t("posts.none")}
+              </Text>
+            )
           ) : (
             <FlashList
               ListFooterComponentStyle={{ height: 125 }}
