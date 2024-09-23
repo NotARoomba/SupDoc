@@ -7,9 +7,9 @@ import DateTimePicker, {
 import { Picker } from "@react-native-picker/picker";
 import Slider from "components/buttons/Slider";
 import ImageUpload from "components/misc/ImageUpload";
-import Loader from "components/misc/Loader";
 import useCamera from "components/misc/useCamera";
 import useGallery from "components/misc/useGallery";
+import useLoading from "components/misc/useLoading";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
@@ -26,7 +26,6 @@ import {
 } from "react-native";
 import { CountryPicker } from "react-native-country-codes-picker";
 import DropDownPicker from "react-native-dropdown-picker";
-import Spinner from "react-native-loading-spinner-overlay";
 import Animated, {
   FadeIn,
   FadeInLeft,
@@ -59,7 +58,7 @@ export default function Signup({
   const camera = useCamera();
   const gallery = useGallery();
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
-  const [loading, setIsLoading] = useState(false);
+  const { loading, setLoading } = useLoading();
   const [gsValue, setGSValue] = useState(GS.O);
   const [gsOpen, setGSOpen] = useState(false);
   const [verified, setIsVerified] = useState(false);
@@ -108,14 +107,14 @@ export default function Signup({
   useEffect(() => {
     const doChecks = async () => {
       if (index == 3) {
-        setIsLoading(true);
+        setLoading(true);
         const res = await callAPI(`/users/check`, "POST", {
           number: info.countryCode + info.number,
           id: info.identification,
         });
         if (res.status !== STATUS_CODES.SUCCESS) {
           setIndex(index - 1);
-          setIsLoading(false);
+          setLoading(false);
           return Alert.alert(
             t("error"),
             t(`errors.${STATUS_CODES[res.status]}`),
@@ -128,7 +127,7 @@ export default function Signup({
             );
           if (!isValid) {
             setIndex(index - 1);
-            setIsLoading(false);
+            setLoading(false);
             return Alert.alert(t("error"), t("errors.INVALID_NUMBER"));
           }
           // const verify = await callAPI("/verify/code/send", "POST", {
@@ -136,13 +135,13 @@ export default function Signup({
           // });
           // if (verify.status === STATUS_CODES.INVALID_NUMBER)
           //  { setIndex(index-1);
-          //   setIsLoading(false);return Alert.alert("Error", "That number is invalid!");}
+          //   setLoading(false);return Alert.alert("Error", "That number is invalid!");}
           // else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
           //  { setIndex(index-1);
-          //   setIsLoading(false);return Alert.alert("Error", "That number does not exist!");}
+          //   setLoading(false);return Alert.alert("Error", "That number does not exist!");}
           // else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
           // {  setIndex(index-1);
-          //   setIsLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
+          //   setLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
           // else {
           //   setTimeout(() => {
           //     return prompt(
@@ -150,14 +149,14 @@ export default function Signup({
           //       "Enter the verification code sent to: " +
           //         (info.countryCode + info.number),
           //       [{text: 'Cancel', style: 'cancel', onPress: () => {setIndex(index-1);
-          //         setIsLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
-          //         setIsLoading(true);
+          //         setLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
+          //         setLoading(true);
           //         const v = await callAPI("/verify/code/check", "POST", {
           //           number: info.countryCode + info.number,
           //           input,
           //         });
           //         if (v.status !== STATUS_CODES.SUCCESS) {
-          //           setIsLoading(false);
+          //           setLoading(false);
           //           return Alert.alert("Error", "The code is incorrect!");
           //         }
           //         setIsVerified(true);
@@ -169,27 +168,27 @@ export default function Signup({
           //   }, 250);
           // }
         }
-        setIsLoading(false);
+        setLoading(false);
       } else if (
         index == 4 &&
         userType == UserType.DOCTOR &&
         isDoctorSignupInfo(userType, info)
       ) {
         // MAKE THIS HAPPEN IN THE BACKGROUND WITH NOTIFICATIONS
-        setIsLoading(true);
+        setLoading(true);
         const res = await callAPI(`/verify/doctor`, "POST", {
           id: info.identification,
           name: info.firstName + " " + info.lastName,
         });
         if (res.status !== STATUS_CODES.SUCCESS) {
-          setIsLoading(false);
+          setLoading(false);
           setIndex(3);
           return Alert.alert(
             t("error"),
             t(`errors.${STATUS_CODES[res.status]}`),
           );
         }
-        setIsLoading(false);
+        setLoading(false);
       }
     };
     doChecks();
@@ -1068,14 +1067,6 @@ export default function Signup({
         }}
       />
       {/* <LoadingScreen text="Loading" show={loading} /> */}
-      <Spinner
-        visible={loading}
-        overlayColor="#00000099"
-        textContent={"Loading"}
-        customIndicator={<Loader />}
-        textStyle={{ color: "#fff", marginTop: -25 }}
-        animation="fade"
-      />
     </View>
   );
 }

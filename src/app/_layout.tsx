@@ -1,8 +1,11 @@
+import Loader from "components/misc/Loader";
+import useLoading from "components/misc/useLoading";
 import "expo-dev-client";
 import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { Platform, SafeAreaView, View } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 import { useLanguageUpdater } from "../components/utils/i18n";
 import Index from "./Index";
 
@@ -10,6 +13,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   if (Platform.OS == "android") useLanguageUpdater();
   const [isLogged, setIsLogged] = useState(false);
+  const { loading } = useLoading();
   useEffect(() => {
     const updateData = async () => {
       // await logout();
@@ -38,7 +42,6 @@ export default function RootLayout() {
             options={{
               headerShown: false,
               presentation: "modal",
-              
             }}
           />
         </Stack>
@@ -46,6 +49,14 @@ export default function RootLayout() {
         // </Animated.View>
         <Index setIsLogged={setIsLogged} />
       )}
+      <Spinner
+        visible={loading}
+        overlayColor="#00000099"
+        textContent={"Loading"}
+        customIndicator={<Loader />}
+        textStyle={{ color: "#fff", marginTop: -25 }}
+        animation="fade"
+      />
     </View>
   );
 }

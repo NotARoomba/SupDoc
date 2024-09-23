@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { ObjectId, PushOperator } from "mongodb";
+import { DeleteResult, ObjectId, PushOperator } from "mongodb";
 import Comment from "../models/comment";
 import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
@@ -35,6 +35,47 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
           {
             post: null,
             status: STATUS_CODES.POST_NOT_FOUND,
+          },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+  }
+});
+
+postsRouter.get("/:id/delete", async (req: Request, res: Response) => {
+  const id = req?.params?.id;
+  try {
+    let post: DeleteResult | null = null;
+    if (collections.posts) {
+      post = (await collections.posts.deleteOne({
+        _id: new ObjectId(id),
+      }));
+    }
+    if (post && post.acknowledged) {
+      res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.SUCCESS },
+            req.headers.authorization,
+          ),
+        );
+    } else {
+      res.status(404).send(
+        encrypt(
+          {
+            status: STATUS_CODES.ERROR_DELETING_POST,
           },
           req.headers.authorization,
         ),

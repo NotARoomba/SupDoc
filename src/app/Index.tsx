@@ -38,7 +38,6 @@ export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [userType, setUserType] = useState<UserType>();
-  const { loading } = useLoading();
   const [signUpInfo, setSignUpInfo] = useState<
     SignupInfo<UserType.DOCTOR> | SignupInfo<UserType.PATIENT>
   >({} as SignupInfo<UserType.PATIENT>);

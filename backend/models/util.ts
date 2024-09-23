@@ -21,7 +21,8 @@ export enum STATUS_CODES {
   WRONG_PASSWORD,
   UNAUTHORIZED,
   DOCTOR_INVALID,
-  POST_NOT_FOUND
+  POST_NOT_FOUND,
+  ERROR_DELETING_POST
 }
 
 type ConditionalType<T, U> = T extends Binary ? T : U;

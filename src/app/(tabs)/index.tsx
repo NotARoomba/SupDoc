@@ -6,9 +6,14 @@ import PostBlock from "components/misc/PostBlock";
 import useFade from "components/misc/useFade";
 import useLoading from "components/misc/useLoading";
 import { callAPI, logout } from "components/utils/Functions";
-import { SplashScreen } from "expo-router";
+import {
+  SplashScreen,
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+} from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -22,8 +27,9 @@ export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [userType, setUserType] = useState<UserType>(UserType.PATIENT);
   const { setLoading } = useLoading();
-  const fadeAnim = useFade(true);
+  const fadeAnim = useFade();
   const { t } = useTranslation();
+  const routes = useLocalSearchParams();
   const fetchData = async () => {
     setLoading(true);
     const ut = (await SecureStore.getItemAsync(
@@ -44,11 +50,15 @@ export default function Index() {
     await SplashScreen.hideAsync();
   };
   // REPLACE WITH WEBHOOK
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchData();
-  //   }, []),
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      if (routes.refresh) {
+        fetchData();
+        router.setParams({});
+        router.navigate({ pathname: "/(tabs)/", params: { refresh: null } });
+      }
+    }, [routes]),
+  );
   useEffect(() => {
     fetchData();
   }, []);
@@ -69,13 +79,14 @@ export default function Index() {
               {t("posts.none")}
             </Text>
           ) : (
-            <View className="flex">
-              <View className="h-8" />
-              {posts.map((v, i) => (
-                <PostBlock key={i} post={v} userType={userType} />
-              ))}
-              <View className="h-32" />
-            </View>
+            <FlashList
+              ListFooterComponentStyle={{ height: 125 }}
+              estimatedItemSize={281}
+              data={posts}
+              renderItem={({ item }) => (
+                <PostBlock post={item} userType={userType} />
+              )}
+            />
           )}
         </ScrollView>
       ) : (
@@ -84,7 +95,7 @@ export default function Index() {
             {t("posts.posts")}
           </Text>
           <FlashList
-            estimatedItemSize={70}
+            estimatedItemSize={313}
             data={posts}
             renderItem={({ item }) => (
               <Text className="text-6xl font-medium text-ivory">

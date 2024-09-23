@@ -38,11 +38,11 @@ export default function PostBlock({
     <Animated.View
       style={{ opacity: fadeAnim }}
       className={
-        "h-fit flex w-11/12 bg-midnight_green-500/60 my-8 p-4 pt-0 gap-y-4 rounded-2xl mx-auto "
+        "h-fit flex w-11/12 bg-midnight_green-500/60 mt-4 p-4 rounded-2xl mx-auto "
       }
     >
       <View className="justify-between flex flex-row">
-        <Text className="text-ivory text-2xl font-bold">{post.title}</Text>
+        <Text className="text-ivory text-2xl font-bold mb-4">{post.title}</Text>
         {userType === UserType.DOCTOR && (
           <TouchableOpacity onPress={savePost}>
             <Icons
@@ -53,7 +53,7 @@ export default function PostBlock({
           </TouchableOpacity>
         )}
       </View>
-      <View className="flex h-44 flex-row w-full gap-x-4">
+      <View className="flex h-44 flex-row w-full gap-x-4 mb-4">
         <View className="w-6/12 aspect-square relative rounded-xl overflow-hidden">
           <TouchableOpacity
             onPress={(e) => {
