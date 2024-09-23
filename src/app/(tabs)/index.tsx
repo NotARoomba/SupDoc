@@ -27,7 +27,7 @@ export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [userType, setUserType] = useState<UserType | null>(null);
   // const [loading, setLoading] = useState(false);
-  const fadeAnim = useFade();
+  const fadeAnim = useFade(true);
   const { t } = useTranslation();
   const routes = useLocalSearchParams();
   const fetchData = async () => {

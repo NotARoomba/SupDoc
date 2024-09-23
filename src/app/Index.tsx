@@ -138,7 +138,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           } as Doctor),
     );
     if (create.status === STATUS_CODES.SUCCESS) {
-      Alert.alert(t("success"), t("successMsg.signup"));
+      Alert.alert(t("success"), t("successMsg.login"));
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
         keys.private,

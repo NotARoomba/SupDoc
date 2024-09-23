@@ -263,7 +263,7 @@ patientsRouter.get("/posts", async (req: Request, res: Response) => {
         .toArray();
       res.send(
         encrypt(
-          { posts, status: STATUS_CODES.SUCCESS },
+          { posts: posts.reverse(), status: STATUS_CODES.SUCCESS },
           req.headers.authorization,
         ),
       );
