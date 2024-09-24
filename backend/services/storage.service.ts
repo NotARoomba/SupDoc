@@ -7,7 +7,9 @@ const storage = new Storage({
   projectId: env.GCP_ID,
   credentials: {
     client_email: env.GCP_EMAIL,
-    private_key: env.GCP_PRIVATE_KEY,
+    private_key: `-----BEGIN PRIVATE KEY-----\
+    ${env.GCP_PRIVATE_KEY}\
+    -----END PRIVATE KEY-----`,
   },
 });
 
