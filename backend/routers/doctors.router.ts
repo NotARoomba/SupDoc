@@ -94,20 +94,20 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
     return res.send({ status: STATUS_CODES.DOCTOR_INVALID });
   try {
     if (collections.doctors) {
-      const licenseURLS = await Promise.all(
-        data.identification.license.map(
-          async (image: any) => await uploadImageToStorage(image),
-        ),
-      );
-      const pictureURL = await uploadImageToStorage(data.picture);
-      if (!pictureURL || licenseURLS.every((url) => url === null))
-        return res.send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
+      // const licenseURLS = await Promise.all(
+      //   data.identification.license.map(
+      //     async (image: any) => await uploadImageToStorage(image),
+      //   ),
+      // );
+      // const pictureURL = await uploadImageToStorage(data.picture);
+      // if (!pictureURL || licenseURLS.every((url) => url === null))
+      //   return res.send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
       await collections.doctors.insertOne({
         ...data,
-        picture: pictureURL,
+        // picture: pictureURL,
         identification: {
           ...data.identification,
-          license: licenseURLS as string[],
+          // license: licenseURLS as string[],
           isVerified: false,
         },
         comments: [],
@@ -126,20 +126,21 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
   const data: Doctor = req.body;
   try {
     if (collections.doctors) {
-      const pictureURL = await uploadImageToStorage(data.picture);
-      if (!pictureURL)
-        return res.send(
-          encrypt(
-            { status: STATUS_CODES.ERROR_UPLOADING_IMAGE },
-            req.headers.authorization,
-          ),
-        );
+      // const pictureURL = await uploadImageToStorage(data.picture);
+      // if (!pictureURL)
+      //   return res.send(
+      //     encrypt(
+      //       { status: STATUS_CODES.ERROR_UPLOADING_IMAGE },
+      //       req.headers.authorization,
+      //     ),
+      //   );
       const upd = await collections.doctors.findOneAndUpdate(
         { publicKey: req.headers.authorization },
         {
           $set: {
             number: data.number,
-            picture: pictureURL,
+            picture: data.picture,
+            // picture: pictureURL,
             info: {
               ...data.info,
             },
@@ -155,7 +156,7 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
             encrypt(
               { user: {
                 ...data,
-                picture: await generateSignedUrl(pictureURL),
+                // picture: await generateSignedUrl(pictureURL),
               }, status: STATUS_CODES.SUCCESS },
               req.headers.authorization,
             ),

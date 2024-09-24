@@ -6,6 +6,7 @@ import {
   callAPI,
   isDoctorSignupInfo,
   isPatientSignupInfo,
+  uploadImages,
 } from "components/utils/Functions";
 import CryptoJS from "crypto-es";
 import * as FileSystem from "expo-file-system";
@@ -88,15 +89,26 @@ export default function Index({ setIsLogged }: IndexProps) {
       publicKey: keys.public, // R
       privateKey: encPriv.toString(), // R
     };
-    if (isDoctorSignupInfo(userType, signUpInfo))
-      for (let i = 0; i < signUpInfo.license.length; i++)
-        signUpInfo.license[i] =
-          `data:image/png;base64,${await FileSystem.readAsStringAsync(
-            signUpInfo.license[i],
-            { encoding: "base64" },
-          )}`;
-    if (isDoctorSignupInfo(userType, signUpInfo))
-      console.log(signUpInfo.license[0].length / 1000);
+    // if (isDoctorSignupInfo(userType, signUpInfo))
+    //   for (let i = 0; i < signUpInfo.license.length; i++)
+    //     signUpInfo.license[i] =
+    //       `data:image/png;base64,${await FileSystem.readAsStringAsync(
+    //         signUpInfo.license[i],
+    //         { encoding: "base64" },
+    //       )}`;
+    // if (isDoctorSignupInfo(userType, signUpInfo))
+    //   console.log(signUpInfo.license[0].length / 1000);
+    if (isDoctorSignupInfo(userType, signUpInfo)) {
+      const res = await uploadImages(signUpInfo.license.concat(signUpInfo.picture));
+      console.log(res);
+      if (res.status !== STATUS_CODES.SUCCESS) {
+        setLoading(false);
+        return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+      }
+      const [licence, picture] = [res.urls.slice(0, -1), res.urls[res.urls.length - 1]]
+      signUpInfo.license = licence;
+      signUpInfo.picture = picture;
+    }
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
@@ -120,12 +132,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         : ({
             name: signUpInfo.firstName + " " + signUpInfo.lastName,
             ...sharedData,
-            picture: `data:image/png;base64,${await FileSystem.readAsStringAsync(
-              signUpInfo.picture,
-              {
-                encoding: "base64",
-              },
-            )}`,
+            picture: signUpInfo.picture,
             info: {
               specialty: signUpInfo.specialty,
               experience: signUpInfo.experience,
