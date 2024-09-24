@@ -27,6 +27,7 @@ export async function decryptionMiddleware(
   );
   console.log(auth)
   req.headers.authorization = auth;
+  if (req.originalUrl == "/images/upload") return next();
   if (
     auth == env.LIMITED_AUTH &&
     ![
@@ -34,7 +35,6 @@ export async function decryptionMiddleware(
       "/doctors/create",
       "/users/check",
       "/users/keys",
-      "/images/upload",
       "/verify/code/send",
       "/verify/code/check",
       "/verify/doctor",
@@ -55,8 +55,6 @@ export async function decryptionMiddleware(
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
   }
   if (req.method == "POST") {
-    console.log(req.files, req.body)
-    if (req.files) return next();
     if (!req.body.key || !req.body.data)
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
     const key = nodeRSA.decrypt(req.body.key, "utf8");

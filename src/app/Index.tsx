@@ -99,6 +99,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     // if (isDoctorSignupInfo(userType, signUpInfo))
     //   console.log(signUpInfo.license[0].length / 1000);
     if (isDoctorSignupInfo(userType, signUpInfo)) {
+      console.log("SIGNUP")
       console.log(signUpInfo.license)
       const res = await uploadImages(signUpInfo.license.concat(signUpInfo.picture));
       console.log(res);

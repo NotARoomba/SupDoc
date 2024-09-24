@@ -111,21 +111,24 @@ export async function uploadImages(
     // Create FormData
     const key = CryptoJS.SHA256(CryptoJS.lib.WordArray.random(128/8)).toString();
     const formData = new FormData();
-    imageUris.forEach(async (uri) => {
-      formData.append('files', CryptoJS.AES.encrypt(`data:image/png;base64,${await FileSystem.readAsStringAsync(uri, {
+    for (const uri of imageUris) {
+      const base64Image = `data:image/png;base64,${await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
-})}`, key).toString())}
-    );
+      })}`;
+  
+      // const encryptedImage = CryptoJS.AES.encrypt(base64Image, key).toString();
+      formData.append('files', base64Image);
+    }
 
     // Encrypt FormData
     // const data = formData; // FormData needs special handling for encryption
     // const key = CryptoJS.SHA256(JSON.stringify(data)).toString();
-    const encryptedKey = await RSA.encrypt(
-      key,
-      process.env.EXPO_PUBLIC_SERVER_PUBLIC
-    );
-    // const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
-    formData.append('key', encryptedKey)
+    // const encryptedKey = await RSA.encrypt(
+    //   key,
+    //   process.env.EXPO_PUBLIC_SERVER_PUBLIC
+    // );
+    // // const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
+    // formData.append('key', encryptedKey)
     // const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
 
     // Handle authorization
