@@ -6,7 +6,7 @@ export default function LoaderView() {
     <View className="m-auto flex h-full w-full">
       <View className="m-auto">
         <Loader />
-        <Text className="text-ivory text-center mt-2 font-semibold text-xl ">
+        <Text className="text-ivory text-center font-semibold text-xl ">
           Loading
         </Text>
       </View>

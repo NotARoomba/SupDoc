@@ -29,7 +29,7 @@ export default function Index() {
   const list = useRef<FlashList<Post> | null>(null);
   const [userType, setUserType] = useState<UserType | null>(null);
   // const [loading, setLoading] = useState(false);
-  const fadeAnim = useFade(true);
+  const fadeAnim = useFade();
   const { t } = useTranslation();
   const routes = useLocalSearchParams();
   const fetchData = async () => {

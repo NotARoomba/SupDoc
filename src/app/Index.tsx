@@ -155,6 +155,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         signUpInfo.password,
       );
+      setLoading(false);
       return setIsLogged(true);
     } else {
       console.log(create);

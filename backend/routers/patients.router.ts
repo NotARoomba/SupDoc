@@ -259,7 +259,8 @@ patientsRouter.get("/posts", async (req: Request, res: Response) => {
           _id: {
             $in: postIDs.map((v) => new ObjectId(v)),
           },
-        }).sort({_id: -1})
+        })
+        .sort({ _id: -1 })
         .toArray();
       res.send(
         encrypt(

@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^7.13.0",
     "@types/cors": "^2.8.17",
     "@types/crypto-js": "^4.2.2",
     "axios": "^1.7.7",
@@ -37,6 +38,7 @@
     "@types/mongodb": "^4.0.7",
     "@types/node": "^22.5.1",
     "@types/node-rsa": "^1.1.4",
+    "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"

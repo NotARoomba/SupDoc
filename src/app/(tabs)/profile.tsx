@@ -531,6 +531,7 @@ export default function Profile() {
                                 open={altSexOpen}
                                 value={altSexValue}
                                 items={altSexItems}
+                                listMode="SCROLLVIEW"
                                 setOpen={setAltSexOpen}
                                 setValue={setAltSexValue}
                                 onChangeValue={(v) => {

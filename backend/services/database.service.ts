@@ -11,6 +11,7 @@ export const env = dotenv.load({
   GCP_LOCATION: String,
   GCP_KEYRING: String,
   GCP_KEYNAME: String,
+  GCP_BUCKET: String,
   KEY_ALIAS: String,
   KEYVAULT_NAMESPACE: String,
   USER_DB_NAME: String,

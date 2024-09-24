@@ -57,7 +57,7 @@ export default function PostPage() {
       style={{ opacity: fadeAnim }}
       className={
         "h-full bg-richer_black relative " +
-        (Platform.OS == "ios" ? "pt-16" : "pt-16")
+        (Platform.OS == "ios" ? "pt-16" : "pt-24")
       }
     >
       <View

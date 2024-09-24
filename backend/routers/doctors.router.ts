@@ -1,8 +1,11 @@
+import axios from "axios";
+import * as cheerio from "cheerio";
 import express, { Request, Response } from "express";
 import { Doctor } from "../models/doctor";
 import { STATUS_CODES } from "../models/util";
-import { collections } from "../services/database.service";
+import { collections, env } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
+import { uploadImageToStorage } from "../services/storage.service";
 
 export const doctorsRouter = express.Router();
 
@@ -60,11 +63,52 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
   // console.log(ret.data.text);
   // if (!ret.data.text.includes(data.identification.number.toString()))
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
+  const [firstName, lastName] = data.name.split(" ");
+  const verifyRes = await axios.post(
+    env.VERIFY_URL,
+    env.VERIFY_BODY_1.replace("{{ID}}", data._id?.toString() ?? "")
+      .replace("{{FIRST_NAME}}", firstName)
+      .replace("{{LAST_NAME}}", lastName),
+    {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
+        Accept: "*/*",
+        "Accept-Language": "en-US,en;q=0.5",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-MicrosoftAjax": "Delta=true",
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        Priority: "u=0",
+      },
+      withCredentials: true,
+    },
+  );
+  const $ = cheerio.load(verifyRes.data);
+  const noDoctorFoundMessage = $("span#ctl00_cntContenido_LblResultado").text();
+  if (noDoctorFoundMessage.includes(env.VERIFY_NONE))
+    return res.send({ status: STATUS_CODES.DOCTOR_INVALID });
   try {
     if (collections.doctors) {
+      const licenseURLS = await Promise.all(
+        data.identification.license.map(
+          async (image: any) => await uploadImageToStorage(image),
+        ),
+      );
+      const pictureURL = await uploadImageToStorage(data.picture);
+      if (!pictureURL || licenseURLS.every((url) => url === null))
+        return res.send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
       await collections.doctors.insertOne({
         ...data,
-        identification: { ...data.identification, isVerified: false },
+        picture: pictureURL,
+        identification: {
+          ...data.identification,
+          license: licenseURLS as string[],
+          isVerified: false,
+        },
         comments: [],
         reports: [],
         saved: [],
@@ -78,16 +122,23 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
 });
 
 doctorsRouter.post("/update", async (req: Request, res: Response) => {
-  //TODO: COOLDOWN ON UPDATING STUFF
   const data: Doctor = req.body;
   try {
     if (collections.doctors) {
+      const pictureURL = await uploadImageToStorage(data.picture);
+      if (!pictureURL)
+        return res.send(
+          encrypt(
+            { status: STATUS_CODES.ERROR_UPLOADING_IMAGE },
+            req.headers.authorization,
+          ),
+        );
       const upd = await collections.doctors.findOneAndUpdate(
         { publicKey: req.headers.authorization },
         {
           $set: {
             number: data.number,
-            picture: data.picture,
+            picture: pictureURL,
             info: {
               ...data.info,
             },
@@ -96,7 +147,6 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
         { returnDocument: "after" },
       );
       if (upd) {
-        upd.identification.license = [];
         res
           .status(200)
           .send(
@@ -119,16 +169,21 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
     }
   } catch (error) {
     console.log(error);
-    res.send({ status: STATUS_CODES.GENERIC_ERROR });
+    res.send(
+      encrypt(
+        { status: STATUS_CODES.GENERIC_ERROR },
+        req.headers.authorization,
+      ),
+    );
   }
 });
 
 doctorsRouter.get("/posts/:timestamp", async (req: Request, res: Response) => {
-  const timestamp: number = parseInt(req.params.timestamp)
+  const timestamp: number = parseInt(req.params.timestamp);
   try {
     if (collections.posts) {
       const posts = await collections.posts
-        .find({timestamp : { $gt : timestamp } })
+        .find({ timestamp: { $gt: timestamp } })
         .sort({ timestamp: -1 })
         .limit(8)
         .toArray();
