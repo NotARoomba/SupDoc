@@ -160,6 +160,9 @@ export async function uploadImages(
           'Content-Type': 'multipart/form-data',
           Authorization: authorization,
         },
+        transformRequest: (data, headers) => {
+          return formData; // this is doing the trick
+        },
       }
     );
 

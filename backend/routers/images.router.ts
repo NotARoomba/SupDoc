@@ -48,6 +48,7 @@ imagesRouter.get("/:name",  async (req: Request, res: Response) => {
 
 imagesRouter.post("/upload", upload.array('image'), async (req: Request, res: Response) => {
   const files = req.files as Express.Multer.File[];
+  console.log(req.body, req.files, req.file)
   if (!files || files.length == 0) return res
   .status(200)
   .send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE }
