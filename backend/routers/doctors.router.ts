@@ -66,7 +66,7 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
   const [firstName, lastName] = data.name.split(" ");
   const verifyRes = await axios.post(
     env.VERIFY_URL,
-    env.VERIFY_BODY_1.replace("{{ID}}", data._id?.toString() ?? "")
+    env.VERIFY_BODY_1.replace("{{ID}}", data.identification.number.toString())
       .replace("{{FIRST_NAME}}", firstName)
       .replace("{{LAST_NAME}}", lastName),
     {
