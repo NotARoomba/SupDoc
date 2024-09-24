@@ -91,6 +91,8 @@
         },
         "missing": "Missing Info",
         "missingInfo": "Please fill out the information",
+        "fetchData": "There was an error fetching your data!",
+        "updateData": "There was an error updating your information!",
         "GENERIC_ERROR": "An error has occured",
         "USER_NOT_FOUND": "That user does not exist",
         "INVALID_NUMBER": "The phone number is invalid",
@@ -108,6 +110,9 @@
         "COMMENT_LIMIT_REACHED": "The post has reached the maximum limit of comments allowed",
         "DOES_NOT_EXIST": "The requested resource does not exist",
         "DOCTOR_INVALID": "The doctor with the information provided does not exist"
+    },
+    "succeses": {
+        "updateData": "Successfully updated your information!"
     },
     "verification": {
         "title": "Enter Verification Code",
