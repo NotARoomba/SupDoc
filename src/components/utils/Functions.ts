@@ -110,7 +110,7 @@ export async function uploadImages(
   try {
     // Create FormData
     const formData = new FormData();
-    imageUris.forEach(async (uri, index) => {
+    imageUris.forEach(async (uri) => {
       formData.append('files', `data:image/png;base64,${await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
 })}`)}
@@ -134,7 +134,11 @@ export async function uploadImages(
     const authorization = Base64.stringify(
       CryptoJS.enc.Utf8.parse(
         JSON.stringify({
-          key: (await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC)).replace(/\s+/g, "").replace("\n", ""),
+          key: (
+            await RSA.encrypt(authKey, process.env.EXPO_PUBLIC_SERVER_PUBLIC)
+          )
+            .replace(/\s+/g, "")
+            .replace("\n", ""),
           data: CryptoJS.AES.encrypt(encryptedAuth, authKey).toString(),
         }),
       ),
@@ -146,6 +150,7 @@ export async function uploadImages(
       magic,
       {
         headers: {
+          method: "POST",
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
           Authorization: authorization,

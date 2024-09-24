@@ -25,6 +25,7 @@ export async function decryptionMiddleware(
   const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(
     CryptoJS.enc.Utf8,
   );
+  console.log(auth)
   req.headers.authorization = auth;
   if (
     auth == env.LIMITED_AUTH &&
@@ -54,6 +55,7 @@ export async function decryptionMiddleware(
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
   }
   if (req.method == "POST") {
+    console.log(req.body)
     if (!req.body.key || !req.body.data)
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
     const key = nodeRSA.decrypt(req.body.key, "utf8");
