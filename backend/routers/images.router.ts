@@ -50,12 +50,8 @@ imagesRouter.post("/upload", upload.array('image'), async (req: Request, res: Re
   const files = req.files as Express.Multer.File[];
   if (!files || files.length == 0) return res
   .status(200)
-  .send(
-    encrypt(
-      { status: STATUS_CODES.ERROR_UPLOADING_IMAGE },
-      req.headers.authorization,
-    ),
-  );
+  .send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE }
+    );
   try {
     const urls = await Promise.all(
         files.map(
@@ -66,38 +62,26 @@ imagesRouter.post("/upload", upload.array('image'), async (req: Request, res: Re
       return res
       .status(200)
       .send(
-        encrypt(
-          { status: STATUS_CODES.ERROR_UPLOADING_IMAGE },
-          req.headers.authorization,
-        ),
+          { status: STATUS_CODES.ERROR_UPLOADING_IMAGE }
       );
       if (urls)
         return res
           .status(200)
           .send(
-            encrypt(
-              { urls, status: STATUS_CODES.SUCCESS },
-              req.headers.authorization,
-            ),
+              { urls, status: STATUS_CODES.SUCCESS }
           );
       else
         return res
           .status(200)
           .send(
-            encrypt(
-              { status: STATUS_CODES.GENERIC_ERROR },
-              req.headers.authorization,
-            ),
+              { status: STATUS_CODES.GENERIC_ERROR }
           );
     } catch (error) {
     console.error("Error uploading image:", error);
     res
       .status(200)
       .send(
-        encrypt(
-          { status: STATUS_CODES.GENERIC_ERROR },
-          req.headers.authorization,
-        ),
+          { status: STATUS_CODES.GENERIC_ERROR }
       );
   }
 });

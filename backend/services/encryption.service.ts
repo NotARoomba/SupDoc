@@ -33,6 +33,7 @@ export async function decryptionMiddleware(
       "/doctors/create",
       "/users/check",
       "/users/keys",
+      "/images/upload",
       "/verify/code/send",
       "/verify/code/check",
       "/verify/doctor",
