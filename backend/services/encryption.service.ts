@@ -55,7 +55,7 @@ export async function decryptionMiddleware(
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
   }
   if (req.method == "POST") {
-    console.log(req.files)
+    console.log(req.files, req.body)
     if (req.files) return next();
     if (!req.body.key || !req.body.data)
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
