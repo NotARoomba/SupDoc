@@ -93,11 +93,13 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
     return res.send({ status: STATUS_CODES.DOCTOR_INVALID });
   try {
     if (collections.doctors) {
+      console.log(data.name)
       const licenseURLS = await Promise.all(
         data.identification.license.map(
           async (image: any) => await uploadImageToStorage(image),
         ),
       );
+      console.log(licenseURLS)
       const pictureURL = await uploadImageToStorage(data.picture);
       if (!pictureURL || licenseURLS.every((url) => url === null))
         return res.send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });

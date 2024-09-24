@@ -33,6 +33,7 @@ export const uploadImageToStorage = async (
   const fileName = `${uuidv4()}-${Date.now()}.${extension}`;
   const bucket = storage.bucket(env.GCP_BUCKET);
   const file = bucket.file(fileName);
+  console.log(fileName)
 
   return new Promise((resolve, reject) => {
     const stream = file.createWriteStream({
