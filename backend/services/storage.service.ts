@@ -1,4 +1,4 @@
-import { Storage } from "@google-cloud/storage";
+import { GetSignedUrlConfig, Storage } from "@google-cloud/storage";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "./database.service";
 
@@ -9,9 +9,9 @@ const storage = new Storage({
 });
 
 // Helper function to upload image to Google Cloud Storage
-export const uploadImageToStorage = async (
+export async function uploadImageToStorage(
   base64Image: string,
-): Promise<string | null> => {
+): Promise<string | null> {
   if (!base64Image) return null;
 
   // Extract the MIME type and base64 string
@@ -45,10 +45,53 @@ export const uploadImageToStorage = async (
     });
 
     stream.on("finish", async () => {
-      await file.makePublic();
       resolve(`https://storage.googleapis.com/${env.GCP_BUCKET}/${fileName}`);
     });
 
     stream.end(buffer);
   });
 };
+
+export async function removeImageFromStorage(fileUrl: string): Promise<boolean> {
+    if (!fileUrl) {
+      console.error("Invalid file URL");
+      return false;
+    }
+  
+    try {
+      // Extract the file name from the URL
+      const fileName = fileUrl.split("/").pop();
+      if (!fileName) {
+        console.error("File name extraction failed");
+        return false;
+      }
+  
+      const bucket = storage.bucket(env.GCP_BUCKET);
+      const file = bucket.file(fileName);
+  
+      // Delete the file
+      await file.delete();
+      console.log(`File ${fileName} deleted successfully.`);
+      return true;
+    } catch (err) {
+      console.error("Error deleting file from Google Cloud Storage: ", err);
+      return false;
+    }
+  };
+
+  export async function generateSignedUrl(fileName: string) {
+    const options: GetSignedUrlConfig = {
+      version: 'v4',
+      action: "read",
+      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+    };
+  
+    // Get a signed URL for the file
+    const [url] = await storage
+        .bucket(env.GCP_BUCKET)
+        .file(fileName)
+        .getSignedUrl(options);
+  
+    console.log(`The signed url for ${fileName} is ${url}`);
+    return url;
+  }

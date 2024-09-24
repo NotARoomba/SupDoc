@@ -5,7 +5,7 @@ import { Doctor } from "../models/doctor";
 import { STATUS_CODES } from "../models/util";
 import { collections, env } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
-import { uploadImageToStorage } from "../services/storage.service";
+import { generateSignedUrl, removeImageFromStorage, uploadImageToStorage } from "../services/storage.service";
 
 export const doctorsRouter = express.Router();
 
@@ -25,7 +25,7 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
         .status(200)
         .send(
           encrypt(
-            { user, status: STATUS_CODES.SUCCESS },
+            { user: {...user, picture: await generateSignedUrl(user.picture)}, status: STATUS_CODES.SUCCESS },
             req.headers.authorization,
           ),
         );
@@ -93,13 +93,11 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
     return res.send({ status: STATUS_CODES.DOCTOR_INVALID });
   try {
     if (collections.doctors) {
-      console.log(data.name)
       const licenseURLS = await Promise.all(
         data.identification.license.map(
           async (image: any) => await uploadImageToStorage(image),
         ),
       );
-      console.log(licenseURLS)
       const pictureURL = await uploadImageToStorage(data.picture);
       if (!pictureURL || licenseURLS.every((url) => url === null))
         return res.send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
@@ -146,14 +144,18 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
             },
           },
         },
-        { returnDocument: "after" },
+        { returnDocument: "before" },
       );
       if (upd) {
+        await removeImageFromStorage(upd.picture);
         res
           .status(200)
           .send(
             encrypt(
-              { user: upd, status: STATUS_CODES.SUCCESS },
+              { user: {
+                ...data,
+                picture: await generateSignedUrl(pictureURL),
+              }, status: STATUS_CODES.SUCCESS },
               req.headers.authorization,
             ),
           );
