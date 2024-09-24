@@ -25,7 +25,9 @@ export async function decryptionMiddleware(
   const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(
     CryptoJS.enc.Utf8,
   );
+  console.log(auth)
   req.headers.authorization = auth;
+  if (req.originalUrl == "/images/upload") return next();
   if (
     auth == env.LIMITED_AUTH &&
     ![

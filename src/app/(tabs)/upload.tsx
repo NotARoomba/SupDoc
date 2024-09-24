@@ -6,6 +6,7 @@ import Loader from "components/misc/Loader";
 import useCamera from "components/misc/useCamera";
 import useFade from "components/misc/useFade";
 import useGallery from "components/misc/useGallery";
+import { useLoading } from "components/misc/useLoading";
 import { callAPI } from "components/utils/Functions";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
@@ -31,6 +32,7 @@ export default function Upload() {
   const fadeAnim = useFade();
   const gallery = useGallery();
   const camera = useCamera();
+  const { loading, setLoading } = useLoading();
   const [postData, setPostData] = useState<Post>();
   const uploadPost = async () => {
     setLoading(true);
@@ -50,13 +52,12 @@ export default function Upload() {
       return Alert.alert("Error", "There was an error uploading your post!");
     else {
       resetPostData();
-      router.replace("/");
       setLoading(false);
+      router.navigate({ pathname: "/(tabs)/", params: { refresh: 1 } });
       Alert.alert("Success", "Sucessfully uploaded your post!");
     }
   };
   const [activeChange, setActiveChange] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [activeDelete, setActiveDelete] = useState("");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const resetPostData = () => {
@@ -83,11 +84,11 @@ export default function Upload() {
       if (pickerType === "camera") {
         result = await camera.takePhoto({
           allowsEditing: true,
-          quality: 0.5,
+          quality: 1,
         } as ImagePicker.ImagePickerOptions);
       } else {
         result = await gallery.selectImage({
-          quality: 0.5,
+          quality: 1,
           allowsEditing: true,
         });
       }
@@ -261,7 +262,7 @@ export default function Upload() {
           </Reanimated.ScrollView>
           <Spinner
             visible={loading}
-            overlayColor="#000000cc"
+            overlayColor="#00000099"
             textContent={"Loading"}
             customIndicator={<Loader />}
             textStyle={{ color: "#fff", marginTop: -25 }}

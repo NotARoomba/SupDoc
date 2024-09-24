@@ -5,12 +5,14 @@ import Fact from "../models/fact";
 
 export const env = dotenv.load({
   MONGODB: String,
+  GCP_SERVICE_ACCOUNT: String,
   GCP_EMAIL: String,
   GCP_PRIVATE_KEY: String,
   GCP_ID: String,
   GCP_LOCATION: String,
   GCP_KEYRING: String,
   GCP_KEYNAME: String,
+  GCP_BUCKET: String,
   KEY_ALIAS: String,
   KEYVAULT_NAMESPACE: String,
   USER_DB_NAME: String,

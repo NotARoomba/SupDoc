@@ -2,7 +2,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useCallback, useEffect, useRef } from "react";
 import { Animated } from "react-native";
 
-export default function useFade() {
+export default function useFade(noFade?: boolean) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const focused = useIsFocused();
   const fadeIn = useCallback(() => {
@@ -25,7 +25,7 @@ export default function useFade() {
   }, [fadeAnim]);
   useEffect(() => {
     if (focused) fadeIn();
-    else fadeOut();
+    else if (!noFade) fadeOut();
   }, [focused]);
   return fadeAnim;
 }

@@ -1,11 +1,12 @@
 import { Doctor } from "@/backend/models/doctor";
 import { STATUS_CODES } from "@/backend/models/util";
 import prompt from "@powerdesigninc/react-native-prompt";
-import Loader from "components/misc/Loader";
+import { useLoading } from "components/misc/useLoading";
 import {
   callAPI,
   isDoctorSignupInfo,
   isPatientSignupInfo,
+  uploadImages,
 } from "components/utils/Functions";
 import CryptoJS from "crypto-es";
 import * as FileSystem from "expo-file-system";
@@ -22,7 +23,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Spinner from "react-native-loading-spinner-overlay";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { RSA } from "react-native-rsa-native";
 import Slider from "../components/buttons/Slider";
@@ -46,7 +46,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     LoginInfo<UserType.DOCTOR> | LoginInfo<UserType.PATIENT>
   >({} as LoginInfo<UserType.PATIENT>);
   const [pageIndex, setIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const { setLoading } = useLoading();
   const { t } = useTranslation();
   useEffect(() => {
     // check if key if not then create one and if theres a key check if it exists and login
@@ -89,15 +89,28 @@ export default function Index({ setIsLogged }: IndexProps) {
       publicKey: keys.public, // R
       privateKey: encPriv.toString(), // R
     };
-    if (isDoctorSignupInfo(userType, signUpInfo))
-      for (let i = 0; i < signUpInfo.license.length; i++)
-        signUpInfo.license[i] =
-          `data:image/png;base64,${await FileSystem.readAsStringAsync(
-            signUpInfo.license[i],
-            { encoding: "base64" },
-          )}`;
-    if (isDoctorSignupInfo(userType, signUpInfo))
-      console.log(signUpInfo.license[0].length / 1000);
+    // if (isDoctorSignupInfo(userType, signUpInfo))
+    //   for (let i = 0; i < signUpInfo.license.length; i++)
+    //     signUpInfo.license[i] =
+    //       `data:image/png;base64,${await FileSystem.readAsStringAsync(
+    //         signUpInfo.license[i],
+    //         { encoding: "base64" },
+    //       )}`;
+    // if (isDoctorSignupInfo(userType, signUpInfo))
+    //   console.log(signUpInfo.license[0].length / 1000);
+    if (isDoctorSignupInfo(userType, signUpInfo)) {
+      console.log("SIGNUP")
+      console.log(signUpInfo.license)
+      const res = await uploadImages(signUpInfo.license.concat(signUpInfo.picture));
+      console.log(res);
+      if (res.status !== STATUS_CODES.SUCCESS) {
+        setLoading(false);
+        return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+      }
+      const [licence, picture] = [res.urls.slice(0, -1), res.urls[res.urls.length - 1]]
+      signUpInfo.license = licence;
+      signUpInfo.picture = picture;
+    }
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
@@ -121,12 +134,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         : ({
             name: signUpInfo.firstName + " " + signUpInfo.lastName,
             ...sharedData,
-            picture: `data:image/png;base64,${await FileSystem.readAsStringAsync(
-              signUpInfo.picture,
-              {
-                encoding: "base64",
-              },
-            )}`,
+            picture: signUpInfo.picture,
             info: {
               specialty: signUpInfo.specialty,
               experience: signUpInfo.experience,
@@ -156,6 +164,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         signUpInfo.password,
       );
+      setLoading(false);
       return setIsLogged(true);
     } else {
       console.log(create);
@@ -367,7 +376,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                   : setUserType(UserType.PATIENT)
               }
               selected={
-                userType == UserType.DOCTOR ? t("doctor") : t("patient")
+                userType ? userType == UserType.DOCTOR ? t("doctor") : t("patient") : userType
               }
             />
           </Animated.View>
@@ -521,14 +530,6 @@ export default function Index({ setIsLogged }: IndexProps) {
             </TouchableOpacity>
           )}
         </View>
-        <Spinner
-          visible={loading}
-          overlayColor="#000000cc"
-          textContent={t("loading")}
-          customIndicator={<Loader />}
-          textStyle={{ color: "#fbfff1", marginTop: -25 }}
-          animation="fade"
-        />
       </View>
     </TouchableWithoutFeedback>
   );

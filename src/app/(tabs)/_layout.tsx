@@ -1,10 +1,12 @@
+import { STATUS_CODES } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
+import { callAPI, logout } from "components/utils/Functions";
 import { UserType } from "components/utils/Types";
 import { SplashScreen, Tabs } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
+import { Alert, Platform } from "react-native";
 
 export default function TabLayout() {
   const { t } = useTranslation();
@@ -16,9 +18,9 @@ export default function TabLayout() {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
-      // const res = await callAPI(`/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`, "GET")
-      // if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
-      // else if (res.status == STATUS_CODES.GENERIC_ERROR) return Alert.alert("Error", "There was an error fetching your data!")
+      const res = await callAPI(`/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`, "GET")
+      if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
+      else if (res.status == STATUS_CODES.GENERIC_ERROR) return Alert.alert("Error", "There was an error fetching your data!")
       setUserType(ut);
       await SplashScreen.hideAsync();
     };
@@ -61,16 +63,15 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name={t("index")}
+        name={"index"}
         options={{
           tabBarIcon: ({ color }) => (
             <Icons size={38} name="home" color={color} />
           ),
         }}
       />
-
       <Tabs.Screen
-        name={t("pins")}
+        name={"pins"}
         options={{
           href: userType == UserType.DOCTOR ? "/(tabs)/pins" : null,
           tabBarIcon: ({ color }) => (
@@ -80,7 +81,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name={t("upload")}
+        name={"upload"}
         options={{
           href: userType != UserType.DOCTOR ? "/(tabs)/upload" : null,
           tabBarIcon: ({ color }) => (
@@ -89,7 +90,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name={t("settings")}
+        name={"settings"}
         options={{
           href: null,
           tabBarIcon: ({ color }) => (
@@ -98,7 +99,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name={t("profile")}
+        name={"profile"}
         options={{
           tabBarIcon: ({ color }) => (
             <Icons size={38} name="person" color={color} />

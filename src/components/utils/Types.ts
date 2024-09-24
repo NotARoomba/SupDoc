@@ -153,4 +153,5 @@ export interface PostBlockProps {
   post: Post;
   userType: UserType;
   saved?: boolean;
+  blur?: boolean;
 }

@@ -2,35 +2,41 @@ import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import FunFact from "components/misc/FunFact";
-import Loader from "components/misc/Loader";
+import LoaderView from "components/misc/LoaderView";
 import PostBlock from "components/misc/PostBlock";
 import useFade from "components/misc/useFade";
 import { callAPI, logout } from "components/utils/Functions";
-import { SplashScreen, useFocusEffect } from "expo-router";
+import {
+  SplashScreen,
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+} from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
   Animated,
+  LayoutAnimation,
   Platform,
   ScrollView,
   Text,
   View,
 } from "react-native";
-import Spinner from "react-native-loading-spinner-overlay";
 export default function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [userType, setUserType] = useState<UserType>(UserType.PATIENT);
-  const [loading, setLoading] = useState(false);
+  const list = useRef<FlashList<Post> | null>(null);
+  const [userType, setUserType] = useState<UserType | null>(null);
+  // const [loading, setLoading] = useState(false);
   const fadeAnim = useFade();
   const { t } = useTranslation();
+  const routes = useLocalSearchParams();
   const fetchData = async () => {
-    setLoading(true);
+    // setLoading(true);
     const ut = (await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
     )) as UserType;
-    setUserType(ut);
     const res = await callAPI(
       `/${ut == UserType.DOCTOR ? t("doctors") : t("patients")}/posts`,
       "GET",
@@ -40,15 +46,22 @@ export default function Index() {
         ? await logout()
         : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     setPosts(res.posts);
-    console.log(res.posts.length);
-    setLoading(false);
+    setUserType(ut);
+    // setLoading(false);
+    list.current?.prepareForLayoutAnimationRender();
+    // After removing the item, we can start the animation.
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await SplashScreen.hideAsync();
   };
   // REPLACE WITH WEBHOOK
   useFocusEffect(
     useCallback(() => {
-      fetchData();
-    }, []),
+      if (routes.refresh) {
+        fetchData();
+        router.setParams({});
+        router.navigate({ pathname: "/(tabs)/", params: { refresh: null } });
+      }
+    }, [routes]),
   );
   useEffect(() => {
     fetchData();
@@ -56,35 +69,47 @@ export default function Index() {
   return (
     <Animated.View
       style={{ opacity: fadeAnim }}
-      className={"h-full pt-6 " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}
+      className={"h-full " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}
     >
       {userType == UserType.PATIENT ? (
-        <View className="h-full">
+        <ScrollView className="h-full flex">
           <FunFact />
           <View className="h-0.5 rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
           <Text className="text-4xl font-bold text-center text-ivory">
             {t("titles.posts")}
           </Text>
           {posts.length == 0 ? (
-            <Text className=" text-center text-powder_blue/80">
-              {t("posts.none")}
-            </Text>
+            !userType ? (
+              <View>
+                <LoaderView />
+              </View>
+            ) : (
+              <Text className=" text-center text-powder_blue/80">
+                {t("posts.none")}
+              </Text>
+            )
           ) : (
-            <ScrollView className="flex">
-              {posts.map((v, i) => (
-                <PostBlock key={i} post={v} userType={userType} />
-              ))}
-              <View className="h-32" />
-            </ScrollView>
+            //https://shopify.github.io/flash-list/docs/guides/layout-animation/
+            <FlashList
+              keyExtractor={(p) => {
+                return p.timestamp.toString();
+              }}
+              ListFooterComponentStyle={{ height: 125 }}
+              estimatedItemSize={281}
+              data={posts}
+              renderItem={({ item }) => (
+                <PostBlock post={item} userType={userType} />
+              )}
+            />
           )}
-        </View>
+        </ScrollView>
       ) : (
         <View className="h-full">
           <Text className="text-6xl font-bold text-center text-ivory">
             {t("posts.posts")}
           </Text>
           <FlashList
-            estimatedItemSize={70}
+            estimatedItemSize={313}
             data={posts}
             renderItem={({ item }) => (
               <Text className="text-6xl font-medium text-ivory">
@@ -95,14 +120,6 @@ export default function Index() {
           />
         </View>
       )}
-      <Spinner
-        visible={loading}
-        overlayColor="#00000099"
-        textContent={"Loading"}
-        customIndicator={<Loader />}
-        textStyle={{ color: "#fff", marginTop: -25 }}
-        animation="fade"
-      />
     </Animated.View>
   );
 }

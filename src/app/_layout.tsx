@@ -1,3 +1,5 @@
+import Loading from "components/misc/Loading";
+import { LoadingProvider } from "components/misc/useLoading";
 import "expo-dev-client";
 import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -28,16 +30,28 @@ export default function RootLayout() {
   }, []);
   return (
     <View className="text-ivory h-full bg-white">
-      <SafeAreaView className="bg-richer_black" />
-      {isLogged ? (
-        // <Animated.View entering={FadeIn.duration(500)}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      ) : (
-        // </Animated.View>
-        <Index setIsLogged={setIsLogged} />
-      )}
+      <LoadingProvider>
+        <SafeAreaView className="bg-richer_black" />
+        {isLogged ? (
+          // <Animated.View entering={FadeIn.duration(500)}>
+          <Stack
+            screenOptions={{ contentStyle: { backgroundColor: "#020912" } }}
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="Post"
+              options={{
+                headerShown: false,
+                presentation: "modal",
+              }}
+            />
+          </Stack>
+        ) : (
+          // </Animated.View>
+          <Index setIsLogged={setIsLogged} />
+        )}
+        <Loading />
+      </LoadingProvider>
     </View>
   );
 }

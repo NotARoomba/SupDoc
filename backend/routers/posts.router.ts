@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { ObjectId, PushOperator } from "mongodb";
+import { DeleteResult, ObjectId, PushOperator } from "mongodb";
 import Comment from "../models/comment";
 import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
@@ -34,7 +34,45 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
         encrypt(
           {
             post: null,
-            status: STATUS_CODES.USER_NOT_FOUND,
+            status: STATUS_CODES.POST_NOT_FOUND,
+          },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+  }
+});
+
+postsRouter.get("/:id/delete", async (req: Request, res: Response) => {
+  const id = req?.params?.id;
+  try {
+    let post: DeleteResult | null = null;
+    if (collections.posts) {
+      post = await collections.posts.deleteOne({
+        _id: new ObjectId(id),
+      });
+    }
+    if (post && post.acknowledged) {
+      res
+        .status(200)
+        .send(
+          encrypt({ status: STATUS_CODES.SUCCESS }, req.headers.authorization),
+        );
+    } else {
+      res.status(404).send(
+        encrypt(
+          {
+            status: STATUS_CODES.ERROR_DELETING_POST,
           },
           req.headers.authorization,
         ),
@@ -86,19 +124,23 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
           keyAltName,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
-        timestamp: await encryption.encrypt(data.timestamp, {
-          keyAltName,
-          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        }),
+        timestamp: Date.now(),
 
         // Include empty arrays for comments and reports
         comments: [],
         reports: [],
       });
       if (postInsert.acknowledged) {
-        await collections.patients?.updateOne({
-          publicKey: req.headers.authorization,
-        }, {$push: {posts: postInsert.insertedId.toString()} as PushOperator<Document>});
+        await collections.patients?.updateOne(
+          {
+            publicKey: req.headers.authorization,
+          },
+          {
+            $push: {
+              posts: postInsert.insertedId.toString(),
+            } as PushOperator<Document>,
+          },
+        );
         res
           .status(200)
           .send(
@@ -299,5 +341,51 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
           ),
         );
     }
+  }
+});
+
+postsRouter.get("/:id/save", async (req: Request, res: Response) => {
+  //check if doctor
+  const id = req?.params?.id;
+  try {
+    if (collections.posts && collections.doctors) {
+      const post = (await collections.posts.findOne({
+        _id: new ObjectId(id),
+      })) as unknown as Post;
+      const updated = await collections.doctors.updateOne(
+        { publicKey: req.headers.authorization },
+        { $push: { saved: post._id?.toString() } },
+      );
+      if (updated.acknowledged) {
+        res
+          .status(200)
+          .send(
+            encrypt(
+              { post, status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
+      } else {
+        res.status(404).send(
+          encrypt(
+            {
+              post: null,
+              status: STATUS_CODES.GENERIC_ERROR,
+            },
+            req.headers.authorization,
+          ),
+        );
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
   }
 });
