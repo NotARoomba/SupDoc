@@ -63,6 +63,7 @@ doctorsRouter.post("/create", async (req: Request, res: Response) => {
   // console.log(ret.data.text);
   // if (!ret.data.text.includes(data.identification.number.toString()))
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
+  console.log(data.identification.number)
   const [firstName, lastName] = data.name.split(" ");
   const verifyRes = await axios.post(
     env.VERIFY_URL,
