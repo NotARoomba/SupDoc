@@ -1,6 +1,8 @@
 import { GetSignedUrlConfig, Storage } from "@google-cloud/storage";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "./database.service";
+import fs from 'node:fs'
+import path from "node:path";
 
 // Initialize Google Cloud Storage
 const storage = new Storage({
@@ -10,25 +12,35 @@ const storage = new Storage({
 
 // Helper function to upload image to Google Cloud Storage
 export async function uploadImageToStorage(
-  base64Image: string,
+  fileInput: string, // This can be either a file path or a base64 string
+  isBase64: boolean = false // Boolean flag to indicate if it's base64
 ): Promise<string | null> {
-  if (!base64Image) return null;
+  if (!fileInput) return null;
 
-  // Extract the MIME type and base64 string
-  const matches = base64Image.match(/^data:(.*);base64,(.*)$/);
-  if (!matches || matches.length !== 3) {
-    console.error("Invalid base64 image string");
-    return null;
+  let buffer: Buffer;
+  let mimeType: string;
+
+  if (isBase64) {
+    // Handle base64 input
+    const matches = fileInput.match(/^data:(.*);base64,(.*)$/);
+    if (!matches || matches.length !== 3) {
+      console.error("Invalid base64 image string");
+      return null;
+    }
+
+    mimeType = matches[1]; // e.g., "image/png"
+    const base64Data = matches[2];
+    buffer = Buffer.from(base64Data, "base64");
+  } else {
+    // Handle file path input
+    const filePath = fileInput;
+    buffer = fs.readFileSync(filePath); // Read file into buffer
+    mimeType = `image/${path.extname(filePath).slice(1)}`; // Derive MIME type from file extension
   }
-
-  const mimeType = matches[1]; // e.g., "image/png"
-  const base64Data = matches[2];
-  const buffer = Buffer.from(base64Data, "base64");
 
   // Create a unique file name with extension based on the MIME type
   const extension = mimeType.split("/")[1]; // e.g., "image/png" -> "png"
   const fileName = `${uuidv4()}-${Date.now()}.${extension}`;
-  console.log(fileName)
   const bucket = storage.bucket(env.GCP_BUCKET);
   const file = bucket.file(fileName);
 
@@ -50,7 +62,7 @@ export async function uploadImageToStorage(
 
     stream.end(buffer);
   });
-};
+}
 
 export async function removeImageFromStorage(fileUrl: string): Promise<boolean> {
     if (!fileUrl) {
@@ -83,7 +95,7 @@ export async function removeImageFromStorage(fileUrl: string): Promise<boolean> 
     const options: GetSignedUrlConfig = {
       version: 'v4',
       action: "read",
-      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+      expires: Date.now() + (15 * 60 * 1000), // 15 minutes
     };
   
     // Get a signed URL for the file
