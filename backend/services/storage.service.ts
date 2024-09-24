@@ -33,9 +33,9 @@ export const uploadImageToStorage = async (
   // Create a unique file name with extension based on the MIME type
   const extension = mimeType.split("/")[1]; // e.g., "image/png" -> "png"
   const fileName = `${uuidv4()}-${Date.now()}.${extension}`;
+  console.log(fileName)
   const bucket = storage.bucket(env.GCP_BUCKET);
   const file = bucket.file(fileName);
-  console.log(fileName)
 
   return new Promise((resolve, reject) => {
     const stream = file.createWriteStream({
