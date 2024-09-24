@@ -5,6 +5,7 @@ import Fact from "../models/fact";
 
 export const env = dotenv.load({
   MONGODB: String,
+  GCP_SERVICE_ACCOUNT: String,
   GCP_EMAIL: String,
   GCP_PRIVATE_KEY: String,
   GCP_ID: String,

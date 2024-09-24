@@ -5,10 +5,7 @@ import { env } from "./database.service";
 // Initialize Google Cloud Storage
 const storage = new Storage({
   projectId: env.GCP_ID,
-  credentials: {
-    client_email: env.GCP_EMAIL,
-    private_key: `-----BEGIN PRIVATE KEY-----\n${env.GCP_PRIVATE_KEY}\n-----END PRIVATE KEY-----`,
-  },
+  credentials: JSON.parse(Buffer.from(env.GCP_SERVICE_ACCOUNT, 'base64').toString('utf-8')),
 });
 
 // Helper function to upload image to Google Cloud Storage
