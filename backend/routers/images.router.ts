@@ -5,10 +5,10 @@ import { STATUS_CODES } from "../models/util";
 import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl, uploadImageToStorage } from "../services/storage.service";
-import multer, {Multer} from 'multer'
+import multer from 'multer'
 export const imagesRouter = express.Router();
 
-const upload = multer({storage: multer.diskStorage({})});
+const upload = multer({storage: multer.diskStorage({}), limits: {fieldSize: 25 * 1024 * 1024}});
 imagesRouter.use(express.json());
 
 imagesRouter.get("/:name",  async (req: Request, res: Response) => {
