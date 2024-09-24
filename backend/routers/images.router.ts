@@ -58,6 +58,7 @@ imagesRouter.post("/upload", upload.array('image'), async (req: Request, res: Re
           async (image: any) => await uploadImageToStorage(image),
         ),
       );
+      console.log(urls);
       if (!urls || urls.every((url) => url === null))
       return res
       .status(200)
