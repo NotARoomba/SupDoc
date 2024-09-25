@@ -77,7 +77,7 @@ export default function Profile() {
         return await logout();
       } else if (res.status == STATUS_CODES.GENERIC_ERROR) {
         setLoading(false);
-        return Alert.alert("Error", "There was an error fetching your data!");
+        return Alert.alert(t("error"), t("errors.fetchData"));
       }
       setUser(res.user);
       setUserEdit({
