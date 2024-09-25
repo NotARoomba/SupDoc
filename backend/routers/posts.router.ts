@@ -5,6 +5,7 @@ import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
 import { collections, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
+import { generateSignedUrl } from "../services/storage.service";
 
 export const postsRouter = express.Router();
 
@@ -25,7 +26,7 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
         .status(200)
         .send(
           encrypt(
-            { post, status: STATUS_CODES.SUCCESS },
+             {post: {...post, images: await Promise.all(post.images.map(async (v) => await generateSignedUrl(v)))}, status: STATUS_CODES.SUCCESS },
             req.headers.authorization,
           ),
         );
@@ -115,7 +116,10 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
           keyAltName,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
-        images: data.images,
+        images: await encryption.encrypt(data.images, {
+          keyAltName,
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+        }),
         description: await encryption.encrypt(data.description, {
           keyAltName,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",

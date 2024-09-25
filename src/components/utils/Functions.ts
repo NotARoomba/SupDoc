@@ -152,18 +152,18 @@ export async function uploadImages(
     // Make the API call
     const res = await axios.post(
       process.env.EXPO_PUBLIC_API_URL + '/images/upload',
-      magic,
+      null,
       {
-        // data: formData,
+        data: formData,
         headers: {
           method: "POST",
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
           Authorization: authorization,
         },
-        // transformRequest: () => {
-        //   return formData; // this is doing the trick
-        // },
+        transformRequest: () => {
+          return formData; // this is doing the trick
+        },
       }
     );
 

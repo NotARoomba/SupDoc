@@ -7,7 +7,7 @@ import useCamera from "components/misc/useCamera";
 import useFade from "components/misc/useFade";
 import useGallery from "components/misc/useGallery";
 import { useLoading } from "components/misc/useLoading";
-import { callAPI } from "components/utils/Functions";
+import { callAPI, uploadImages } from "components/utils/Functions";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
@@ -37,16 +37,21 @@ export default function Upload() {
   const uploadPost = async () => {
     setLoading(true);
     if (!postData) return;
-    let images = [];
-    for (let i = 0; i < postData.images.length; i++)
-      images[i] = `data:image/png;base64,${await FileSystem.readAsStringAsync(
-        postData.images[i],
-        {
-          encoding: "base64",
-        },
-      )}`;
+    // let images = [];
+    // for (let i = 0; i < postData.images.length; i++)
+    //   images[i] = `data:image/png;base64,${await FileSystem.readAsStringAsync(
+    //     postData.images[i],
+    //     {
+    //       encoding: "base64",
+    //     },
+    //   )}`;
+    const imgRes = await uploadImages(postData.images);
+      if (imgRes.status !== STATUS_CODES.SUCCESS) {
+        setLoading(false);
+        return Alert.alert(t("error"), t(STATUS_CODES[imgRes.status]));
+      }
     const res = await callAPI(`/posts/create`, "POST", {
-      ...postData,
+      ...postData, images: imgRes.urls 
     });
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert("Error", "There was an error uploading your post!");
