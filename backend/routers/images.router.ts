@@ -4,14 +4,10 @@ import Fact from "../models/fact";
 import { STATUS_CODES } from "../models/util";
 import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
-import { generateSignedUrl, removeImageFromStorage, uploadImageToStorage } from "../services/storage.service";
+import { generateSignedUrl, removeImageFromStorage, upload, uploadImageToStorage } from "../services/storage.service";
 import multer from 'multer'
 export const imagesRouter = express.Router();
 
-const upload = multer({storage: multer.diskStorage({filename: function (req, file, cb) {
-  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-  cb(null, `${uniqueSuffix}.${file.mimetype.split("/")[1]}`)
-}}), limits: {fieldSize: 25 * 1024 * 1024}});
 imagesRouter.use(express.json());
 
 imagesRouter.get("/:image",  async (req: Request, res: Response) => {

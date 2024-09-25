@@ -3,12 +3,19 @@ import { v4 as uuidv4 } from "uuid";
 import { env } from "./database.service";
 import fs from 'node:fs'
 import path from "node:path";
+import multer from "multer";
 
 // Initialize Google Cloud Storage
 const storage = new Storage({
   projectId: env.GCP_ID,
   credentials: JSON.parse(Buffer.from(env.GCP_SERVICE_ACCOUNT, 'base64').toString('utf-8')),
 });
+
+
+export const upload = multer({storage: multer.diskStorage({filename: function (req, file, cb) {
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+  cb(null, `${uniqueSuffix}.${file.mimetype.split("/")[1]}`)
+}}), limits: {fieldSize: 25 * 1024 * 1024}});
 
 // Helper function to upload image to Google Cloud Storage
 export async function uploadImageToStorage(

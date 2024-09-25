@@ -112,9 +112,9 @@ export async function uploadImages(
     // const key = CryptoJS.SHA256(CryptoJS.lib.WordArray.random(128/8)).toString();
     const formData = new FormData();
     for (const uri of imageUris) {
-      const base64Image = `data:image/png;base64,${await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      })}`;
+      // const base64Image = `data:image/png;base64,${await FileSystem.readAsStringAsync(uri, {
+      //   encoding: FileSystem.EncodingType.Base64,
+      // })}`;
   
       // const encryptedImage = CryptoJS.AES.encrypt(base64Image, key).toString();
       formData.append('files', {type: 'image/png', uri, name: "files"} as unknown as File);
@@ -128,9 +128,9 @@ export async function uploadImages(
       process.env.EXPO_PUBLIC_SERVER_PUBLIC
     );
     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(formData), key).toString();
-    formData.append('key', encryptedKey)
+    // formData.append('key', encryptedKey)
     const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
-
+      console.log(magic)
     // Handle authorization
     const publicKey = await SecureStore.getItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC);
     const privateKey = await SecureStore.getItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE);
