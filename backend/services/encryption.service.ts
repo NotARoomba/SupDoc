@@ -25,9 +25,7 @@ export async function decryptionMiddleware(
   const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(
     CryptoJS.enc.Utf8,
   );
-  console.log(auth)
   req.headers.authorization = auth;
-  if (req.originalUrl == "/images/upload") return next();
   if (
     auth == env.LIMITED_AUTH &&
     ![
@@ -35,6 +33,7 @@ export async function decryptionMiddleware(
       "/doctors/create",
       "/users/check",
       "/users/keys",
+      "/images/upload",
       "/verify/code/send",
       "/verify/code/check",
       "/verify/doctor",
@@ -53,6 +52,11 @@ export async function decryptionMiddleware(
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists))
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
+  }
+  if (req.originalUrl == "/images/upload") {
+    console.log(req.body)
+    req.files = req.body.files;
+    return next();
   }
   if (req.method == "POST") {
     if (!req.body.key || !req.body.data)

@@ -163,7 +163,6 @@ verifyRouter.post("/doctor", async (req: Request, res: Response) => {
   let id: number = parseInt(req?.body?.id);
   const name: string = req.body.name;
   const [firstName, lastName] = name.split(" ");
-  console.log(id, name);
   try {
     const firstResponse = await axios.post(
       env.VERIFY_URL,
@@ -226,7 +225,6 @@ verifyRouter.post("/doctor", async (req: Request, res: Response) => {
       },
     );
     const parsed = parseDoctorData(finalResponse.data);
-    console.log(parsed);
     res.send({ data: parsed, status: STATUS_CODES.SUCCESS });
   } catch (e) {
     console.log(e);

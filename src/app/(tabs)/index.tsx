@@ -38,7 +38,7 @@ export default function Index() {
       process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
     )) as UserType;
     const res = await callAPI(
-      `/${ut == UserType.DOCTOR ? t("doctors") : t("patients")}/posts`,
+      `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/posts`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS)

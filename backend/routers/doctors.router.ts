@@ -5,7 +5,7 @@ import { Doctor } from "../models/doctor";
 import { STATUS_CODES } from "../models/util";
 import { collections, env } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
-import { generateSignedUrl, removeImageFromStorage, uploadImageToStorage } from "../services/storage.service";
+import { generateSignedUrl, removeImageFromStorage, upload, uploadImageToStorage } from "../services/storage.service";
 
 export const doctorsRouter = express.Router();
 
@@ -53,7 +53,7 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
-doctorsRouter.post("/create", async (req: Request, res: Response) => {
+doctorsRouter.post("/create", upload.array('files'), async (req: Request, res: Response) => {
   const data: Doctor = req.body;
   // run check with doctor database again
   // verification of id
