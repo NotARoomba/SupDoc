@@ -25,7 +25,6 @@ export async function decryptionMiddleware(
   const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(
     CryptoJS.enc.Utf8,
   );
-  console.log(req.body, req.files)
   req.headers.authorization = auth;
   if (
     auth == env.LIMITED_AUTH &&
@@ -54,17 +53,19 @@ export async function decryptionMiddleware(
     if (!(doctorExists || patientExists))
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
   }
-  if (req.originalUrl == "/images/upload") {
-    console.log(req.body)
-    req.files = req.body.files;
-    return next();
-  }
   if (req.method == "POST") {
     if (!req.body.key || !req.body.data)
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
     const key = nodeRSA.decrypt(req.body.key, "utf8");
     const data = CryptoJS.AES.decrypt(req.body.data, key);
     req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
+    if (req.originalUrl == "/images/upload") {
+      console.log("UPLOADDD")
+      console.log(req.body)
+      console.log(req.files)
+      req.files = req.body.files;
+      return next();
+    }
   }
   next();
 }
