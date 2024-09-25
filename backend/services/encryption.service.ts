@@ -25,7 +25,7 @@ export async function decryptionMiddleware(
   const auth = CryptoJS.AES.decrypt(obj.data, authKey).toString(
     CryptoJS.enc.Utf8,
   );
-  console.log(req.body)
+  console.log(req.body, req.files)
   req.headers.authorization = auth;
   if (
     auth == env.LIMITED_AUTH &&
