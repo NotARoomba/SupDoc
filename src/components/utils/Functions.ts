@@ -112,7 +112,7 @@ export async function uploadImages(
     const key = CryptoJS.SHA256(CryptoJS.lib.WordArray.random(128/8)).toString();
     const formData = new FormData();
     for (const uri of imageUris) {
-      const base64Image = `data:image/png;base64,${await FileSystem.readAsStringAsync(uri, {
+      const base64Image = `${await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
       })}`;
   
@@ -152,7 +152,7 @@ export async function uploadImages(
     // Make the API call
     const res = await axios.post(
       process.env.EXPO_PUBLIC_API_URL + '/images/upload',
-      null,
+      formData,
       {
         data: formData,
         headers: {
