@@ -117,7 +117,7 @@ export async function uploadImages(
       })}`;
   
       // const encryptedImage = CryptoJS.AES.encrypt(base64Image, key).toString();
-      formData.append('files', base64Image);
+      formData.append('files', {type: 'image/png', uri: base64Image} as unknown as File);
     }
 
     // Encrypt FormData
@@ -152,8 +152,9 @@ export async function uploadImages(
     // Make the API call
     const res = await axios.post(
       process.env.EXPO_PUBLIC_API_URL + '/images/upload',
-      formData,
+      null,
       {
+        data: formData,
         headers: {
           method: "POST",
           Accept: 'application/json',
