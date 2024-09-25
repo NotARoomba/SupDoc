@@ -117,7 +117,7 @@ export async function uploadImages(
       })}`;
   
       // const encryptedImage = CryptoJS.AES.encrypt(base64Image, key).toString();
-      formData.append('files', {type: 'image/png', uri: base64Image} as unknown as File);
+      formData.append('files', {type: 'image/png', uri} as unknown as File);
     }
 
     // Encrypt FormData
