@@ -15,6 +15,7 @@ export async function callAPI(
   endpoint: string,
   method: string,
   body: object = {},
+  images?: string[]
 ) {
   try {
     // return { status: STATUS_CODES.NONE_IN_USE };
@@ -148,22 +149,23 @@ export async function uploadImages(
         }),
       ),
     );
-
+//change to b64
     // Make the API call
     const res = await axios.post(
       process.env.EXPO_PUBLIC_API_URL + '/images/upload',
-      magic,
+      // magic,
+      null,
       {
-        // data: formData,
+        data: formData,
         headers: {
           method: "POST",
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
           Authorization: authorization,
         },
-        // transformRequest: () => {
-        //   return formData; // this is doing the trick
-        // },
+        transformRequest: (data, headers) => {
+          return CryptoJS.AES.encrypt(JSON.stringify(data), key).toString(); // this is doing the trick
+        },
       }
     );
 
