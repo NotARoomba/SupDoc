@@ -91,13 +91,13 @@ export async function removeImageFromStorage(fileUrl: string): Promise<boolean> 
     }
   };
 
-  export async function generateSignedUrl(fileName: string) {
+  export async function generateSignedUrl(fileUrl: string) {
     const options: GetSignedUrlConfig = {
       version: 'v4',
       action: "read",
       expires: Date.now() + (15 * 60 * 1000), // 15 minutes
     };
-  
+    const fileName = fileUrl.split("/").pop() as string;
     // Get a signed URL for the file
     const [url] = await storage
         .bucket(env.GCP_BUCKET)
