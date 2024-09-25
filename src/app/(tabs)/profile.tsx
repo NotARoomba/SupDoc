@@ -80,7 +80,6 @@ export default function Profile() {
         setLoading(false);
         return Alert.alert("Error", "There was an error fetching your data!");
       }
-      console.log(res)
       setUser(res.user);
       setUserEdit({
         ...res.user,
