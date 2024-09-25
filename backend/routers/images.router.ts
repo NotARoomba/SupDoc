@@ -4,7 +4,7 @@ import Fact from "../models/fact";
 import { STATUS_CODES } from "../models/util";
 import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
-import { generateSignedUrl, uploadImageToStorage } from "../services/storage.service";
+import { generateSignedUrl, removeImageFromStorage, uploadImageToStorage } from "../services/storage.service";
 import multer from 'multer'
 export const imagesRouter = express.Router();
 
@@ -14,10 +14,10 @@ const upload = multer({storage: multer.diskStorage({filename: function (req, fil
 }}), limits: {fieldSize: 25 * 1024 * 1024}});
 imagesRouter.use(express.json());
 
-imagesRouter.get("/:name",  async (req: Request, res: Response) => {
-    const name = req.params.name;
+imagesRouter.get("/:image",  async (req: Request, res: Response) => {
+    const image = req.params.image;
   try {
-    const url = await generateSignedUrl(name);
+    const url = await generateSignedUrl(image);
     if (url)
       res
         .status(200)
@@ -47,6 +47,41 @@ imagesRouter.get("/:name",  async (req: Request, res: Response) => {
         ),
       );
   }
+});
+
+imagesRouter.get("/:image/delete",  async (req: Request, res: Response) => {
+  const image = req.params.image;
+try {
+  const del = await removeImageFromStorage(image);
+  if (del)
+    res
+      .status(200)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.SUCCESS },
+          req.headers.authorization,
+        ),
+      );
+  else
+    res
+      .status(200)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+} catch (error) {
+  console.error("Error fetching image:", error);
+  res
+    .status(200)
+    .send(
+      encrypt(
+        { status: STATUS_CODES.GENERIC_ERROR },
+        req.headers.authorization,
+      ),
+    );
+}
 });
 
 imagesRouter.post("/upload", upload.array('files'), async (req: Request, res: Response) => {

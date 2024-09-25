@@ -15,6 +15,7 @@ import {
   isDoctorInfo,
   isPatientInfo,
   logout,
+  uploadImages,
 } from "components/utils/Functions";
 import { BirthSex, Sex, UserType } from "components/utils/Types";
 import * as FileSystem from "expo-file-system";
@@ -66,7 +67,7 @@ export default function Profile() {
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
       const res = await callAPI(
-        `/${ut == UserType.DOCTOR ? t("doctors") : t("patients")}/`,
+        `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
         "GET",
       );
       if (
@@ -79,6 +80,7 @@ export default function Profile() {
         setLoading(false);
         return Alert.alert("Error", "There was an error fetching your data!");
       }
+      console.log(res)
       setUser(res.user);
       setUserEdit({
         ...res.user,
@@ -97,24 +99,22 @@ export default function Profile() {
   }, []);
   const updateUser = async () => {
     // NEED TO CHECK IF PATIENT WITH THE USEREDIT
-    const doctorStuff =
-      userType &&
+    let doctorStuff = {}
+      if (userType &&
       userEdit &&
       user &&
       isDoctorInfo(userType, userEdit) &&
       isDoctorInfo(userType, user) &&
-      userEdit.picture !== user.picture
-        ? {
-            picture: `data:image/png;base64,${await FileSystem.readAsStringAsync(
-              userEdit.picture,
-              {
-                encoding: "base64",
-              },
-            )}`,
+      userEdit.picture !== user.picture){
+        const res = await uploadImages([userEdit.picture]);
+      if (res.status !== STATUS_CODES.SUCCESS) {
+        setLoading(false);
+        return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+      }
+            doctorStuff  = {picture:res.urls[0]}
           }
-        : {};
     const res = await callAPI(
-      `/${userType == UserType.DOCTOR ? t("doctors") : t("patients")}/update`,
+      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/update`,
       "POST",
       {
         ...userEdit,
@@ -130,6 +130,7 @@ export default function Profile() {
         ("errors.updateData"),
       );
     } else {
+      if (userType && user && isDoctorInfo(userType, user)) await callAPI(`/images/${user.picture}/delete`, "GET")
       setUser(res.user);
       setUserEdit({
         ...res.user,
@@ -217,11 +218,11 @@ export default function Profile() {
       if (pickerType === "camera") {
         result = await camera.takePhoto({
           allowsEditing: true,
-          quality: 0.5,
+          quality: 1,
         });
       } else {
         result = await gallery.selectImage({
-          quality: 0.5,
+          quality: 1,
           allowsEditing: true,
         });
       }
@@ -279,9 +280,7 @@ export default function Profile() {
                           <View className="m-auto">
                             <Image
                               className="rounded-xl h-full aspect-square"
-                              source={{
-                                uri: `${userEdit.picture !== user.picture ? userEdit.picture : `data:image/png;base64,${userEdit.picture}`}`,
-                              }}
+                              source={userEdit.picture}
                             />
                             <Pressable
                               onPress={() => setActiveChange(!activeChange)}
