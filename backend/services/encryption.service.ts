@@ -54,6 +54,7 @@ export async function decryptionMiddleware(
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
   }
   if (req.method == "POST") {
+    console.log("AAAAA")
     if (!req.body.key || !req.body.data)
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
     const key = nodeRSA.decrypt(req.body.key, "utf8");
