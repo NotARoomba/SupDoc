@@ -56,7 +56,7 @@ imagesRouter.post("/upload", upload.array('files'), async (req: Request, res: Re
   try {
     const urls = await Promise.all(
         files.map(
-          async (image: any) => await uploadImageToStorage(image),
+          async (image) => await uploadImageToStorage(image.path),
         ),
       );
       console.log(urls);
