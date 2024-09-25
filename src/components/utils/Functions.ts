@@ -15,7 +15,6 @@ export async function callAPI(
   endpoint: string,
   method: string,
   body: object = {},
-  images?: string[]
 ) {
   try {
     // return { status: STATUS_CODES.NONE_IN_USE };
@@ -110,29 +109,28 @@ export async function uploadImages(
 ) {
   try {
     // Create FormData
-    const key = CryptoJS.SHA256(CryptoJS.lib.WordArray.random(128/8)).toString();
+    // const key = CryptoJS.SHA256(CryptoJS.lib.WordArray.random(128/8)).toString();
     const formData = new FormData();
     for (const uri of imageUris) {
-      const base64Image = `${await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      })}`;
+      // const base64Image = `data:image/png;base64,${await FileSystem.readAsStringAsync(uri, {
+      //   encoding: FileSystem.EncodingType.Base64,
+      // })}`;
   
-      const encryptedImage = CryptoJS.AES.encrypt(base64Image, key).toString();
-      await FileSystem.writeAsStringAsync(uri, encryptedImage)
+      // const encryptedImage = CryptoJS.AES.encrypt(base64Image, key).toString();
       formData.append('files', {type: 'image/png', uri, name: "files"} as unknown as File);
     }
 
     // Encrypt FormData
     // const data = formData; // FormData needs special handling for encryption
-    // const key = CryptoJS.SHA256(JSON.stringify(formData)).toString();
+    const key = CryptoJS.SHA256(JSON.stringify(formData)).toString();
     const encryptedKey = await RSA.encrypt(
       key,
       process.env.EXPO_PUBLIC_SERVER_PUBLIC
     );
-    // const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(formData), key).toString();
-    formData.append('key', encryptedKey)
-    // const magic = JSON.stringify({ key: encryptedKey});
-      // console.log(magic)
+    const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(formData), key).toString();
+    // formData.append('key', encryptedKey)
+    const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
+      console.log(magic)
     // Handle authorization
     const publicKey = await SecureStore.getItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC);
     const privateKey = await SecureStore.getItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE);
@@ -154,19 +152,18 @@ export async function uploadImages(
     // Make the API call
     const res = await axios.post(
       process.env.EXPO_PUBLIC_API_URL + '/images/upload',
-      // magic,
-      null,
+      magic,
       {
-        data: formData,
+        // data: formData,
         headers: {
           method: "POST",
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
           Authorization: authorization,
         },
-        transformRequest: () => {
-          return formData
-        },
+        // transformRequest: () => {
+        //   return formData; // this is doing the trick
+        // },
       }
     );
 

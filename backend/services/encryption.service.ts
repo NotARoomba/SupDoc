@@ -53,20 +53,17 @@ export async function decryptionMiddleware(
     if (!(doctorExists || patientExists))
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
   }
+  if (req.originalUrl == "/images/upload") {
+    console.log(req.body)
+    req.files = req.body.files;
+    return next();
+  }
   if (req.method == "POST") {
-    console.log("AAAAA", req.body, req.files)
-    if ((!req.body.key || !req.body.data))
+    if (!req.body.key || !req.body.data)
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
     const key = nodeRSA.decrypt(req.body.key, "utf8");
     const data = CryptoJS.AES.decrypt(req.body.data, key);
     req.body = JSON.parse(data.toString(CryptoJS.enc.Utf8));
-    if (req.originalUrl == "/images/upload") {
-      console.log("UPLOADDD")
-      console.log(req.body)
-      console.log(req.files)
-      req.files = req.body.files;
-      return next();
-    }
   }
   next();
 }
