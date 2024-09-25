@@ -38,6 +38,7 @@ import {
 import { CountryPicker } from "react-native-country-codes-picker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 export default function Profile() {
   const camera = useCamera();
@@ -57,6 +58,7 @@ export default function Profile() {
     Object.values(Sex).map((s) => ({ label: s, value: s })),
   );
   const fadeAnim = useFade();
+  const { t } = useTranslation();
   useEffect(() => {
     const fetchData = async () => {
       // setLoading(true);
@@ -64,7 +66,7 @@ export default function Profile() {
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
       const res = await callAPI(
-        `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
+        `/${ut == UserType.DOCTOR ? t("doctors") : t("patients")}/`,
         "GET",
       );
       if (
@@ -74,7 +76,7 @@ export default function Profile() {
         // setLoading(false);
         return await logout();
       } else if (res.status == STATUS_CODES.GENERIC_ERROR) {
-        // setLoading(false);
+        setLoading(false);
         return Alert.alert("Error", "There was an error fetching your data!");
       }
       setUser(res.user);
@@ -112,7 +114,7 @@ export default function Profile() {
           }
         : {};
     const res = await callAPI(
-      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/update`,
+      `/${userType == UserType.DOCTOR ? t("doctors") : t("patients")}/update`,
       "POST",
       {
         ...userEdit,
@@ -124,8 +126,8 @@ export default function Profile() {
       setUserEdit(user);
       setLoading(false);
       return Alert.alert(
-        "Error",
-        "There was an error updating your information!",
+        t("error"),
+        ("errors.updateData"),
       );
     } else {
       setUser(res.user);
@@ -142,7 +144,7 @@ export default function Profile() {
           ),
       );
       setLoading(false);
-      return Alert.alert("Success", "Successfully updated your information!");
+      return Alert.alert(t("success"), t("successes.updateData"));
     }
   };
   const parseUpdate = async () => {
@@ -154,10 +156,10 @@ export default function Profile() {
       });
       if (verify.status === STATUS_CODES.INVALID_NUMBER) {
         setLoading(false);
-        return Alert.alert("Error", "That number is invalid!");
+        return Alert.alert(t("error"), t("errors.INVALID_NUMBER"));
       } else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST) {
         setLoading(false);
-        return Alert.alert("Error", "That number does not exist!");
+        return Alert.alert(t("error"), "That number does not exist!");
       } else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE) {
         setLoading(false);
         return Alert.alert("Error", "There was an error sending the code!");

@@ -10,7 +10,9 @@
     "yes": "Sí",
     "no": "No",
     "doctor": "Doctor",
+    "doctors": "Doctores",
     "patient": "Paciente",
+    "patients": "Pacientes",
     "inputs": {
         "first": "Primer Nombre",
         "last": "Primer Apellido",
@@ -44,7 +46,13 @@
         "register": "Registrar",
         "personal": "Información Personal",
         "fact": "Dato Curioso",
-        "posts": "Tus Publicaciones"
+        "posts": "Tus Publicaciones",
+        "index": "índice",
+        "pins": "guardados",
+        "Pins": "Guardados",
+        "upload": "montar",
+        "settings": "configuración",
+        "profile": "perfil"
     },
     "images": {
         "choose": "Selecciona uno",
@@ -82,6 +90,8 @@
         },
         "missing": "Informacion Faltante",
         "missingInfo": "Por favor, llenar todas las casillas",
+        "fetchData": "¡Hubo un error al obtener tus datos!",
+        "updateData": "¡Hubo un error al actualizar tu información!",
         "GENERIC_ERROR": "Ha ocurrido un error",
         "USER_NOT_FOUND": "Ese usuario no existe",
         "INVALID_NUMBER": "El número de teléfono es inválido",
@@ -98,6 +108,9 @@
         "INVALID_IDENTITY": "La identificación proporcionada es inválida",
         "COMMENT_LIMIT_REACHED": "La publicación ha alcanzado el límite máximo de comentarios permitidos",
         "DOES_NOT_EXIST": "El recurso solicitado no existe"
+    },
+    "succeses": {
+        "updateData": "Successfully updated your information!"
     },
     "verification": {
         "title": "Ingresa el Código de Verificación",
