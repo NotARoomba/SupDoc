@@ -8,7 +8,10 @@ import { generateSignedUrl, uploadImageToStorage } from "../services/storage.ser
 import multer from 'multer'
 export const imagesRouter = express.Router();
 
-const upload = multer({storage: multer.diskStorage({}), limits: {fieldSize: 25 * 1024 * 1024}});
+const upload = multer({storage: multer.diskStorage({filename: function (req, file, cb) {
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+  cb(null, `${uniqueSuffix}.${file.mimetype.split("/")[1]}`)
+}}), limits: {fieldSize: 25 * 1024 * 1024}});
 imagesRouter.use(express.json());
 
 imagesRouter.get("/:name",  async (req: Request, res: Response) => {
