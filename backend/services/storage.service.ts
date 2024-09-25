@@ -102,7 +102,7 @@ export async function removeImageFromStorage(fileUrl: string): Promise<boolean> 
     const options: GetSignedUrlConfig = {
       version: 'v4',
       action: "read",
-      expires: Date.now() + (15 * 60 * 1000), // 15 minutes
+      expires: Date.now() + (1 * 60 * 1000),
     };
     const fileName = fileUrl.split("/").pop() as string;
     // Get a signed URL for the file
