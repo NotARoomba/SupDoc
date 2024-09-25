@@ -24,30 +24,36 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
               number: number ?? "",
             },
           ],
-        })) ?? (await encryption.getKeyByAltName(id.toString(2))))
-          ? ((await collections.patients.findOne({
-              $or: [
-                {
-                  "identification.number": await encryption.encrypt(id, {
-                    algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                    keyAltName: id.toString(2),
-                  }),
-                },
-                {
-                  number: await encryption.encrypt(number ?? "", {
-                    algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                    keyAltName: id.toString(2),
-                  }),
-                },
-              ],
-            })) as User)
-          : null;
-    }
-    if (!user) return res.status(200).send({ status: STATUS_CODES.SUCCESS });
-    else if (user.identification.number == id)
-      return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
-    else if (user.number == number)
-      res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+        })))
+        if (user) {
+          if (user.identification.number == id)
+          return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
+          else if (user.number == number)
+            res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+        }
+        user = (await encryption.getKeyByAltName(id.toString(2)))? ((await collections.patients.findOne({
+            $or: [
+              {
+                "identification.number": await encryption.encrypt(id, {
+                  algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                  keyAltName: id.toString(2),
+                }),
+              },
+              {
+                number: await encryption.encrypt(number ?? "", {
+                  algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                  keyAltName: id.toString(2),
+                }),
+              },
+            ],
+          })) as User)
+        : null;
+        if (!user) return res.status(200).send({ status: STATUS_CODES.SUCCESS });
+        else if (user.identification.number == id)
+          return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
+        else if (user.number == number)
+          res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+        }
   } catch (error) {
     if (error instanceof MongoCryptError) {
       return res.status(200).send({ status: STATUS_CODES.SUCCESS });
