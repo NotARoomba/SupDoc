@@ -14,24 +14,24 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
   try {
     let user: User | null = null;
     if (collections.patients && collections.doctors) {
-      user =
-        ((await collections.doctors.findOne({
-          $or: [
-            {
-              "identification.number": id,
-            },
-            {
-              number: number ?? "",
-            },
-          ],
-        })))
-        if (user) {
-          if (user.identification.number == id)
+      user = await collections.doctors.findOne({
+        $or: [
+          {
+            "identification.number": id,
+          },
+          {
+            number: number ?? "",
+          },
+        ],
+      });
+      if (user) {
+        if (user.identification.number == id)
           return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
-          else if (user.number == number)
-            res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
-        }
-        user = (await encryption.getKeyByAltName(id.toString(2)))? ((await collections.patients.findOne({
+        else if (user.number == number)
+          res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+      }
+      user = (await encryption.getKeyByAltName(id.toString(2)))
+        ? ((await collections.patients.findOne({
             $or: [
               {
                 "identification.number": await encryption.encrypt(id, {
@@ -48,12 +48,12 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
             ],
           })) as User)
         : null;
-        if (!user) return res.status(200).send({ status: STATUS_CODES.SUCCESS });
-        else if (user.identification.number == id)
-          return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
-        else if (user.number == number)
-          res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
-        }
+      if (!user) return res.status(200).send({ status: STATUS_CODES.SUCCESS });
+      else if (user.identification.number == id)
+        return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
+      else if (user.number == number)
+        res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+    }
   } catch (error) {
     if (error instanceof MongoCryptError) {
       return res.status(200).send({ status: STATUS_CODES.SUCCESS });

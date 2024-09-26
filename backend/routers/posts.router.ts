@@ -26,7 +26,15 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
         .status(200)
         .send(
           encrypt(
-             {post: {...post, images: await Promise.all(post.images.map(async (v) => await generateSignedUrl(v)))}, status: STATUS_CODES.SUCCESS },
+            {
+              post: {
+                ...post,
+                images: await Promise.all(
+                  post.images.map(async (v) => await generateSignedUrl(v)),
+                ),
+              },
+              status: STATUS_CODES.SUCCESS,
+            },
             req.headers.authorization,
           ),
         );

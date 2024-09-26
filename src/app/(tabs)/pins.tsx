@@ -22,7 +22,6 @@ export default function Pins() {
   const list = useRef<FlashList<Post> | null>(null);
   const fetchData = async () => {
     setLoading(true);
-    console.log(`/doctors/saved/${posts.length == 0 ? 0 : posts[posts.length-1].timestamp}`)
     const res = await callAPI(
       `/doctors/saved/${posts.length == 0 ? 0 : posts[posts.length-1].timestamp}`,
       "GET",
@@ -36,7 +35,6 @@ export default function Pins() {
     list.current?.prepareForLayoutAnimationRender();
     // After removing the item, we can start the animation.
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    await SplashScreen.hideAsync();
   };
   useEffect(() => {
     fetchData();
@@ -45,13 +43,13 @@ export default function Pins() {
     <Animated.View style={{ opacity: fadeAnim }} className={"h-full " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}>
         <Text className="text-6xl font-bold text-center text-ivory">{t("titles.pins")}</Text>
         {posts.length == 0 ? (
-            !loading ? (
-              <View>
+            loading ? (
+              <View className="h-fit">
                 <LoaderView />
               </View>
             ) : (
               <Text className=" text-center text-powder_blue/80">
-                {t("posts.none")}
+                {t("posts.savedNone")}
               </Text>
             )
           ) : <FlashList

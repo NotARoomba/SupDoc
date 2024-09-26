@@ -29,7 +29,7 @@ export default function PostBlock({
   }));
 
   const savePost = async () => {
-    const res = await callAPI("/posts/save", "GET");
+    const res = await callAPI(`/posts/${post._id?.toString()}/save`, "GET");
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
   };

@@ -38,6 +38,7 @@
         "picture": "Upload a profile photo"
     },
     "posts": {
+        "savedNone": "(You have not saved any posts)",
         "feedNone": "(There are no posts)",
         "none": "(You have not posted anything yet)"
     },

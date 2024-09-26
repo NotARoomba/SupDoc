@@ -14,6 +14,7 @@ import {
   Dimensions,
   Keyboard,
   Platform,
+  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
@@ -53,6 +54,7 @@ export default function PostPage() {
     }
   };
   return (
+    <><SafeAreaView className="bg-richer_black" />
     <Animated.View
       style={{ opacity: fadeAnim }}
       className={
@@ -108,7 +110,7 @@ export default function PostPage() {
         </TouchableOpacity>
       </View>
       {post ? (
-        <Reanimated.View
+        <Reanimated.ScrollView
           entering={FadeIn.duration(500)}
           exiting={FadeOut.duration(500)}
           className="h-full z-10 w-full"
@@ -183,7 +185,7 @@ export default function PostPage() {
               <></>
             )}
           </View>
-        </Reanimated.View>
+        </Reanimated.ScrollView>
       ) : (
         <LoaderView />
       )}
@@ -195,6 +197,6 @@ export default function PostPage() {
         textStyle={{ color: "#fff", marginTop: -25 }}
         animation="fade"
       />
-    </Animated.View>
+    </Animated.View></>
   );
 }

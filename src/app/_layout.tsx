@@ -42,7 +42,7 @@ export default function RootLayout() {
               name="Post"
               options={{
                 headerShown: false,
-                presentation: "modal",
+                presentation: "fullScreenModal",
               }}
             />
           </Stack>
