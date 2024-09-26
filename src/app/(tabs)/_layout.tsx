@@ -18,9 +18,13 @@ export default function TabLayout() {
       const ut = (await SecureStore.getItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
       )) as UserType;
-      const res = await callAPI(`/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`, "GET")
+      const res = await callAPI(
+        `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
+        "GET",
+      );
       if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
-      else if (res.status == STATUS_CODES.GENERIC_ERROR) return Alert.alert("Error", "There was an error fetching your data!")
+      else if (res.status == STATUS_CODES.GENERIC_ERROR)
+        return Alert.alert("Error", "There was an error fetching your data!");
       setUserType(ut);
       await SplashScreen.hideAsync();
     };

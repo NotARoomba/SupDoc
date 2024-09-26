@@ -18,11 +18,11 @@ import {
   uploadImages,
 } from "components/utils/Functions";
 import { BirthSex, Sex, UserType } from "components/utils/Types";
-import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import * as SecureStore from "expo-secure-store";
 import parsePhoneNumber from "libphonenumber-js";
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Alert,
   Animated,
@@ -39,7 +39,6 @@ import {
 import { CountryPicker } from "react-native-country-codes-picker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
 
 export default function Profile() {
   const camera = useCamera();
@@ -99,20 +98,22 @@ export default function Profile() {
   }, []);
   const updateUser = async () => {
     // NEED TO CHECK IF PATIENT WITH THE USEREDIT
-    let doctorStuff = {}
-      if (userType &&
+    let doctorStuff = {};
+    if (
+      userType &&
       userEdit &&
       user &&
       isDoctorInfo(userType, userEdit) &&
       isDoctorInfo(userType, user) &&
-      userEdit.picture !== user.picture){
-        const res = await uploadImages([userEdit.picture]);
+      userEdit.picture !== user.picture
+    ) {
+      const res = await uploadImages([userEdit.picture]);
       if (res.status !== STATUS_CODES.SUCCESS) {
         setLoading(false);
         return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
       }
-            doctorStuff  = {picture:res.urls[0]}
-          }
+      doctorStuff = { picture: res.urls[0] };
+    }
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/update`,
       "POST",
@@ -125,12 +126,10 @@ export default function Profile() {
     if (res.status != STATUS_CODES.SUCCESS) {
       setUserEdit(user);
       setLoading(false);
-      return Alert.alert(
-        t("error"),
-        ("errors.updateData"),
-      );
+      return Alert.alert(t("error"), "errors.updateData");
     } else {
-      if (userType && user && isDoctorInfo(userType, user)) await callAPI(`/images/${user.picture}/delete`, "GET")
+      if (userType && user && isDoctorInfo(userType, user))
+        await callAPI(`/images/${user.picture}/delete`, "GET");
       setUser(res.user);
       setUserEdit({
         ...res.user,
@@ -278,17 +277,26 @@ export default function Profile() {
                       isDoctorInfo(userType, userEdit) && (
                         <TouchableOpacity className=" w-48 h-48  aspect-square flex border-dashed border border-ivory/80 rounded-xl">
                           <View className="m-auto">
-                            
                             <Image
                               onLoadStart={() => setPictureLoaded(false)}
                               onLoad={() => setPictureLoaded(true)}
                               className={"rounded-xl h-full aspect-square"}
                               source={userEdit.picture}
                             />
-                            {!pictureLoaded && <View className="absolute rounded-xl w-48 h-48  z-50  flex"><Reanimated.View
+                            {!pictureLoaded && (
+                              <View className="absolute rounded-xl w-48 h-48  z-50  flex">
+                                <Reanimated.View
                                   entering={FadeIn.springify().damping(0)}
-                
-                                   className="m-auto"><Icons name="person" size={150} color={"#fbfff1"} /></Reanimated.View></View>}
+                                  className="m-auto"
+                                >
+                                  <Icons
+                                    name="person"
+                                    size={150}
+                                    color={"#fbfff1"}
+                                  />
+                                </Reanimated.View>
+                              </View>
+                            )}
                             <Pressable
                               onPress={() => setActiveChange(!activeChange)}
                               className="absolute rounded-xl w-48 h-48  z-50  flex"

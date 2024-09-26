@@ -39,7 +39,7 @@ export default function Index() {
       process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
     )) as UserType;
     const res = await callAPI(
-      `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/posts/${posts.length == 0 ? 0 : posts[posts.length-1].timestamp}`,
+      `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/posts/${posts.length == 0 ? 0 : posts[posts.length - 1].timestamp}`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS)
@@ -120,14 +120,15 @@ export default function Index() {
           {posts.length == 0 ? (
             !userType ? (
               // <View>
-                <LoaderView />
-              // </View>
+              <LoaderView />
             ) : (
+              // </View>
               <Text className=" text-center text-powder_blue/80">
                 {t("posts.feedNone")}
               </Text>
             )
-          ) : <FlashList
+          ) : (
+            <FlashList
               keyExtractor={(p) => {
                 return p.timestamp.toString();
               }}
@@ -137,7 +138,8 @@ export default function Index() {
               renderItem={({ item }) => (
                 <PostBlock post={item} userType={userType as UserType.DOCTOR} />
               )}
-            />}
+            />
+          )}
         </View>
       )}
       {/* </SkeletonContent> */}

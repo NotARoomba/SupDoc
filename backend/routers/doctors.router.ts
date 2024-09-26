@@ -223,6 +223,8 @@ doctorsRouter.get("/saved/:timestamp", async (req: Request, res: Response) => {
           publicKey: req.headers.authorization,
         })) as Doctor
       ).saved;
+      if (postIDs.length == 0) return res.send(
+        encrypt({posts: [], status: STATUS_CODES.SUCCESS}, req.headers.authorization))
       const posts = await collections.posts
         .find({ _id: {
           $in: postIDs.map((v) => new ObjectId(v)),

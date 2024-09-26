@@ -9,7 +9,6 @@ import {
   uploadImages,
 } from "components/utils/Functions";
 import CryptoJS from "crypto-es";
-import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
@@ -99,15 +98,20 @@ export default function Index({ setIsLogged }: IndexProps) {
     // if (isDoctorSignupInfo(userType, signUpInfo))
     //   console.log(signUpInfo.license[0].length / 1000);
     if (isDoctorSignupInfo(userType, signUpInfo)) {
-      console.log("SIGNUP")
-      console.log(signUpInfo.license)
-      const res = await uploadImages(signUpInfo.license.concat(signUpInfo.picture));
+      console.log("SIGNUP");
+      console.log(signUpInfo.license);
+      const res = await uploadImages(
+        signUpInfo.license.concat(signUpInfo.picture),
+      );
       console.log(res);
       if (res.status !== STATUS_CODES.SUCCESS) {
         setLoading(false);
         return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
       }
-      const [licence, picture] = [res.urls.slice(0, -1), res.urls[res.urls.length - 1]]
+      const [licence, picture] = [
+        res.urls.slice(0, -1),
+        res.urls[res.urls.length - 1],
+      ];
       signUpInfo.license = licence;
       signUpInfo.picture = picture;
     }
@@ -376,7 +380,11 @@ export default function Index({ setIsLogged }: IndexProps) {
                   : setUserType(UserType.PATIENT)
               }
               selected={
-                userType ? userType == UserType.DOCTOR ? t("doctor") : t("patient") : userType
+                userType
+                  ? userType == UserType.DOCTOR
+                    ? t("doctor")
+                    : t("patient")
+                  : userType
               }
             />
           </Animated.View>

@@ -8,7 +8,6 @@ import useFade from "components/misc/useFade";
 import useGallery from "components/misc/useGallery";
 import { useLoading } from "components/misc/useLoading";
 import { callAPI, uploadImages } from "components/utils/Functions";
-import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { t } from "i18next";
@@ -46,12 +45,13 @@ export default function Upload() {
     //     },
     //   )}`;
     const imgRes = await uploadImages(postData.images);
-      if (imgRes.status !== STATUS_CODES.SUCCESS) {
-        setLoading(false);
-        return Alert.alert(t("error"), t(STATUS_CODES[imgRes.status]));
-      }
+    if (imgRes.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
+      return Alert.alert(t("error"), t(STATUS_CODES[imgRes.status]));
+    }
     const res = await callAPI(`/posts/create`, "POST", {
-      ...postData, images: imgRes.urls 
+      ...postData,
+      images: imgRes.urls,
     });
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert("Error", "There was an error uploading your post!");
