@@ -38,7 +38,7 @@
         "picture": "Upload a profile photo"
     },
     "posts": {
-        "posts": "posts",
+        "feedNone": "(There are no posts)",
         "none": "(You have not posted anything yet)"
     },
     "titles": {
@@ -48,12 +48,8 @@
         "personal": "Personal Information",
         "fact": "Fun Fact",
         "posts": "Your Posts",
-        "index": "index",
-        "pins": "pins",
-        "Pins": "Pins",
-        "upload": "upload",
-        "settings": "settings",
-        "profile": "profile"
+        "feed": "Feed",
+        "Pins": "Pins"
     },
     "images": {
         "choose": "Please choose",

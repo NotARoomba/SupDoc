@@ -9,6 +9,8 @@ import {
   env,
 } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
+import { generateSignedUrl } from "../services/storage.service";
+import Post from "../models/post";
 
 export const patientsRouter = express.Router();
 
@@ -261,10 +263,10 @@ patientsRouter.get("/posts", async (req: Request, res: Response) => {
           },
         })
         .sort({ _id: -1 })
-        .toArray();
+        .toArray() as unknown as Post[];
       res.send(
         encrypt(
-          { posts, status: STATUS_CODES.SUCCESS },
+          { posts: await Promise.all(posts.map(async v => ({...v, images: (await Promise.all(v.images.map(async v => await generateSignedUrl(v))))}))), status: STATUS_CODES.SUCCESS },
           req.headers.authorization,
         ),
       );

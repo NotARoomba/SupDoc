@@ -58,6 +58,7 @@ export default function Profile() {
   const [altSexItems, setAltSexItems] = useState(
     Object.values(Sex).map((s) => ({ label: s, value: s })),
   );
+  const [pictureLoaded, setPictureLoaded] = useState(true);
   const fadeAnim = useFade();
   const { t } = useTranslation();
   useEffect(() => {
@@ -277,10 +278,17 @@ export default function Profile() {
                       isDoctorInfo(userType, userEdit) && (
                         <TouchableOpacity className=" w-48 h-48  aspect-square flex border-dashed border border-ivory/80 rounded-xl">
                           <View className="m-auto">
+                            
                             <Image
-                              className="rounded-xl h-full aspect-square"
+                              onLoadStart={() => setPictureLoaded(false)}
+                              onLoad={() => setPictureLoaded(true)}
+                              className={"rounded-xl h-full aspect-square"}
                               source={userEdit.picture}
                             />
+                            {!pictureLoaded && <View className="absolute rounded-xl w-48 h-48  z-50  flex"><Reanimated.View
+                                  entering={FadeIn.springify().damping(0)}
+                
+                                   className="m-auto"><Icons name="person" size={150} color={"#fbfff1"} /></Reanimated.View></View>}
                             <Pressable
                               onPress={() => setActiveChange(!activeChange)}
                               className="absolute rounded-xl w-48 h-48  z-50  flex"

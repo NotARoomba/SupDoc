@@ -7,6 +7,7 @@ import { collections, env } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl, removeImageFromStorage, upload, uploadImageToStorage } from "../services/storage.service";
 import Post from "../models/post";
+import { ObjectId } from "mongodb";
 
 export const doctorsRouter = express.Router();
 
@@ -191,6 +192,41 @@ doctorsRouter.get("/posts/:timestamp", async (req: Request, res: Response) => {
     if (collections.posts) {
       const posts = await collections.posts
         .find({ timestamp: { $gt: timestamp } })
+        .sort({ timestamp: -1 })
+        .limit(8)
+        .toArray() as unknown as Post[];
+        // this is hell
+      res.send(
+        encrypt(
+          { posts: await Promise.all(posts.map(async v => ({...v, images: (await Promise.all(v.images.map(async v => await generateSignedUrl(v))))}))), status: STATUS_CODES.SUCCESS },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res.send(
+      encrypt(
+        { status: STATUS_CODES.GENERIC_ERROR },
+        req.headers.authorization,
+      ),
+    );
+  }
+});
+
+doctorsRouter.get("/saved/:timestamp", async (req: Request, res: Response) => {
+  const timestamp: number = parseInt(req.params.timestamp);
+  try {
+    if (collections.posts && collections.doctors) {
+      const postIDs = (
+        (await collections.doctors.findOne({
+          publicKey: req.headers.authorization,
+        })) as Doctor
+      ).saved;
+      const posts = await collections.posts
+        .find({ _id: {
+          $in: postIDs.map((v) => new ObjectId(v)),
+        }, timestamp: { $gt: timestamp } })
         .sort({ timestamp: -1 })
         .limit(8)
         .toArray() as unknown as Post[];
