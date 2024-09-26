@@ -13,15 +13,16 @@ import Reanimated, {
   withSpring,
 } from "react-native-reanimated";
 import useFade from "./useFade";
+import { useState } from "react";
 
 export default function PostBlock({
   post,
   userType,
-  saved,
   blur,
 }: PostBlockProps) {
   const fadeAnim = useFade(true);
   const { t } = useTranslation();
+  const [saved, setSaved] = useState(true);
   const ReanimatedBlurView = Reanimated.createAnimatedComponent(BlurView);
   const blurIntensity = useSharedValue(50);
   const animatedBlurProps = useAnimatedProps(() => ({
@@ -29,9 +30,10 @@ export default function PostBlock({
   }));
 
   const savePost = async () => {
-    const res = await callAPI(`/posts/${post._id?.toString()}/save`, "GET");
+    const res = await callAPI(`/posts/${post._id?.toString()}/${saved? "unsave" : "save"}`, "GET");
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+    else setSaved(!saved);
   };
 
   return (

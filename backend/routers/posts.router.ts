@@ -361,19 +361,27 @@ postsRouter.get("/:id/save", async (req: Request, res: Response) => {
   const id = req?.params?.id;
   try {
     if (collections.posts && collections.doctors) {
-      const post = (await collections.posts.findOne({
-        _id: new ObjectId(id),
-      })) as unknown as Post;
       const updated = await collections.doctors.updateOne(
         { publicKey: req.headers.authorization },
-        { $push: { saved: post._id?.toString() } },
+        [
+          { 
+               $set: { 
+                   saved: { 
+                       $cond: [ { $in: [ id, "$arr" ] }, 
+                                { $setDifference: [ "$arr", [ id ] ] }, 
+                                { $concatArrays: [ "$arr", [ id ] ] } 
+                       ] 
+                   }
+               }
+          }
+       ],
       );
       if (updated.acknowledged) {
         res
           .status(200)
           .send(
             encrypt(
-              { post, status: STATUS_CODES.SUCCESS },
+              { status: STATUS_CODES.SUCCESS },
               req.headers.authorization,
             ),
           );

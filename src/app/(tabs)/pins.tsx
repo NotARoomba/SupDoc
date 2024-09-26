@@ -1,13 +1,13 @@
 import useFade from "components/misc/useFade";
 import { useLoading } from "components/misc/useLoading";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Animated, LayoutAnimation, Platform, Text, View } from "react-native";
 import * as SecureStore from 'expo-secure-store'
 import { STATUS_CODES } from "@/backend/models/util";
 import { callAPI, logout } from "components/utils/Functions";
 import { UserType } from "components/utils/Types";
-import { SplashScreen } from "expo-router";
+import { SplashScreen, useFocusEffect } from "expo-router";
 import Post from "@/backend/models/post";
 import { FlashList } from "@shopify/flash-list";
 import LoaderView from "components/misc/LoaderView";
@@ -39,6 +39,11 @@ export default function Pins() {
   useEffect(() => {
     fetchData();
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+     fetchData();
+    }, []),
+  );
   return (
     <Animated.View style={{ opacity: fadeAnim }} className={"h-full " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}>
         <Text className="text-6xl font-bold text-center text-ivory">{t("titles.pins")}</Text>
