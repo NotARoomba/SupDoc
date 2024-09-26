@@ -22,6 +22,7 @@ export default function Pins() {
   const list = useRef<FlashList<Post> | null>(null);
   const fetchData = async () => {
     setLoading(true);
+    console.log(`/doctors/saved/${posts.length == 0 ? 0 : posts[posts.length-1].timestamp}`)
     const res = await callAPI(
       `/doctors/saved/${posts.length == 0 ? 0 : posts[posts.length-1].timestamp}`,
       "GET",
