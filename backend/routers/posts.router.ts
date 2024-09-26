@@ -364,17 +364,18 @@ postsRouter.get("/:id/save", async (req: Request, res: Response) => {
       const updated = await collections.doctors.updateOne(
         { publicKey: req.headers.authorization },
         [
-          { 
-               $set: { 
-                   saved: { 
-                       $cond: [ { $in: [ id, "$arr" ] }, 
-                                { $setDifference: [ "$arr", [ id ] ] }, 
-                                { $concatArrays: [ "$arr", [ id ] ] } 
-                       ] 
-                   }
-               }
+          {
+            $set: {
+              saved: {
+                $cond: {
+                  if: { $in: [ id, "$saved" ] },    // Check if 'id' is in the 'saved' array
+                  then: { $setDifference: [ "$saved", [ id ] ] }, // Remove 'id' if it exists
+                  else: { $concatArrays: [ "$saved", [ id ] ] }   // Add 'id' if it doesn't exist
+                }
+              }
+            }
           }
-       ],
+        ]
       );
       if (updated.acknowledged) {
         res
