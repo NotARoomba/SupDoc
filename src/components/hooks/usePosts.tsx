@@ -14,6 +14,7 @@ import React, {
 import { Alert } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
+import * as SecureStore from 'expo-secure-store'
 
 // Define the types for the context
 interface PostsContextType {
@@ -51,7 +52,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS)
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
-        : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+        : Alert.alert(t("errorsss"), t(STATUS_CODES[res.status]));
     setPosts(res.posts);
     await Image.prefetch(
       (res.posts as Post[]).map((v: Post) => v.images).flat(),
@@ -129,10 +130,12 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       Alert.alert("Success", "Sucessfully uploaded your post!");
     }
   };
-  useEffect(() => {
-    fetchPosts().then(async () => await SplashScreen.hideAsync());
-    if (userType == UserType.DOCTOR) fetchSavedPosts();
-  }, []);
+  useEffect(() => { 
+    if (userType) {
+      fetchPosts().then(async () => await SplashScreen.hideAsync());
+      if (userType == UserType.DOCTOR) fetchSavedPosts();
+    }
+  }, [userType]);
   return (
     <PostsContext.Provider
       value={{

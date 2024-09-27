@@ -8,7 +8,6 @@ import { Platform } from "react-native";
 export default function TabLayout() {
   const { userType } = useUser();
   return (
-    <PostsProvider>
       <Tabs
         screenOptions={({ route }) => ({
           tabBarLabel: () => null,
@@ -89,6 +88,5 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </PostsProvider>
   );
 }

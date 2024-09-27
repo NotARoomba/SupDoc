@@ -18,7 +18,7 @@ import { useLoading } from "./useLoading";
 interface UserContextType {
   user: User;
   userEdit: User;
-  userType: UserType;
+  userType: UserType | undefined;
   fetchUser: () => void;
   setUser: (user: User) => void;
   setUserEdit: (user: User) => void;
@@ -35,7 +35,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const { setLoading } = useLoading();
   const [user, setUser] = useState<User>({} as User);
   const [userEdit, setUserEdit] = useState<User>({} as User);
-  const [userType, setUserType] = useState<UserType>(UserType.PATIENT);
+  const [userType, setUserType] = useState<UserType>();
   const fetchUser = async () => {
     setLoading(true);
     const ut = (await SecureStore.getItemAsync(

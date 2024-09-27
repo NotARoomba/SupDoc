@@ -64,7 +64,7 @@ export default function Profile() {
     const fetchData = async () => {
       // setLoading(true);
 
-      if (isPatientInfo(userType, user)) {
+      if (isPatientInfo(userType as UserType, user)) {
         setTrans(
           user.info.altSex != undefined && user.info.sex !== user.info.altSex,
         );

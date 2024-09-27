@@ -2,9 +2,12 @@ import Post from "@/backend/models/post";
 import { STATUS_CODES } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import useFade from "components/hooks/useFade";
+import { usePosts } from "components/hooks/usePosts";
+import { useUser } from "components/hooks/useUser";
 import Loader from "components/loading/Loader";
 import LoaderView from "components/loading/LoaderView";
 import { callAPI } from "components/utils/Functions";
+import { UserType } from "components/utils/Types";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,6 +28,8 @@ import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 export default function PostPage() {
   const routes = useLocalSearchParams();
+  const {posts} = usePosts();
+  const {userType} = useUser();
   const fadeAnim = useFade();
   const [post, setPost] = useState<Post>();
   const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -34,12 +39,8 @@ export default function PostPage() {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
-      const res = await callAPI(`/posts/${routes.id}`, "GET");
-      if (res.status !== STATUS_CODES.SUCCESS) {
-        router.navigate("/(tabs)");
-        return Alert.alert(t("error"), t(`${STATUS_CODES[res.status]}`));
-      }
-      setPost(res.post);
+      
+      setPost(posts.find(v => v._id?.toString() == routes.id));
     };
     fetchData();
   }, []);
@@ -86,6 +87,8 @@ export default function PostPage() {
           Post
         </Text> */}
           <TouchableOpacity
+          disabled={userType == UserType.DOCTOR}
+            style={{opacity: userType == UserType.DOCTOR ? 0 : 1}}
             className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
               true
