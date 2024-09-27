@@ -6,7 +6,7 @@ import { PostBlockProps } from "components/utils/Types";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
 import Reanimated, {
@@ -16,7 +16,12 @@ import Reanimated, {
 } from "react-native-reanimated";
 import Skeleton from "react-native-reanimated-skeleton";
 
-export default function PostBlock({ post, userType, saved }: PostBlockProps) {
+export default function PostBlock({
+  post,
+  userType,
+  saved,
+  listRef,
+}: PostBlockProps) {
   const fadeAnim = useFade(true);
   const [s, setSaved] = useState(saved);
   const { t } = useTranslation();
@@ -27,7 +32,7 @@ export default function PostBlock({ post, userType, saved }: PostBlockProps) {
   const animatedBlurProps = useAnimatedProps(() => ({
     intensity: withSpring(blurIntensity.value, { damping: 15, stiffness: 90 }),
   }));
-
+  useEffect(() => console.log(post), []);
   return (
     <Animated.View
       style={{ opacity: fadeAnim }}

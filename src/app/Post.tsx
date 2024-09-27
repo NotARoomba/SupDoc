@@ -7,6 +7,7 @@ import { useUser } from "components/hooks/useUser";
 import Loader from "components/loading/Loader";
 import LoaderView from "components/loading/LoaderView";
 import { callAPI } from "components/utils/Functions";
+import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,6 +25,7 @@ import {
 import Gallery, { GalleryRef } from "react-native-awesome-gallery";
 import Spinner from "react-native-loading-spinner-overlay";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Skeleton from "react-native-reanimated-skeleton";
 
 export default function PostPage() {
   const routes = useLocalSearchParams();
@@ -140,6 +142,38 @@ export default function PostPage() {
                   containerDimensions={{
                     width: Dimensions.get("window").width * (11 / 12),
                     height: Dimensions.get("window").width * (11 / 12),
+                  }}
+                  renderItem={(v) => {
+                    const [pictureLoading, setPictureLoading] = useState(false);
+                    return (
+                      <View className="h-full w-full">
+                        <Image
+                          className="h-full w-full"
+                          onLoadStart={() => setPictureLoading(true)}
+                          onLoad={() => setPictureLoading(false)}
+                          source={v.item}
+                        />
+                        <View className="h-full w-full absolute top-0-z-10">
+                          <Skeleton
+                            // animationType="pulse"
+                            boneColor="#041225"
+                            highlightColor="#b4c5e410"
+                            animationDirection="diagonalDownRight"
+                            layout={[
+                              {
+                                width: "100%",
+                                height: "auto",
+                                aspectRatio: 1 / 1,
+                                position: "absolute",
+                                top: 0,
+                                zIndex: 50,
+                              },
+                            ]}
+                            isLoading={pictureLoading}
+                          ></Skeleton>
+                        </View>
+                      </View>
+                    );
                   }}
                   onIndexChange={(i) => setIndex(i)}
                   data={post.images}

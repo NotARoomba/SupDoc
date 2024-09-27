@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { DeleteResult, ObjectId, PushOperator } from "mongodb";
 import Comment from "../models/comment";
+import Patient from "../models/patient";
 import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
 import { collections, encryption } from "../services/database.service";
@@ -100,19 +101,11 @@ postsRouter.get("/:id/delete", async (req: Request, res: Response) => {
 
 postsRouter.post("/create", async (req: Request, res: Response) => {
   const data: Post = req.body;
-  if (!data.patient) {
-    const patient = await collections.patients?.findOne({
-      publicKey: req.headers.authorization,
-    });
-    if (patient) data.patient = patient.identification.number;
-    else
-      return res.send(
-        encrypt(
-          { status: STATUS_CODES.USER_NOT_FOUND },
-          req.headers.authorization,
-        ),
-      );
-  }
+  const patient = (await collections.patients?.findOne({
+    publicKey: req.headers.authorization,
+  })) as Patient;
+  data.patient = patient.identification.number;
+
   const keyAltName = data.patient.toString(2);
   try {
     if (collections.posts) {
@@ -133,6 +126,10 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
         patient: await encryption.encrypt(data.patient, {
           keyAltName,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+        }),
+        info: await encryption.encrypt(patient.info, {
+          keyAltName,
+          algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
         }),
         timestamp: Date.now(),
 
@@ -155,7 +152,16 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
           .status(200)
           .send(
             encrypt(
-              { status: STATUS_CODES.SUCCESS },
+              {
+                post: {
+                  ...data,
+                  _id: postInsert.insertedId,
+                  images: await Promise.all(
+                    data.images.map(async (v) => await generateSignedUrl(v)),
+                  ),
+                },
+                status: STATUS_CODES.SUCCESS,
+              },
               req.headers.authorization,
             ),
           );

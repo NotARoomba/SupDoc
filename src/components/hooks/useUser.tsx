@@ -19,7 +19,7 @@ interface UserContextType {
   user: User;
   userEdit: User;
   userType: UserType | undefined;
-  fetchUser: () => void;
+  fetchUser: () => Promise<void>;
   setUser: (user: User) => void;
   setUserEdit: (user: User) => void;
 }
@@ -41,6 +41,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const ut = (await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
     )) as UserType;
+    if (!ut) return setLoading(false);
     setUserType(ut);
     const res = await callAPI(
       `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
@@ -54,7 +55,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       ...res.user,
       number: parsePhoneNumber(res.user.number)?.nationalNumber,
     });
-    Image.prefetch(res.user.picture);
+    if (ut == UserType.DOCTOR) Image.prefetch(res.user.picture);
     setLoading(false);
   };
 

@@ -47,11 +47,11 @@ export default function Upload() {
       if (pickerType === "camera") {
         result = await camera.takePhoto({
           allowsEditing: true,
-          quality: 1,
+          quality: 0.5,
         } as ImagePicker.ImagePickerOptions);
       } else {
         result = await gallery.selectImage({
-          quality: 1,
+          quality: 0.5,
           allowsEditing: true,
         });
       }

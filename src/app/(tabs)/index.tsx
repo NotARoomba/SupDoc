@@ -1,4 +1,3 @@
-import Post from "@/backend/models/post";
 import { UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import useFade from "components/hooks/useFade";
@@ -9,7 +8,7 @@ import FunFact from "components/misc/FunFact";
 import PostBlock from "components/misc/PostBlock";
 // import SkeletonContent from 'react-native-reanimated-skeleton'
 import { SplashScreen } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Animated,
@@ -20,14 +19,14 @@ import {
   View,
 } from "react-native";
 export default function Index() {
-  const { posts, savedPosts } = usePosts();
-  const list = useRef<FlashList<Post> | null>(null);
+  const { posts, listRef } = usePosts();
+  // const listRef = useRef<FlashList<Post> | null>(null);
   const { userType } = useUser();
   // const [loading, setLoading] = useState(false);
   const fadeAnim = useFade();
   const { t } = useTranslation();
   const fetchData = async () => {
-    list.current?.prepareForLayoutAnimationRender();
+    listRef.current?.prepareForLayoutAnimationRender();
     // After removing the item, we can start the animation.
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await SplashScreen.hideAsync();
@@ -73,7 +72,7 @@ export default function Index() {
               estimatedItemSize={281}
               data={posts}
               renderItem={({ item }) => (
-                <PostBlock post={item} userType={userType} />
+                <PostBlock post={item} listRef={listRef} userType={userType} />
               )}
             />
           )}
@@ -95,12 +94,17 @@ export default function Index() {
             )
           ) : (
             <FlashList
+              ref={listRef}
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
               data={posts}
               renderItem={({ item }) => (
-                <PostBlock post={item} userType={userType as UserType.DOCTOR} />
+                <PostBlock
+                  post={item}
+                  listRef={listRef}
+                  userType={userType as UserType.DOCTOR}
+                />
               )}
             />
           )}

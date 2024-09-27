@@ -1,17 +1,21 @@
+import { PatientMetrics } from "@/backend/models/metrics";
 import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
+import { FlashList } from "@shopify/flash-list";
 import { callAPI, logout, uploadImages } from "components/utils/Functions";
 import { Image } from "expo-image";
 import { SplashScreen, router } from "expo-router";
 import { t } from "i18next";
 import React, {
+  MutableRefObject,
   ReactNode,
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
-import { Alert } from "react-native";
+import { Alert, LayoutAnimation } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
 
@@ -20,9 +24,10 @@ interface PostsContextType {
   posts: Post[];
   postEdit: Post | undefined;
   savedPosts: Post[];
+  listRef: MutableRefObject<FlashList<Post> | null>;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
-  fetchPosts: () => void;
+  fetchPosts: () => Promise<void>;
   savePost: (post: Post) => Promise<boolean>;
   deletePost: (id: string) => Promise<void>;
   addComment: (id: string, isParent?: boolean) => Promise<void>;
@@ -42,6 +47,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
   const [postEdit, setPostEdit] = useState<Post>();
   const { userType } = useUser();
+  const listRef = useRef<FlashList<Post> | null>(null);
   const fetchPosts = async () => {
     setLoading(true);
     const res = await callAPI(
@@ -78,6 +84,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     const found = savedPosts.find((v) => v._id === post._id);
     if (found) setSavedPosts(savedPosts.filter((v) => v._id !== post._id));
     else setSavedPosts([...savedPosts, post]);
+    listRef.current?.prepareForLayoutAnimationRender();
+    // After removing the item, we can start the animation.
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     return true;
   };
 
@@ -89,7 +98,12 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     else {
       Alert.alert("Success", "Sucessfully deleted your post");
       setLoading(false);
-      return router.navigate({ pathname: "/(tabs)", params: { refresh: 1 } });
+      listRef.current?.prepareForLayoutAnimationRender();
+      // After removing the item, we can start the animation.
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setPosts(posts.filter((v) => v._id?.toString() !== id));
+      setSavedPosts(savedPosts.filter((v) => v._id?.toString() !== id));
+      // return router.navigate({ pathname: "/(tabs)", params: { refresh: 1 } });
     }
   };
 
@@ -102,6 +116,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       images: [],
       patient: 0,
       reports: [],
+      info: {} as PatientMetrics,
       timestamp: 0,
       comments: [],
     } as Post);
@@ -149,6 +164,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         posts,
         postEdit,
         savedPosts,
+        listRef,
         setPostEdit,
         resetPostEdit,
         createPost,

@@ -12,8 +12,8 @@ export default function Pins() {
   const { t } = useTranslation();
   const fadeAnim = useFade();
   const { loading } = useLoading();
-  const { savedPosts } = usePosts();
-  // const list = useRef<FlashList<Post> | null>(null);
+  const { savedPosts, listRef } = usePosts();
+  // const listRef = useRef<FlashList<Post> | null>(null);
   // const fetchData = async () => {
 
   //   list.current?.prepareForLayoutAnimationRender();
@@ -53,7 +53,12 @@ export default function Pins() {
           estimatedItemSize={281}
           data={savedPosts}
           renderItem={({ item }) => (
-            <PostBlock post={item} saved userType={UserType.DOCTOR} />
+            <PostBlock
+              post={item}
+              listRef={listRef}
+              saved
+              userType={UserType.DOCTOR}
+            />
           )}
         />
       )}

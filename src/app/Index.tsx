@@ -2,6 +2,8 @@ import { Doctor } from "@/backend/models/doctor";
 import { STATUS_CODES } from "@/backend/models/util";
 import prompt from "@powerdesigninc/react-native-prompt";
 import { useLoading } from "components/hooks/useLoading";
+import { usePosts } from "components/hooks/usePosts";
+import { useUser } from "components/hooks/useUser";
 import {
   callAPI,
   isDoctorSignupInfo,
@@ -38,6 +40,8 @@ export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [userType, setUserType] = useState<UserType>();
+  const { fetchUser } = useUser();
+  const { fetchPosts } = usePosts();
   const [signUpInfo, setSignUpInfo] = useState<
     SignupInfo<UserType.DOCTOR> | SignupInfo<UserType.PATIENT>
   >({} as SignupInfo<UserType.PATIENT>);
@@ -165,7 +169,9 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         signUpInfo.password,
       );
-      setLoading(false);
+      await fetchUser();
+      await fetchPosts();
+      // setLoading(false);
       return setIsLogged(true);
     } else {
       console.log(create);
@@ -302,8 +308,10 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         loginInfo.password,
       );
-      setLoading(false);
-      Alert.alert(t("success"), t("successMsg.signup"));
+      await fetchUser();
+      await fetchPosts();
+      // setLoading(false);
+      Alert.alert(t("success"), t("successMsg.login"));
       return setIsLogged(true);
     } catch (e) {
       setLoading(false);
