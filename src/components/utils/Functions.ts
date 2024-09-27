@@ -123,18 +123,18 @@ export async function uploadImages(imageUris: string[]) {
 
     // Encrypt FormData
     // const data = formData; // FormData needs special handling for encryption
-    const key = CryptoJS.SHA256(JSON.stringify(formData)).toString();
-    const encryptedKey = await RSA.encrypt(
-      key,
-      process.env.EXPO_PUBLIC_SERVER_PUBLIC,
-    );
-    const encryptedData = CryptoJS.AES.encrypt(
-      JSON.stringify(formData),
-      key,
-    ).toString();
+    // const key = CryptoJS.SHA256(JSON.stringify(formData)).toString();
+    // const encryptedKey = await RSA.encrypt(
+    //   key,
+    //   process.env.EXPO_PUBLIC_SERVER_PUBLIC,
+    // );
+    // const encryptedData = CryptoJS.AES.encrypt(
+    //   JSON.stringify(formData),
+    //   key,
+    // ).toString();
     // formData.append('key', encryptedKey)
-    const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
-    console.log(magic);
+    // const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
+    // console.log(magic);
     // Handle authorization
     const publicKey = await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,

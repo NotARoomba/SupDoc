@@ -1,9 +1,9 @@
 import Post from "@/backend/models/post";
 import { STATUS_CODES } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
-import Loader from "components/misc/Loader";
-import LoaderView from "components/misc/LoaderView";
-import useFade from "components/misc/useFade";
+import useFade from "components/hooks/useFade";
+import Loader from "components/loading/Loader";
+import LoaderView from "components/loading/LoaderView";
 import { callAPI } from "components/utils/Functions";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -54,73 +54,77 @@ export default function PostPage() {
     }
   };
   return (
-    <><SafeAreaView className="bg-richer_black" />
-    <Animated.View
-      style={{ opacity: fadeAnim }}
-      className={
-        "h-full bg-richer_black relative " +
-        (Platform.OS == "ios" ? "pt-16" : "pt-24")
-      }
-    >
-      <View
+    <>
+      <SafeAreaView className="bg-richer_black" />
+      <Animated.View
+        style={{ opacity: fadeAnim }}
         className={
-          " absolute w-full p-4 flex justify-between z-50 flex-row " +
-          (Platform.OS == "android" ? "top-7" : "")
+          "h-full bg-richer_black relative " +
+          (Platform.OS == "ios" ? "pt-16" : "pt-24")
         }
       >
-        <TouchableOpacity
-          onPress={() => (keyboardOpen ? Keyboard.dismiss() : router.back())}
-          className="z-50 w-24  px-5 h-8 py-0 bg-ivory/20 rounded-full"
-        >
-          <Reanimated.Text
-            key={keyboardOpen ? "a" : "b"}
-            entering={FadeIn.duration(250)}
-            exiting={FadeOut.duration(250)}
-            className="text-ivory h-fit  text font-bold text-center m-auto"
-          >
-            {keyboardOpen ? "Cancel" : "Back"}
-          </Reanimated.Text>
-        </TouchableOpacity>
-        {/* <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
-          Post
-        </Text> */}
-        <TouchableOpacity
-          className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
-          onPress={() =>
-            true
-              ? Alert.alert(
-                  "Confirm",
-                  "Are you sure you want to delete the post?",
-                  [
-                    { text: "Cancel", style: "cancel" },
-                    {
-                      text: "Delete",
-                      style: "destructive",
-                      onPress: () => deletePost(),
-                    },
-                  ],
-                )
-              : Alert.alert("Error", "Please fill out the missing infromation")
+        <View
+          className={
+            " absolute w-full p-4 flex justify-between z-50 flex-row " +
+            (Platform.OS == "android" ? "top-7" : "")
           }
         >
-          {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
-          <Text className="text-ivory h-fit font-bold text-center m-auto">
-            Delete
-          </Text>
-        </TouchableOpacity>
-      </View>
-      {post ? (
-        <Reanimated.ScrollView
-          entering={FadeIn.duration(500)}
-          exiting={FadeOut.duration(500)}
-          className="h-full z-10 w-full"
-        >
-          <Text className="text-ivory w-11/12 text-left text-4xl mx-auto font-bold ">
-            {post.title}
-          </Text>
-          {post.images.length > 0 && (
-            <View className="flex relative w-11/12 aspect-square my-4 mx-auto">
-              {/* <Reanimated.ScrollView
+          <TouchableOpacity
+            onPress={() => (keyboardOpen ? Keyboard.dismiss() : router.back())}
+            className="z-50 w-24  px-5 h-8 py-0 bg-ivory/20 rounded-full"
+          >
+            <Reanimated.Text
+              key={keyboardOpen ? "a" : "b"}
+              entering={FadeIn.duration(250)}
+              exiting={FadeOut.duration(250)}
+              className="text-ivory h-fit  text font-bold text-center m-auto"
+            >
+              {keyboardOpen ? "Cancel" : "Back"}
+            </Reanimated.Text>
+          </TouchableOpacity>
+          {/* <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
+          Post
+        </Text> */}
+          <TouchableOpacity
+            className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
+            onPress={() =>
+              true
+                ? Alert.alert(
+                    "Confirm",
+                    "Are you sure you want to delete the post?",
+                    [
+                      { text: "Cancel", style: "cancel" },
+                      {
+                        text: "Delete",
+                        style: "destructive",
+                        onPress: () => deletePost(),
+                      },
+                    ],
+                  )
+                : Alert.alert(
+                    "Error",
+                    "Please fill out the missing infromation",
+                  )
+            }
+          >
+            {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
+            <Text className="text-ivory h-fit font-bold text-center m-auto">
+              Delete
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {post ? (
+          <Reanimated.ScrollView
+            entering={FadeIn.duration(500)}
+            exiting={FadeOut.duration(500)}
+            className="h-full z-10 w-full"
+          >
+            <Text className="text-ivory w-11/12 text-left text-4xl mx-auto font-bold ">
+              {post.title}
+            </Text>
+            {post.images.length > 0 && (
+              <View className="flex relative w-11/12 aspect-square my-4 mx-auto">
+                {/* <Reanimated.ScrollView
             centerContent
             horizontal
             entering={FadeIn.duration(500)}
@@ -135,68 +139,69 @@ export default function PostPage() {
             className={" flex aspect-square border border-solid border-ivory/80 rounded-xl " + (expanded != i ? "w-64 my-auto mx-2 h-64" : " w-screen aspect-square absolute top-0 z-50")}
           >
             <Image  source={{uri: v}} className=" z-50 aspect-square rounded-xl" /></TouchableOpacity>)}</Reanimated.ScrollView> */}
-              <Gallery
-                ref={galleryRef}
-                containerDimensions={{
-                  width: Dimensions.get("window").width * (11 / 12),
-                  height: Dimensions.get("window").width * (11 / 12),
-                }}
-                onIndexChange={(i) => setIndex(i)}
-                data={post.images}
-              />
-              <TouchableOpacity
-                disabled={index == 0}
-                className={
-                  "absolute top-1/2 -translate-y-5 left-4 transition-opacity duration-300" +
-                  (index == 0 ? " opacity-0" : " opacity-100")
-                }
-                onPress={() => galleryRef.current?.setIndex(index - 1, true)}
-              >
-                <Icons name="chevron-left" size={40} color="#fbfff1" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                disabled={index == post.images.length - 1}
-                className={
-                  "absolute top-1/2 -translate-y-5 right-4 transition-opacity duration-300" +
-                  (index == post.images.length - 1
-                    ? " opacity-0"
-                    : " opacity-100")
-                }
-                onPress={() => galleryRef.current?.setIndex(index + 1, true)}
-              >
-                <Icons name="chevron-right" size={40} color="#fbfff1" />
-              </TouchableOpacity>
-              {/* <View className="absolute flex justify-between w-full h-full"><View className="w-full m-auto flex flex-row justify-between px-4"><TouchableOpacity disabled={index == 0} className={index == 0 ? " animate-hide" : " animate-show"} onPress={() => galleryRef.current?.setIndex(index-1, true)}><Icons name="chevron-left" size={40} color="#fbfff1" /></TouchableOpacity><TouchableOpacity disabled={index == post.images.length-1} className={index == post.images.length-1 ? " animate-hide" : " animate-show"} onPress={() => galleryRef.current?.setIndex(index+1, true)}><Icons name="chevron-right" size={40} color="#fbfff1" /></TouchableOpacity></View></View> */}
-            </View>
-          )}
-          <View className="-z-10">
-            <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">
-              {post.description}
-            </Text>
-            <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
-            <Text className="text-4xl font-bold text-center text-ivory">
-              Comments
-            </Text>
-            {post.comments.length == 0 ? (
-              <Text className=" text-center text-powder_blue/80">
-                (There are no comments on your post yet)
-              </Text>
-            ) : (
-              <></>
+                <Gallery
+                  ref={galleryRef}
+                  containerDimensions={{
+                    width: Dimensions.get("window").width * (11 / 12),
+                    height: Dimensions.get("window").width * (11 / 12),
+                  }}
+                  onIndexChange={(i) => setIndex(i)}
+                  data={post.images}
+                />
+                <TouchableOpacity
+                  disabled={index == 0}
+                  className={
+                    "absolute top-1/2 -translate-y-5 left-4 transition-opacity duration-300" +
+                    (index == 0 ? " opacity-0" : " opacity-100")
+                  }
+                  onPress={() => galleryRef.current?.setIndex(index - 1, true)}
+                >
+                  <Icons name="chevron-left" size={40} color="#fbfff1" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={index == post.images.length - 1}
+                  className={
+                    "absolute top-1/2 -translate-y-5 right-4 transition-opacity duration-300" +
+                    (index == post.images.length - 1
+                      ? " opacity-0"
+                      : " opacity-100")
+                  }
+                  onPress={() => galleryRef.current?.setIndex(index + 1, true)}
+                >
+                  <Icons name="chevron-right" size={40} color="#fbfff1" />
+                </TouchableOpacity>
+                {/* <View className="absolute flex justify-between w-full h-full"><View className="w-full m-auto flex flex-row justify-between px-4"><TouchableOpacity disabled={index == 0} className={index == 0 ? " animate-hide" : " animate-show"} onPress={() => galleryRef.current?.setIndex(index-1, true)}><Icons name="chevron-left" size={40} color="#fbfff1" /></TouchableOpacity><TouchableOpacity disabled={index == post.images.length-1} className={index == post.images.length-1 ? " animate-hide" : " animate-show"} onPress={() => galleryRef.current?.setIndex(index+1, true)}><Icons name="chevron-right" size={40} color="#fbfff1" /></TouchableOpacity></View></View> */}
+              </View>
             )}
-          </View>
-        </Reanimated.ScrollView>
-      ) : (
-        <LoaderView />
-      )}
-      <Spinner
-        visible={loading}
-        overlayColor="#00000099"
-        textContent={"Loading"}
-        customIndicator={<Loader />}
-        textStyle={{ color: "#fff", marginTop: -25 }}
-        animation="fade"
-      />
-    </Animated.View></>
+            <View className="-z-10">
+              <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">
+                {post.description}
+              </Text>
+              <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
+              <Text className="text-4xl font-bold text-center text-ivory">
+                Comments
+              </Text>
+              {post.comments.length == 0 ? (
+                <Text className=" text-center text-powder_blue/80">
+                  (There are no comments on your post yet)
+                </Text>
+              ) : (
+                <></>
+              )}
+            </View>
+          </Reanimated.ScrollView>
+        ) : (
+          <LoaderView />
+        )}
+        <Spinner
+          visible={loading}
+          overlayColor="#00000099"
+          textContent={"Loading"}
+          customIndicator={<Loader />}
+          textStyle={{ color: "#fff", marginTop: -25 }}
+          animation="fade"
+        />
+      </Animated.View>
+    </>
   );
 }

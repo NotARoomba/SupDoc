@@ -1,7 +1,7 @@
 import { Doctor } from "@/backend/models/doctor";
 import { STATUS_CODES } from "@/backend/models/util";
 import prompt from "@powerdesigninc/react-native-prompt";
-import { useLoading } from "components/misc/useLoading";
+import { useLoading } from "components/hooks/useLoading";
 import {
   callAPI,
   isDoctorSignupInfo,
@@ -98,12 +98,9 @@ export default function Index({ setIsLogged }: IndexProps) {
     // if (isDoctorSignupInfo(userType, signUpInfo))
     //   console.log(signUpInfo.license[0].length / 1000);
     if (isDoctorSignupInfo(userType, signUpInfo)) {
-      console.log("SIGNUP");
-      console.log(signUpInfo.license);
       const res = await uploadImages(
         signUpInfo.license.concat(signUpInfo.picture),
       );
-      console.log(res);
       if (res.status !== STATUS_CODES.SUCCESS) {
         setLoading(false);
         return Alert.alert(t("error"), t(STATUS_CODES[res.status]));

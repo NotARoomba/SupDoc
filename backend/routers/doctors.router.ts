@@ -27,17 +27,15 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
     }
     if (user) {
       user.identification.license = [];
-      res
-        .status(200)
-        .send(
-          encrypt(
-            {
-              user: { ...user, picture: await generateSignedUrl(user.picture) },
-              status: STATUS_CODES.SUCCESS,
-            },
-            req.headers.authorization,
-          ),
-        );
+      res.status(200).send(
+        encrypt(
+          {
+            user: { ...user, picture: await generateSignedUrl(user.picture) },
+            status: STATUS_CODES.SUCCESS,
+          },
+          req.headers.authorization,
+        ),
+      );
     } else {
       res.status(404).send(
         encrypt(
@@ -170,7 +168,7 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
             {
               user: {
                 ...data,
-                // picture: await generateSignedUrl(pictureURL),
+                picture: await generateSignedUrl(data.picture),
               },
               status: STATUS_CODES.SUCCESS,
             },

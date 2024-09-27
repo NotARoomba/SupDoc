@@ -22,22 +22,20 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
       })) as unknown as Post;
     }
     if (post) {
-      res
-        .status(200)
-        .send(
-          encrypt(
-            {
-              post: {
-                ...post,
-                images: await Promise.all(
-                  post.images.map(async (v) => await generateSignedUrl(v)),
-                ),
-              },
-              status: STATUS_CODES.SUCCESS,
+      res.status(200).send(
+        encrypt(
+          {
+            post: {
+              ...post,
+              images: await Promise.all(
+                post.images.map(async (v) => await generateSignedUrl(v)),
+              ),
             },
-            req.headers.authorization,
-          ),
-        );
+            status: STATUS_CODES.SUCCESS,
+          },
+          req.headers.authorization,
+        ),
+      );
     } else {
       res.status(404).send(
         encrypt(
@@ -368,14 +366,14 @@ postsRouter.get("/:id/save", async (req: Request, res: Response) => {
             $set: {
               saved: {
                 $cond: {
-                  if: { $in: [ id, "$saved" ] },    // Check if 'id' is in the 'saved' array
-                  then: { $setDifference: [ "$saved", [ id ] ] }, // Remove 'id' if it exists
-                  else: { $concatArrays: [ "$saved", [ id ] ] }   // Add 'id' if it doesn't exist
-                }
-              }
-            }
-          }
-        ]
+                  if: { $in: [id, "$saved"] }, // Check if 'id' is in the 'saved' array
+                  then: { $setDifference: ["$saved", [id]] }, // Remove 'id' if it exists
+                  else: { $concatArrays: ["$saved", [id]] }, // Add 'id' if it doesn't exist
+                },
+              },
+            },
+          },
+        ],
       );
       if (updated.acknowledged) {
         res

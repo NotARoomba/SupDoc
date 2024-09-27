@@ -1,40 +1,32 @@
-import { STATUS_CODES, UserType } from "@/backend/models/util";
+import { UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
-import { callAPI } from "components/utils/Functions";
+import useFade from "components/hooks/useFade";
+import { usePosts } from "components/hooks/usePosts";
 import { PostBlockProps } from "components/utils/Types";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Animated, Text, TouchableOpacity, View } from "react-native";
+import { Animated, Text, TouchableOpacity, View } from "react-native";
 import Reanimated, {
   useAnimatedProps,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import useFade from "./useFade";
-import { useState } from "react";
+import Skeleton from "react-native-reanimated-skeleton";
 
-export default function PostBlock({
-  post,
-  userType,
-  blur,
-}: PostBlockProps) {
+export default function PostBlock({ post, userType, saved }: PostBlockProps) {
   const fadeAnim = useFade(true);
+  const [s, setSaved] = useState(saved);
   const { t } = useTranslation();
-  const [saved, setSaved] = useState(true);
+  const [pictureLoading, setPictureLoading] = useState(true);
+  const { savePost, savedPosts } = usePosts();
   const ReanimatedBlurView = Reanimated.createAnimatedComponent(BlurView);
   const blurIntensity = useSharedValue(50);
   const animatedBlurProps = useAnimatedProps(() => ({
     intensity: withSpring(blurIntensity.value, { damping: 15, stiffness: 90 }),
   }));
-
-  const savePost = async () => {
-    const res = await callAPI(`/posts/${post._id?.toString()}/save`, "GET");
-    if (res.status !== STATUS_CODES.SUCCESS)
-      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
-    else setSaved(!saved);
-  };
 
   return (
     <Animated.View
@@ -46,10 +38,22 @@ export default function PostBlock({
       <View className="justify-between flex flex-row">
         <Text className="text-ivory text-2xl font-bold mb-4">{post.title}</Text>
         {userType === UserType.DOCTOR && (
-          <TouchableOpacity onPress={savePost}>
+          <TouchableOpacity
+            onPress={() => {
+              setSaved(!s);
+              savePost(post).then((v) => setSaved(v));
+            }}
+          >
             <Icons
+              key={savedPosts.length}
               color={"#fbfff1"}
-              name={saved ? "bookmark-slash" : "bookmark"}
+              name={
+                saved
+                  ? "bookmark-slash"
+                  : savedPosts.includes(post)
+                    ? "bookmark-slash"
+                    : "bookmark"
+              }
               size={40}
             />
           </TouchableOpacity>
@@ -58,6 +62,7 @@ export default function PostBlock({
       <View className="flex h-44 flex-row w-full gap-x-4 mb-4">
         <View className="w-6/12 aspect-square relative rounded-xl overflow-hidden">
           <TouchableOpacity
+            className="h-full"
             onPress={(e) => {
               e.preventDefault();
               blurIntensity.value = blurIntensity.value === 50 ? 0 : 50;
@@ -68,9 +73,28 @@ export default function PostBlock({
               className="h-full absolute w-full z-50"
             />
             <Image
+              onLoadStart={() => setPictureLoading(true)}
+              onLoad={() => setPictureLoading(false)}
               className="h-full w-full rounded-xl"
               source={{ uri: post.images[0] }}
             />
+            <View className="h-full w-full absolute top-0-z-10">
+              <Skeleton
+                boneColor="#023c4d"
+                highlightColor="#b4c5e4"
+                layout={[
+                  {
+                    width: "100%",
+                    height: "auto",
+                    aspectRatio: 1 / 1,
+                    position: "absolute",
+                    top: 0,
+                    zIndex: 50,
+                  },
+                ]}
+                isLoading={pictureLoading}
+              ></Skeleton>
+            </View>
           </TouchableOpacity>
         </View>
         <View className="w-5/12">

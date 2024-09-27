@@ -1,23 +1,17 @@
 import Post from "@/backend/models/post";
-import { STATUS_CODES, UserType } from "@/backend/models/util";
+import { UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
+import useFade from "components/hooks/useFade";
+import { usePosts } from "components/hooks/usePosts";
+import { useUser } from "components/hooks/useUser";
+import LoaderView from "components/loading/LoaderView";
 import FunFact from "components/misc/FunFact";
-import LoaderView from "components/misc/LoaderView";
 import PostBlock from "components/misc/PostBlock";
-import useFade from "components/misc/useFade";
-import { callAPI, logout } from "components/utils/Functions";
 // import SkeletonContent from 'react-native-reanimated-skeleton'
-import {
-  SplashScreen,
-  router,
-  useFocusEffect,
-  useLocalSearchParams,
-} from "expo-router";
-import * as SecureStore from "expo-secure-store";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { SplashScreen } from "expo-router";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Alert,
   Animated,
   LayoutAnimation,
   Platform,
@@ -26,44 +20,18 @@ import {
   View,
 } from "react-native";
 export default function Index() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const { posts, savedPosts } = usePosts();
   const list = useRef<FlashList<Post> | null>(null);
-  const [userType, setUserType] = useState<UserType | null>(null);
+  const { userType } = useUser();
   // const [loading, setLoading] = useState(false);
   const fadeAnim = useFade();
   const { t } = useTranslation();
-  const routes = useLocalSearchParams();
   const fetchData = async () => {
-    // setLoading(true);
-    const ut = (await SecureStore.getItemAsync(
-      process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
-    )) as UserType;
-    const res = await callAPI(
-      `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/posts/${ut == UserType.DOCTOR ? (posts.length == 0 ? 0 : posts[posts.length - 1].timestamp) : ""}`,
-      "GET",
-    );
-    if (res.status !== STATUS_CODES.SUCCESS)
-      return res.status == STATUS_CODES.UNAUTHORIZED
-        ? await logout()
-        : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
-    setPosts(res.posts);
-    setUserType(ut);
-    // setLoading(false);
     list.current?.prepareForLayoutAnimationRender();
     // After removing the item, we can start the animation.
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     await SplashScreen.hideAsync();
   };
-  // REPLACE WITH WEBHOOK
-  useFocusEffect(
-    useCallback(() => {
-      if (routes.refresh) {
-        fetchData();
-        router.setParams({});
-        router.navigate({ pathname: "/(tabs)/", params: { refresh: null } });
-      }
-    }, [routes]),
-  );
   useEffect(() => {
     fetchData();
   }, []);
@@ -100,9 +68,7 @@ export default function Index() {
           ) : (
             //https://shopify.github.io/flash-list/docs/guides/layout-animation/
             <FlashList
-              keyExtractor={(p) => {
-                return p.timestamp.toString();
-              }}
+              keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
               data={posts}
@@ -129,9 +95,7 @@ export default function Index() {
             )
           ) : (
             <FlashList
-              keyExtractor={(p) => {
-                return p.timestamp.toString();
-              }}
+              keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
               data={posts}

@@ -5,11 +5,12 @@ import Icons from "@expo/vector-icons/Octicons";
 import prompt from "@powerdesigninc/react-native-prompt";
 import { Picker } from "@react-native-picker/picker";
 import Slider from "components/buttons/Slider";
-import LoaderView from "components/misc/LoaderView";
-import useCamera from "components/misc/useCamera";
-import useFade from "components/misc/useFade";
-import useGallery from "components/misc/useGallery";
-import { useLoading } from "components/misc/useLoading";
+import useCamera from "components/hooks/useCamera";
+import useFade from "components/hooks/useFade";
+import useGallery from "components/hooks/useGallery";
+import { useLoading } from "components/hooks/useLoading";
+import { useUser } from "components/hooks/useUser";
+import LoaderView from "components/loading/LoaderView";
 import {
   callAPI,
   isDoctorInfo,
@@ -19,7 +20,6 @@ import {
 } from "components/utils/Functions";
 import { BirthSex, Sex, UserType } from "components/utils/Types";
 import { Image } from "expo-image";
-import * as SecureStore from "expo-secure-store";
 import parsePhoneNumber from "libphonenumber-js";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -39,15 +39,15 @@ import {
 import { CountryPicker } from "react-native-country-codes-picker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Skeleton from "react-native-reanimated-skeleton";
 
 export default function Profile() {
   const camera = useCamera();
   const gallery = useGallery();
-  const [userType, setUserType] = useState<UserType>();
   const [countryShow, setCountryShow] = useState(false);
   const [countryCode, setCountryCode] = useState("🇨🇴+57");
-  const [user, setUser] = useState<User>();
-  const [userEdit, setUserEdit] = useState<User>();
+  const { user, userEdit, userType, setUser, setUserEdit, fetchUser } =
+    useUser();
   const { setLoading } = useLoading();
   const [trans, setTrans] = useState(false);
   const [activeChange, setActiveChange] = useState(false);
@@ -57,41 +57,19 @@ export default function Profile() {
   const [altSexItems, setAltSexItems] = useState(
     Object.values(Sex).map((s) => ({ label: s, value: s })),
   );
-  const [pictureLoaded, setPictureLoaded] = useState(true);
+  const [pictureLoading, setPictureLoading] = useState(true);
   const fadeAnim = useFade();
   const { t } = useTranslation();
   useEffect(() => {
     const fetchData = async () => {
       // setLoading(true);
-      const ut = (await SecureStore.getItemAsync(
-        process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
-      )) as UserType;
-      const res = await callAPI(
-        `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
-        "GET",
-      );
-      if (
-        res.status == STATUS_CODES.USER_NOT_FOUND ||
-        res.status == STATUS_CODES.UNAUTHORIZED
-      ) {
-        // setLoading(false);
-        return await logout();
-      } else if (res.status == STATUS_CODES.GENERIC_ERROR) {
-        setLoading(false);
-        return Alert.alert(t("error"), t("errors.fetchData"));
-      }
-      setUser(res.user);
-      setUserEdit({
-        ...res.user,
-        number: parsePhoneNumber(res.user.number)?.nationalNumber,
-      });
-      if (isPatientInfo(ut, res.user)) {
+
+      if (isPatientInfo(userType, user)) {
         setTrans(
-          res.user.info.sex !== res.user.info.altSex && res.user.info.altSex,
+          user.info.altSex != undefined && user.info.sex !== user.info.altSex,
         );
-        setAltSexValue(res.user.info.sex);
+        setAltSexValue(user.info.sex as Sex);
       }
-      setUserType(ut);
       // setLoading(false);
     };
     fetchData();
@@ -275,29 +253,44 @@ export default function Profile() {
                       userEdit &&
                       isDoctorInfo(userType, user) &&
                       isDoctorInfo(userType, userEdit) && (
-                        <TouchableOpacity className=" w-48 h-48  aspect-square flex border-dashed border border-ivory/80 rounded-xl">
+                        <TouchableOpacity className=" w-48 h-48  aspect-square flex  rounded-xl">
                           <View className="m-auto">
                             <Image
-                              onLoadStart={() => setPictureLoaded(false)}
-                              onLoad={() => setPictureLoaded(true)}
-                              className={"rounded-xl h-full aspect-square"}
+                              onLoadStart={() => setPictureLoading(true)}
+                              onLoad={() => setPictureLoading(false)}
+                              className={
+                                "rounded-xl border-dashed border border-ivory/80 h-full aspect-square"
+                              }
                               source={userEdit.picture}
                             />
-                            {!pictureLoaded && (
+
+                            {pictureLoading && (
                               <View className="absolute rounded-xl w-48 h-48  z-50  flex">
-                                <Reanimated.View
-                                  entering={FadeIn.springify().damping(0)}
-                                  className="m-auto"
+                                <Skeleton
+                                  animationType="shiver"
+                                  boneColor="#041225"
+                                  highlightColor="#b4c5e4"
+                                  layout={[
+                                    {
+                                      borderRadius: 12,
+                                      width: 192,
+                                      height: 192,
+                                    },
+                                  ]}
+                                  isLoading={pictureLoading}
                                 >
-                                  <Icons
-                                    name="person"
-                                    size={150}
-                                    color={"#fbfff1"}
-                                  />
-                                </Reanimated.View>
+                                  <View className="m-auto w-48 h-48">
+                                    <Icons
+                                      name="person"
+                                      size={150}
+                                      color={"#fbfff1"}
+                                    />
+                                  </View>
+                                </Skeleton>
                               </View>
                             )}
                             <Pressable
+                              disabled={pictureLoading}
                               onPress={() => setActiveChange(!activeChange)}
                               className="absolute rounded-xl w-48 h-48  z-50  flex"
                             >

@@ -1,73 +1,62 @@
-import useFade from "components/misc/useFade";
-import { useLoading } from "components/misc/useLoading";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Alert, Animated, LayoutAnimation, Platform, Text, View } from "react-native";
-import * as SecureStore from 'expo-secure-store'
-import { STATUS_CODES } from "@/backend/models/util";
-import { callAPI, logout } from "components/utils/Functions";
-import { UserType } from "components/utils/Types";
-import { SplashScreen, useFocusEffect } from "expo-router";
-import Post from "@/backend/models/post";
 import { FlashList } from "@shopify/flash-list";
-import LoaderView from "components/misc/LoaderView";
+import useFade from "components/hooks/useFade";
+import { useLoading } from "components/hooks/useLoading";
+import { usePosts } from "components/hooks/usePosts";
+import LoaderView from "components/loading/LoaderView";
 import PostBlock from "components/misc/PostBlock";
+import { UserType } from "components/utils/Types";
+import { useTranslation } from "react-i18next";
+import { Animated, Platform, Text, View } from "react-native";
 
 export default function Pins() {
   const { t } = useTranslation();
   const fadeAnim = useFade();
-  // const {setLoading} = useLoading();
-  const [loading, setLoading] = useState(false);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const list = useRef<FlashList<Post> | null>(null);
-  const fetchData = async () => {
-    setLoading(true);
-    const res = await callAPI(
-      `/doctors/saved/${posts.length == 0 ? 0 : posts[posts.length-1].timestamp}`,
-      "GET",
-    );
-    if (res.status !== STATUS_CODES.SUCCESS)
-      return res.status == STATUS_CODES.UNAUTHORIZED
-        ? await logout()
-        : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
-    setPosts(res.posts);
-    setLoading(false);
-    list.current?.prepareForLayoutAnimationRender();
-    // After removing the item, we can start the animation.
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
-  useFocusEffect(
-    useCallback(() => {
-     fetchData();
-    }, []),
-  );
+  const { loading } = useLoading();
+  const { savedPosts } = usePosts();
+  // const list = useRef<FlashList<Post> | null>(null);
+  // const fetchData = async () => {
+
+  //   list.current?.prepareForLayoutAnimationRender();
+  //   // After removing the item, we can start the animation.
+  //   LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  // };
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+  // useFocusEffect(
+  //   useCallback(() => {
+  //    fetchData();
+  //   }, []),
+  // );
   return (
-    <Animated.View style={{ opacity: fadeAnim }} className={"h-full " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}>
-        <Text className="text-6xl font-bold text-center text-ivory">{t("titles.pins")}</Text>
-        {posts.length == 0 ? (
-            loading ? (
-              <View className="h-fit">
-                <LoaderView />
-              </View>
-            ) : (
-              <Text className=" text-center text-powder_blue/80">
-                {t("posts.savedNone")}
-              </Text>
-            )
-          ) : <FlashList
-          keyExtractor={(p) => {
-            return p.timestamp.toString();
-          }}
+    <Animated.View
+      style={{ opacity: fadeAnim }}
+      className={"h-full " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}
+    >
+      <Text className="text-6xl font-bold text-center text-ivory">
+        {t("titles.pins")}
+      </Text>
+      {savedPosts.length == 0 ? (
+        loading ? (
+          <View className="h-fit">
+            <LoaderView />
+          </View>
+        ) : (
+          <Text className=" text-center text-powder_blue/80">
+            {t("posts.savedNone")}
+          </Text>
+        )
+      ) : (
+        <FlashList
+          keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
           ListFooterComponentStyle={{ height: 125 }}
           estimatedItemSize={281}
-          data={posts}
+          data={savedPosts}
           renderItem={({ item }) => (
-            <PostBlock post={item} userType={UserType.DOCTOR} />
+            <PostBlock post={item} saved userType={UserType.DOCTOR} />
           )}
-        />}
+        />
+      )}
     </Animated.View>
   );
 }
