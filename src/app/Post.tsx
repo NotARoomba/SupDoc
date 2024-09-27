@@ -1,5 +1,5 @@
 import Post from "@/backend/models/post";
-import { STATUS_CODES } from "@/backend/models/util";
+import { STATUS_CODES, UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import useFade from "components/hooks/useFade";
 import { usePosts } from "components/hooks/usePosts";
@@ -7,7 +7,6 @@ import { useUser } from "components/hooks/useUser";
 import Loader from "components/loading/Loader";
 import LoaderView from "components/loading/LoaderView";
 import { callAPI } from "components/utils/Functions";
-import { UserType } from "components/utils/Types";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,9 +27,9 @@ import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 export default function PostPage() {
   const routes = useLocalSearchParams();
-  const {posts} = usePosts();
-  const {userType} = useUser();
   const fadeAnim = useFade();
+  const { userType } = useUser();
+  const { deletePost } = usePosts();
   const [post, setPost] = useState<Post>();
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const galleryRef = useRef<GalleryRef>(null);
@@ -39,21 +38,15 @@ export default function PostPage() {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
-      
-      setPost(posts.find(v => v._id?.toString() == routes.id));
+      const res = await callAPI(`/posts/${routes.id}`, "GET");
+      if (res.status !== STATUS_CODES.SUCCESS) {
+        router.navigate("/(tabs)");
+        return Alert.alert(t("error"), t(`${STATUS_CODES[res.status]}`));
+      }
+      setPost(res.post);
     };
     fetchData();
   }, []);
-  const deletePost = async () => {
-    setLoading(true);
-    const res = await callAPI(`/posts/${routes.id}/delete`, "GET");
-    if (res.status !== STATUS_CODES.SUCCESS)
-      return Alert.alert(t("error"), t(`${STATUS_CODES[res.status]}`));
-    else {
-      Alert.alert("Success", "Sucessfully deleted your post");
-      return router.navigate({ pathname: "/(tabs)", params: { refresh: 1 } });
-    }
-  };
   return (
     <>
       <SafeAreaView className="bg-richer_black" />
@@ -87,8 +80,8 @@ export default function PostPage() {
           Post
         </Text> */}
           <TouchableOpacity
-          disabled={userType == UserType.DOCTOR}
-            style={{opacity: userType == UserType.DOCTOR ? 0 : 1}}
+            disabled={userType == UserType.DOCTOR}
+            style={{ opacity: userType == UserType.DOCTOR ? 0 : 1 }}
             className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
               true
@@ -100,7 +93,7 @@ export default function PostPage() {
                       {
                         text: "Delete",
                         style: "destructive",
-                        onPress: () => deletePost(),
+                        onPress: () => deletePost(routes.id as string),
                       },
                     ],
                   )

@@ -14,7 +14,6 @@ import React, {
 import { Alert } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
-import * as SecureStore from 'expo-secure-store'
 
 // Define the types for the context
 interface PostsContextType {
@@ -52,11 +51,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS)
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
-        : Alert.alert(t("errorsss"), t(STATUS_CODES[res.status]));
+        : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     setPosts(res.posts);
-    await Image.prefetch(
-      (res.posts as Post[]).map((v: Post) => v.images).flat(),
-    );
+    Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
   };
   const fetchSavedPosts = async () => {
@@ -84,7 +81,17 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     return true;
   };
 
-  const deletePost = async (id: string) => {};
+  const deletePost = async (id: string) => {
+    setLoading(true);
+    const res = await callAPI(`/posts/${id}/delete`, "GET");
+    if (res.status !== STATUS_CODES.SUCCESS)
+      return Alert.alert(t("error"), t(`${STATUS_CODES[res.status]}`));
+    else {
+      Alert.alert("Success", "Sucessfully deleted your post");
+      setLoading(false);
+      return router.navigate({ pathname: "/(tabs)", params: { refresh: 1 } });
+    }
+  };
 
   const addComment = async (id: string, isParent: boolean = false) => {};
 
@@ -130,7 +137,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       Alert.alert("Success", "Sucessfully uploaded your post!");
     }
   };
-  useEffect(() => { 
+  useEffect(() => {
     if (userType) {
       fetchPosts().then(async () => await SplashScreen.hideAsync());
       if (userType == UserType.DOCTOR) fetchSavedPosts();
