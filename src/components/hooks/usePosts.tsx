@@ -11,6 +11,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -31,6 +32,7 @@ interface PostsContextType {
   fetchPosts: () => Promise<void>;
   savePost: (post: Post) => Promise<boolean>;
   deletePost: (id: string) => Promise<void>;
+  reportPost: (id: string) => Promise<void>;
   addComment: (id: string, isParent?: boolean) => Promise<void>;
   createPost: () => Promise<void>;
 }
@@ -51,6 +53,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const listRef = useRef<FlashList<Post> | null>(null);
   const fetchPosts = async () => {
     setLoading(true);
+    if (!userType) return;
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? 0 : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
@@ -82,12 +85,11 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       Alert.alert(t("error"), t(STATUS_CODES[res.status]));
       return false;
     }
-    const found = savedPosts.find((v) => v._id === post._id);
-    if (found) setSavedPosts(savedPosts.filter((v) => v._id !== post._id));
-    else setSavedPosts([...savedPosts, post]);
-    listRef.current?.prepareForLayoutAnimationRender();
-    // After removing the item, we can start the animation.
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    
+    const updatedSavedPosts = savedPosts.find((v) => v._id === post._id)
+      ? savedPosts.filter((v) => v._id !== post._id)
+      : [...savedPosts, post];
+    setSavedPosts(updatedSavedPosts);  // Only call setSavedPosts once
     return true;
   };
 
@@ -109,7 +111,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
 
   const addComment = async (id: string, isParent: boolean = false) => {};
-
+  const reportPost = async (id: string) => {
+    
+  }
   const resetPostEdit = () => {
     setPostEdit({
       title: "",
@@ -159,22 +163,26 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       if (userType == UserType.DOCTOR) fetchSavedPosts();
     }
   }, [userType]);
+  const postsContextValue = useMemo(
+    () => ({
+      posts,
+      postEdit,
+      savedPosts,
+      listRef,
+      setPostEdit,
+      resetPostEdit,
+      createPost,
+      reportPost,
+      addComment,
+      deletePost,
+      savePost,
+      fetchPosts,
+    }),
+    [posts, postEdit, savedPosts, listRef]  // Dependencies
+  );
   return (
     <PostsContext.Provider
-      value={{
-        posts,
-        postEdit,
-        savedPosts,
-        listRef,
-        setPostEdit,
-        resetPostEdit,
-        createPost,
-        addComment,
-        deletePost,
-        savePost,
-        fetchPosts,
-      }}
-    >
+      value={postsContextValue} >
       {children}
     </PostsContext.Provider>
   );

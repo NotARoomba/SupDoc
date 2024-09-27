@@ -1,15 +1,18 @@
 import { UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
+import { useIsFocused } from "@react-navigation/native";
 import useFade from "components/hooks/useFade";
 import { usePosts } from "components/hooks/usePosts";
 import { PostBlockProps } from "components/utils/Types";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
 import Reanimated, {
+  FadeIn,
+  FadeOut,
   useAnimatedProps,
   useSharedValue,
   withSpring,
@@ -33,9 +36,15 @@ export default function PostBlock({
     intensity: withSpring(blurIntensity.value, { damping: 15, stiffness: 90 }),
   }));
   // useEffect(() => console.log(post), []);
+  useEffect(() => {
+    // Synchronize with the saved state in usePosts when the component re-renders
+    setSaved(savedPosts.some((p) => p._id === post._id));
+  }, [savedPosts, post._id]);
   return (
-    <Animated.View
-      style={{ opacity: fadeAnim }}
+    <Reanimated.View
+    entering={FadeIn.duration(250)}
+    exiting={FadeOut.duration(250)}
+      // style={{ opacity: fadeAnim }}
       className={
         "h-fit flex w-11/12 bg-midnight_green-500/60 mt-4 p-4 rounded-2xl mx-auto "
       }
@@ -45,19 +54,15 @@ export default function PostBlock({
         {userType === UserType.DOCTOR && (
           <TouchableOpacity
             onPress={() => {
-              setSaved(!s);
-              savePost(post).then((v) => setSaved(v));
+              setSaved(!s)
+              savePost(post);
             }}
           >
             <Icons
               key={savedPosts.length}
               color={"#fbfff1"}
               name={
-                saved
-                  ? "bookmark-slash"
-                  : savedPosts.includes(post)
-                    ? "bookmark-slash"
-                    : "bookmark"
+                (s ? "bookmark-slash" : "bookmark")
               }
               size={40}
             />
@@ -125,6 +130,6 @@ export default function PostBlock({
           </View>
         </View>
       </TouchableOpacity>
-    </Animated.View>
+    </Reanimated.View>
   );
 }

@@ -67,6 +67,7 @@ export default function Index() {
           ) : (
             //https://shopify.github.io/flash-list/docs/guides/layout-animation/
             <FlashList
+            ref={listRef}
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
@@ -78,7 +79,7 @@ export default function Index() {
           )}
         </ScrollView>
       ) : (
-        <View className="h-full">
+        <ScrollView className="h-full flex">
           <Text className="text-6xl font-bold text-center text-ivory">
             {t("titles.feed")}
           </Text>
@@ -108,7 +109,7 @@ export default function Index() {
               )}
             />
           )}
-        </View>
+        </ScrollView>
       )}
       {/* </SkeletonContent> */}
     </Animated.View>

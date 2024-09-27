@@ -7,6 +7,7 @@ import { STATUS_CODES } from "../models/util";
 import { collections, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl } from "../services/storage.service";
+import { Doctor } from "../models/doctor";
 
 export const postsRouter = express.Router();
 
@@ -382,6 +383,52 @@ postsRouter.get("/:id/save", async (req: Request, res: Response) => {
         ],
       );
       if (updated.acknowledged) {
+        res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
+      } else {
+        res.status(404).send(
+          encrypt(
+            {
+              post: null,
+              status: STATUS_CODES.GENERIC_ERROR,
+            },
+            req.headers.authorization,
+          ),
+        );
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+  }
+});
+
+postsRouter.post("/:id/report", async (req: Request, res: Response) => {
+  //check if doctor
+  const report: Report = req.body;
+  const id = req?.params?.id;
+  try {
+    if (collections.posts && collections.doctors && collections.reports) {
+      const doctor = await collections.doctors.findOne(
+        { publicKey: req.headers.authorization },
+      ) as Doctor;
+      if ((await collections.reports.findOne({reported: new ObjectId(id), reporter: doctor.identification.number}))) return res.send(encrypt({status: STATUS_CODES.ALREADY_REPORTED}, req.headers.authorization))
+      const created = await collections.reports.insertOne({...report, reported: new ObjectId(id), reporter: doctor.identification.number} as Report)
+      const updated = await collections.posts.updateOne({_id: new ObjectId(id)}, {$push: {reports: created.insertedId.toString()} as PushOperator<Document>})
+      if (created.acknowledged && updated.acknowledged) {
         res
           .status(200)
           .send(

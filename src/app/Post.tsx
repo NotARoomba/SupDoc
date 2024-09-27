@@ -1,6 +1,7 @@
 import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
+import prompt from "@powerdesigninc/react-native-prompt";
 import useFade from "components/hooks/useFade";
 import { usePosts } from "components/hooks/usePosts";
 import { useUser } from "components/hooks/useUser";
@@ -31,7 +32,7 @@ export default function PostPage() {
   const routes = useLocalSearchParams();
   const fadeAnim = useFade();
   const { userType } = useUser();
-  const { deletePost } = usePosts();
+  const { deletePost, reportPost } = usePosts();
   const [post, setPost] = useState<Post>();
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const galleryRef = useRef<GalleryRef>(null);
@@ -82,32 +83,25 @@ export default function PostPage() {
           Post
         </Text> */}
           <TouchableOpacity
-            disabled={userType == UserType.DOCTOR}
-            style={{ opacity: userType == UserType.DOCTOR ? 0 : 1 }}
             className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
-              true
-                ? Alert.alert(
+              Alert.alert(
                     "Confirm",
-                    "Are you sure you want to delete the post?",
+                    `Are you sure you want to ${userType == UserType.DOCTOR ? "report" : "delete"} the post?`,
                     [
                       { text: "Cancel", style: "cancel" },
                       {
-                        text: "Delete",
+                        text: userType == UserType.DOCTOR ? "Report" : "Delete",
                         style: "destructive",
-                        onPress: () => deletePost(routes.id as string),
+                        onPress: () => userType == UserType.DOCTOR ? deletePost(routes.id as string) : reportPost(routes.id as string),
                       },
                     ],
-                  )
-                : Alert.alert(
-                    "Error",
-                    "Please fill out the missing infromation",
                   )
             }
           >
             {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
             <Text className="text-ivory h-fit font-bold text-center m-auto">
-              Delete
+              {userType == UserType.DOCTOR ? "Report" : "Delete"}
             </Text>
           </TouchableOpacity>
         </View>

@@ -154,7 +154,7 @@ export interface HomeProps {
 export interface PostBlockProps {
   post: Post;
   userType: UserType;
-  listRef: Ref<FlashList<Post> | null>;
+  listRef?: Ref<FlashList<Post> | null>;
   saved?: boolean;
   blur?: boolean;
 }

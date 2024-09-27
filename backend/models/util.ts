@@ -24,6 +24,7 @@ export enum STATUS_CODES {
   POST_NOT_FOUND,
   ERROR_DELETING_POST,
   ERROR_UPLOADING_IMAGE,
+  ALREADY_REPORTED
 }
 
 type ConditionalType<T, U> = T extends Binary ? T : U;
