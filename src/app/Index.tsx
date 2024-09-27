@@ -169,9 +169,9 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         signUpInfo.password,
       );
+      setLoading(false);
       await fetchUser();
       await fetchPosts();
-      // setLoading(false);
       return setIsLogged(true);
     } else {
       console.log(create);
@@ -308,9 +308,8 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         loginInfo.password,
       );
+      setLoading(false);
       await fetchUser();
-      await fetchPosts();
-      // setLoading(false);
       Alert.alert(t("success"), t("successMsg.login"));
       return setIsLogged(true);
     } catch (e) {

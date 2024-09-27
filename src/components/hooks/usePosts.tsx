@@ -1,7 +1,5 @@
-import { PatientMetrics } from "@/backend/models/metrics";
 import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
-import { FlashList } from "@shopify/flash-list";
 import { callAPI, logout, uploadImages } from "components/utils/Functions";
 import { Image } from "expo-image";
 import { SplashScreen, router } from "expo-router";
@@ -9,6 +7,7 @@ import { t } from "i18next";
 import React, {
   MutableRefObject,
   ReactNode,
+  Ref,
   createContext,
   useContext,
   useEffect,
@@ -18,13 +17,15 @@ import React, {
 import { Alert, LayoutAnimation } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
+import { PatientMetrics } from "@/backend/models/metrics";
+import { FlashList } from "@shopify/flash-list";
 
 // Define the types for the context
 interface PostsContextType {
   posts: Post[];
   postEdit: Post | undefined;
   savedPosts: Post[];
-  listRef: MutableRefObject<FlashList<Post> | null>;
+  listRef: MutableRefObject<FlashList<Post>|null>;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
   fetchPosts: () => Promise<void>;
@@ -101,8 +102,8 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       listRef.current?.prepareForLayoutAnimationRender();
       // After removing the item, we can start the animation.
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setPosts(posts.filter((v) => v._id?.toString() !== id));
-      setSavedPosts(savedPosts.filter((v) => v._id?.toString() !== id));
+      setPosts(posts.filter(v => v._id?.toString() !== id))
+      setSavedPosts(savedPosts.filter(v => v._id?.toString() !== id))
       // return router.navigate({ pathname: "/(tabs)", params: { refresh: 1 } });
     }
   };
@@ -145,7 +146,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert("Error", "There was an error uploading your post!");
     else {
-      setPosts([...posts, postEdit]);
+      setPosts([...posts, res.post]);
       resetPostEdit();
       setLoading(false);
       router.navigate({ pathname: "/(tabs)/", params: { refresh: 1 } });

@@ -32,7 +32,7 @@ export default function PostBlock({
   const animatedBlurProps = useAnimatedProps(() => ({
     intensity: withSpring(blurIntensity.value, { damping: 15, stiffness: 90 }),
   }));
-  useEffect(() => console.log(post), []);
+  // useEffect(() => console.log(post), []);
   return (
     <Animated.View
       style={{ opacity: fadeAnim }}
