@@ -73,9 +73,10 @@
         "next": "Next",
         "finish": "Finish"
     },
-    "successMsg": {
+    "successes": {
         "login": "You are now logged in",
-        "signup": "You are now registered"
+        "signup": "You are now registered",
+        "deletePost": "Sucessfully deleted your post"
     },
     "errors": {
         "createUser": "There was an error creating a user",

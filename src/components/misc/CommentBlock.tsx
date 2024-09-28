@@ -50,7 +50,8 @@ export default function CommentBlock({ comments, post, parent }: CommentBlockPro
         style={{ flex: 1 }}
       >
         <ScrollView>
-          {currentComments.map((comment, index) => { 
+          {currentComments.map((comment, index) => {
+            console.log(comment) 
             const [liked, setLiked] = useState(false);
              useEffect(() => {
               setLiked(comment.likes.includes(user._id as ObjectId));

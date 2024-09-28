@@ -308,6 +308,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   }
 
   // Update the post in the database with the modified comments
+  console.log(parentPost.comments)
   const updated = await collections.posts.updateOne(
     { _id: postID },
     { $set: { comments: parentPost.comments } }

@@ -68,6 +68,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     setPosts(res.posts);
+    console.log(res.posts)
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
   };
@@ -80,14 +81,14 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS)
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
-        : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+        : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     setSavedPosts(res.posts);
     setLoading(false);
   };
   const savePost = async (post: Post) => {
     const res = await callAPI(`/posts/${post._id?.toString()}/save`, "GET");
     if (res.status !== STATUS_CODES.SUCCESS) {
-      Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+      Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
       return false;
     }
     
@@ -102,9 +103,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     setLoading(true);
     const res = await callAPI(`/posts/${id}/delete`, "GET");
     if (res.status !== STATUS_CODES.SUCCESS)
-      return Alert.alert(t("error"), t(`${STATUS_CODES[res.status]}`));
+      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     else {
-      Alert.alert("Success", "Sucessfully deleted your post");
+      Alert.alert(t("success"), t("sucesses.deletePost"));
       setLoading(false);
       listRef.current?.prepareForLayoutAnimationRender();
       // After removing the item, we can start the animation.
@@ -118,7 +119,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   
   const updatePostComments = (postList: Post[], postID: ObjectId, updatedComments: Comment[]): Post[] => {
     return postList.map((post) =>
-      (post._id as ObjectId).equals(postID) ? { ...post, comments: updatedComments } : post
+      (post._id == postID) ? { ...post, comments: updatedComments } : post
     );
   };
 
@@ -126,10 +127,12 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     const res = await callAPI(`/posts/${post}/comment`, "POST", {
       text,
       parent,
+      commenter: user._id
     });
     if (res.status !== STATUS_CODES.SUCCESS) {
-      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
+    console.log(res.comments)
   
     // Update posts
     setPosts(updatePostComments(posts, post, res.comments));
@@ -143,7 +146,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const likeComment = async (post: ObjectId, commentID: ObjectId) => {
     const res = await callAPI(`/posts/${post}/comments/${commentID}/like`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
-      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
     setPosts(updatePostComments(posts, post, res.comments));
   
@@ -156,7 +159,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
     const res = await callAPI(`/posts/${post}/comments/${commentID}/report`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
-      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
     Alert.alert("Success", "Successfully reported the comment!");
   };
