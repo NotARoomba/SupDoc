@@ -18,7 +18,7 @@ import Icons from "@expo/vector-icons/Octicons";
 import { usePosts } from "components/hooks/usePosts";
 import Comment from "@/backend/models/comment";
 
-export default function CommentBlock({ comments, postID, parent }: CommentBlockProps) {
+export default function CommentBlock({ comments, post, parent }: CommentBlockProps) {
   const { user } = useUser();
   const [commentText, setCommentText] = useState("");
   const [currentComments, setCurrentComments] = useState(comments);
@@ -31,7 +31,7 @@ export default function CommentBlock({ comments, postID, parent }: CommentBlockP
 
   const handleAddComment = async () => {
     if (commentText.trim()) {
-      await addComment(postID, commentText);
+      await addComment(post, commentText, parent);
       setCommentText(""); // Clear input after posting
     } else {
       Alert.alert("Comment cannot be empty.");
@@ -82,7 +82,7 @@ export default function CommentBlock({ comments, postID, parent }: CommentBlockP
                 <View className="pl-4 border-l border-gray-500 mt-2">
                   <CommentBlock
                     comments={comment.replies as unknown as Comment[]}
-                    postID={postID}
+                    post={post}
                     parent={comment._id?.toString() as string}
                   />
                 </View>

@@ -33,7 +33,7 @@ interface PostsContextType {
   savePost: (post: Post) => Promise<boolean>;
   deletePost: (id: string) => Promise<void>;
   reportPost: (id: string) => Promise<void>;
-  addComment: (id: string, text: string, parentId?: string) => Promise<void>;
+  addComment: (id: string, text: string, parent: string | null) => Promise<void>;
   likeComment: (commentId: string) => Promise<void>;
   reportComment: (commentId: string) => Promise<void>;
   createPost: () => Promise<void>;
@@ -112,7 +112,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     }
   };
 
-  const addComment = async (post: string, text: string, parent?: string) => {
+  const addComment = async (post: string, text: string, parent: string | null) => {
     const res = await callAPI(`/posts/${post}/comment`, "POST", {
       text,
       post,
