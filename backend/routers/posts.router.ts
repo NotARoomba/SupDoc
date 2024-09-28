@@ -22,7 +22,7 @@ const getCommentsWithReplies = async (post: string | ObjectId) => {
     .aggregate([
       // Match comments that belong to the specific post
       {
-        $match: { post: postId, parent: { $exists: false } },
+        $match: { post: postId, parent: null },
       },
       // Recursively look up replies
       {
