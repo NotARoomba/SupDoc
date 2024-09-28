@@ -161,12 +161,12 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-    Alert.alert("Success", "Successfully reported the comment!");
+    Alert.alert(t("success"), "Successfully reported the comment!");
   };
   const reportPost = async (id: string) => {
     const res = await callAPI(`/posts/${id.toString()}/report`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS)
-      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     
     
     Alert.alert("Success", "Sucessfully submitted your report!");
