@@ -15,7 +15,7 @@ export const postsRouter = express.Router();
 
 postsRouter.use(express.json());
 
-const getCommentsWithReplies = async (post: string) => {
+const getCommentsWithReplies = async (post: ObjectId) => {
   console.log(post)
 console.log(await collections.comments
   .aggregate([
@@ -69,7 +69,7 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
           {
             post: {
               ...post,
-              comments: await getCommentsWithReplies(id),
+              comments: await getCommentsWithReplies(new ObjectId(id)),
               images: await Promise.all(
                 post.images.map(async (v) => await generateSignedUrl(v)),
               ),
