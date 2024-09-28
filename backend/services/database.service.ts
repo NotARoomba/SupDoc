@@ -2,6 +2,7 @@ import * as mongoDB from "mongodb";
 import * as dotenv from "ts-dotenv";
 import { Doctor } from "../models/doctor";
 import Fact from "../models/fact";
+import Report from "../models/report";
 
 export const env = dotenv.load({
   MONGODB: String,
@@ -36,13 +37,13 @@ export const env = dotenv.load({
 });
 
 export const collections: {
-  patients?: mongoDB.Collection;
-  doctors?: mongoDB.Collection<Doctor>;
-  posts?: mongoDB.Collection;
-  comments?: mongoDB.Collection;
-  reports?: mongoDB.Collection<Report>;
-  facts?: mongoDB.Collection<Fact>;
-} = {};
+  patients: mongoDB.Collection;
+  doctors: mongoDB.Collection<Doctor>;
+  posts: mongoDB.Collection;
+  comments: mongoDB.Collection;
+  reports: mongoDB.Collection<Report>;
+  facts: mongoDB.Collection<Fact>;
+} = {} as any;
 
 export let encryption: mongoDB.ClientEncryption;
 const masterKey = {

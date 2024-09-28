@@ -1,3 +1,4 @@
+import Comment from "@/backend/models/comment";
 import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
@@ -7,6 +8,7 @@ import { usePosts } from "components/hooks/usePosts";
 import { useUser } from "components/hooks/useUser";
 import Loader from "components/loading/Loader";
 import LoaderView from "components/loading/LoaderView";
+import CommentBlock from "components/misc/CommentBlock";
 import { callAPI } from "components/utils/Functions";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
@@ -210,7 +212,7 @@ export default function PostPage() {
                   (There are no comments on your post yet)
                 </Text>
               ) : (
-                <></>
+                <CommentBlock postID={post._id?.toString() as string} comments={post.comments as unknown as Comment[]} />
               )}
             </View>
           </Reanimated.ScrollView>

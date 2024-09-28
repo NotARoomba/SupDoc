@@ -26,14 +26,16 @@ interface PostsContextType {
   posts: Post[];
   postEdit: Post | undefined;
   savedPosts: Post[];
-  listRef: MutableRefObject<FlashList<Post>|null>;
+  listRef: MutableRefObject<FlashList<Post> | null>;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
   fetchPosts: () => Promise<void>;
   savePost: (post: Post) => Promise<boolean>;
   deletePost: (id: string) => Promise<void>;
   reportPost: (id: string) => Promise<void>;
-  addComment: (id: string, isParent?: boolean) => Promise<void>;
+  addComment: (id: string, text: string, parentId?: string) => Promise<void>;
+  likeComment: (commentId: string) => Promise<void>;
+  reportComment: (commentId: string) => Promise<void>;
   createPost: () => Promise<void>;
 }
 
@@ -110,7 +112,33 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     }
   };
 
-  const addComment = async (id: string, isParent: boolean = false) => {};
+  const addComment = async (postId: string, text: string, parentId?: string) => {
+    const res = await callAPI(`/posts/${postId}/comment`, "POST", {
+      text,
+      parent: parentId || null,
+    });
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+    }
+    await fetchPosts(); // Re-fetch posts to include the new comment
+  };
+
+  // Liking a comment
+  const likeComment = async (commentId: string) => {
+    const res = await callAPI(`/comments/${commentId}/like`, "POST");
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+    }
+  };
+
+  // Reporting a comment
+  const reportComment = async (commentId: string) => {
+    const res = await callAPI(`/comments/${commentId}/report`, "POST");
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+    }
+    Alert.alert("Success", "Successfully reported the comment!");
+  };
   const reportPost = async (id: string) => {
     const res = await callAPI(`/posts/${id.toString()}/report`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS)
@@ -179,11 +207,13 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       createPost,
       reportPost,
       addComment,
+      likeComment,
+      reportComment,
       deletePost,
       savePost,
       fetchPosts,
     }),
-    [posts, postEdit, savedPosts, listRef]  // Dependencies
+    [posts, postEdit, savedPosts, listRef] // Dependencies
   );
   return (
     <PostsContext.Provider

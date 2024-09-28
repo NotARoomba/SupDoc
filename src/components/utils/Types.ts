@@ -1,5 +1,6 @@
 /// <reference types="nativewind/types" />
 
+import Comment from "@/backend/models/comment";
 import Post from "@/backend/models/post";
 import { FlashList } from "@shopify/flash-list";
 import { Ref } from "react";
@@ -157,4 +158,9 @@ export interface PostBlockProps {
   listRef?: Ref<FlashList<Post> | null>;
   saved?: boolean;
   blur?: boolean;
+}
+
+export interface CommentBlockProps {
+  comments: Comment[]
+  postID: string,
 }

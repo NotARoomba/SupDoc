@@ -10,14 +10,15 @@ enum REPORT_REASONS {
 }
 
 interface Reporter {
-  id: number,
-  type: UserType,
+  id: number;
+  type: UserType;
 }
 
 export default interface Report {
-  _id: ObjectId;
+  _id?: ObjectId;
   reported: ObjectId;
   reporter: Reporter;
+  timestamp: number;
   reason?: REPORT_REASONS;
   proof?: string;
 }
