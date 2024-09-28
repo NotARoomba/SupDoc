@@ -32,7 +32,7 @@ const getCommentsWithReplies = async (post: string | ObjectId) => {
           connectFromField: "_id", // Match the _id of the parent comment
           connectToField: "parent", // The field in replies that refers to the parent comment
           as: "replies", // Output the replies as a field called 'replies'
-          depthField: "level", // Optional: to add a field specifying the depth of recursion
+          // depthField: "level", // Optional: to add a field specifying the depth of recursion
           // maxDepth: 3              // Optional: set the maximum depth of replies (recursive levels)
         },
       },
