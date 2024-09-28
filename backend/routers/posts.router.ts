@@ -236,6 +236,9 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   // if comment has a parent then get the parent and add the id as a child
   // if the comment does not have a parent then get the postID and run checks if the comment is able to be placed, if not then throw an error, else add the comment ID to the array of comments
   // DOCTOR IS DOCTOR ID NOT IDENTIFICATION
+
+  // TODOOOO MIGRATE ALL collections? to collections
+  // FIX ALL TO OBJECTID
   // await createKey([
   //   comment.doctor,
   // ]);
@@ -260,12 +263,12 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
 
-      parent: await encryption.encrypt(comment.parent, {
+      parent: await encryption.encrypt(parentComment._id, {
         keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
 
-      doctor: await encryption.encrypt(comment.doctor, {
+      doctor: await encryption.encrypt(new ObjectId(comment.doctor), {
         keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
@@ -352,7 +355,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
 
       parent: null,
 
-      doctor: await encryption.encrypt(comment.doctor, {
+      doctor: await encryption.encrypt(new ObjectId(comment.doctor), {
         keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
