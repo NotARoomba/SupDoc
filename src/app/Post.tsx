@@ -19,6 +19,7 @@ import {
   Animated,
   Dimensions,
   Keyboard,
+  KeyboardAvoidingView,
   Platform,
   SafeAreaView,
   Text,
@@ -53,7 +54,11 @@ export default function PostPage() {
     fetchData();
   }, []);
   return (
-    <>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "position" : "position"}
+      style={{ flex: 1 }}
+      // keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+    >
       <SafeAreaView className="bg-richer_black" />
       <Animated.View
         style={{ opacity: fadeAnim }}
@@ -228,6 +233,6 @@ export default function PostPage() {
           animation="fade"
         />
       </Animated.View>
-    </>
+      </KeyboardAvoidingView>
   );
 }

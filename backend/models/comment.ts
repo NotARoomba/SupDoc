@@ -4,7 +4,7 @@ export default interface Comment {
   _id?: ObjectId;
   postId: string;
   parent: string | null; // D
-  doctor: number; // D // IDENTIFICATION NUMBER
+  doctor: string; // D // DOCUMENT ID
   text: string; // R
   likes: string[]; // D
   reports: string[];

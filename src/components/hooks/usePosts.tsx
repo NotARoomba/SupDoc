@@ -51,7 +51,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
   const [postEdit, setPostEdit] = useState<Post>();
-  const { userType } = useUser();
+  const { userType, user } = useUser();
   const listRef = useRef<FlashList<Post> | null>(null);
   const fetchPosts = async () => {
     setLoading(true);
@@ -116,6 +116,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     const res = await callAPI(`/posts/${postId}/comment`, "POST", {
       text,
       parent: parentId || null,
+      doctor: user
     });
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
@@ -125,7 +126,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   // Liking a comment
   const likeComment = async (commentId: string) => {
-    const res = await callAPI(`/comments/${commentId}/like`, "POST");
+    const res = await callAPI(`/posts/comments/${commentId}/like`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     }
@@ -133,7 +134,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   // Reporting a comment
   const reportComment = async (commentId: string) => {
-    const res = await callAPI(`/comments/${commentId}/report`, "POST");
+    const res = await callAPI(`/posts/comments/${commentId}/report`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     }

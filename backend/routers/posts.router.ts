@@ -6,9 +6,10 @@ import Patient from "../models/patient";
 import Post from "../models/post";
 import Report from "../models/report";
 import { STATUS_CODES, UserType } from "../models/util";
-import { collections, encryption } from "../services/database.service";
+import { collections, createKey, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl } from "../services/storage.service";
+import { data } from "cheerio/dist/commonjs/api/attributes";
 
 export const postsRouter = express.Router();
 
@@ -226,7 +227,9 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   // if comment has a parent then get the parent and add the id as a child
   // if the comment does not have a parent then get the postID and run checks if the comment is able to be placed, if not then throw an error, else add the comment ID to the array of comments
   // DOCTOR IS DOCTOR ID NOT IDENTIFICATION
-  const keyAltName = comment.doctor.toString(2);
+  await createKey([
+    comment.doctor,
+  ]);
   if (comment.parent) {
     const parentComment = (await collections.comments.findOne({
       _id: new ObjectId(comment.parent),
@@ -243,22 +246,22 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     const insComment = await collections.comments.insertOne({
       // Comment fields
       postId: await encryption.encrypt(postID, {
-        keyAltName,
+        keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
 
       parent: await encryption.encrypt(comment.parent, {
-        keyAltName,
+        keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
 
       doctor: await encryption.encrypt(comment.doctor, {
-        keyAltName,
+        keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
 
       text: await encryption.encrypt(comment.text, {
-        keyAltName,
+        keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
       }),
 
@@ -278,7 +281,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
             ...parentComment.replies,
             await encryption.encrypt(insComment?.insertedId.toString(), {
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-              keyAltName: comment.doctor.toString(2),
+              keyAltName: comment.doctor,
             }),
           ],
         },
@@ -325,22 +328,22 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     const insComment = await collections.comments.insertOne({
       // Comment fields
       postId: await encryption.encrypt(postID, {
-        keyAltName,
+        keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
 
       parent: await encryption.encrypt(null, {
-        keyAltName,
+        keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
 
       doctor: await encryption.encrypt(comment.doctor, {
-        keyAltName,
+        keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
 
       text: await encryption.encrypt(comment.text, {
-        keyAltName,
+        keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
       }),
 
@@ -360,7 +363,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
             ...parentPost.comments,
             await encryption.encrypt(insComment?.insertedId, {
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-              keyAltName: comment.doctor.toString(2),
+              keyAltName: comment.doctor,
             }),
           ],
         },

@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 import { Doctor } from "../models/doctor";
 import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
-import { collections, env } from "../services/database.service";
+import { collections, createKey, env } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import {
   generateSignedUrl,
@@ -114,7 +114,7 @@ doctorsRouter.post(
         // const pictureURL = await uploadImageToStorage(data.picture);
         // if (!pictureURL || licenseURLS.every((url) => url === null))
         //   return res.send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
-        await collections.doctors.insertOne({
+        const inserted = await collections.doctors.insertOne({
           ...data,
           // picture: pictureURL,
           identification: {
@@ -126,6 +126,13 @@ doctorsRouter.post(
           reports: [],
           saved: [],
         });
+        await createKey([
+          inserted.insertedId.toString(),
+          data.number
+            .split("")
+            .map((bin) => String.fromCharCode(parseInt(bin, 2)))
+            .join(""),
+        ]);
         res.send({ status: STATUS_CODES.SUCCESS });
       }
     } catch (error) {
