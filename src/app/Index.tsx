@@ -169,7 +169,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         signUpInfo.password,
       );
-      setLoading(false);
+      // setLoading(false);
       await fetchUser();
       await fetchPosts();
       return setIsLogged(true);

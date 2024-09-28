@@ -3,7 +3,6 @@ import { STATUS_CODES, UserType } from "@/backend/models/util";
 import { callAPI, logout, uploadImages } from "components/utils/Functions";
 import { Image } from "expo-image";
 import { SplashScreen, router } from "expo-router";
-import { t } from "i18next";
 import React, {
   MutableRefObject,
   ReactNode,
@@ -21,6 +20,8 @@ import { useUser } from "./useUser";
 import { PatientMetrics } from "@/backend/models/metrics";
 import { FlashList } from "@shopify/flash-list";
 import { ObjectId } from "mongodb";
+import Comment from "@/backend/models/comment";
+import { useTranslation } from "react-i18next";
 
 // Define the types for the context
 interface PostsContextType {
@@ -34,9 +35,9 @@ interface PostsContextType {
   savePost: (post: Post) => Promise<boolean>;
   deletePost: (id: string) => Promise<void>;
   reportPost: (id: string) => Promise<void>;
-  addComment: (id: ObjectId, text: string, parent: ObjectId | null) => Promise<void>;
-  likeComment: (commentId: ObjectId) => Promise<void>;
-  reportComment: (commentId: ObjectId) => Promise<void>;
+  addComment: (post: ObjectId, text: string, parent: ObjectId | null) => Promise<void>;
+  likeComment: (post: ObjectId, commentID: ObjectId) => Promise<void>;
+  reportComment: (post: ObjectId, commentID: ObjectId) => Promise<void>;
   createPost: () => Promise<void>;
 }
 
@@ -48,6 +49,7 @@ interface PostsProviderProps {
 }
 
 export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
+  const { t } = useTranslation();
   const { setLoading } = useLoading();
   const [posts, setPosts] = useState<Post[]>([]);
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
@@ -64,7 +66,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS)
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
-        : Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+        : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     setPosts(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
@@ -113,30 +115,46 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     }
   };
 
+  
+  const updatePostComments = (postList: Post[], postID: ObjectId, updatedComments: Comment[]): Post[] => {
+    return postList.map((post) =>
+      (post._id as ObjectId).equals(postID) ? { ...post, comments: updatedComments } : post
+    );
+  };
+
   const addComment = async (post: ObjectId, text: string, parent: ObjectId | null) => {
     const res = await callAPI(`/posts/${post}/comment`, "POST", {
       text,
-      post,
       parent,
     });
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     }
+  
+    // Update posts
+    setPosts(updatePostComments(posts, post, res.comments));
+  
+    // Update saved posts, if needed
+    setSavedPosts(updatePostComments(savedPosts, post, res.comments));
     // await fetchPosts(); // Re-fetch posts to include the new comment
   };
 
   // Liking a comment
-  const likeComment = async (commentId: ObjectId) => {
-    const res = await callAPI(`/posts/:id/${commentId}/like`, "POST");
+  const likeComment = async (post: ObjectId, commentID: ObjectId) => {
+    const res = await callAPI(`/posts/${post}/comments/${commentID}/like`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     }
+    setPosts(updatePostComments(posts, post, res.comments));
+  
+    // Update saved posts, if needed
+    setSavedPosts(updatePostComments(savedPosts, post, res.comments));
     // await fetchPosts(); // Re-fetch posts to include the new comment
   };
 
   // Reporting a comment
-  const reportComment = async (commentId: ObjectId) => {
-    const res = await callAPI(`/posts/:id/${commentId}/report`, "POST");
+  const reportComment = async (post: ObjectId, commentID: ObjectId) => {
+    const res = await callAPI(`/posts/${post}/comments/${commentID}/report`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     }

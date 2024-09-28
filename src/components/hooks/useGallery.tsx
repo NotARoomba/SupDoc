@@ -1,18 +1,21 @@
 import * as ImagePicker from "expo-image-picker";
 import { Alert, Linking } from "react-native";
+import { useTranslation } from "react-i18next";
+
 
 export default function useGallery() {
+  const { t } = useTranslation();
   const requestPermission = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!granted) {
       Alert.alert(
-        "Allow Gallery Access",
-        "You need to allow media library permissions for this to work",
+        t("images.galleryTitle"),
+        t("images.galleryDescription"),
         [
-          { text: "Cancel", style: "cancel" },
+          { text: t("cancel"), style: "cancel" },
           {
-            text: "Settings",
+            text: t("settings"),
             isPreferred: true,
             onPress: Linking.openSettings,
           },

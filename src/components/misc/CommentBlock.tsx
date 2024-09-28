@@ -52,35 +52,36 @@ export default function CommentBlock({ comments, post, parent }: CommentBlockPro
         <ScrollView>
           {currentComments.map((comment, index) => { 
             const [liked, setLiked] = useState(false);
-            //  useEffect(() => {
-            //   setLiked(comment.likes.includes(user._id as ObjectId));
-            // }, [comment, user._id, comments]);
+             useEffect(() => {
+              setLiked(comment.likes.includes(user._id as ObjectId));
+            }, [comment, user._id, comments]);
   return (
             <View key={comment._id?.toString()} className="mb-4 px-4">
               <Text className="text-ivory text-lg font-bold">
-                {comment.doctor.toString()}
+                {comment.name}
               </Text>
               <Text className="text-ivory text-md">{comment.text}</Text>
               <View className="flex flex-row mt-2 space-x-3">
                 <TouchableOpacity
                   onPress={() =>{setLiked(!liked)
-                    likeComment(comment._id as ObjectId)}
+                    likeComment(post, comment._id)}
                   }
                 >
                   <Icons
                     name="heart"
                     size={24}
                     color={
-                      liked || comment.likes.includes(user._id as ObjectId)
+                      liked
                         ? "red"
                         : "gray"
                     }
                   />
-                  <Text className="text-ivory text-center">{comment.likes.length + (liked ?  1 : comment.likes.includes(user._id as ObjectId) ? 0 : -1)}</Text>
+                  {/* / + (liked ?  1 : comment.likes.includes(user._id as ObjectId) ? -1 : 0) */}
+                  <Text className="text-ivory text-center">{comment.likes.length}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() =>
-                    reportComment(comment._id  as ObjectId)
+                    reportComment(post, comment._id)
                   }
                 >
                   <Icons name="alert" size={24} color="yellow" />
