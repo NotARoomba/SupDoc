@@ -65,9 +65,10 @@ export default function CommentBlock({
         <ScrollView>
           {currentComments.map((comment) => {
             const [liked, setLiked] = useState(false);
-
+            const [likes, setLikes] = useState(0);
             useEffect(() => {
               setLiked(comment.likes.includes(user._id as ObjectId));
+              setLikes(comment.likes.length);
             }, [comment, user._id, comments]);
 
             const isReplyingToThisComment = replyingTo === comment._id;
@@ -77,68 +78,96 @@ export default function CommentBlock({
                 key={comment._id?.toString()}
                 entering={FadeInUp.delay(100 * (comments.indexOf(comment) + 1))} // Slight stagger for each comment
                 exiting={FadeOutDown.duration(300)}
-                className={`mb-4 px-4 ${
-                  isReplyingToThisComment ? "bg-highlight-color" : "bg-transparent"
-                }`} // Highlight selected comment
+                className={`mb-4  rounded-xl  
+                ${isReplyingToThisComment ? ` bg-oxford_blue transition-all duration-500 px-0 mx-4 ${comment.replies.length == 0 ? 'py-2' : 'pt-2'} ` : "bg-transparent transition-all duration-500 px-4 mx-0 py-2 "}
+                `}
               >
-                <Text className="text-ivory text-lg font-bold">
-                  {comment.name}
-                </Text>
-                <Text className="text-ivory text-md">{comment.text}</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setReplyingTo(
+                      comment._id == replyingTo ? null : comment._id
+                    ); // Set the reply state
+                  }}
+                >
+                  <View  className={isReplyingToThisComment ? "px-4" : 'px-0'}>
+                  <Text 
+                className="text-ivory text-lg font-bold">
+                    {comment.name}
+                  </Text>
+                  <Text className="text-ivory text-md">{comment.text}</Text>
 
-                <View className="flex flex-row mt-2 justify-between">
-                  <View className="flex flex-row space-x-6">
-                    {/* Grouped Like and Reply */}
-                    <TouchableOpacity
-                      onPress={() => {
-                        setLiked(!liked);
-                        likeComment(post, comment._id);
-                      }}
-                    >
-                      <Icons
-                        name="heart"
-                        size={24}
-                        color={liked ? "red" : "gray"}
-                      />
-                      <Text className="text-ivory text-center">
-                        {comment.likes.length}
-                      </Text>
-                    </TouchableOpacity>
-
-                    {/* Only show reply button if no other reply is selected */}
-                    {!replyingTo && (
+                  <View className="flex flex-row mt-2 justify-between">
+                    <View className="flex flex-row space-x-6 align-middle">
+                      {/* Grouped Like and Reply */}
                       <TouchableOpacity
-                        onPress={() => setReplyingTo(comment._id)}
+                        onPress={() => {
+                          setLikes(likes + (liked ? -1 : 1));
+                          setLiked(!liked);
+                          likeComment(post, comment._id);
+                        }}
                       >
-                        <Text className="text-blue-500">Reply</Text>
+                        <Icons
+                          name="heart"
+                          size={24}
+                          color={liked ? "red" : "gray"}
+                        />
+                        <Text className="text-ivory text-center">{likes}</Text>
                       </TouchableOpacity>
+
+                      {/* Reply Button - Toggles the Report Button */}
+                      <Reanimated.View
+                        exiting={FadeOut.duration(250)}
+                        entering={FadeIn.duration(250)}
+                        className={"my-auto"}
+                      >
+                        <TouchableOpacity
+                          onPress={() => {
+                            setReplyingTo(
+                              comment._id == replyingTo ? null : comment._id
+                            ); // Set the reply state
+                          }}
+                        >
+                          <Text className="text-blue-500">Reply</Text>
+                        </TouchableOpacity>
+                      </Reanimated.View>
+                    </View>
+
+                    {/* Conditional Report Button */}
+                    {isReplyingToThisComment && (
+                      <Reanimated.View
+                        entering={FadeInUp.delay(200)}
+                        exiting={FadeOutDown.duration(200)}
+                      >
+                        <TouchableOpacity
+                          onPress={() => reportComment(post, comment._id)}
+                        >
+                          <Icons name="report" size={24} color="red" />
+                        </TouchableOpacity>
+                      </Reanimated.View>
                     )}
                   </View>
-
-                  {/* Report button */}
-                  <TouchableOpacity
-                    onPress={() => reportComment(post, comment._id)}
-                  >
-                    <Icons name="report" size={24} color="red" />
-                  </TouchableOpacity>
-                </View>
-
-                {/* Nested Replies */}
-                {comment.replies && comment.replies.length > 0 && (
-                  <Reanimated.View
-                    entering={FadeInDown.delay(200)} // Enter with delay
-                    exiting={FadeOutUp.duration(200)} // Exit with upward motion
-                    className="pl-4 border-l border-gray-500 mt-2"
-                  >
-                    <CommentBlock
-                      comments={comment.replies as unknown as Comment[]}
-                      post={post}
-                      parent={comment._id as ObjectId}
-                      replyingTo={replyingTo} // Pass down the current reply target
-                      setReplyingTo={setReplyingTo} // Pass down the setter for replyingTo
-                    />
-                  </Reanimated.View>
-                )}
+                  </View>
+                  {/* Nested Replies */}
+                  {comment.replies && comment.replies.length > 0 && (
+                    <Reanimated.View
+                      entering={FadeInDown.delay(200)} // Enter with delay
+                      exiting={FadeOutUp.duration(200)} // Exit with upward motion
+                      className={`pl-4 border-l border-gray-500 mt-2 ${
+                        isReplyingToThisComment
+                          ? "bg-richer_black" // Darker background for child comments when parent is selected
+                          : "bg-transparent"
+                      }`}
+                    >
+                      <CommentBlock
+                        comments={comment.replies as unknown as Comment[]}
+                        post={post}
+                        parent={comment._id as ObjectId}
+                        replyingTo={replyingTo} // Pass down the current reply target
+                        setReplyingTo={setReplyingTo} // Pass down the setter for replyingTo
+                      />
+                    </Reanimated.View>
+                  )}
+                </TouchableOpacity>
               </Reanimated.View>
             );
           })}
@@ -162,9 +191,13 @@ export default function CommentBlock({
                 onPress={handleAddComment}
                 className="mt-2 bg-midnight_green p-3 rounded-lg"
               >
-                <Text className="text-ivory text-center font-bold">
+                <Reanimated.Text
+                  entering={FadeIn.duration(500)}
+                  exiting={FadeOut.duration(500)}
+                  className="text-ivory text-center font-bold"
+                >
                   {replyingTo ? "Post Reply" : "Post Comment"}
-                </Text>
+                </Reanimated.Text>
               </TouchableOpacity>
 
               {replyingTo && (
