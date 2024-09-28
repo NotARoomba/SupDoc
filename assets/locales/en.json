@@ -5,7 +5,7 @@
     "success": "Success!",
     "error": "Error",
     "cancel": "Cancel",
-    "settings": "Settings",
+    "settings": "Settings", 
     "loading": "Loading",
     "yes": "Yes",
     "no": "No",
@@ -35,7 +35,9 @@
         "experience": "Experience",
         "bio": "Bio",
         "license": "Upload your doctor's license or degree",
-        "picture": "Upload a profile photo"
+        "picture": "Upload a profile photo",
+        "enterCode": "Enter Verification Code",
+        "enterCode2": "Enter the verification code sent to: "
     },
     "posts": {
         "savedNone": "(You have not saved any posts)",
