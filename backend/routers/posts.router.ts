@@ -229,7 +229,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
 
   // Fetch the parent post
-  const parentPost = await collections.posts.findOne({
+  let parentPost = await collections.posts.findOne({
     _id: postID,
   }) as Post;
 
@@ -259,7 +259,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   // Check if the comment is a reply to an existing comment
   if (comment.parent) {
     // Find the parent comment within the post's comments array
-    const parentComment = findCommentById(parentPost.comments, comment.parent);
+    let parentComment = findCommentById(parentPost.comments, comment.parent);
 
     if (!parentComment) {
       return res.status(200).send(

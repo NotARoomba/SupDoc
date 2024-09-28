@@ -71,7 +71,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     setPosts(res.posts);
-    console.log(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
   };
@@ -124,6 +123,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     postID: ObjectId,
     updatedComments: Comment[],
   ): Post[] => {
+    console.log(postID, postList[0]._id)
     return postList.map((post) =>
       post._id == postID ? { ...post, comments: updatedComments } : post,
     );
@@ -145,10 +145,14 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     console.log(res.comments);
 
     // Update posts
-    setPosts(updatePostComments(posts, post, res.comments));
+    setPosts(posts.map((p) =>
+    post == p._id ? { ...p, comments: res.comments } : p,
+  ));
 
     // Update saved posts, if needed
-    setSavedPosts(updatePostComments(savedPosts, post, res.comments));
+    setSavedPosts(savedPosts.map((p) =>
+    post == p._id ? { ...p, comments: res.comments } : p,
+  ));
     // await fetchPosts(); // Re-fetch posts to include the new comment
   };
 
