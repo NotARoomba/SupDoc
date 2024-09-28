@@ -98,7 +98,7 @@ export async function removeImageFromStorage(
 
     // Delete the file
     await file.delete();
-    console.log(`File ${fileName} deleted successfully.`);
+    // console.log(`File ${fileName} deleted successfully.`);
     return true;
   } catch (err) {
     console.error("Error deleting file from Google Cloud Storage: ", err);
@@ -119,6 +119,6 @@ export async function generateSignedUrl(fileUrl: string) {
     .file(fileName)
     .getSignedUrl(options);
 
-  console.log(`The signed url for ${fileName} is ${url}`);
+  // console.log(`The signed url for ${fileName} is ${url}`);
   return url;
 }

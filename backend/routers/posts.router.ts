@@ -40,7 +40,7 @@ const getCommentsWithReplies = async (post: ObjectId) => {
       },
     ])
     .toArray();
-
+    console.log(comments)
   return comments;
 };
 // GETS POST FROM POST ID

@@ -26,8 +26,11 @@ export default function CommentBlock({ comments, post, parent }: CommentBlockPro
   const { addComment, likeComment, reportComment } = usePosts();
 
   useEffect(() => {
+    console.log(comments); // Log the comments to ensure they are coming through correctly
     setCurrentComments(comments);
   }, [comments]);
+  
+  
 
   const handleAddComment = async () => {
     if (commentText.trim()) {
