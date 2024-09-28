@@ -4,6 +4,7 @@ import Comment from "@/backend/models/comment";
 import Post from "@/backend/models/post";
 import { FlashList } from "@shopify/flash-list";
 import { Ref } from "react";
+import {ObjectId} from 'mongodb'
 
 export interface IndexProps {
   setIsLogged: (v: boolean) => void;
@@ -162,6 +163,6 @@ export interface PostBlockProps {
 
 export interface CommentBlockProps {
   comments: Comment[]
-  post: string,
-  parent: string| null
+  post: ObjectId,
+  parent: ObjectId| null
 }

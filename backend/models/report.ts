@@ -10,7 +10,7 @@ enum REPORT_REASONS {
 }
 
 interface Reporter {
-  id: number;
+  id: ObjectId;
   type: UserType;
 }
 

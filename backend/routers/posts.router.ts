@@ -186,7 +186,7 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
           },
           {
             $push: {
-              posts: postInsert.insertedId.toString(),
+              posts: postInsert.insertedId,
             } as PushOperator<Document>,
           },
         );
@@ -232,7 +232,7 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
 
 postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   const comment: Comment = req.body;
-  const postID = req.params.id;
+  const postID = new ObjectId(req.params.id);
   // if comment has a parent then get the parent and add the id as a child
   // if the comment does not have a parent then get the postID and run checks if the comment is able to be placed, if not then throw an error, else add the comment ID to the array of comments
   // DOCTOR IS DOCTOR ID NOT IDENTIFICATION
@@ -243,6 +243,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   //   comment.doctor,
   // ]);
   console.log(comment, postID)
+  const keyAltName = comment.doctor.toString()
   if (comment.parent) {
     const parentComment = (await collections.comments.findOne({
       _id: new ObjectId(comment.parent),
@@ -258,23 +259,14 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
         );
     const insComment = await collections.comments.insertOne({
       // Comment fields
-      post: await encryption.encrypt(postID, {
-        keyAltName: comment.doctor,
-        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-      }),
+      post: postID,
 
-      parent: await encryption.encrypt(parentComment._id, {
-        keyAltName: comment.doctor,
-        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-      }),
+      parent: new ObjectId(parentComment._id),
 
-      doctor: await encryption.encrypt(new ObjectId(comment.doctor), {
-        keyAltName: comment.doctor,
-        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-      }),
+      doctor: new ObjectId(comment.doctor),
 
       text: await encryption.encrypt(comment.text, {
-        keyAltName: comment.doctor,
+        keyAltName,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
       }),
 
@@ -287,17 +279,12 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
       timestamp: Date.now(),
     });
     const updated = await collections.comments.updateOne(
-      { _id: parentComment._id },
+      { _id: new ObjectId(parentComment._id) },
       {
-        $set: {
-          replies: [
-            ...parentComment.replies,
-            await encryption.encrypt(insComment?.insertedId, {
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-              keyAltName: comment.doctor,
-            }),
-          ],
-        },
+        $push: {
+          replies: 
+          insComment.insertedId,
+        } as PushOperator<Document>,
       },
     );
     if (updated?.acknowledged) {
@@ -348,20 +335,14 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     );
     const insComment = await collections.comments.insertOne({
       // Comment fields
-      post: await encryption.encrypt(postID, {
-        keyAltName: comment.doctor,
-        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-      }),
+      post: postID,
 
       parent: null,
 
-      doctor: await encryption.encrypt(new ObjectId(comment.doctor), {
-        keyAltName: comment.doctor,
-        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-      }),
+      doctor: new ObjectId(comment.doctor),
 
       text: await encryption.encrypt(comment.text, {
-        keyAltName: comment.doctor,
+        keyAltName,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
       }),
 
@@ -378,10 +359,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
       {
         $push: {
           comments: 
-            await encryption.encrypt(insComment?.insertedId, {
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-              keyAltName: comment.doctor,
-            }),
+          insComment.insertedId,
         } as PushOperator<Document>,
       },
     );
@@ -405,7 +383,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
 });
 
 postsRouter.post("/comments/:id/like", async (req: Request, res: Response) => {
-  const commentId = req.params.id;
+  const commentId = new ObjectId(req.params.id);
   const doctor = (await collections.doctors.findOne({
     publicKey: req.headers.authorization,
   })) as Doctor;
@@ -416,18 +394,18 @@ postsRouter.post("/comments/:id/like", async (req: Request, res: Response) => {
 
   try {
     const updated = await collections.comments.updateOne(
-      { _id: new ObjectId(commentId) },
+      { _id: commentId },
       [
         {
           $set: {
             likes: {
               $cond: {
-                if: { $in: [user.identification.number, "$likes"] }, // If already liked, remove the like
+                if: { $in: [user._id, "$likes"] }, // If already liked, remove the like
                 then: {
-                  $setDifference: ["$likes", [user.identification.number]],
+                  $setDifference: ["$likes", [user._id]],
                 },
                 else: {
-                  $concatArrays: ["$likes", [user.identification.number]],
+                  $concatArrays: ["$likes", [user._id]],
                 }, // If not liked, add the like
               },
             },
@@ -436,7 +414,7 @@ postsRouter.post("/comments/:id/like", async (req: Request, res: Response) => {
       ],
     );
 
-    if (updated?.acknowledged) {
+    if (updated.acknowledged) {
       return res
         .status(200)
         .send(
@@ -469,7 +447,7 @@ postsRouter.post("/comments/:id/like", async (req: Request, res: Response) => {
 postsRouter.post(
   "/comments/:id/report",
   async (req: Request, res: Response) => {
-    const commentId = req.params.id;
+    const commentId = new ObjectId(req.params.id);
 
     const doctor = (await collections.doctors.findOne({
       publicKey: req.headers.authorization,
@@ -482,9 +460,9 @@ postsRouter.post(
     try {
       if (
         await collections.reports.findOne({
-          reported: new ObjectId(commentId),
+          reported: commentId,
           reporter: {
-            id: user.identification.number,
+            id: user._id,
             type: doctor ? UserType.DOCTOR : UserType.PATIENT,
           },
         })
@@ -498,15 +476,15 @@ postsRouter.post(
       }
 
       const createdReport = await collections.reports.insertOne({
-        reported: new ObjectId(commentId),
+        reported: commentId,
         reporter: {
-          id: user.identification.number,
+          id: new ObjectId(user._id),
           type: doctor ? UserType.DOCTOR : UserType.PATIENT,
         },
         timestamp: Date.now(),
       });
       const updatedComment = await collections.comments.updateOne(
-        { _id: new ObjectId(commentId) },
+        { _id: commentId },
         {
           $push: {
             reports: createdReport.insertedId,
@@ -549,7 +527,7 @@ postsRouter.post(
 
 postsRouter.get("/:id/save", async (req: Request, res: Response) => {
   //check if doctor
-  const id = req?.params?.id;
+  const id = new ObjectId(req?.params?.id);
   try {
     if (collections.posts && collections.doctors) {
       const updated = await collections.doctors.updateOne(
@@ -604,7 +582,7 @@ postsRouter.get("/:id/save", async (req: Request, res: Response) => {
 postsRouter.post("/:id/report", async (req: Request, res: Response) => {
   //check if doctor
   const report: Report = req.body;
-  const id = req?.params?.id;
+  const id = new ObjectId(req?.params?.id);
   try {
     if (collections.posts && collections.doctors && collections.reports) {
       const doctor = (await collections.doctors.findOne({
@@ -612,8 +590,8 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
       })) as Doctor;
       if (
         await collections.reports.findOne({
-          reported: new ObjectId(id),
-          reporter: { id: doctor.identification.number, type: UserType.DOCTOR },
+          reported: id,
+          reporter: { id: doctor._id, type: UserType.DOCTOR },
         })
       )
         return res.send(
@@ -624,11 +602,11 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
         );
       const created = await collections.reports.insertOne({
         ...report,
-        reported: new ObjectId(id),
-        reporter: { id: doctor.identification.number, type: UserType.DOCTOR },
+        reported: id,
+        reporter: { id: doctor._id, type: UserType.DOCTOR },
       } as Report);
       const updated = await collections.posts.updateOne(
-        { _id: new ObjectId(id) },
+        { _id: id },
         {
           $push: {
             reports: created.insertedId,

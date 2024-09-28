@@ -12,6 +12,7 @@ import CommentBlock from "components/misc/CommentBlock";
 import { callAPI } from "components/utils/Functions";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
+import { ObjectId } from "mongodb";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -217,7 +218,7 @@ export default function PostPage() {
                   (There are no comments on your post yet)
                 </Text>
               ) : (
-                <CommentBlock post={post._id?.toString() as string} parent={null} comments={post.comments as unknown as Comment[]} />
+                <CommentBlock post={post._id as ObjectId} parent={null} comments={post.comments as unknown as Comment[]} />
               )}
             </View>
           </Reanimated.ScrollView>

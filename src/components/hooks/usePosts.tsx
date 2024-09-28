@@ -20,6 +20,7 @@ import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
 import { PatientMetrics } from "@/backend/models/metrics";
 import { FlashList } from "@shopify/flash-list";
+import { ObjectId } from "mongodb";
 
 // Define the types for the context
 interface PostsContextType {
@@ -33,9 +34,9 @@ interface PostsContextType {
   savePost: (post: Post) => Promise<boolean>;
   deletePost: (id: string) => Promise<void>;
   reportPost: (id: string) => Promise<void>;
-  addComment: (id: string, text: string, parent: string | null) => Promise<void>;
-  likeComment: (commentId: string) => Promise<void>;
-  reportComment: (commentId: string) => Promise<void>;
+  addComment: (id: ObjectId, text: string, parent: ObjectId | null) => Promise<void>;
+  likeComment: (commentId: ObjectId) => Promise<void>;
+  reportComment: (commentId: ObjectId) => Promise<void>;
   createPost: () => Promise<void>;
 }
 
@@ -112,12 +113,12 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     }
   };
 
-  const addComment = async (post: string, text: string, parent: string | null) => {
+  const addComment = async (post: ObjectId, text: string, parent: ObjectId | null) => {
     const res = await callAPI(`/posts/${post}/comment`, "POST", {
       text,
       post,
       parent,
-      doctor: user._id?.toString()
+      doctor: user._id
     });
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
@@ -126,7 +127,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
 
   // Liking a comment
-  const likeComment = async (commentId: string) => {
+  const likeComment = async (commentId: ObjectId) => {
     const res = await callAPI(`/posts/comments/${commentId}/like`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
@@ -134,7 +135,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
 
   // Reporting a comment
-  const reportComment = async (commentId: string) => {
+  const reportComment = async (commentId: ObjectId) => {
     const res = await callAPI(`/posts/comments/${commentId}/report`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));

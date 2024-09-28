@@ -262,7 +262,7 @@ doctorsRouter.get("/saved/:timestamp", async (req: Request, res: Response) => {
       const posts = (await collections.posts
         .find({
           _id: {
-            $in: postIDs.map((v) => new ObjectId(v)),
+            $in: postIDs,
           },
           timestamp: { $gt: timestamp },
         })

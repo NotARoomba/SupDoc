@@ -17,6 +17,7 @@ import { useUser } from "components/hooks/useUser";
 import Icons from "@expo/vector-icons/Octicons";
 import { usePosts } from "components/hooks/usePosts";
 import Comment from "@/backend/models/comment";
+import { ObjectId } from "mongodb";
 
 export default function CommentBlock({ comments, post, parent }: CommentBlockProps) {
   const { user } = useUser();
@@ -52,20 +53,20 @@ export default function CommentBlock({ comments, post, parent }: CommentBlockPro
           {currentComments.map((comment, index) => (
             <View key={comment._id?.toString()} className="mb-4 px-4">
               <Text className="text-ivory text-lg font-bold">
-                {comment.doctor}
+                {comment.doctor.toString()}
               </Text>
               <Text className="text-ivory text-md">{comment.text}</Text>
               <View className="flex flex-row mt-2 space-x-3">
                 <TouchableOpacity
                   onPress={() =>
-                    likeComment(comment._id?.toString() as string)
+                    likeComment(comment._id as ObjectId)
                   }
                 >
                   <Icons
                     name="heart"
                     size={24}
                     color={
-                      comment.likes.includes(user._id?.toString() as string)
+                      comment.likes.includes(user._id  as ObjectId)
                         ? "red"
                         : "gray"
                     }
@@ -74,7 +75,7 @@ export default function CommentBlock({ comments, post, parent }: CommentBlockPro
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() =>
-                    reportComment(comment._id?.toString() as string)
+                    reportComment(comment._id  as ObjectId)
                   }
                 >
                   <Icons name="alert" size={24} color="yellow" />
@@ -86,7 +87,7 @@ export default function CommentBlock({ comments, post, parent }: CommentBlockPro
                   <CommentBlock
                     comments={comment.replies as unknown as Comment[]}
                     post={post}
-                    parent={comment._id?.toString() as string}
+                    parent={comment._id  as ObjectId}
                   />
                 </View>
               )}
