@@ -18,11 +18,13 @@ import Icons from "@expo/vector-icons/Octicons";
 import { usePosts } from "components/hooks/usePosts";
 import Comment from "@/backend/models/comment";
 import { ObjectId } from "mongodb";
+import { useTranslation } from "react-i18next";
 
 export default function CommentBlock({ comments, post, parent }: CommentBlockProps) {
   const { user } = useUser();
   const [commentText, setCommentText] = useState("");
   const [currentComments, setCurrentComments] = useState(comments);
+  const { t } = useTranslation();
 
   const { addComment, likeComment, reportComment } = usePosts();
 
@@ -38,7 +40,7 @@ export default function CommentBlock({ comments, post, parent }: CommentBlockPro
       await addComment(post, commentText, parent);
       setCommentText(""); // Clear input after posting
     } else {
-      Alert.alert("Comment cannot be empty.");
+      Alert.alert(t("error"), t("errors.emptyComment"));
     }
   };
 

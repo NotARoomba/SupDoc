@@ -161,7 +161,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-    Alert.alert(t("success"), "Successfully reported the comment!");
+    Alert.alert(t("success"), t("successes.reportComment"));
   };
   const reportPost = async (id: string) => {
     const res = await callAPI(`/posts/${id.toString()}/report`, "POST");
@@ -169,7 +169,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     
     
-    Alert.alert("Success", "Sucessfully submitted your report!");
+    Alert.alert(t("success"), t("successes.submitReport"));
   }
   const resetPostEdit = () => {
     setPostEdit({
@@ -198,20 +198,20 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     const imgRes = await uploadImages(postEdit.images);
     if (imgRes.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
-      return Alert.alert(t("error"), t(STATUS_CODES[imgRes.status]));
+      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[imgRes.status]}`));
     }
     const res = await callAPI(`/posts/create`, "POST", {
       ...postEdit,
       images: imgRes.urls,
     });
     if (res.status !== STATUS_CODES.SUCCESS)
-      return Alert.alert("Error", "There was an error uploading your post!");
+      return Alert.alert(t("error"), t("errors.postUploading"));
     else {
       setPosts([...posts, res.post]);
       resetPostEdit();
       setLoading(false);
       router.navigate({ pathname: "/(tabs)/", params: { refresh: 1 } });
-      Alert.alert("Success", "Sucessfully uploaded your post!");
+      Alert.alert(t("success"), t("successes.postUploading"));
     }
   };
   useEffect(() => {
