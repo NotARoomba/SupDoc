@@ -15,7 +15,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Reanimated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, FadeOutUp } from "react-native-reanimated";
 
 export default function CommentBlock({
   comments,
@@ -129,16 +129,6 @@ export default function CommentBlock({
           {/* Add Comment Input only for root or replying to a specific comment */}
           {parent === null && (
             <View className="mt-4 px-4">
-              {replyingTo && (
-                <View className="mb-2">
-                  <TouchableOpacity
-                    onPress={handleStopReply}
-                    className="bg-red-600 p-2 rounded-lg"
-                  >
-                    <Text className="text-ivory text-center font-bold">Stop Reply</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
               <TextInput
                 placeholder={
                   replyingTo ? "Reply to comment..." : "Add a comment..."
@@ -155,6 +145,16 @@ export default function CommentBlock({
                   {replyingTo ? "Post Reply" : "Post Comment"}
                 </Text>
               </TouchableOpacity>
+              {replyingTo && (
+                <View  className="mb-2">
+                   <TouchableOpacity
+                  onPress={handleStopReply}
+                  className="mt-2 bg-red-500 p-3 rounded-lg"
+                >
+                  <Text className="text-ivory text-center font-bold">Cancel Reply</Text>
+                </TouchableOpacity>
+                </View>
+              )}
             </View>
           )}
         </ScrollView>
