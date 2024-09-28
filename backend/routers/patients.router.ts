@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import Patient from "../models/patient";
+import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
 import {
   collections,
@@ -9,6 +10,7 @@ import {
   env,
 } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
+import { generateSignedUrl } from "../services/storage.service";
 
 export const patientsRouter = express.Router();
 
@@ -254,17 +256,27 @@ patientsRouter.get("/posts", async (req: Request, res: Response) => {
           publicKey: req.headers.authorization,
         })) as Patient
       ).posts;
-      const posts = await collections.posts
+      const posts = (await collections.posts
         .find({
           _id: {
             $in: postIDs.map((v) => new ObjectId(v)),
           },
         })
         .sort({ _id: -1 })
-        .toArray();
+        .toArray()) as unknown as Post[];
       res.send(
         encrypt(
-          { posts, status: STATUS_CODES.SUCCESS },
+          {
+            posts: await Promise.all(
+              posts.map(async (v) => ({
+                ...v,
+                images: await Promise.all(
+                  v.images.map(async (v) => await generateSignedUrl(v)),
+                ),
+              })),
+            ),
+            status: STATUS_CODES.SUCCESS,
+          },
           req.headers.authorization,
         ),
       );

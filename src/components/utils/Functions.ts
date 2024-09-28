@@ -9,7 +9,6 @@ import { reloadAppAsync } from "expo";
 import * as SecureStore from "expo-secure-store";
 import { RSA } from "react-native-rsa-native";
 import { SignupInfo, UserType } from "./Types";
-import * as FileSystem from 'expo-file-system'
 
 export async function callAPI(
   endpoint: string,
@@ -104,9 +103,7 @@ export async function callAPI(
   }
 }
 
-export async function uploadImages(
-  imageUris: string[],
-) {
+export async function uploadImages(imageUris: string[]) {
   try {
     // Create FormData
     // const key = CryptoJS.SHA256(CryptoJS.lib.WordArray.random(128/8)).toString();
@@ -115,25 +112,36 @@ export async function uploadImages(
       // const base64Image = `data:image/png;base64,${await FileSystem.readAsStringAsync(uri, {
       //   encoding: FileSystem.EncodingType.Base64,
       // })}`;
-  
+
       // const encryptedImage = CryptoJS.AES.encrypt(base64Image, key).toString();
-      formData.append('files', {type: 'image/png', uri, name: "files"} as unknown as File);
+      formData.append("files", {
+        type: "image/png",
+        uri,
+        name: "files",
+      } as unknown as File);
     }
 
     // Encrypt FormData
     // const data = formData; // FormData needs special handling for encryption
-    const key = CryptoJS.SHA256(JSON.stringify(formData)).toString();
-    const encryptedKey = await RSA.encrypt(
-      key,
-      process.env.EXPO_PUBLIC_SERVER_PUBLIC
-    );
-    const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(formData), key).toString();
+    // const key = CryptoJS.SHA256(JSON.stringify(formData)).toString();
+    // const encryptedKey = await RSA.encrypt(
+    //   key,
+    //   process.env.EXPO_PUBLIC_SERVER_PUBLIC,
+    // );
+    // const encryptedData = CryptoJS.AES.encrypt(
+    //   JSON.stringify(formData),
+    //   key,
+    // ).toString();
     // formData.append('key', encryptedKey)
-    const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
-      console.log(magic)
+    // const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
+    // console.log(magic);
     // Handle authorization
-    const publicKey = await SecureStore.getItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC);
-    const privateKey = await SecureStore.getItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE);
+    const publicKey = await SecureStore.getItemAsync(
+      process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
+    );
+    const privateKey = await SecureStore.getItemAsync(
+      process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
+    );
     let encryptedAuth = publicKey ?? process.env.EXPO_PUBLIC_LIMITED_AUTH;
     const authKey = CryptoJS.SHA256(encryptedAuth).toString();
     const authorization = Base64.stringify(
@@ -148,30 +156,34 @@ export async function uploadImages(
         }),
       ),
     );
-
+    //change to b64
     // Make the API call
     const res = await axios.post(
-      process.env.EXPO_PUBLIC_API_URL + '/images/upload',
-      magic,
+      process.env.EXPO_PUBLIC_API_URL + "/images/upload",
+      null,
       {
-        // data: formData,
+        data: formData,
         headers: {
           method: "POST",
-          Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
           Authorization: authorization,
         },
-        // transformRequest: () => {
-        //   return formData; // this is doing the trick
-        // },
-      }
+        transformRequest: () => {
+          return formData; // this is doing the trick
+        },
+      },
     );
 
     // Decrypt response
-    const decryptKey = privateKey ? await RSA.decrypt(res.data.key, privateKey) : res.data.key;
+    const decryptKey = privateKey
+      ? await RSA.decrypt(res.data.key, privateKey)
+      : res.data.key;
     return decryptKey
       ? JSON.parse(
-          CryptoJS.AES.decrypt(res.data.body, decryptKey).toString(CryptoJS.enc.Utf8),
+          CryptoJS.AES.decrypt(res.data.body, decryptKey).toString(
+            CryptoJS.enc.Utf8,
+          ),
         )
       : res.data;
   } catch (error: any) {

@@ -1,16 +1,12 @@
-import Post from "@/backend/models/post";
-import { STATUS_CODES } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
+import useCamera from "components/hooks/useCamera";
+import useFade from "components/hooks/useFade";
+import useGallery from "components/hooks/useGallery";
+import { useLoading } from "components/hooks/useLoading";
+import { usePosts } from "components/hooks/usePosts";
+import Loader from "components/loading/Loader";
 import ImageUpload from "components/misc/ImageUpload";
-import Loader from "components/misc/Loader";
-import useCamera from "components/misc/useCamera";
-import useFade from "components/misc/useFade";
-import useGallery from "components/misc/useGallery";
-import { useLoading } from "components/misc/useLoading";
-import { callAPI } from "components/utils/Functions";
-import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
 import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import {
@@ -33,44 +29,11 @@ export default function Upload() {
   const gallery = useGallery();
   const camera = useCamera();
   const { loading, setLoading } = useLoading();
-  const [postData, setPostData] = useState<Post>();
-  const uploadPost = async () => {
-    setLoading(true);
-    if (!postData) return;
-    let images = [];
-    for (let i = 0; i < postData.images.length; i++)
-      images[i] = `data:image/png;base64,${await FileSystem.readAsStringAsync(
-        postData.images[i],
-        {
-          encoding: "base64",
-        },
-      )}`;
-    const res = await callAPI(`/posts/create`, "POST", {
-      ...postData,
-    });
-    if (res.status !== STATUS_CODES.SUCCESS)
-      return Alert.alert("Error", "There was an error uploading your post!");
-    else {
-      resetPostData();
-      setLoading(false);
-      router.navigate({ pathname: "/(tabs)/", params: { refresh: 1 } });
-      Alert.alert("Success", "Sucessfully uploaded your post!");
-    }
-  };
+  const { createPost, resetPostEdit, setPostEdit, postEdit } = usePosts();
   const [activeChange, setActiveChange] = useState(false);
   const [activeDelete, setActiveDelete] = useState("");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
-  const resetPostData = () => {
-    setPostData({
-      title: "",
-      description: "",
-      images: [],
-      patient: 0,
-      reports: [],
-      timestamp: 0,
-      comments: [],
-    } as Post);
-  };
+
   const selectImage = async (pickerType: "camera" | "gallery") => {
     if (
       !(await camera.requestPermission()) &&
@@ -84,11 +47,11 @@ export default function Upload() {
       if (pickerType === "camera") {
         result = await camera.takePhoto({
           allowsEditing: true,
-          quality: 1,
+          quality: 0.5,
         } as ImagePicker.ImagePickerOptions);
       } else {
         result = await gallery.selectImage({
-          quality: 1,
+          quality: 0.5,
           allowsEditing: true,
         });
       }
@@ -100,7 +63,7 @@ export default function Upload() {
     }
   };
   useEffect(() => {
-    resetPostData();
+    resetPostEdit();
     const showListener = Keyboard.addListener("keyboardWillShow", () => {
       setKeyboardOpen(true);
     });
@@ -115,7 +78,7 @@ export default function Upload() {
   }, []);
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
-      {postData ? (
+      {postEdit ? (
         <Animated.View
           style={{ opacity: fadeAnim }}
           className={
@@ -130,7 +93,7 @@ export default function Upload() {
           >
             <TouchableOpacity
               onPress={() =>
-                keyboardOpen ? Keyboard.dismiss() : resetPostData()
+                keyboardOpen ? Keyboard.dismiss() : resetPostEdit()
               }
               className="z-50 w-24  px-5 h-8 py-0 bg-ivory/20 rounded-full"
             >
@@ -149,12 +112,12 @@ export default function Upload() {
             <TouchableOpacity
               className="z-50 w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
               onPress={() =>
-                postData.title && postData.description
+                postEdit.title && postEdit.description
                   ? Alert.alert("Confirm", "Are you sure you want to post?", [
                       { text: "Cancel", style: "cancel" },
                       {
                         text: "Post",
-                        onPress: () => uploadPost(),
+                        onPress: () => createPost(),
                       },
                     ])
                   : Alert.alert(
@@ -174,30 +137,30 @@ export default function Upload() {
           </Text>
           <TextInput
             onChangeText={(n) =>
-              setPostData({
-                ...postData,
+              setPostEdit({
+                ...postEdit,
                 title: n,
               })
             }
-            value={postData.title}
+            value={postEdit.title}
             keyboardType="default"
             maxLength={50}
             placeholderTextColor={"#ffffff"}
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl my-4 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
           <Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
-            Description ({postData.description.length}/1000)
+            Description ({postEdit.description.length}/1000)
           </Text>
           <TextInput
             onChangeText={(n) =>
-              setPostData({
-                ...postData,
+              setPostEdit({
+                ...postEdit,
                 description: n,
               })
             }
             maxLength={1000}
             multiline
-            value={postData.description}
+            value={postEdit.description}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
             className="flex justify-center   m-auto  h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
@@ -211,16 +174,16 @@ export default function Upload() {
             style={{ width: Dimensions.get("window").width }}
             className="flex flex-row h-64 m-auto py-4"
           >
-            {postData.images.map((v, i) => (
+            {postEdit.images.map((v, i) => (
               <ImageUpload
                 activeDelete={v == activeDelete}
                 setActiveDelete={setActiveDelete}
                 key={i}
                 image={v}
                 removeImage={(image) =>
-                  setPostData({
-                    ...postData,
-                    images: postData.images.filter((v) => v !== image),
+                  setPostEdit({
+                    ...postEdit,
+                    images: postEdit.images.filter((v) => v !== image),
                   })
                 }
               />
@@ -233,9 +196,9 @@ export default function Upload() {
                     onPress: async () => {
                       const i = await selectImage("gallery");
                       if (i)
-                        setPostData({
-                          ...postData,
-                          images: [...postData.images, i],
+                        setPostEdit({
+                          ...postEdit,
+                          images: [...postEdit.images, i],
                         });
                     },
                   },
@@ -244,9 +207,9 @@ export default function Upload() {
                     onPress: async () => {
                       const i = await selectImage("camera");
                       if (i)
-                        setPostData({
-                          ...postData,
-                          images: [...postData.images, i],
+                        setPostEdit({
+                          ...postEdit,
+                          images: [...postEdit.images, i],
                         });
                     },
                   },

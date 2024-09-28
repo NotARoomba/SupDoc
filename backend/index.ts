@@ -3,13 +3,13 @@ import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { doctorsRouter } from "./routers/doctors.router";
 import { factsRouter } from "./routers/facts.router";
+import { imagesRouter } from "./routers/images.router";
 import { patientsRouter } from "./routers/patients.router";
 import { postsRouter } from "./routers/posts.router";
 import { usersRouter } from "./routers/users.router";
 import { verifyRouter } from "./routers/verify.router";
 import { connectToDatabase } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
-import { imagesRouter } from "./routers/images.router";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -24,7 +24,7 @@ const port = 3001;
 connectToDatabase()
   .then(() => {
     app.use(cors());
-    app.use(express.json({ limit: "50mb", type: 'application/json' }));
+    app.use(express.json({ limit: "50mb", type: "application/json" }));
     app.use(decryptionMiddleware);
     app.use("/users", usersRouter);
     app.use("/patients", patientsRouter);

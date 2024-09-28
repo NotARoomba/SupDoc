@@ -1,17 +1,18 @@
 import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
-import Fact from "../models/fact";
 import { STATUS_CODES } from "../models/util";
-import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
-import { generateSignedUrl, removeImageFromStorage, upload, uploadImageToStorage } from "../services/storage.service";
-import multer from 'multer'
+import {
+  generateSignedUrl,
+  removeImageFromStorage,
+  upload,
+  uploadImageToStorage,
+} from "../services/storage.service";
 export const imagesRouter = express.Router();
 
 imagesRouter.use(express.json());
 
-imagesRouter.get("/:image",  async (req: Request, res: Response) => {
-    const image = req.params.image;
+imagesRouter.get("/:image", async (req: Request, res: Response) => {
+  const image = req.params.image;
   try {
     const url = await generateSignedUrl(image);
     if (url)
@@ -45,20 +46,27 @@ imagesRouter.get("/:image",  async (req: Request, res: Response) => {
   }
 });
 
-imagesRouter.get("/:image/delete",  async (req: Request, res: Response) => {
+imagesRouter.get("/:image/delete", async (req: Request, res: Response) => {
   const image = req.params.image;
-try {
-  const del = await removeImageFromStorage(image);
-  if (del)
-    res
-      .status(200)
-      .send(
-        encrypt(
-          { status: STATUS_CODES.SUCCESS },
-          req.headers.authorization,
-        ),
-      );
-  else
+  try {
+    const del = await removeImageFromStorage(image);
+    if (del)
+      res
+        .status(200)
+        .send(
+          encrypt({ status: STATUS_CODES.SUCCESS }, req.headers.authorization),
+        );
+    else
+      res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.GENERIC_ERROR },
+            req.headers.authorization,
+          ),
+        );
+  } catch (error) {
+    console.error("Error fetching image:", error);
     res
       .status(200)
       .send(
@@ -67,57 +75,34 @@ try {
           req.headers.authorization,
         ),
       );
-} catch (error) {
-  console.error("Error fetching image:", error);
-  res
-    .status(200)
-    .send(
-      encrypt(
-        { status: STATUS_CODES.GENERIC_ERROR },
-        req.headers.authorization,
-      ),
-    );
-}
+  }
 });
 
-imagesRouter.post("/upload", upload.array('files'), async (req: Request, res: Response) => {
-  const files = req.files as Express.Multer.File[];
-  console.log(req.files)
-  if (!files || files.length == 0) return res
-  .status(200)
-  .send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE }
-    );
-  try {
-    const urls = await Promise.all(
-        files.map(
-          async (image) => await uploadImageToStorage(image.path),
-        ),
+imagesRouter.post(
+  "/upload",
+  upload.array("files"),
+  async (req: Request, res: Response) => {
+    const files = req.files as Express.Multer.File[];
+    console.log(req.files);
+    if (!files || files.length == 0)
+      return res
+        .status(200)
+        .send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
+    try {
+      const urls = await Promise.all(
+        files.map(async (image) => await uploadImageToStorage(image.path)),
       );
       console.log(urls);
       if (!urls || urls.every((url) => url === null))
-      return res
-      .status(200)
-      .send(
-          { status: STATUS_CODES.ERROR_UPLOADING_IMAGE }
-      );
+        return res
+          .status(200)
+          .send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
       if (urls)
-        return res
-          .status(200)
-          .send(
-              { urls, status: STATUS_CODES.SUCCESS }
-          );
-      else
-        return res
-          .status(200)
-          .send(
-              { status: STATUS_CODES.GENERIC_ERROR }
-          );
+        return res.status(200).send({ urls, status: STATUS_CODES.SUCCESS });
+      else return res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
     } catch (error) {
-    console.error("Error uploading image:", error);
-    res
-      .status(200)
-      .send(
-          { status: STATUS_CODES.GENERIC_ERROR }
-      );
-  }
-});
+      console.error("Error uploading image:", error);
+      res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+    }
+  },
+);

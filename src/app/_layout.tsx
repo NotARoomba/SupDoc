@@ -1,5 +1,7 @@
-import Loading from "components/misc/Loading";
-import { LoadingProvider } from "components/misc/useLoading";
+import { LoadingProvider } from "components/hooks/useLoading";
+import { PostsProvider } from "components/hooks/usePosts";
+import { UserProvider } from "components/hooks/useUser";
+import Loading from "components/loading/Loading";
 import "expo-dev-client";
 import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -31,26 +33,30 @@ export default function RootLayout() {
   return (
     <View className="text-ivory h-full bg-white">
       <LoadingProvider>
-        <SafeAreaView className="bg-richer_black" />
-        {isLogged ? (
-          // <Animated.View entering={FadeIn.duration(500)}>
-          <Stack
-            screenOptions={{ contentStyle: { backgroundColor: "#020912" } }}
-          >
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="Post"
-              options={{
-                headerShown: false,
-                presentation: "modal",
-              }}
-            />
-          </Stack>
-        ) : (
-          // </Animated.View>
-          <Index setIsLogged={setIsLogged} />
-        )}
-        <Loading />
+        <UserProvider>
+          <PostsProvider>
+            <SafeAreaView className="bg-richer_black" />
+            {isLogged ? (
+              // <Animated.View entering={FadeIn.duration(500)}>
+              <Stack
+                screenOptions={{ contentStyle: { backgroundColor: "#020912" } }}
+              >
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="Post"
+                  options={{
+                    headerShown: false,
+                    presentation: "fullScreenModal",
+                  }}
+                />
+              </Stack>
+            ) : (
+              // </Animated.View>
+              <Index setIsLogged={setIsLogged} />
+            )}
+            <Loading />
+          </PostsProvider>
+        </UserProvider>
       </LoadingProvider>
     </View>
   );

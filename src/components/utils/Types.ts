@@ -1,6 +1,10 @@
 /// <reference types="nativewind/types" />
 
+import Comment from "@/backend/models/comment";
 import Post from "@/backend/models/post";
+import { FlashList } from "@shopify/flash-list";
+import { Ref } from "react";
+import {ObjectId} from 'mongodb'
 
 export interface IndexProps {
   setIsLogged: (v: boolean) => void;
@@ -152,6 +156,13 @@ export interface HomeProps {
 export interface PostBlockProps {
   post: Post;
   userType: UserType;
+  listRef?: Ref<FlashList<Post> | null>;
   saved?: boolean;
   blur?: boolean;
+}
+
+export interface CommentBlockProps {
+  comments: Comment[]
+  post: ObjectId,
+  parent: ObjectId| null
 }

@@ -1,6 +1,6 @@
 import Spinner from "react-native-loading-spinner-overlay";
+import { useLoading } from "../hooks/useLoading";
 import Loader from "./Loader";
-import { useLoading } from "./useLoading";
 
 export default function Loading() {
   const { loading } = useLoading();

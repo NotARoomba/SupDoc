@@ -6,10 +6,10 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import Slider from "components/buttons/Slider";
+import useCamera from "components/hooks/useCamera";
+import useGallery from "components/hooks/useGallery";
+import { useLoading } from "components/hooks/useLoading";
 import ImageUpload from "components/misc/ImageUpload";
-import useCamera from "components/misc/useCamera";
-import useGallery from "components/misc/useGallery";
-import { useLoading } from "components/misc/useLoading";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";

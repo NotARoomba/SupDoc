@@ -2,6 +2,8 @@ import * as mongoDB from "mongodb";
 import * as dotenv from "ts-dotenv";
 import { Doctor } from "../models/doctor";
 import Fact from "../models/fact";
+import Report from "../models/report";
+import Post from "../models/post";
 
 export const env = dotenv.load({
   MONGODB: String,
@@ -36,13 +38,13 @@ export const env = dotenv.load({
 });
 
 export const collections: {
-  patients?: mongoDB.Collection;
-  doctors?: mongoDB.Collection<Doctor>;
-  posts?: mongoDB.Collection;
-  comments?: mongoDB.Collection;
-  reports?: mongoDB.Collection<Report>;
-  facts?: mongoDB.Collection<Fact>;
-} = {};
+  patients: mongoDB.Collection;
+  doctors: mongoDB.Collection<Doctor>;
+  posts: mongoDB.Collection;
+  // comments: mongoDB.Collection;
+  reports: mongoDB.Collection<Report>;
+  facts: mongoDB.Collection<Fact>;
+} = {} as any;
 
 export let encryption: mongoDB.ClientEncryption;
 const masterKey = {
@@ -108,7 +110,7 @@ export async function connectToDatabase() {
   collections.doctors = userDB.collection(env.DOCTOR_COLLECTION);
 
   collections.posts = interactionDB.collection(env.POST_COLLECTION);
-  collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
+  // collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
   collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
   collections.facts = interactionDB.collection(env.FACT_COLLECTION);
 

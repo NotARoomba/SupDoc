@@ -1,31 +1,17 @@
-import { STATUS_CODES } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
-import { callAPI, logout } from "components/utils/Functions";
+import { usePosts } from "components/hooks/usePosts";
+import { useUser } from "components/hooks/useUser";
 import { UserType } from "components/utils/Types";
-import { SplashScreen, Tabs } from "expo-router";
-import * as SecureStore from "expo-secure-store";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Alert, Platform } from "react-native";
+import { Tabs } from "expo-router";
+import { useEffect } from "react";
+import { Platform } from "react-native";
 
 export default function TabLayout() {
-  const { t } = useTranslation();
-  const [userType, setUserType] = useState<UserType>();
-
-  // const [user, setUser] = useState<User>();
+  const { userType } = useUser();
+  const { fetchPosts } = usePosts();
   useEffect(() => {
-    const updateData = async () => {
-      const ut = (await SecureStore.getItemAsync(
-        process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
-      )) as UserType;
-      const res = await callAPI(`/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`, "GET")
-      if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
-      else if (res.status == STATUS_CODES.GENERIC_ERROR) return Alert.alert("Error", "There was an error fetching your data!")
-      setUserType(ut);
-      await SplashScreen.hideAsync();
-    };
-    updateData();
-  }, []);
+    fetchPosts();
+  }, [])
   return (
     <Tabs
       screenOptions={({ route }) => ({
