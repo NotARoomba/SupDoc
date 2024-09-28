@@ -15,14 +15,13 @@ export const postsRouter = express.Router();
 
 postsRouter.use(express.json());
 
-const getCommentsWithReplies = async (post: string | ObjectId) => {
-  const postId = typeof post === "string" ? new ObjectId(post) : post;
+const getCommentsWithReplies = async (post: string) => {
 
   const comments = await collections.comments
     .aggregate([
       // Match comments that belong to the specific post
       {
-        $match: { post: postId, parent: null },
+        $match: { post: post, parent: null },
       },
       // Recursively look up replies
       {
