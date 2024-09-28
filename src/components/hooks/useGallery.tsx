@@ -1,7 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
-import { Alert, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-
+import { Alert, Linking } from "react-native";
 
 export default function useGallery() {
   const { t } = useTranslation();
@@ -9,18 +8,14 @@ export default function useGallery() {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!granted) {
-      Alert.alert(
-        t("images.galleryTitle"),
-        t("images.galleryDescription"),
-        [
-          { text: t("cancel"), style: "cancel" },
-          {
-            text: t("settings"),
-            isPreferred: true,
-            onPress: Linking.openSettings,
-          },
-        ],
-      );
+      Alert.alert(t("images.galleryTitle"), t("images.galleryDescription"), [
+        { text: t("cancel"), style: "cancel" },
+        {
+          text: t("settings"),
+          isPreferred: true,
+          onPress: Linking.openSettings,
+        },
+      ]);
     }
     return granted;
   };

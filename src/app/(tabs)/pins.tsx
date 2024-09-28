@@ -7,7 +7,7 @@ import PostBlock from "components/misc/PostBlock";
 import { UserType } from "components/utils/Types";
 import { useTranslation } from "react-i18next";
 import { Animated, Platform, Text, View } from "react-native";
-import Reanimated, { FadeIn } from 'react-native-reanimated'
+import Reanimated, { FadeIn } from "react-native-reanimated";
 
 export default function Pins() {
   const { t } = useTranslation();
@@ -43,7 +43,10 @@ export default function Pins() {
             <LoaderView />
           </View>
         ) : (
-          <Reanimated.Text entering={FadeIn.duration(500).delay(250)}  className=" text-center text-powder_blue/80">
+          <Reanimated.Text
+            entering={FadeIn.duration(500).delay(250)}
+            className=" text-center text-powder_blue/80"
+          >
             {t("posts.savedNone")}
           </Reanimated.Text>
         )

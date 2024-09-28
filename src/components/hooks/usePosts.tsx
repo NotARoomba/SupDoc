@@ -1,12 +1,15 @@
+import Comment from "@/backend/models/comment";
+import { PatientMetrics } from "@/backend/models/metrics";
 import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
+import { FlashList } from "@shopify/flash-list";
 import { callAPI, logout, uploadImages } from "components/utils/Functions";
 import { Image } from "expo-image";
 import { SplashScreen, router } from "expo-router";
+import { ObjectId } from "mongodb";
 import React, {
   MutableRefObject,
   ReactNode,
-  Ref,
   createContext,
   useContext,
   useEffect,
@@ -14,14 +17,10 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, LayoutAnimation } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
-import { PatientMetrics } from "@/backend/models/metrics";
-import { FlashList } from "@shopify/flash-list";
-import { ObjectId } from "mongodb";
-import Comment from "@/backend/models/comment";
-import { useTranslation } from "react-i18next";
 
 // Define the types for the context
 interface PostsContextType {
@@ -35,7 +34,11 @@ interface PostsContextType {
   savePost: (post: Post) => Promise<boolean>;
   deletePost: (id: string) => Promise<void>;
   reportPost: (id: string) => Promise<void>;
-  addComment: (post: ObjectId, text: string, parent: ObjectId | null) => Promise<void>;
+  addComment: (
+    post: ObjectId,
+    text: string,
+    parent: ObjectId | null,
+  ) => Promise<void>;
   likeComment: (post: ObjectId, commentID: ObjectId) => Promise<void>;
   reportComment: (post: ObjectId, commentID: ObjectId) => Promise<void>;
   createPost: () => Promise<void>;
@@ -68,7 +71,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     setPosts(res.posts);
-    console.log(res.posts)
+    console.log(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
   };
@@ -91,11 +94,11 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
       return false;
     }
-    
+
     const updatedSavedPosts = savedPosts.find((v) => v._id === post._id)
       ? savedPosts.filter((v) => v._id !== post._id)
       : [...savedPosts, post];
-    setSavedPosts(updatedSavedPosts);  // Only call setSavedPosts once
+    setSavedPosts(updatedSavedPosts); // Only call setSavedPosts once
     return true;
   };
 
@@ -110,33 +113,40 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       listRef.current?.prepareForLayoutAnimationRender();
       // After removing the item, we can start the animation.
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setPosts(posts.filter(v => v._id?.toString() !== id))
-      setSavedPosts(savedPosts.filter(v => v._id?.toString() !== id))
+      setPosts(posts.filter((v) => v._id?.toString() !== id));
+      setSavedPosts(savedPosts.filter((v) => v._id?.toString() !== id));
       // return router.navigate({ pathname: "/(tabs)", params: { refresh: 1 } });
     }
   };
 
-  
-  const updatePostComments = (postList: Post[], postID: ObjectId, updatedComments: Comment[]): Post[] => {
+  const updatePostComments = (
+    postList: Post[],
+    postID: ObjectId,
+    updatedComments: Comment[],
+  ): Post[] => {
     return postList.map((post) =>
-      (post._id == postID) ? { ...post, comments: updatedComments } : post
+      post._id == postID ? { ...post, comments: updatedComments } : post,
     );
   };
 
-  const addComment = async (post: ObjectId, text: string, parent: ObjectId | null) => {
+  const addComment = async (
+    post: ObjectId,
+    text: string,
+    parent: ObjectId | null,
+  ) => {
     const res = await callAPI(`/posts/${post}/comment`, "POST", {
       text,
       parent,
-      commenter: user._id
+      commenter: user._id,
     });
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-    console.log(res.comments)
-  
+    console.log(res.comments);
+
     // Update posts
     setPosts(updatePostComments(posts, post, res.comments));
-  
+
     // Update saved posts, if needed
     setSavedPosts(updatePostComments(savedPosts, post, res.comments));
     // await fetchPosts(); // Re-fetch posts to include the new comment
@@ -144,12 +154,15 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   // Liking a comment
   const likeComment = async (post: ObjectId, commentID: ObjectId) => {
-    const res = await callAPI(`/posts/${post}/comments/${commentID}/like`, "POST");
+    const res = await callAPI(
+      `/posts/${post}/comments/${commentID}/like`,
+      "POST",
+    );
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
     setPosts(updatePostComments(posts, post, res.comments));
-  
+
     // Update saved posts, if needed
     setSavedPosts(updatePostComments(savedPosts, post, res.comments));
     // await fetchPosts(); // Re-fetch posts to include the new comment
@@ -157,7 +170,10 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   // Reporting a comment
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
-    const res = await callAPI(`/posts/${post}/comments/${commentID}/report`, "POST");
+    const res = await callAPI(
+      `/posts/${post}/comments/${commentID}/report`,
+      "POST",
+    );
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
@@ -167,10 +183,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     const res = await callAPI(`/posts/${id.toString()}/report`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
-    
-    
+
     Alert.alert("Success", "Sucessfully submitted your report!");
-  }
+  };
   const resetPostEdit = () => {
     setPostEdit({
       title: "",
@@ -237,11 +252,10 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       savePost,
       fetchPosts,
     }),
-    [posts, postEdit, savedPosts, listRef] // Dependencies
+    [posts, postEdit, savedPosts, listRef], // Dependencies
   );
   return (
-    <PostsContext.Provider
-      value={postsContextValue} >
+    <PostsContext.Provider value={postsContextValue}>
       {children}
     </PostsContext.Provider>
   );

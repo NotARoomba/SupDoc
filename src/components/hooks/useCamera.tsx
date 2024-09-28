@@ -1,25 +1,21 @@
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
-import { Alert, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
+import { Alert, Linking } from "react-native";
 
 export default function useCamera() {
   const { t } = useTranslation();
   const requestPermission = async () => {
     const { granted } = await Camera.requestCameraPermissionsAsync();
     if (!granted) {
-      Alert.alert(
-        t("images.cameraTitle"),
-        t("images.cameraDescription"),
-        [
-          { text: t("cancel"), style: "cancel" },
-          {
-            text: t("settings"),
-            isPreferred: true,
-            onPress: Linking.openSettings,
-          },
-        ],
-      );
+      Alert.alert(t("images.cameraTitle"), t("images.cameraDescription"), [
+        { text: t("cancel"), style: "cancel" },
+        {
+          text: t("settings"),
+          isPreferred: true,
+          onPress: Linking.openSettings,
+        },
+      ]);
     }
     return granted;
   };

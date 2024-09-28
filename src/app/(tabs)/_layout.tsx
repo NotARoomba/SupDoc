@@ -11,7 +11,7 @@ export default function TabLayout() {
   const { fetchPosts } = usePosts();
   useEffect(() => {
     fetchPosts();
-  }, [])
+  }, []);
   return (
     <Tabs
       screenOptions={({ route }) => ({

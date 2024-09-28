@@ -3,8 +3,8 @@
 import Comment from "@/backend/models/comment";
 import Post from "@/backend/models/post";
 import { FlashList } from "@shopify/flash-list";
+import { ObjectId } from "mongodb";
 import { Ref } from "react";
-import {ObjectId} from 'mongodb'
 
 export interface IndexProps {
   setIsLogged: (v: boolean) => void;
@@ -162,7 +162,9 @@ export interface PostBlockProps {
 }
 
 export interface CommentBlockProps {
-  comments: Comment[]
-  post: ObjectId,
-  parent: ObjectId| null
+  comments: Comment[];
+  post: ObjectId;
+  parent: ObjectId | null;
+  replyingTo: ObjectId | null 
+  setReplyingTo: (reply: ObjectId | null) => void
 }
