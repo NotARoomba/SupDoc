@@ -238,6 +238,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   // await createKey([
   //   comment.doctor,
   // ]);
+  console.log(comment, postID)
   if (comment.parent) {
     const parentComment = (await collections.comments.findOne({
       _id: new ObjectId(comment.parent),
