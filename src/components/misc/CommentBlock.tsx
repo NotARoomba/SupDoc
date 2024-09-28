@@ -15,7 +15,14 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Reanimated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, FadeOutUp } from "react-native-reanimated";
+import Reanimated, {
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
+  FadeOut,
+  FadeOutDown,
+  FadeOutUp,
+} from "react-native-reanimated";
 
 export default function CommentBlock({
   comments,
@@ -51,8 +58,8 @@ export default function CommentBlock({
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Reanimated.View
-        entering={FadeIn.duration(500)}
-        exiting={FadeOut.duration(500)}
+        entering={FadeInUp.duration(500)}
+        exiting={FadeOutDown.duration(500)}
         style={{ flex: 1 }}
       >
         <ScrollView>
@@ -66,9 +73,13 @@ export default function CommentBlock({
             const isReplyingToThisComment = replyingTo === comment._id;
 
             return (
-              <View
+              <Reanimated.View
                 key={comment._id?.toString()}
-                className={`mb-4 px-4 ${isReplyingToThisComment ? "bg-highlight-color" : "bg-transparent"}`} // Highlight selected comment
+                entering={FadeInUp.delay(100 * (comments.indexOf(comment) + 1))} // Slight stagger for each comment
+                exiting={FadeOutDown.duration(300)}
+                className={`mb-4 px-4 ${
+                  isReplyingToThisComment ? "bg-highlight-color" : "bg-transparent"
+                }`} // Highlight selected comment
               >
                 <Text className="text-ivory text-lg font-bold">
                   {comment.name}
@@ -93,15 +104,17 @@ export default function CommentBlock({
                         {comment.likes.length}
                       </Text>
                     </TouchableOpacity>
-                    
+
                     {/* Only show reply button if no other reply is selected */}
                     {!replyingTo && (
-                      <TouchableOpacity onPress={() => setReplyingTo(comment._id)}>
+                      <TouchableOpacity
+                        onPress={() => setReplyingTo(comment._id)}
+                      >
                         <Text className="text-blue-500">Reply</Text>
                       </TouchableOpacity>
                     )}
                   </View>
-                  
+
                   {/* Report button */}
                   <TouchableOpacity
                     onPress={() => reportComment(post, comment._id)}
@@ -112,7 +125,11 @@ export default function CommentBlock({
 
                 {/* Nested Replies */}
                 {comment.replies && comment.replies.length > 0 && (
-                  <View className="pl-4 border-l border-gray-500 mt-2">
+                  <Reanimated.View
+                    entering={FadeInDown.delay(200)} // Enter with delay
+                    exiting={FadeOutUp.duration(200)} // Exit with upward motion
+                    className="pl-4 border-l border-gray-500 mt-2"
+                  >
                     <CommentBlock
                       comments={comment.replies as unknown as Comment[]}
                       post={post}
@@ -120,15 +137,19 @@ export default function CommentBlock({
                       replyingTo={replyingTo} // Pass down the current reply target
                       setReplyingTo={setReplyingTo} // Pass down the setter for replyingTo
                     />
-                  </View>
+                  </Reanimated.View>
                 )}
-              </View>
+              </Reanimated.View>
             );
           })}
-          
+
           {/* Add Comment Input only for root or replying to a specific comment */}
           {parent === null && (
-            <View className="mt-4 px-4">
+            <Reanimated.View
+              entering={FadeInUp.delay(500)} // Stagger the input field appearance after comments
+              exiting={FadeOutDown.duration(500)}
+              className="mt-4 px-4"
+            >
               <TextInput
                 placeholder={
                   replyingTo ? "Reply to comment..." : "Add a comment..."
@@ -145,17 +166,24 @@ export default function CommentBlock({
                   {replyingTo ? "Post Reply" : "Post Comment"}
                 </Text>
               </TouchableOpacity>
+
               {replyingTo && (
-                <View  className="mb-2">
-                   <TouchableOpacity
-                  onPress={handleStopReply}
-                  className="mt-2 bg-red-500 p-3 rounded-lg"
+                <Reanimated.View
+                  entering={FadeInUp.duration(300)}
+                  exiting={FadeOutDown.duration(300)}
+                  className="mb-2"
                 >
-                  <Text className="text-ivory text-center font-bold">Cancel Reply</Text>
-                </TouchableOpacity>
-                </View>
+                  <TouchableOpacity
+                    onPress={handleStopReply}
+                    className="mt-2 bg-red-500 p-3 rounded-lg"
+                  >
+                    <Text className="text-ivory text-center font-bold">
+                      Cancel Reply
+                    </Text>
+                  </TouchableOpacity>
+                </Reanimated.View>
               )}
-            </View>
+            </Reanimated.View>
           )}
         </ScrollView>
       </Reanimated.View>
