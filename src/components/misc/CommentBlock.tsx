@@ -18,7 +18,7 @@ import Icons from "@expo/vector-icons/Octicons";
 import { usePosts } from "components/hooks/usePosts";
 import Comment from "@/backend/models/comment";
 
-export default function CommentBlock({ comments, postID }: CommentBlockProps) {
+export default function CommentBlock({ comments, postID, parent }: CommentBlockProps) {
   const { user } = useUser();
   const [commentText, setCommentText] = useState("");
   const [currentComments, setCurrentComments] = useState(comments);
@@ -83,6 +83,7 @@ export default function CommentBlock({ comments, postID }: CommentBlockProps) {
                   <CommentBlock
                     comments={comment.replies as unknown as Comment[]}
                     postID={postID}
+                    parent={comment._id?.toString() as string}
                   />
                 </View>
               )}

@@ -217,7 +217,7 @@ export default function PostPage() {
                   (There are no comments on your post yet)
                 </Text>
               ) : (
-                <CommentBlock postID={post._id?.toString() as string} comments={post.comments as unknown as Comment[]} />
+                <CommentBlock post={post._id?.toString() as string} parent={null} comments={post.comments as unknown as Comment[]} />
               )}
             </View>
           </Reanimated.ScrollView>

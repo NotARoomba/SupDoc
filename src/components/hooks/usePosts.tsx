@@ -112,11 +112,12 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     }
   };
 
-  const addComment = async (postId: string, text: string, parentId?: string) => {
-    const res = await callAPI(`/posts/${postId}/comment`, "POST", {
+  const addComment = async (post: string, text: string, parent?: string) => {
+    const res = await callAPI(`/posts/${post}/comment`, "POST", {
       text,
-      parent: parentId || null,
-      doctor: user
+      post,
+      parent,
+      doctor: user._id?.toString()
     });
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));

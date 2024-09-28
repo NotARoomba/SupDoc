@@ -162,5 +162,6 @@ export interface PostBlockProps {
 
 export interface CommentBlockProps {
   comments: Comment[]
-  postID: string,
+  post: string,
+  parent: string| null
 }

@@ -15,12 +15,12 @@ export const postsRouter = express.Router();
 
 postsRouter.use(express.json());
 
-const getCommentsWithReplies = async (postId: ObjectId) => {
+const getCommentsWithReplies = async (post: ObjectId) => {
   const comments = await collections.comments
     .aggregate([
       // Match comments that belong to the specific post
       {
-        $match: { postId: postId.toString(), parent: { $exists: false } },
+        $match: { post: post.toString(), parent: { $exists: false } },
       },
       // Recursively look up replies
       {
@@ -227,9 +227,9 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   // if comment has a parent then get the parent and add the id as a child
   // if the comment does not have a parent then get the postID and run checks if the comment is able to be placed, if not then throw an error, else add the comment ID to the array of comments
   // DOCTOR IS DOCTOR ID NOT IDENTIFICATION
-  await createKey([
-    comment.doctor,
-  ]);
+  // await createKey([
+  //   comment.doctor,
+  // ]);
   if (comment.parent) {
     const parentComment = (await collections.comments.findOne({
       _id: new ObjectId(comment.parent),
@@ -245,7 +245,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
         );
     const insComment = await collections.comments.insertOne({
       // Comment fields
-      postId: await encryption.encrypt(postID, {
+      post: await encryption.encrypt(postID, {
         keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
@@ -305,7 +305,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     }
   } else {
     const parentPost = (await collections.posts.findOne({
-      _id: new ObjectId(comment.postId),
+      _id: new ObjectId(comment.post),
     })) as unknown as Post;
     if (!parentPost)
       return res
@@ -327,7 +327,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
         );
     const insComment = await collections.comments.insertOne({
       // Comment fields
-      postId: await encryption.encrypt(postID, {
+      post: await encryption.encrypt(postID, {
         keyAltName: comment.doctor,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),

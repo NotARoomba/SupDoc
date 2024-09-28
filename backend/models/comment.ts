@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 export default interface Comment {
   _id?: ObjectId;
-  postId: string;
+  post: string;
   parent: string | null; // D
   doctor: string; // D // DOCUMENT ID
   text: string; // R
