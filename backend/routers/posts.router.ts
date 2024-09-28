@@ -294,7 +294,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     }
 
     // Check if the doctor has already commented
-    if (parentPost.comments.some(c => c.commenter.equals(comment.commenter))) {
+    if (parentPost.comments.some(c => c.commenter.equals(new ObjectId(comment.commenter)))) {
       return res.status(200).send(
         encrypt(
           { status: STATUS_CODES.ALREADY_COMMENTED },
@@ -304,7 +304,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     }
 
     // Add the new comment to the post's comments array
-    parentPost.comments.push(comment);
+    parentPost.comments.push(commentDocument);
   }
 
   // Update the post in the database with the modified comments
