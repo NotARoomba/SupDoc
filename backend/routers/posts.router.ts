@@ -21,7 +21,7 @@ const getCommentsWithReplies = async (post: string) => {
     .aggregate([
       // Match comments that belong to the specific post
       {
-        $match: { post: post, parent: null },
+        $match: { post, parent: null },
       },
       // Recursively look up replies
       {
@@ -62,7 +62,7 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
           {
             post: {
               ...post,
-              comments: await getCommentsWithReplies(new ObjectId(id)),
+              comments: await getCommentsWithReplies(id),
               images: await Promise.all(
                 post.images.map(async (v) => await generateSignedUrl(v)),
               ),
