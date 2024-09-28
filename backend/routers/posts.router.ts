@@ -16,6 +16,12 @@ export const postsRouter = express.Router();
 postsRouter.use(express.json());
 
 const getCommentsWithReplies = async (post: string) => {
+console.log(await collections.comments
+  .aggregate([
+    // Match comments that belong to the specific post and are root comments (parent: null)
+    {
+      $match: { post },
+    }]).toArray())
   const comments = await collections.comments
     .aggregate([
       // Match comments that belong to the specific post and are root comments (parent: null)
@@ -39,8 +45,7 @@ const getCommentsWithReplies = async (post: string) => {
       {
         $sort: { timestamp: 1 },
       },
-    ])
-    .toArray();
+    ]).toArray();
 
   console.log(comments);
   return comments;
