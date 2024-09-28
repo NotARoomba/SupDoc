@@ -13,6 +13,7 @@ import React, {
 } from "react";
 import { Alert } from "react-native";
 import { useLoading } from "./useLoading";
+import { useTranslation } from "react-i18next";
 
 // Define the types for the context
 interface UserContextType {
@@ -32,6 +33,7 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+  const { t } = useTranslation();
   const { setLoading } = useLoading();
   const [user, setUser] = useState<User>({} as User);
   const [userEdit, setUserEdit] = useState<User>({} as User);
@@ -49,7 +51,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     );
     if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
     else if (res.status == STATUS_CODES.GENERIC_ERROR)
-      return Alert.alert("Error", "There was an error fetching your data!");
+      return Alert.alert(t("error"), t("errors.fetchData"));
     setUser(res.user);
     setUserEdit({
       ...res.user,
