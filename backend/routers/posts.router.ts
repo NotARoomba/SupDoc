@@ -243,7 +243,6 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   }
   const commentDocument = {
     _id: new ObjectId(),
-    post: postID,
     name: doctor ? doctor.name : "Patient",
     commenter: user._id,
     text: await encryption.encrypt(comment.text, {

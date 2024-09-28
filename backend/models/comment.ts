@@ -4,7 +4,6 @@ export default interface Comment {
   _id: ObjectId;
   name:  string; // NAME OF DOCTOR OR UNKNOWN
   commenter:  ObjectId; // D // DOCUMENT ID
-  post: ObjectId;
   parent: ObjectId | null;
   text: string; // R
   likes: ObjectId[]; // D
