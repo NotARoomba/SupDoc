@@ -1,13 +1,14 @@
 import { ObjectId } from "mongodb";
 
 export default interface Comment {
-  _id?: ObjectId;
-  post: string;
-  parent:  ObjectId | null; // D
-  doctor:  ObjectId; // D // DOCUMENT ID
+  _id: ObjectId;
+  name:  string; // NAME OF DOCTOR OR UNKNOWN
+  commenter:  ObjectId; // D // DOCUMENT ID
+  post: ObjectId;
+  parent: ObjectId | null;
   text: string; // R
   likes: ObjectId[]; // D
   reports: ObjectId[];
-  replies:  ObjectId[]; // OBJECT IDS OF COMMENTS
+  replies:  Comment[]; // OBJECT IDS OF COMMENTS
   timestamp: number; // D
 }

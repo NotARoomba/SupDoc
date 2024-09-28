@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { PatientMetrics } from "./metrics";
+import Comment from "./comment";
 
 export default interface Post {
   _id?: ObjectId;
@@ -9,6 +10,6 @@ export default interface Post {
   info: PatientMetrics;
   patient: number; // D // IDENTIFICATION NUMBER
   timestamp: number; // D
-  comments: ObjectId[]; // M
+  comments: Comment[]; // M
   reports: ObjectId[];
 }

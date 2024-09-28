@@ -118,25 +118,25 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       text,
       post,
       parent,
-      doctor: user._id
     });
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     }
-    await fetchPosts(); // Re-fetch posts to include the new comment
+    // await fetchPosts(); // Re-fetch posts to include the new comment
   };
 
   // Liking a comment
   const likeComment = async (commentId: ObjectId) => {
-    const res = await callAPI(`/posts/comments/${commentId}/like`, "POST");
+    const res = await callAPI(`/posts/:id/${commentId}/like`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     }
+    // await fetchPosts(); // Re-fetch posts to include the new comment
   };
 
   // Reporting a comment
   const reportComment = async (commentId: ObjectId) => {
-    const res = await callAPI(`/posts/comments/${commentId}/report`, "POST");
+    const res = await callAPI(`/posts/:id/${commentId}/report`, "POST");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     }

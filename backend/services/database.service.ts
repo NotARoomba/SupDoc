@@ -41,7 +41,7 @@ export const collections: {
   patients: mongoDB.Collection;
   doctors: mongoDB.Collection<Doctor>;
   posts: mongoDB.Collection;
-  comments: mongoDB.Collection;
+  // comments: mongoDB.Collection;
   reports: mongoDB.Collection<Report>;
   facts: mongoDB.Collection<Fact>;
 } = {} as any;
@@ -110,7 +110,7 @@ export async function connectToDatabase() {
   collections.doctors = userDB.collection(env.DOCTOR_COLLECTION);
 
   collections.posts = interactionDB.collection(env.POST_COLLECTION);
-  collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
+  // collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
   collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
   collections.facts = interactionDB.collection(env.FACT_COLLECTION);
 
