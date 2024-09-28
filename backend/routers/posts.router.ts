@@ -28,7 +28,7 @@ const getCommentsWithReplies = async (post: string | ObjectId) => {
       {
         $graphLookup: {
           from: "comments", // The collection to search
-          startWith: "$_id", // Start with the comment _id
+          startWith: "_id", // Start with the comment _id
           connectFromField: "_id", // Match the _id of the parent comment
           connectToField: "parent", // The field in replies that refers to the parent comment
           as: "replies", // Output the replies as a field called 'replies'
