@@ -3,6 +3,7 @@ import * as dotenv from "ts-dotenv";
 import { Doctor } from "../models/doctor";
 import Fact from "../models/fact";
 import Report from "../models/report";
+import Post from "../models/post";
 
 export const env = dotenv.load({
   MONGODB: String,

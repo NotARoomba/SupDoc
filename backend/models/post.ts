@@ -9,6 +9,6 @@ export default interface Post {
   info: PatientMetrics;
   patient: number; // D // IDENTIFICATION NUMBER
   timestamp: number; // D
-  comments: string[]; // M
-  reports: string[];
+  comments: ObjectId[]; // M
+  reports: ObjectId[];
 }

@@ -287,12 +287,12 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
       timestamp: Date.now(),
     });
     const updated = await collections.comments.updateOne(
-      { _id: new ObjectId(parentComment._id) },
+      { _id: parentComment._id },
       {
         $set: {
           replies: [
             ...parentComment.replies,
-            await encryption.encrypt(insComment?.insertedId.toString(), {
+            await encryption.encrypt(insComment?.insertedId, {
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
               keyAltName: comment.doctor,
             }),
@@ -338,7 +338,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
             req.headers.authorization,
           ),
         );
-    if (parentPost.comments.includes(comment.doctor))res
+    if (parentPost.comments.includes(new ObjectId(comment.doctor)))res
     .status(200)
     .send(
       encrypt(
@@ -376,15 +376,13 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     const updated = await collections.posts.updateOne(
       { _id: new ObjectId(parentPost._id) },
       {
-        $set: {
-          comments: [
-            ...parentPost.comments,
+        $push: {
+          comments: 
             await encryption.encrypt(insComment?.insertedId, {
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
               keyAltName: comment.doctor,
             }),
-          ],
-        },
+        } as PushOperator<Document>,
       },
     );
     if (updated?.acknowledged) {
@@ -511,7 +509,7 @@ postsRouter.post(
         { _id: new ObjectId(commentId) },
         {
           $push: {
-            reports: createdReport.insertedId.toString(),
+            reports: createdReport.insertedId,
           } as PushOperator<Document>,
         },
       );
@@ -633,7 +631,7 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
         { _id: new ObjectId(id) },
         {
           $push: {
-            reports: created.insertedId.toString(),
+            reports: created.insertedId,
           } as PushOperator<Document>,
         },
       );

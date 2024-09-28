@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { DoctorIdentification } from "./identification";
 import { DoctorMetrics } from "./metrics";
 import Report from "./report";
@@ -8,7 +9,7 @@ export interface Doctor extends UserBase {
   picture: string;
   info: DoctorMetrics;
   identification: DoctorIdentification; // M
-  comments: string[]; // R
+  comments: ObjectId[]; // R
   reports: Report[]; // D
-  saved: string[];
+  saved: ObjectId[];
 }
