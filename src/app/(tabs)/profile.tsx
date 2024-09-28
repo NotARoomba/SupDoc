@@ -27,6 +27,7 @@ import {
   Alert,
   Animated,
   Keyboard,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
@@ -211,6 +212,11 @@ export default function Profile() {
     }
   };
   return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "position" : "position"}
+      style={{ flex: 1 }}
+      // keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+    >
     <Animated.View style={{ opacity: fadeAnim }} className="h-full w-full">
       <View className="absolute w-full p-4 flex justify-between z-50 flex-row">
         <TouchableOpacity className="z-50 p-1">
@@ -706,6 +712,6 @@ export default function Profile() {
             </Reanimated.View>
           </View>
         )}
-    </Animated.View>
+    </Animated.View></KeyboardAvoidingView>
   );
 }

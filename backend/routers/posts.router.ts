@@ -325,6 +325,14 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
             req.headers.authorization,
           ),
         );
+    if (parentPost.comments.includes(comment.doctor))res
+    .status(200)
+    .send(
+      encrypt(
+        { status: STATUS_CODES.ALREADY_COMMENTED },
+        req.headers.authorization,
+      ),
+    );
     const insComment = await collections.comments.insertOne({
       // Comment fields
       post: await encryption.encrypt(postID, {
