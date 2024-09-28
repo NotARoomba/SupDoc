@@ -112,7 +112,12 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   const addComment = async (id: string, isParent: boolean = false) => {};
   const reportPost = async (id: string) => {
+    const res = await callAPI(`/posts/${id.toString()}/report`, "POST");
+    if (res.status !== STATUS_CODES.SUCCESS)
+      return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
     
+    
+    Alert.alert("Success", "Sucessfully submitted your report!");
   }
   const resetPostEdit = () => {
     setPostEdit({

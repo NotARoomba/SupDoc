@@ -12,6 +12,33 @@ import { Doctor } from "../models/doctor";
 export const postsRouter = express.Router();
 
 postsRouter.use(express.json());
+
+const getCommentsWithReplies = async (postId: ObjectId) => {
+  const comments = await collections.comments?.aggregate([
+    // Match comments that belong to the specific post
+    {
+      $match: { postId: postId.toString(), parent: { $exists: false } }
+    },
+    // Recursively look up replies
+    {
+      $graphLookup: {
+        from: 'comments',        // The collection to search
+        startWith: '$_id',       // Start with the comment _id
+        connectFromField: '_id', // Match the _id of the parent comment
+        connectToField: 'parent',// The field in replies that refers to the parent comment
+        as: 'replies',           // Output the replies as a field called 'replies'
+        depthField: 'level',     // Optional: to add a field specifying the depth of recursion
+        // maxDepth: 3              // Optional: set the maximum depth of replies (recursive levels)
+      }
+    },
+    // Sort by timestamp (newest to oldest or oldest to newest)
+    {
+      $sort: { timestamp: 1 } // Oldest first (use -1 for newest first)
+    }
+  ]).toArray();
+
+  return comments;
+};
 // GETS POST FROM POST ID
 postsRouter.get("/:id", async (req: Request, res: Response) => {
   //check if doctor
@@ -29,6 +56,7 @@ postsRouter.get("/:id", async (req: Request, res: Response) => {
           {
             post: {
               ...post,
+              comments: await getCommentsWithReplies(new ObjectId(id)),
               images: await Promise.all(
                 post.images.map(async (v) => await generateSignedUrl(v)),
               ),
@@ -193,6 +221,7 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
 
 postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   const comment: Comment = req.body;
+  const postID = req.params.id
   // if comment has a parent then get the parent and add the id as a child
   // if the comment does not have a parent then get the postID and run checks if the comment is able to be placed, if not then throw an error, else add the comment ID to the array of comments
   // DOCTOR IS DOCTOR ID NOT IDENTIFICATION
@@ -212,7 +241,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
         );
     const insComment = await collections.comments?.insertOne({
       // Comment fields
-      postId: await encryption.encrypt(comment.postId, {
+      postId: await encryption.encrypt(postID, {
         keyAltName,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
@@ -236,19 +265,16 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
 
       reports: [],
 
-      children: [],
+      replies: [],
 
-      timestamp: await encryption.encrypt(Date.now(), {
-        keyAltName,
-        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-      }),
+      timestamp: Date.now(),
     });
     const updated = await collections.comments?.updateOne(
       { _id: new ObjectId(parentComment._id) },
       {
         $set: {
-          children: [
-            ...parentComment.children,
+          replies: [
+            ...parentComment.replies,
             await encryption.encrypt(insComment?.insertedId.toString(), {
               algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
               keyAltName: comment.doctor.toString(2),
@@ -297,7 +323,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
         );
     const insComment = await collections.comments?.insertOne({
       // Comment fields
-      postId: await encryption.encrypt(comment.postId, {
+      postId: await encryption.encrypt(postID, {
         keyAltName,
         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
       }),
@@ -321,12 +347,9 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
 
       reports: [],
 
-      children: [],
+      replies: [],
 
-      timestamp: await encryption.encrypt(comment.timestamp, {
-        keyAltName,
-        algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-      }),
+      timestamp: Date.now(),
     });
     const updated = await collections.posts?.updateOne(
       { _id: new ObjectId(parentPost._id) },

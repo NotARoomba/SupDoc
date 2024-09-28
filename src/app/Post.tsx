@@ -93,7 +93,7 @@ export default function PostPage() {
                       {
                         text: userType == UserType.DOCTOR ? "Report" : "Delete",
                         style: "destructive",
-                        onPress: () => userType == UserType.DOCTOR ? deletePost(routes.id as string) : reportPost(routes.id as string),
+                        onPress: () => userType == UserType.DOCTOR ? reportPost(routes.id as string):deletePost(routes.id as string) ,
                       },
                     ],
                   )
@@ -205,7 +205,7 @@ export default function PostPage() {
               <Text className="text-4xl font-bold text-center text-ivory">
                 Comments
               </Text>
-              {post.comments.length == 0 ? (
+              {post.comments.length == 0 && userType == UserType.PATIENT ? (
                 <Text className=" text-center text-powder_blue/80">
                   (There are no comments on your post yet)
                 </Text>
