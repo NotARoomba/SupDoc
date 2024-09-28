@@ -16,10 +16,9 @@ export const postsRouter = express.Router();
 postsRouter.use(express.json());
 
 const getCommentsWithReplies = async (post: string) => {
-
   const comments = await collections.comments
     .aggregate([
-      // Match comments that belong to the specific post
+      // Match comments that belong to the specific post and are root comments (parent: null)
       {
         $match: { post, parent: null },
       },
@@ -27,12 +26,13 @@ const getCommentsWithReplies = async (post: string) => {
       {
         $graphLookup: {
           from: "comments", // The collection to search
-          startWith: "_id", // Start with the comment _id
-          connectFromField: "_id", // Match the _id of the parent comment
-          connectToField: "parent", // The field in replies that refers to the parent comment
-          as: "replies", // Output the replies as a field called 'replies'
-          // depthField: "level", // Optional: to add a field specifying the depth of recursion
-          // maxDepth: 3              // Optional: set the maximum depth of replies (recursive levels)
+          startWith: "$_id", // Start with the _id of the current comment
+          connectFromField: "_id", // The field in the current document
+          connectToField: "parent", // The field in the reply that refers to the parent comment
+          as: "replies", // Output the replies in a field called 'replies'
+          // Optional: to add recursion depth and limit
+          // depthField: "level", 
+          // maxDepth: 3              
         },
       },
       // Sort by timestamp (oldest to newest)
@@ -45,6 +45,7 @@ const getCommentsWithReplies = async (post: string) => {
   console.log(comments);
   return comments;
 };
+
 // GETS POST FROM POST ID
 postsRouter.get("/:id", async (req: Request, res: Response) => {
   //check if doctor
