@@ -3,7 +3,7 @@ import { PatientMetrics } from "@/backend/models/metrics";
 import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
-import { callAPI, logout, uploadImages } from "components/utils/Functions";
+import { callAPI, handleReport, logout, uploadImages } from "components/utils/Functions";
 import { Image } from "expo-image";
 import { SplashScreen, router } from "expo-router";
 import { ObjectId } from "mongodb";
@@ -28,6 +28,8 @@ interface PostsContextType {
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
+  updateComments: boolean,
+  setUpdateComments: (u: boolean) => void;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
   fetchPosts: () => Promise<void>;
@@ -57,6 +59,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
   const [postEdit, setPostEdit] = useState<Post>();
+  const [updateComments, setUpdateComments] = useState(false);
   const { userType, user } = useUser();
   const listRef = useRef<FlashList<Post> | null>(null);
   const fetchPosts = async () => {
@@ -71,7 +74,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     setPosts(res.posts);
-    console.log(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
   };
@@ -145,10 +147,23 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     console.log(res.comments);
 
     // Update posts
-    setPosts(updatePostComments(posts, post, res.comments));
+    setPosts((prevPosts) =>
+      prevPosts.map((p) =>
+        post == (p._id)
+          ? { ...p, comments: res.comments } // Make sure to update the comments array
+          : p
+      )
+    );
 
-    // Update saved posts, if needed
-    setSavedPosts(updatePostComments(savedPosts, post, res.comments));
+    // Update saved posts, if necessary
+    setSavedPosts((prevSavedPosts) =>
+      prevSavedPosts.map((p) =>
+      post == (p._id)
+          ? { ...p, comments: res.comments } // Update saved posts' comments array
+          : p
+      )
+    );
+    setUpdateComments(true);
     // await fetchPosts(); // Re-fetch posts to include the new comment
   };
 
@@ -161,18 +176,23 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-    setPosts(updatePostComments(posts, post, res.comments));
+    // setPosts(updatePostComments(posts, post, res.comments));
 
-    // Update saved posts, if needed
-    setSavedPosts(updatePostComments(savedPosts, post, res.comments));
+    // // Update saved posts, if needed
+    // setSavedPosts(updatePostComments(savedPosts, post, res.comments));
     // await fetchPosts(); // Re-fetch posts to include the new comment
   };
 
   // Reporting a comment
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
+    const {reason, evidence} = await handleReport(userType as UserType, false)
+    if (!reason) return
     const res = await callAPI(
       `/posts/${post}/comments/${commentID}/report`,
-      "POST",
+      "POST",{
+        reason,
+        evidence
+      }
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
@@ -180,7 +200,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     Alert.alert(t("success"), t("successes.reportComment"));
   };
   const reportPost = async (id: string) => {
-    const res = await callAPI(`/posts/${id.toString()}/report`, "POST");
+    const {reason, evidence} = await handleReport(userType as UserType, false)
+    if (!reason) return
+    const res = await callAPI(`/posts/${id}/report`, "POST", {reason, evidence});
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     
@@ -242,6 +264,8 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       postEdit,
       savedPosts,
       listRef,
+      updateComments,
+      setUpdateComments,
       setPostEdit,
       resetPostEdit,
       createPost,

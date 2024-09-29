@@ -229,7 +229,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
 
   // Fetch the parent post
-  const parentPost = await collections.posts.findOne({
+  let parentPost = await collections.posts.findOne({
     _id: postID,
   }) as Post;
 
@@ -248,18 +248,18 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     text: await encryption.encrypt(comment.text, {
       keyAltName,
       algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-    }) as unknown as string,
+    }),
     parent: comment.parent,
     likes: [],
     reports: [],
     replies: [],
     timestamp: Date.now()
-  } as Comment
+  } as unknown as Comment
 
   // Check if the comment is a reply to an existing comment
   if (comment.parent) {
     // Find the parent comment within the post's comments array
-    const parentComment = findCommentById(parentPost.comments, comment.parent);
+    let parentComment = findCommentById(parentPost.comments, comment.parent);
 
     if (!parentComment) {
       return res.status(200).send(
@@ -308,15 +308,14 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   }
 
   // Update the post in the database with the modified comments
-  console.log(parentPost.comments)
-  const updated = await collections.posts.updateOne(
+  const updated = await collections.posts.findOneAndUpdate(
     { _id: postID },
-    { $set: { comments: parentPost.comments } }
-  );
+    { $set: { comments: parentPost.comments } }, {returnDocument: 'after'}
+  ) as Post;
 
-  if (updated.acknowledged) {
+  if (updated) {
     return res.status(200).send(
-      encrypt({ comments: parentPost.comments,status: STATUS_CODES.SUCCESS }, req.headers.authorization),
+      encrypt({ comments: updated.comments,status: STATUS_CODES.SUCCESS }, req.headers.authorization),
     );
   } else {
     return res.status(200).send(
@@ -446,6 +445,8 @@ postsRouter.post("/:postID/comments/:commentID/report", async (req: Request, res
         id: user._id as ObjectId,
         type: doctor ? UserType.DOCTOR : UserType.PATIENT,
       },
+      reason: req.body.reason,
+      evidence: req.body.evidence,
       timestamp: Date.now(),
     });
 

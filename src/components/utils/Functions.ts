@@ -9,6 +9,10 @@ import { reloadAppAsync } from "expo";
 import * as SecureStore from "expo-secure-store";
 import { RSA } from "react-native-rsa-native";
 import { SignupInfo, UserType } from "./Types";
+import { REPORT_REASONS } from "@/backend/models/report";
+import { Alert } from "react-native";
+import prompt from "@powerdesigninc/react-native-prompt";
+import { ObjectId } from "mongodb";
 
 export async function callAPI(
   endpoint: string,
@@ -229,4 +233,72 @@ export async function logout() {
   await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_TYPE);
   await SecureStore.deleteItemAsync(process.env.EXPO_PUBLIC_KEY_NAME_PASS);
   reloadAppAsync();
+}
+
+export function handleReport(
+  userType: UserType,
+  isPost: boolean = false
+) {
+  return new Promise<{ reason: REPORT_REASONS; evidence?: string }>((resolve, reject) => {
+    const options = [
+      {
+        text: "Inappropriate Behaviour",
+        onPress: () => resolve({ reason: REPORT_REASONS.INNAPROPRIATE_BEHAVIOUR }),
+      },
+      {
+        text: "Spam",
+        onPress: () => resolve({ reason: REPORT_REASONS.SPAM }),
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+        onPress: () => reject("cancelled"),
+      },
+    ];
+
+    // For comments, add the "Incorrect Information" option for doctors
+    if (!isPost) {
+      options.unshift({
+        text: "Incorrect Information",
+        onPress: () => {
+          if (userType === UserType.DOCTOR) {
+            prompt(
+              "Provide Scholarly Evidence",
+              "As a doctor, please provide a valid scholarly link as evidence for reporting incorrect information:",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                  onPress: () => reject("cancelled"),
+                },
+                {
+                  text: "Submit",
+                  onPress: (input) => {
+                    if (validateScholarlyLink(input ?? "")) {
+                      resolve({
+                        reason: REPORT_REASONS.INCORRECT_INFORMATION,
+                        evidence: input,
+                      });
+                    } else {
+                      Alert.alert("Invalid Link", "Please provide a valid scholarly link.");
+                      reject("invalid_link");
+                    }
+                  },
+                },
+              ],"plain-text"
+            );
+          } else {
+            resolve({ reason: REPORT_REASONS.INCORRECT_INFORMATION });
+          }
+        },
+      });
+    }
+
+    Alert.alert("Report", "Please choose a reason for reporting:", options as any, { cancelable: true });
+  });
+}
+
+export function validateScholarlyLink(link: string) {
+  const regex = /^(https?:\/\/)?(www\.)?(\w+\.)?([a-zA-Z0-9]+)\.[a-zA-Z]{2,}\/[^\s]+$/;
+  return regex.test(link);
 }
