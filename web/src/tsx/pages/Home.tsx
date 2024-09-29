@@ -29,7 +29,7 @@ export default function Home() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="h-screen flex pt-24 flex-col"
+        className="h-screen flex pt-24 flex-col justify-around"
       >
         <motion.div
           variants={item}
@@ -37,10 +37,10 @@ export default function Home() {
         >
           <img className="aspect-square " src="/icon.png" />
         </motion.div>
-
+        <div className="my-auto">
         <motion.p
           variants={item}
-          className="text-7xl sm:text-8xl mx-auto font-bold"
+          className="text-7xl sm:text-8xl mx-auto  font-bold"
         >
           SupDoc
         </motion.p>
@@ -49,7 +49,7 @@ export default function Home() {
           className=" text-powder_blue font-semibold text-lg mx-auto mt-4"
         >
           {Localizations.construction}
-        </motion.p>
+        </motion.p></div>
       </motion.div>
     </div>
   );
