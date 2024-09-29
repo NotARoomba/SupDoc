@@ -3,6 +3,7 @@ import Icons from "@expo/vector-icons/Octicons";
 import { usePosts } from "components/hooks/usePosts";
 import { useUser } from "components/hooks/useUser";
 import { CommentBlockProps } from "components/utils/Types";
+import { router } from "expo-router";
 import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -83,9 +84,10 @@ export default function CommentBlock({
                 setReplyingTo(comment._id == replyingTo ? null : comment._id);
               }}
             >
+              <TouchableOpacity onPress={() => router.navigate({pathname: "/User", params: {id: comment.commenter.toString() as string}})}>
               <Text className="text-ivory text-lg font-bold">
                 {comment.name}
-              </Text>
+              </Text></TouchableOpacity>
               <Text className="text-ivory text-md">{comment.text}</Text>
 
               <View className="flex flex-row mt-2 justify-between">

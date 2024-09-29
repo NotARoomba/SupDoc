@@ -58,7 +58,7 @@ export async function callAPI(
         method === "POST"
           ? (
               await axios.post(
-                process.env.EXPO_PUBLIC_API_URL + endpoint,
+                (process.env.EXPO_PUBLIC_API_URL + endpoint),
                 magic,
                 {
                   method: method,
@@ -71,7 +71,7 @@ export async function callAPI(
               )
             ).data
           : (
-              await axios.get(process.env.EXPO_PUBLIC_API_URL + endpoint, {
+              await axios.get((process.env.EXPO_PUBLIC_API_URL + endpoint), {
                 method: method,
                 headers: {
                   Accept: "application/json",
@@ -234,7 +234,7 @@ export async function logout() {
   reloadAppAsync();
 }
 
-export function handleReport(userType: UserType, isPost: boolean = false) {
+export function handleReport(userType: UserType, isComment: boolean = true) {
   return new Promise<{ reason: REPORT_REASONS; evidence?: string }>(
     (resolve, reject) => {
       const options = [
@@ -255,7 +255,7 @@ export function handleReport(userType: UserType, isPost: boolean = false) {
       ];
 
       // For comments, add the "Incorrect Information" option for doctors
-      if (!isPost) {
+      if (isComment) {
         options.unshift({
           text: "Incorrect Information",
           onPress: () => {

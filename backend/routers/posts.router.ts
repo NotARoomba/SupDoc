@@ -6,7 +6,7 @@ import Patient from "../models/patient";
 import Post from "../models/post";
 import Report from "../models/report";
 import { STATUS_CODES, UserType } from "../models/util";
-import { collections, encryption } from "../services/database.service";
+import { collections, createKey, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl } from "../services/storage.service";
 
@@ -214,10 +214,11 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
 
   // TODOOOO MIGRATE ALL collections? to collections
   // FIX ALL TO OBJECTID
-  // await createKey([
-  //   comment.doctor,
-  // ]);
   const comment: Comment = req.body;
+  
+  await createKey([
+    comment.commenter.toString(),
+  ]);
   const postID = new ObjectId(req.params.id);
   const keyAltName = comment.commenter.toString();
   const doctor = (await collections.doctors.findOne({

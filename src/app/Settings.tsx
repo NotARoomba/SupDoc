@@ -214,7 +214,7 @@ export default function Settings() {
       </Animated.View>
       <Reanimated.View className="w-full absolute bottom-6">
         <Text className=" text-powder_blue font-bold text-center text-xs w-11/12 mx-auto">
-          {process.env.EXPO_PUBLIC_CREDITS}
+          {t('settings.credits')}
         </Text>
       </Reanimated.View>
     </View>

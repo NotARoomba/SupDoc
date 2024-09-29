@@ -1,6 +1,6 @@
 import { User } from "@/backend/models/user";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
-import { callAPI, logout } from "components/utils/Functions";
+import { callAPI, handleReport, logout } from "components/utils/Functions";
 import { Image } from "expo-image";
 import * as SecureStore from "expo-secure-store";
 import { parsePhoneNumber } from "libphonenumber-js";
@@ -14,11 +14,13 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import { useLoading } from "./useLoading";
+import { ObjectId } from "mongodb";
 
 interface UserContextType {
   user: User;
   userEdit: User;
   userType: UserType | undefined;
+  reportUser: (id: string, userType: UserType) => void
   deleteUser: () => void;
   fetchUser: () => Promise<void>;
   setUser: (user: User) => void;
@@ -62,6 +64,28 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const updateUser = (user: User) => {};
 
+  const reportUser = async (id: string, ut: UserType) => {
+    try {
+      const { reason, evidence } = await handleReport(
+        userType as UserType,
+        false,
+      );
+      const res = await callAPI(
+        `/users/report`,
+        "POST",
+        {
+          id,
+          userType: ut,
+          reason, evidence
+        },
+      );
+      if (res.status !== STATUS_CODES.SUCCESS) {
+        return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+      }
+      Alert.alert(t("success"), t("successes.reportComment"));
+    } catch {}
+  }
+
   const deleteUser = async () => {
     const res = await callAPI("/users/delete", "POST", { userType });
     if (res.status !== STATUS_CODES.SUCCESS) {
@@ -79,6 +103,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         user,
         userEdit,
         userType,
+        reportUser,
         setUserEdit,
         setUser,
         fetchUser,

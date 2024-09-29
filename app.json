@@ -24,8 +24,8 @@
       },
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
-        "CFBundleLocalizations": ["en", "es", "zh", "hi", "pt", "ar", "fr", "de", "ru", "ja", "ko", "it"],
-        "CFBundleDevelopmentRegion": "en"
+        "CFBundleLocalizations": ["en", "es"],
+        "CFBundleDevelopmentRegion": "es"
       },
       "bundleIdentifier": "com.notaroomba.supdoc"
     },

@@ -178,7 +178,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     try {
       const { reason, evidence } = await handleReport(
         userType as UserType,
-        false,
       );
       const res = await callAPI(
         `/posts/${post}/comments/${commentID}/report`,
