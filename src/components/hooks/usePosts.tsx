@@ -215,7 +215,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       title: "",
       description: "",
       images: [],
-      patient: 0,
+      patient: "0" as unknown as ObjectId,
       reports: [],
       info: {} as PatientMetrics,
       timestamp: 0,

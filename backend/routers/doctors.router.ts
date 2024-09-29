@@ -60,7 +60,7 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
       );
   }
 });
-doctorsRouter.get("/:id", async (req: Request, res: Response) => {
+doctorsRouter.get("/id/:id", async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id);
   try {
     let user: Doctor | null = null;

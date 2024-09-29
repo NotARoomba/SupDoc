@@ -221,7 +221,7 @@ export default function PostPage() {
                 </View>
               )}
               <View className="-z-10">
-              <TouchableOpacity className="bg-oxford_blue w-11/12 mx-auto mb-4 px-5 py-2 rounded-xl">
+              <TouchableOpacity onPress={() => router.navigate({pathname: "/User", params: {id: post.patient.toString()}})} className="bg-oxford_blue w-11/12 mx-auto mb-4 px-5 py-2 rounded-xl">
                   <Text className="text-ivory text-center font-semibold text-lg  ">Patient Info</Text>
                 </TouchableOpacity>
                 <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">

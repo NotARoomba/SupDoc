@@ -47,7 +47,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     if (!ut) return setLoading(false);
     setUserType(ut);
     const res = await callAPI(
-      `/${ut == UserType.DOCTOR ? "doctors" : "patients"}/`,
+      `/${ut == UserType.DOCTOR ? "doctors" : "patients"}`,
       "GET",
     );
     if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();

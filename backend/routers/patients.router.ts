@@ -60,7 +60,7 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
-patientsRouter.get("/:id", async (req: Request, res: Response) => {
+patientsRouter.get("/id/:id", async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id);
   try {
     let user: Patient | null = null;
