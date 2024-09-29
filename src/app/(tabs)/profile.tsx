@@ -20,6 +20,7 @@ import {
 } from "components/utils/Functions";
 import { BirthSex, Sex, UserType } from "components/utils/Types";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import parsePhoneNumber from "libphonenumber-js";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -219,8 +220,11 @@ export default function Profile() {
     >
       <Animated.View style={{ opacity: fadeAnim }} className="h-full w-full">
         <View className="absolute w-full p-4 flex justify-between z-50 flex-row">
-          <TouchableOpacity className="z-50 p-1">
-            <Icons name="info" size={38} color={"#fbfff1"} />
+          <TouchableOpacity
+            onPress={() => router.navigate("/Settings")}
+            className="z-50 p-1"
+          >
+            <Icons name="gear" size={38} color={"#fbfff1"} />
           </TouchableOpacity>
           <TouchableOpacity
             className="z-50 p-1"

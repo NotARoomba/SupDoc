@@ -5,7 +5,6 @@
     "success": "Success!",
     "error": "Error",
     "cancel": "Cancel",
-    "settings": "Settings", 
     "loading": "Loading",
     "yes": "Yes",
     "no": "No",
@@ -52,7 +51,8 @@
         "fact": "Fun Fact",
         "posts": "Your Posts",
         "feed": "Feed",
-        "Pins": "Pins"
+        "pins": "Pins",
+        "settings": "Settings"
     },
     "images": {
         "choose": "Please choose",
@@ -77,9 +77,7 @@
         "login": "You are now logged in",
         "signup": "You are now registered",
         "deletePost": "Sucessfully deleted your post",
-        "reportComment": "Successfully reported the comment!",
-        "submitReport": "Sucessfully submitted your report!",
-        "postUploading": "Sucessfully uploaded your post!"
+        "reportComment": "Successfully reported the comment!"
     },
     "errors": {
         "createUser": "There was an error creating a user",
@@ -93,11 +91,9 @@
             "minChrtr": "Password must be at least 8 characters long."
         },
         "missing": "Missing Info",
-        "emptyComment": "Comment cannot be empty.",
         "missingInfo": "Please fill out the information",
         "fetchData": "There was an error fetching your data!",
         "updateData": "There was an error updating your information!",
-        "postUploading": "There was an error uploading your post!",
         "GENERIC_ERROR": "An error has occured",
         "USER_NOT_FOUND": "That user does not exist",
         "INVALID_NUMBER": "The phone number is invalid",
@@ -114,7 +110,14 @@
         "INVALID_IDENTITY": "The identification provided is invalid",
         "COMMENT_LIMIT_REACHED": "The post has reached the maximum limit of comments allowed",
         "DOES_NOT_EXIST": "The requested resource does not exist",
-        "DOCTOR_INVALID": "The doctor with the information provided does not exist"
+        "DOCTOR_INVALID": "The doctor with the information provided does not exist",
+        "POST_NOT_FOUND": "That post could not be found",
+        "ERROR_DELETING_POST": "There was an error deleting your post",
+        "ERROR_UPLOADING_IMAGE": "error uploading image has occurred",
+        "ALREADY_REPORTED": "You have already reported this comment",
+        "ALREADY_COMMENTED": "You have already commented on this post",
+        "COMMENT_NOT_ALLOWED": "You cannot comment here",
+        "COMMENT_NOT_FOUND": "There was an error finding that comment"
     },
     "succeses": {
         "updateData": "Successfully updated your information!"
@@ -122,5 +125,9 @@
     "verification": {
         "title": "Enter Verification Code",
         "description": "Enter the verification code sent to: "
+    },
+    "settings": {
+        "languages": "Languages",
+        "theme": "Theme"
     }
 }

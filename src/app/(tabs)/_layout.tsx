@@ -1,5 +1,6 @@
 import Icons from "@expo/vector-icons/Octicons";
 import { usePosts } from "components/hooks/usePosts";
+import { useSettings } from "components/hooks/useSettings";
 import { useUser } from "components/hooks/useUser";
 import { UserType } from "components/utils/Types";
 import { Tabs } from "expo-router";
@@ -9,7 +10,9 @@ import { Platform } from "react-native";
 export default function TabLayout() {
   const { userType } = useUser();
   const { fetchPosts } = usePosts();
+  const { fetchSettings } = useSettings();
   useEffect(() => {
+    fetchSettings();
     fetchPosts();
   }, []);
   return (

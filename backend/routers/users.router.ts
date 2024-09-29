@@ -3,6 +3,7 @@ import { MongoCryptError } from "mongodb";
 import { User } from "../models/user";
 import { STATUS_CODES, UserType } from "../models/util";
 import { collections, encryption } from "../services/database.service";
+import { encrypt } from "../services/encryption.service";
 
 export const usersRouter = express.Router();
 
@@ -102,5 +103,48 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+});
+
+usersRouter.post("/delete", async (req: Request, res: Response) => {
+  const userType: UserType = req.body.userType;
+  try {
+    if (collections.patients && collections.doctors) {
+      const deleteResult =
+        userType == UserType.DOCTOR
+          ? await collections.doctors.deleteOne({
+              publicKey: req.headers.authorization,
+            })
+          : await collections.patients.deleteOne({
+              publicKey: req.headers.authorization,
+            });
+      if (!deleteResult.acknowledged)
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.ERROR_DELETING_USER },
+              req.headers.authorization,
+            ),
+          );
+      res.status(200).send(
+        encrypt(
+          {
+            status: STATUS_CODES.SUCCESS,
+          },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
   }
 });

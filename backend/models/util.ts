@@ -28,6 +28,7 @@ export enum STATUS_CODES {
   ALREADY_COMMENTED,
   COMMENT_NOT_ALLOWED,
   COMMENT_NOT_FOUND,
+  ERROR_DELETING_USER,
 }
 
 type ConditionalType<T, U> = T extends Binary ? T : U;

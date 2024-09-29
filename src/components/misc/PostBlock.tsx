@@ -34,16 +34,13 @@ export default function PostBlock({
   const animatedBlurProps = useAnimatedProps(() => ({
     intensity: withSpring(blurIntensity.value, { damping: 15, stiffness: 90 }),
   }));
-  // useEffect(() => console.log(post), []);
   useEffect(() => {
-    // Synchronize with the saved state in usePosts when the component re-renders
     setSaved(savedPosts.some((p) => p._id === post._id));
   }, [savedPosts, post._id]);
   return (
     <Reanimated.View
       entering={FadeIn.duration(250)}
       exiting={FadeOut.duration(250)}
-      // style={{ opacity: fadeAnim }}
       className={
         "h-fit flex w-11/12 bg-midnight_green-500/60 mt-4 p-4 rounded-2xl mx-auto "
       }
@@ -58,7 +55,6 @@ export default function PostBlock({
             }}
           >
             <Icons
-              key={savedPosts.length}
               color={"#fbfff1"}
               name={s ? "bookmark-slash" : "bookmark"}
               size={40}

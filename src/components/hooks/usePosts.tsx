@@ -27,14 +27,11 @@ import { Alert, LayoutAnimation } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
 
-// Define the types for the context
 interface PostsContextType {
   posts: Post[];
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
-  updateComments: boolean;
-  setUpdateComments: (u: boolean) => void;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
   fetchPosts: () => Promise<void>;
@@ -53,7 +50,6 @@ interface PostsContextType {
 
 const PostsContext = createContext<PostsContextType | undefined>(undefined);
 
-// Create a provider component
 interface PostsProviderProps {
   children: ReactNode;
 }
@@ -64,7 +60,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
   const [postEdit, setPostEdit] = useState<Post>();
-  const [updateComments, setUpdateComments] = useState(false);
   const { userType, user } = useUser();
   const listRef = useRef<FlashList<Post> | null>(null);
   const fetchPosts = async () => {
@@ -105,7 +100,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     const updatedSavedPosts = savedPosts.find((v) => v._id === post._id)
       ? savedPosts.filter((v) => v._id !== post._id)
       : [...savedPosts, post];
-    setSavedPosts(updatedSavedPosts); // Only call setSavedPosts once
+    setSavedPosts(updatedSavedPosts);
     return true;
   };
 
@@ -118,11 +113,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       Alert.alert(t("success"), t("sucesses.deletePost"));
       setLoading(false);
       listRef.current?.prepareForLayoutAnimationRender();
-      // After removing the item, we can start the animation.
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setPosts(posts.filter((v) => v._id?.toString() !== id));
       setSavedPosts(savedPosts.filter((v) => v._id?.toString() !== id));
-      // return router.navigate({ pathname: "/(tabs)", params: { refresh: 1 } });
     }
   };
 
@@ -149,30 +142,18 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-    console.log(res.comments);
 
-    // Update posts
-    setPosts((prevPosts) =>
-      prevPosts.map((p) =>
-        post == p._id
-          ? { ...p, comments: res.comments } // Make sure to update the comments array
-          : p,
-      ),
+    setPosts(
+      posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
     );
 
-    // Update saved posts, if necessary
-    setSavedPosts((prevSavedPosts) =>
-      prevSavedPosts.map((p) =>
-        post == p._id
-          ? { ...p, comments: res.comments } // Update saved posts' comments array
-          : p,
+    setSavedPosts(
+      savedPosts.map((p) =>
+        post == p._id ? { ...p, comments: res.comments } : p,
       ),
     );
-    setUpdateComments(true);
-    // await fetchPosts(); // Re-fetch posts to include the new comment
   };
 
-  // Liking a comment
   const likeComment = async (post: ObjectId, commentID: ObjectId) => {
     const res = await callAPI(
       `/posts/${post}/comments/${commentID}/like`,
@@ -181,14 +162,18 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-    // setPosts(updatePostComments(posts, post, res.comments));
 
-    // // Update saved posts, if needed
-    // setSavedPosts(updatePostComments(savedPosts, post, res.comments));
-    // await fetchPosts(); // Re-fetch posts to include the new comment
+    setPosts(
+      posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+    );
+
+    setSavedPosts(
+      savedPosts.map((p) =>
+        post == p._id ? { ...p, comments: res.comments } : p,
+      ),
+    );
   };
 
-  // Reporting a comment
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
     try {
       const { reason, evidence } = await handleReport(
@@ -242,14 +227,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const createPost = async () => {
     setLoading(true);
     if (!postEdit) return;
-    // let images = [];
-    // for (let i = 0; i < postData.images.length; i++)
-    //   images[i] = `data:image/png;base64,${await FileSystem.readAsStringAsync(
-    //     postData.images[i],
-    //     {
-    //       encoding: "base64",
-    //     },
-    //   )}`;
     const imgRes = await uploadImages(postEdit.images);
     if (imgRes.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
@@ -284,8 +261,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       postEdit,
       savedPosts,
       listRef,
-      updateComments,
-      setUpdateComments,
       setPostEdit,
       resetPostEdit,
       createPost,
@@ -297,7 +272,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       savePost,
       fetchPosts,
     }),
-    [posts, postEdit, savedPosts, listRef], // Dependencies
+    [posts, postEdit, savedPosts, listRef],
   );
   return (
     <PostsContext.Provider value={postsContextValue}>
@@ -306,7 +281,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   );
 };
 
-// Custom hook to use the LoadingContext
 export const usePosts = (): PostsContextType => {
   const context = useContext(PostsContext);
   if (!context) {

@@ -1,5 +1,6 @@
 import { LoadingProvider } from "components/hooks/useLoading";
 import { PostsProvider } from "components/hooks/usePosts";
+import { SettingsProvider } from "components/hooks/useSettings";
 import { UserProvider } from "components/hooks/useUser";
 import Loading from "components/loading/Loading";
 import "expo-dev-client";
@@ -35,26 +36,40 @@ export default function RootLayout() {
       <LoadingProvider>
         <UserProvider>
           <PostsProvider>
-            <SafeAreaView className="bg-richer_black" />
-            {isLogged ? (
-              // <Animated.View entering={FadeIn.duration(500)}>
-              <Stack
-                screenOptions={{ contentStyle: { backgroundColor: "#020912" } }}
-              >
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="Post"
-                  options={{
-                    headerShown: false,
-                    presentation: "fullScreenModal",
+            <SettingsProvider>
+              <SafeAreaView className="bg-richer_black" />
+              {isLogged ? (
+                // <Animated.View entering={FadeIn.duration(500)}>
+                <Stack
+                  screenOptions={{
+                    contentStyle: { backgroundColor: "#020912" },
                   }}
-                />
-              </Stack>
-            ) : (
-              // </Animated.View>
-              <Index setIsLogged={setIsLogged} />
-            )}
-            <Loading />
+                >
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="Post"
+                    options={{
+                      headerShown: false,
+                      presentation: "fullScreenModal",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="Settings"
+                    options={{
+                      headerShown: false,
+                      presentation: "fullScreenModal",
+                    }}
+                  />
+                </Stack>
+              ) : (
+                // </Animated.View>
+                <Index setIsLogged={setIsLogged} />
+              )}
+              <Loading />
+            </SettingsProvider>
           </PostsProvider>
         </UserProvider>
       </LoadingProvider>

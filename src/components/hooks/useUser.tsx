@@ -15,11 +15,11 @@ import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import { useLoading } from "./useLoading";
 
-// Define the types for the context
 interface UserContextType {
   user: User;
   userEdit: User;
   userType: UserType | undefined;
+  deleteUser: () => void;
   fetchUser: () => Promise<void>;
   setUser: (user: User) => void;
   setUserEdit: (user: User) => void;
@@ -27,7 +27,6 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// Create a provider component
 interface UserProviderProps {
   children: ReactNode;
 }
@@ -57,25 +56,40 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       ...res.user,
       number: parsePhoneNumber(res.user.number)?.nationalNumber,
     });
-    if (ut == UserType.DOCTOR) Image.prefetch(res.user.picture);
+    if (ut == UserType.DOCTOR) await Image.prefetch(res.user.picture);
     setLoading(false);
   };
 
   const updateUser = (user: User) => {};
+
+  const deleteUser = async () => {
+    const res = await callAPI("/users/delete", "POST", { userType });
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+    }
+    await logout();
+  };
 
   useEffect(() => {
     fetchUser();
   }, []);
   return (
     <UserContext.Provider
-      value={{ user, userEdit, userType, setUserEdit, setUser, fetchUser }}
+      value={{
+        user,
+        userEdit,
+        userType,
+        setUserEdit,
+        setUser,
+        fetchUser,
+        deleteUser,
+      }}
     >
       {children}
     </UserContext.Provider>
   );
 };
 
-// Custom hook to use the LoadingContext
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (!context) {

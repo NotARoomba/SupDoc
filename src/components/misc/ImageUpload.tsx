@@ -1,8 +1,8 @@
 import Icons from "@expo/vector-icons/Octicons";
 import { ImageUploadProps } from "components/utils/Types";
+import { useTranslation } from "react-i18next";
 import { Alert, Image, Pressable, TouchableOpacity } from "react-native";
 import Animated, { FadeIn, FadeInUp, FadeOut } from "react-native-reanimated";
-import { useTranslation } from "react-i18next";
 
 export default function ImageUpload({
   image,

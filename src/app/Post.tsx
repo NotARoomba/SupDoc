@@ -1,14 +1,12 @@
 import Comment from "@/backend/models/comment";
 import Post from "@/backend/models/post";
-import { STATUS_CODES, UserType } from "@/backend/models/util";
+import { UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import useFade from "components/hooks/useFade";
 import { usePosts } from "components/hooks/usePosts";
 import { useUser } from "components/hooks/useUser";
-import Loader from "components/loading/Loader";
 import LoaderView from "components/loading/LoaderView";
 import CommentBlock from "components/misc/CommentBlock";
-import { callAPI } from "components/utils/Functions";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { ObjectId } from "mongodb";
@@ -24,49 +22,60 @@ import {
   SafeAreaView,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import Gallery, { GalleryRef } from "react-native-awesome-gallery";
-import Spinner from "react-native-loading-spinner-overlay";
-import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Reanimated, {
+  FadeIn,
+  FadeInUp,
+  FadeOut,
+  FadeOutDown,
+} from "react-native-reanimated";
 import Skeleton from "react-native-reanimated-skeleton";
 
 export default function PostPage() {
   const routes = useLocalSearchParams();
   const fadeAnim = useFade();
   const { userType } = useUser();
-  const { deletePost, reportPost } = usePosts();
+  const { deletePost, reportPost, addComment, likeComment, posts } = usePosts();
   const [post, setPost] = useState<Post>();
+  const [commentText, setCommentText] = useState("");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const galleryRef = useRef<GalleryRef>(null);
   const [index, setIndex] = useState(0);
   const [replyingTo, setReplyingTo] = useState<ObjectId | null>(null);
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await callAPI(`/posts/${routes.id}`, "GET");
-      if (res.status !== STATUS_CODES.SUCCESS) {
-        router.navigate("/(tabs)");
-        return Alert.alert(t("error"), t(`${STATUS_CODES[res.status]}`));
-      }
-      setPost(res.post);
-    };
-    fetchData();
-  }, []);
+    setPost(posts.find((v) => v._id?.toString() == routes.id));
+  }, [posts]);
+
+  const handleAddComment = async () => {
+    if (commentText.trim()) {
+      Keyboard.dismiss();
+      await addComment(post?._id as ObjectId, commentText, replyingTo);
+      setCommentText("");
+      setReplyingTo(null);
+    } else {
+      Alert.alert("Comment cannot be empty.");
+    }
+  };
+
+  const handleStopReply = () => {
+    setReplyingTo(null);
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "position" : "position"}
       style={{ flex: 1 }}
-      // keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
     >
-      <ScrollView className="flex">
+      <ScrollView className="flex h-full">
         <SafeAreaView className="bg-richer_black" />
         <Animated.View
           style={{ opacity: fadeAnim }}
           className={
-            "h-full bg-richer_black relative pb-12 " +
+            "h-full bg-richer_black relative pb-44 " +
             (Platform.OS == "ios" ? "pt-16" : "pt-24")
           }
         >
@@ -77,9 +86,7 @@ export default function PostPage() {
             }
           >
             <TouchableOpacity
-              onPress={() =>
-                keyboardOpen ? Keyboard.dismiss() : router.back()
-              }
+              onPress={keyboardOpen ? Keyboard.dismiss : router.back}
               className="z-50 w-24  px-5 h-8 py-0 bg-ivory/20 rounded-full"
             >
               <Reanimated.Text
@@ -135,13 +142,10 @@ export default function PostPage() {
             centerContent
             horizontal
             entering={FadeIn.duration(500)}
-            // exiting={FadeOut.duration(0)}
-            contentContainerStyle={{ justifyContent: "space-between" }}
+                        contentContainerStyle={{ justifyContent: "space-between" }}
             className={"flex flex-row mt-4 static " + (expanded != -1 ? "h-full" : "")}
-            // style={{ width: Dimensions.get("window").width }}
-          >{post.images.map((v, i) => <TouchableOpacity
-            // exiting={FadeOut.duration(500)}
-            key={i}
+                      >{post.images.map((v, i) => <TouchableOpacity
+                        key={i}
             onPress={() => setExpanded(i == expanded ? -1 : i)}
             className={" flex aspect-square border border-solid border-ivory/80 rounded-xl " + (expanded != i ? "w-64 my-auto mx-2 h-64" : " w-screen aspect-square absolute top-0 z-50")}
           >
@@ -165,7 +169,6 @@ export default function PostPage() {
                           />
                           <View className="h-full w-full absolute top-0-z-10">
                             <Skeleton
-                              // animationType="pulse"
                               boneColor="#041225"
                               highlightColor="#b4c5e410"
                               animationDirection="diagonalDownRight"
@@ -225,9 +228,11 @@ export default function PostPage() {
                 <Text className="text-4xl font-bold text-center text-ivory">
                   Comments
                 </Text>
-                {post.comments.length == 0 && userType == UserType.PATIENT ? (
+                {post.comments.length == 0 ? (
                   <Text className=" text-center text-powder_blue/80">
-                    (There are no comments on your post yet)
+                    {userType == UserType.PATIENT
+                      ? "(There are no comments on your post yet)"
+                      : "(There are no comments on this post yet)"}
                   </Text>
                 ) : (
                   <CommentBlock
@@ -243,16 +248,53 @@ export default function PostPage() {
           ) : (
             <LoaderView />
           )}
-          <Spinner
-            visible={loading}
-            overlayColor="#00000099"
-            textContent={"Loading"}
-            customIndicator={<Loader />}
-            textStyle={{ color: "#fff", marginTop: -25 }}
-            animation="fade"
-          />
         </Animated.View>
       </ScrollView>
+      <View className="absolute flex w-full bottom-6">
+        <Reanimated.View
+          entering={FadeInUp.delay(500)}
+          exiting={FadeOutDown.duration(500)}
+          className=" mx-auto w-11/12"
+        >
+          <TextInput
+            placeholder={
+              replyingTo ? "Reply to comment..." : "Add a comment..."
+            }
+            value={commentText}
+            onChangeText={setCommentText}
+            className="bg-gray-700 text-ivory p-3 rounded-lg"
+          />
+          <TouchableOpacity
+            onPress={handleAddComment}
+            className="mt-2 bg-midnight_green p-3 rounded-lg"
+          >
+            <Reanimated.Text
+              entering={FadeIn.duration(500)}
+              exiting={FadeOut.duration(500)}
+              className="text-ivory text-center font-bold"
+            >
+              {replyingTo ? "Post Reply" : "Post Comment"}
+            </Reanimated.Text>
+          </TouchableOpacity>
+
+          {replyingTo && (
+            <Reanimated.View
+              entering={FadeInUp.duration(300)}
+              exiting={FadeOutDown.duration(300)}
+              className="mb-2"
+            >
+              <TouchableOpacity
+                onPress={handleStopReply}
+                className="mt-2 bg-red-500 p-3 rounded-lg"
+              >
+                <Text className="text-ivory text-center font-bold">
+                  Cancel Reply
+                </Text>
+              </TouchableOpacity>
+            </Reanimated.View>
+          )}
+        </Reanimated.View>
+      </View>
     </KeyboardAvoidingView>
   );
 }
