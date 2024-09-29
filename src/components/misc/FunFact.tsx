@@ -1,7 +1,10 @@
 import Icons from "@expo/vector-icons/Octicons";
 import { Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
+
 export default function FunFact() {
+  const { t } = useTranslation();
   return (
     <Animated.View
       entering={FadeIn.duration(500)}
@@ -10,7 +13,7 @@ export default function FunFact() {
     >
       <View className="flex gap-x-4 flex-row  py-2 h-fit align-middle">
         <Icons name="star-fill" size={35} color={"#fbfff1"} />
-        <Text className="text-ivory text-3xl my-auto font-bold">Fun Fact</Text>
+        <Text className="text-ivory text-3xl my-auto font-bold">{t("titles.fact")}</Text>
       </View>
       <Text className="text-ivory/70 text-lg font-semibold">
         Your stomach becomes more resistant when you eat rotten tomatoes!
