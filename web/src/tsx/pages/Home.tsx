@@ -20,27 +20,22 @@ export default function Home() {
 
   return (
     <div id="home" className="text-ivory bg-richer_black">
-      {/* <SmartBanner
-        title={'SupDoc'}
-        daysHidden={0}
-        daysReminder={0}
-      /> */}
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="h-screen flex pt-24 flex-col justify-around"
+        className="h-screen flex justify-center flex-col"
       >
         <motion.div
           variants={item}
-          className="w-fit mx-auto h-1/3 aspect-square "
+          className="w-fit mx-auto h-1/3 aspect-square"
         >
           <img className="aspect-square " src="/icon.png" />
         </motion.div>
-        <div className="my-auto">
+
         <motion.p
           variants={item}
-          className="text-7xl sm:text-8xl mx-auto  font-bold"
+          className="text-7xl sm:text-8xl mx-auto font-bold"
         >
           SupDoc
         </motion.p>
@@ -49,7 +44,7 @@ export default function Home() {
           className=" text-powder_blue font-semibold text-lg mx-auto mt-4"
         >
           {Localizations.construction}
-        </motion.p></div>
+        </motion.p>
       </motion.div>
     </div>
   );
