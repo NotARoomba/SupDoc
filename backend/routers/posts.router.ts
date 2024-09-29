@@ -5,6 +5,7 @@ import { Doctor } from "../models/doctor";
 import Patient from "../models/patient";
 import Post from "../models/post";
 import Report from "../models/report";
+import CryptoJS from "crypto-js";
 import { STATUS_CODES, UserType } from "../models/util";
 import { collections, createKey, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
@@ -123,9 +124,10 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
   const patient = (await collections.patients.findOne({
     publicKey: req.headers.authorization,
   })) as Patient;
-  data.patient = patient.identification.number;
+  if (!patient._id) return res.send(encrypt({status: STATUS_CODES.USER_NOT_FOUND}, req.headers.authorization))
+  data.patient = patient._id;
 
-  const keyAltName = data.patient.toString(2);
+  const keyAltName = data.patient.toString('hex');
   try {
     if (collections.posts) {
       const postInsert = await collections.posts.insertOne({
@@ -217,10 +219,10 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   const comment: Comment = req.body;
   
   await createKey([
-    comment.commenter.toString(),
+    CryptoJS.SHA256(comment.commenter.toString()).toString(),
   ]);
   const postID = new ObjectId(req.params.id);
-  const keyAltName = comment.commenter.toString();
+  const keyAltName = CryptoJS.SHA256(comment.commenter.toString()).toString();
   const doctor = (await collections.doctors.findOne({
     publicKey: req.headers.authorization,
   })) as Doctor;

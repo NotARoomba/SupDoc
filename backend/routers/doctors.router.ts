@@ -3,6 +3,7 @@ import * as cheerio from "cheerio";
 import express, { Request, Response } from "express";
 import { Doctor } from "../models/doctor";
 import Post from "../models/post";
+import CryptoJS from "crypto-js";
 import { STATUS_CODES } from "../models/util";
 import { collections, createKey, env } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
@@ -11,6 +12,7 @@ import {
   removeImageFromStorage,
   upload,
 } from "../services/storage.service";
+import { ObjectId } from "mongodb";
 
 export const doctorsRouter = express.Router();
 
@@ -26,6 +28,54 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
     }
     if (user) {
       user.identification.license = [];
+      res.status(200).send(
+        encrypt(
+          {
+            user: { ...user, picture: await generateSignedUrl(user.picture) },
+            status: STATUS_CODES.SUCCESS,
+          },
+          req.headers.authorization,
+        ),
+      );
+    } else {
+      res.status(404).send(
+        encrypt(
+          {
+            user: null,
+            status: STATUS_CODES.USER_NOT_FOUND,
+          },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+  }
+});
+doctorsRouter.get("/:id", async (req: Request, res: Response) => {
+  const id = new ObjectId(req.params.id);
+  try {
+    let user: Doctor | null = null;
+    if (collections.doctors) {
+      user = (await collections.doctors.findOne({
+        _id: id,
+      })) as unknown as Doctor;
+    }
+    if (user) {
+      user.identification.license = [];
+      user.comments = [];
+      user.saved = [];
+      user.publicKey = ""
+      user.privateKey = ""
+      user.reports = []
       res.status(200).send(
         encrypt(
           {
@@ -126,11 +176,11 @@ doctorsRouter.post(
           saved: [],
         });
         await createKey([
-          inserted.insertedId.toString(),
-          data.number
+          CryptoJS.SHA256(inserted.insertedId.toString()).toString(),
+          CryptoJS.SHA256(data.number
             .split("")
             .map((bin) => String.fromCharCode(parseInt(bin, 2)))
-            .join(""),
+            .join("")).toString(),
         ]);
         res.send({ status: STATUS_CODES.SUCCESS });
       }

@@ -4,6 +4,7 @@ import { User } from "../models/user";
 import { STATUS_CODES, UserType } from "../models/util";
 import { collections, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
+import CryptoJS from "crypto-js";
 
 export const usersRouter = express.Router();
 
@@ -11,6 +12,7 @@ usersRouter.use(express.json());
 
 usersRouter.post("/check", async (req: Request, res: Response) => {
   const id: number = req.body.id;
+  const idHash = CryptoJS.SHA256(id.toString(2)).toString()
   const number: string | null = req.body.number;
   try {
     let user: User | null = null;
@@ -31,19 +33,19 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
         else if (user.number == number)
           res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
       }
-      user = (await encryption.getKeyByAltName(id.toString(2)))
+      user = (await encryption.getKeyByAltName(idHash))
         ? ((await collections.patients.findOne({
             $or: [
               {
                 "identification.number": await encryption.encrypt(id, {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                  keyAltName: id.toString(2),
+                  keyAltName: idHash,
                 }),
               },
               {
                 number: await encryption.encrypt(number ?? "", {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                  keyAltName: id.toString(2),
+                  keyAltName: idHash,
                 }),
               },
             ],
@@ -65,6 +67,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
 
 usersRouter.post("/keys", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
+  const idHash = CryptoJS.SHA256(id.toString(2)).toString()
   const userType: UserType = req.body.userType;
   // const number: string = req.body.number;
   // try {
@@ -84,11 +87,11 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
           ? await collections.doctors.findOne({
               "identification.number": id,
             })
-          : (await encryption.getKeyByAltName(id.toString(2)))
+          : (await encryption.getKeyByAltName(idHash))
             ? ((await collections.patients.findOne({
                 "identification.number": await encryption.encrypt(id, {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                  keyAltName: id.toString(2),
+                  keyAltName: idHash,
                 }),
               })) as User)
             : null;

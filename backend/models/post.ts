@@ -8,7 +8,7 @@ export default interface Post {
   images: string[]; // R
   description: string;
   info: PatientMetrics;
-  patient: number; // D // IDENTIFICATION NUMBER
+  patient: ObjectId; // D // IDENTIFICATION NUMBER
   timestamp: number; // D
   comments: Comment[]; // M
   reports: ObjectId[];

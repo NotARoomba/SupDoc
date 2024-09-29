@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import Patient from "../models/patient";
 import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
+import CryptoJS from "crypto-js";
 import {
   collections,
   createKey,
@@ -59,6 +60,61 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
+patientsRouter.get("/:id", async (req: Request, res: Response) => {
+  const id = new ObjectId(req.params.id);
+  try {
+    let user: Patient | null = null;
+    if (collections.patients) {
+      user = (await collections.patients.findOne({
+        _id: id,
+      })) as unknown as Patient;
+    }
+    if (user) {
+      user.privateKey = ""
+      user.publicKey = ""
+      user.identification.number = 0
+      user.number = ""
+      const posts = (await collections.posts
+        .find({
+          _id: {
+            $in: user.posts.map((v) => new ObjectId(v)),
+          },
+        })
+        .sort({ _id: -1 })
+        .toArray()) as unknown as Post[];
+      res.status(200).send(
+        encrypt(
+          {
+            user: {...user, posts: posts},
+            status: STATUS_CODES.SUCCESS,
+          },
+          req.headers.authorization,
+        ),
+      );
+    } else {
+      res.status(404).send(
+        encrypt(
+          {
+            user: null,
+            status: STATUS_CODES.USER_NOT_FOUND,
+          },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+  }
+});
+
 patientsRouter.post("/create", async (req: Request, res: Response) => {
   const data: Patient = req.body;
   // verification of id
@@ -68,14 +124,14 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   // console.log(ret.data.text);
   // if (!ret.data.text.includes(data.identification.number.toString()))
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
-  const keyAltName = data.identification.number.toString(2);
+  const keyAltName = CryptoJS.SHA256(data.identification.number.toString(2)).toString();
   try {
     const keyUDID = await createKey([
       keyAltName,
-      data.number
+      CryptoJS.SHA256(data.number
         .split("")
         .map((bin) => bin.charCodeAt(0).toString(2))
-        .join(""),
+        .join("")).toString(),
     ]);
     const sexData =
       data.info.altSex && data.info.altSex !== data.info.sex
@@ -167,6 +223,9 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
         // Posts field
         posts: [],
       });
+      await createKey([
+        CryptoJS.SHA256(ins.insertedId.toString()).toString(),
+      ]);
       res.send(
         encrypt({ status: STATUS_CODES.SUCCESS }, req.headers.authorization),
       );
@@ -184,18 +243,18 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
 
 patientsRouter.post("/update", async (req: Request, res: Response) => {
   const data: Patient = req.body;
-  const keyAltName = data.identification.number.toString(2);
+  const keyAltName = CryptoJS.SHA256(data.identification.number.toString(2)).toString();
   try {
     const keyUDID = await createKey([
       keyAltName,
-      data.number
+      CryptoJS.SHA256(data.number
         .split("")
         .map((bin) => String.fromCharCode(parseInt(bin, 2)))
-        .join(""),
+        .join("")).toString(),
     ]);
     if (collections.patients) {
       const upd = await collections.patients.findOneAndUpdate(
-        { publicKey: data.publicKey },
+        { publicKey: req.headers.authorization },
         {
           $set: {
             number: await encryption.encrypt(data.number, {

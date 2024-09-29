@@ -85,7 +85,7 @@ export default function CommentBlock({
               }}
             >
               <TouchableOpacity onPress={() => router.navigate({pathname: "/User", params: {id: comment.commenter.toString() as string}})}>
-              <Text className="text-ivory text-lg font-bold">
+              <Text className="text-powder_blue text-lg font-bold">
                 {comment.name}
               </Text></TouchableOpacity>
               <Text className="text-ivory text-md">{comment.text}</Text>
