@@ -1,12 +1,10 @@
 import { ObjectId } from "mongodb";
 import { UserType } from "./util";
 
-enum REPORT_REASONS {
+export enum REPORT_REASONS {
+  INCORRECT_INFORMATION,
   INNAPROPRIATE_BEHAVIOUR,
-  UNPROFESSIONAL_CONDUCT,
-  FRADULENT_ACTIVITY,
   SPAM,
-  IMPERSONATION,
 }
 
 interface Reporter {
@@ -21,5 +19,5 @@ export default interface Report {
   timestamp: number;
   parent?: ObjectId,
   reason?: REPORT_REASONS;
-  proof?: string;
+  evidence?: string;
 }

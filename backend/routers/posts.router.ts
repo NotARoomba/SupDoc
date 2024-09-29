@@ -445,6 +445,8 @@ postsRouter.post("/:postID/comments/:commentID/report", async (req: Request, res
         id: user._id as ObjectId,
         type: doctor ? UserType.DOCTOR : UserType.PATIENT,
       },
+      reason: req.body.reason,
+      evidence: req.body.evidence,
       timestamp: Date.now(),
     });
 
