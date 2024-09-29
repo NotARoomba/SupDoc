@@ -41,7 +41,8 @@
     "posts": {
         "savedNone": "(You have not saved any posts)",
         "feedNone": "(There are no posts)",
-        "none": "(You have not posted anything yet)"
+        "none": "(You have not posted anything yet)",
+        "you": "(You)"
     },
     "titles": {
         "login": "Login",
