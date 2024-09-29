@@ -3,9 +3,11 @@ import Post from "@/backend/models/post";
 import { UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import useFade from "components/hooks/useFade";
+import { useLoading } from "components/hooks/useLoading";
 import { usePosts } from "components/hooks/usePosts";
 import { useUser } from "components/hooks/useUser";
 import LoaderView from "components/loading/LoaderView";
+import Loading from "components/loading/Loading";
 import CommentBlock from "components/misc/CommentBlock";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
@@ -39,6 +41,7 @@ export default function PostPage() {
   const routes = useLocalSearchParams();
   const fadeAnim = useFade();
   const { userType } = useUser();
+  const {loading, setLoading} = useLoading();
   const { deletePost, reportPost, addComment, likeComment, posts } = usePosts();
   const [post, setPost] = useState<Post>();
   const [commentText, setCommentText] = useState("");
@@ -52,13 +55,16 @@ export default function PostPage() {
   }, [posts]);
 
   const handleAddComment = async () => {
+    setLoading(true);
     if (commentText.trim()) {
       Keyboard.dismiss();
       await addComment(post?._id as ObjectId, commentText, replyingTo);
       setCommentText("");
       setReplyingTo(null);
+      setLoading(false);
     } else {
       Alert.alert("Comment cannot be empty.");
+      setLoading(false);
     }
   };
 
@@ -69,7 +75,7 @@ export default function PostPage() {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "position" : "position"}
       style={{ flex: 1 }}
-    >
+    ><Loading/>
       <ScrollView className="flex h-full">
         <SafeAreaView className="bg-richer_black" />
         <Animated.View
@@ -253,7 +259,7 @@ export default function PostPage() {
           )}
         </Animated.View>
       </ScrollView>
-      <View className="absolute flex w-full bottom-6">
+      {post?.comments.length !== 0 && userType == UserType.PATIENT && <View className="absolute flex w-full bottom-6">
         <Reanimated.View
           entering={FadeInUp.delay(500)}
           exiting={FadeOutDown.duration(500)}
@@ -297,7 +303,7 @@ export default function PostPage() {
             </Reanimated.View>
           )}
         </Reanimated.View>
-      </View>
+      </View>}
     </KeyboardAvoidingView>
   );
 }
