@@ -2,6 +2,7 @@ import Icons from "@expo/vector-icons/Octicons";
 import { ImageUploadProps } from "components/utils/Types";
 import { Alert, Image, Pressable, TouchableOpacity } from "react-native";
 import Animated, { FadeIn, FadeInUp, FadeOut } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 export default function ImageUpload({
   image,
@@ -9,6 +10,7 @@ export default function ImageUpload({
   activeDelete,
   setActiveDelete,
 }: ImageUploadProps) {
+  const { t } = useTranslation();
   // need to add a square image that has a fixed height and on press there appears a
   // opacity with a trash icon to remove
   return (
@@ -31,12 +33,12 @@ export default function ImageUpload({
             <TouchableOpacity
               onPress={() =>
                 Alert.alert(
-                  "Remove Image",
-                  "Are you sure you want to remove this image?",
+                  t("images.removeTitle"),
+                  t("image.removeDescription"),
                   [
-                    { text: "Cancel", style: "cancel" },
+                    { text: t("cancel"), style: "cancel" },
                     {
-                      text: "Remove",
+                      text: t("remove"),
                       style: "destructive",
                       onPress: () => removeImage(image),
                     },
