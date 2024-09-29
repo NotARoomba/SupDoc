@@ -19,12 +19,12 @@ export default function Home() {
   };
 
   return (
-    <div id="home" className="text-ivory bg-richer_black">
+    <div className="text-ivory h-screen bg-richer_black">
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="h-screen flex justify-center flex-col"
+        className="h-full flex justify-center flex-col"
       >
         <motion.div
           variants={item}
