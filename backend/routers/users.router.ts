@@ -1,14 +1,97 @@
 import express, { Request, Response } from "express";
-import { MongoCryptError } from "mongodb";
+import { MongoCryptError, ObjectId } from "mongodb";
 import { User } from "../models/user";
 import { STATUS_CODES, UserType } from "../models/util";
 import { collections, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import CryptoJS from "crypto-js";
+import { Doctor } from "../models/doctor";
+import Patient from "../models/patient";
+import { generateSignedUrl } from "../services/storage.service";
+import Post from "../models/post";
 
 export const usersRouter = express.Router();
 
 usersRouter.use(express.json());
+
+usersRouter.get("/:id", async (req: Request, res: Response) => {
+  const id = new ObjectId(req.params.id);
+  try {
+    let user: User | null = null;
+    if (collections.doctors && collections.patients) {
+      const doctor = (await collections.doctors.findOne({
+        _id: id,
+      })) as Doctor;
+      const patient = (await collections.patients.findOne({
+       _id: id,
+      })) as Patient;
+      user = doctor ? doctor : patient;
+    
+    if (user) {
+      user.publicKey = ""
+      user.identification.number = 0
+      user.number = ""
+      if (doctor) {
+        user = user as Doctor;
+        user.identification.license = [];
+        user.comments = [];
+        user.saved = [];
+        user.publicKey = ""
+        user.privateKey = ""
+        user.reports = []
+        res.status(200).send(
+          encrypt(
+            {
+              user: { ...user, picture: await generateSignedUrl(user.picture) },
+              status: STATUS_CODES.SUCCESS,
+            },
+            req.headers.authorization,
+          ),
+        );
+      } else {
+        user = user as Patient;
+      const posts = (await collections.posts
+        .find({
+          _id: {
+            $in: user.posts.map((v) => new ObjectId(v)),
+          },
+        })
+        .sort({ _id: -1 })
+        .toArray()) as unknown as Post[];
+        res.status(200).send(
+          encrypt(
+            {
+              user: { ...user, posts },
+              status: STATUS_CODES.SUCCESS,
+            },
+            req.headers.authorization,
+          ),
+        );
+      }
+        }
+    } else {
+      res.status(404).send(
+        encrypt(
+          {
+            user: null,
+            status: STATUS_CODES.USER_NOT_FOUND,
+          },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+  }
+});
 
 usersRouter.post("/check", async (req: Request, res: Response) => {
   const id: number = req.body.id;

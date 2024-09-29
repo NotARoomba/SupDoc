@@ -137,16 +137,10 @@ export default function Profile() {
       const verify = await callAPI("/verify/code/send", "POST", {
         number: countryCode.slice(4) + userEdit?.number,
       });
-      if (verify.status === STATUS_CODES.INVALID_NUMBER) {
+      if (verify.status !== STATUS_CODES.SUCCESS) {
         setLoading(false);
-        return Alert.alert(t("error"), t("errors.INVALID_NUMBER"));
-      } else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST) {
-        setLoading(false);
-        return Alert.alert(t("error"), "That number does not exist!");
-      } else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE) {
-        setLoading(false);
-        return Alert.alert("Error", "There was an error sending the code!");
-      } else {
+        return Alert.alert(t("error"), t(STATUS_CODES[verify.status]));
+      }
         setLoading(false);
         setTimeout(() => {
           return prompt(
@@ -184,7 +178,6 @@ export default function Profile() {
             "number-pad",
           );
         }, 250);
-      }
     } else await updateUser();
   };
   const selectImage = async (pickerType: "camera" | "gallery") => {

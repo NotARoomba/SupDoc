@@ -60,61 +60,6 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
-patientsRouter.get("/id/:id", async (req: Request, res: Response) => {
-  const id = new ObjectId(req.params.id);
-  try {
-    let user: Patient | null = null;
-    if (collections.patients) {
-      user = (await collections.patients.findOne({
-        _id: id,
-      })) as unknown as Patient;
-    }
-    if (user) {
-      user.privateKey = ""
-      user.publicKey = ""
-      user.identification.number = 0
-      user.number = ""
-      const posts = (await collections.posts
-        .find({
-          _id: {
-            $in: user.posts.map((v) => new ObjectId(v)),
-          },
-        })
-        .sort({ _id: -1 })
-        .toArray()) as unknown as Post[];
-      res.status(200).send(
-        encrypt(
-          {
-            user: {...user, posts: posts},
-            status: STATUS_CODES.SUCCESS,
-          },
-          req.headers.authorization,
-        ),
-      );
-    } else {
-      res.status(404).send(
-        encrypt(
-          {
-            user: null,
-            status: STATUS_CODES.USER_NOT_FOUND,
-          },
-          req.headers.authorization,
-        ),
-      );
-    }
-  } catch (error) {
-    console.log(error);
-    res
-      .status(404)
-      .send(
-        encrypt(
-          { status: STATUS_CODES.GENERIC_ERROR },
-          req.headers.authorization,
-        ),
-      );
-  }
-});
-
 patientsRouter.post("/create", async (req: Request, res: Response) => {
   const data: Patient = req.body;
   // verification of id

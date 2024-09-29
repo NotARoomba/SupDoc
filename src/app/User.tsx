@@ -1,8 +1,10 @@
+import { User } from "@/backend/models/user";
 import useFade from "components/hooks/useFade";
 import { useUser } from "components/hooks/useUser";
 import { UserType } from "components/utils/Types";
 import { router, useLocalSearchParams } from "expo-router";
 import { ObjectId } from "mongodb";
+import { useState } from "react";
 import { Alert, Animated, Keyboard, Platform, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Reanimated, { FadeIn, FadeOut } from "react-native-reanimated";
 
@@ -10,6 +12,7 @@ export default function Doctor() {
   const routes = useLocalSearchParams();
   const fadeAnim = useFade();
   const {userType, reportUser} = useUser();
+  const [user, setUser] = useState<User>();
   return <ScrollView className="flex h-full">
   <SafeAreaView className="bg-richer_black" />
   <Animated.View
