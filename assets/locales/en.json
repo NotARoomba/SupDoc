@@ -5,6 +5,7 @@
     "success": "Success!",
     "error": "Error",
     "cancel": "Cancel",
+    "check": "Check",
     "loading": "Loading",
     "yes": "Yes",
     "no": "No",
@@ -38,6 +39,16 @@
         "enterCode": "Enter Verification Code",
         "enterCode2": "Enter the verification code sent to: "
     },
+    "profile": {
+        "logoutTitle": "Logout",
+        "logoutDescription": "Are you sure you want to logout?"
+    },
+    "upload": {
+        "confirmTitle": "Confirm",
+        "confirmDescription": "Are you sure you want to post?",
+        "title": "Title",
+        "description": "Description"
+    },
     "posts": {
         "savedNone": "(You have not saved any posts)",
         "feedNone": "(There are no posts)",
@@ -53,7 +64,8 @@
         "posts": "Your Posts",
         "feed": "Feed",
         "pins": "Pins",
-        "settings": "Settings"
+        "settings": "Settings",
+        "upload": "Upload"
     },
     "images": {
         "choose": "Please choose",
@@ -72,7 +84,10 @@
     "buttons": {
         "back": "Back",
         "next": "Next",
-        "finish": "Finish"
+        "finish": "Finish",
+        "update": "Update",
+        "clear": "Clear",
+        "post": "Post"
     },
     "successes": {
         "login": "You are now logged in",
@@ -92,6 +107,7 @@
             "minChrtr": "Password must be at least 8 characters long."
         },
         "missing": "Missing Info",
+        "fillmissing": "Please fill out the missing infromation",
         "missingInfo": "Please fill out the information",
         "fetchData": "There was an error fetching your data!",
         "updateData": "There was an error updating your information!",

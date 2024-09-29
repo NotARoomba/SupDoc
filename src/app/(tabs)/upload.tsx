@@ -103,37 +103,37 @@ export default function Upload() {
                 exiting={FadeOut.duration(250)}
                 className="text-ivory h-fit  text font-bold text-center m-auto"
               >
-                {keyboardOpen ? "Cancel" : "Clear"}
+                {keyboardOpen ? t("cancel") : t("buttons.clear")}
               </Reanimated.Text>
             </TouchableOpacity>
             <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
-              Post
+              {t("buttons.post")}
             </Text>
             <TouchableOpacity
               className="z-50 w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
               onPress={() =>
                 postEdit.title && postEdit.description
-                  ? Alert.alert("Confirm", "Are you sure you want to post?", [
-                      { text: "Cancel", style: "cancel" },
+                  ? Alert.alert(t("upload.confirmTitle"), t("upload.confirmDescription"), [
+                      { text: t("cancel"), style: "cancel" },
                       {
-                        text: "Post",
+                        text: t("buttons.post"),
                         onPress: () => createPost(),
                       },
                     ])
                   : Alert.alert(
-                      "Error",
-                      "Please fill out the missing infromation",
+                      t("error"),
+                      t("errors.fillmissing"),
                     )
               }
             >
               {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
               <Text className="text-ivory h-fit font-bold text-center m-auto">
-                Upload
+                {"title.upload"}
               </Text>
             </TouchableOpacity>
           </View>
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            Title
+            {"upload.title"}
           </Text>
           <TextInput
             onChangeText={(n) =>
@@ -149,7 +149,7 @@ export default function Upload() {
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl my-4 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
           <Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
-            Description ({postEdit.description.length}/1000)
+            {"upload.description"} ({postEdit.description.length}/1000)
           </Text>
           <TextInput
             onChangeText={(n) =>

@@ -93,7 +93,7 @@ export default function Profile() {
       const res = await uploadImages([userEdit.picture]);
       if (res.status !== STATUS_CODES.SUCCESS) {
         setLoading(false);
-        return Alert.alert(t("error"), t(STATUS_CODES[res.status]));
+        return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
       }
       doctorStuff = { picture: res.urls[0] };
     }
@@ -139,25 +139,25 @@ export default function Profile() {
       });
       if (verify.status !== STATUS_CODES.SUCCESS) {
         setLoading(false);
-        return Alert.alert(t("error"), t(STATUS_CODES[verify.status]));
+        return Alert.alert(t("error"), t(`errors.${STATUS_CODES[verify.status]}`));
       }
         setLoading(false);
         setTimeout(() => {
           return prompt(
-            "Enter Verification Code",
-            "Enter the verification code sent to: " +
+            t("verification.title"),
+            t("verification.description") +
               countryCode.slice(4) +
               userEdit?.number,
             [
               {
-                text: "Cancel",
+                text: t("cancel"),
                 style: "cancel",
                 onPress: () => {
                   setLoading(false);
                 },
               },
               {
-                text: "Check",
+                text: t("check"),
                 isPreferred: true,
                 onPress: async (input) => {
                   setLoading(true);
@@ -167,7 +167,7 @@ export default function Profile() {
                   });
                   if (v.status !== STATUS_CODES.SUCCESS) {
                     setLoading(false);
-                    return Alert.alert("Error", "The code is incorrect!");
+                    return Alert.alert(t("error"), `errors.${STATUS_CODES[v.status]}`);
                   }
                   updateUser();
                 },
@@ -204,7 +204,7 @@ export default function Profile() {
       setActiveChange(false);
       return result.assets ? result.assets[0].uri : null;
     } catch (error) {
-      Alert.alert("Image error", "Error reading image");
+      Alert.alert(t("images.readingTitle"), t("images.readingDescription"));
       console.log(error);
     }
   };
@@ -225,10 +225,10 @@ export default function Profile() {
           <TouchableOpacity
             className="z-50 p-1"
             onPress={() =>
-              Alert.alert("Logout", "Are you sure you want to logout?", [
-                { text: "Cancel", style: "cancel" },
+              Alert.alert(t("profile.logoutTitle"), t("logoutDescription"), [
+                { text: t("cancel"), style: "cancel" },
                 {
-                  text: "Logout",
+                  text: t("profile.logoutTitle"),
                   style: "destructive",
                   onPress: () => logout(),
                 },
@@ -309,11 +309,11 @@ export default function Profile() {
                                     <TouchableOpacity
                                       onPress={() =>
                                         Alert.alert(
-                                          "Please choose",
+                                          t("images.choose"),
                                           undefined,
                                           [
                                             {
-                                              text: "Gallery",
+                                              text: t("images.gallery"),
                                               onPress: async () =>
                                                 setUserEdit({
                                                   ...userEdit,
@@ -324,7 +324,7 @@ export default function Profile() {
                                                 }),
                                             },
                                             {
-                                              text: "Camera",
+                                              text: t("images.camera"),
                                               onPress: async () =>
                                                 setUserEdit({
                                                   ...userEdit,
@@ -334,7 +334,7 @@ export default function Profile() {
                                                     )) ?? userEdit.picture,
                                                 }),
                                             },
-                                            { text: "Cancel", style: "cancel" },
+                                            { text: t("cancel"), style: "cancel" },
                                           ],
                                         )
                                       }
@@ -374,7 +374,7 @@ export default function Profile() {
                       </Text>
                       <View className="h-0.5 rounded-full w-72 mx-auto bg-powder_blue/50 my-4" />
                       <Text className="text-center text-lg text-ivory  font-semibold">
-                        Phone Number
+                        {t("inputs.number")}
                       </Text>
                       <View className="flex flex-row justify-center align-middle -mt-3  ">
                         <TouchableOpacity
@@ -409,7 +409,7 @@ export default function Profile() {
                         <View className="flex w-full flex-row h-fit ">
                           <View className="w-1/2 flex flex-col">
                             <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-                              Height (cm)
+                              {t("inputs.height")}
                             </Text>
 
                             <TextInput
@@ -437,7 +437,7 @@ export default function Profile() {
                           </View>
                           <View className="w-1/2 flex flex-col">
                             <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-                              Weight (kg)
+                              {t("inputs.weight")}
                             </Text>
 
                             <TextInput
@@ -469,37 +469,36 @@ export default function Profile() {
                             userEdit.info.altSex == BirthSex.FEMALE)) && (
                           <View className="flex flex-col">
                             <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
-                              Pregnant
+                              {t("inputs.pregnant")}
                             </Text>
                             <Slider
-                              options={["Yes", "No"]}
+                              options={[t("yes"), t("no")]}
                               setOption={(v) =>
                                 setUserEdit({
                                   ...userEdit,
                                   info: {
                                     ...userEdit.info,
-                                    pregnant: v == "Yes",
+                                    pregnant: v == t("yes"),
                                   },
                                 })
                               }
-                              selected={userEdit.info.pregnant ? "Yes" : "No"}
+                              selected={userEdit.info.pregnant ? t("yes") : t("no")}
                             />
                           </View>
                         )}
                       </View>
                       <View className="mx-auto flex mt-4 ">
                         <Text className=" w-96 text-center mx-auto flex-shrink text-lg mb-4  text-ivory font-semibold">
-                          Do you identify as a different sex than your birth
-                          sex?
+                          {t("inputs.trans")}
                         </Text>
                         <Slider
-                          options={["Yes", "No"]}
+                          options={[t("yes"), t("no")]}
                           setOption={(v) => {
-                            setTrans(v == "Yes");
+                            setTrans(v == t("yes"));
                             setUserEdit({
                               ...userEdit,
                               info:
-                                v == "Yes"
+                                v == t("yes")
                                   ? { ...(userEdit?.info as PatientMetrics) }
                                   : {
                                       ...userEdit.info,
@@ -513,7 +512,7 @@ export default function Profile() {
                                     },
                             });
                           }}
-                          selected={trans ? "Yes" : "No"}
+                          selected={trans ? t("yes") : t("no")}
                         />
                         {trans && (
                           <Reanimated.View entering={FadeIn.duration(500)}>
@@ -584,36 +583,36 @@ export default function Profile() {
                               )}
                             </View>
                             <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
-                              Do you take hormones?
+                              {t("inputs.hormones")}
                             </Text>
                             <Slider
-                              options={["Yes", "No"]}
+                              options={[t("yes"), t("no")]}
                               setOption={(v) =>
                                 setUserEdit({
                                   ...userEdit,
                                   info: {
                                     ...userEdit.info,
-                                    hormones: v == "Yes",
+                                    hormones: v == t("yes"),
                                   },
                                 })
                               }
-                              selected={userEdit.info.hormones ? "Yes" : "No"}
+                              selected={userEdit.info.hormones ? t("yes") : t("no")}
                             />
                             <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
-                              Have you had a sex-changing surgery?
+                              {t("inputs.surgery")}
                             </Text>
                             <Slider
-                              options={["Yes", "No"]}
+                              options={[t("yes"), t("no")]}
                               setOption={(v) =>
                                 setUserEdit({
                                   ...userEdit,
                                   info: {
                                     ...userEdit.info,
-                                    surgery: v == "Yes",
+                                    surgery: v == t("yes"),
                                   },
                                 })
                               }
-                              selected={userEdit.info.surgery ? "Yes" : "No"}
+                              selected={userEdit.info.surgery ? t("yes") : t("no")}
                             />
                           </Reanimated.View>
                         )}
@@ -625,7 +624,7 @@ export default function Profile() {
                     isDoctorInfo(userType, userEdit) && (
                       <View className="flex">
                         <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                          Experience
+                          {t("inputs.experience")}
                         </Text>
                         <TextInput
                           onChangeText={(n) =>
@@ -640,7 +639,7 @@ export default function Profile() {
                           className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
                         />
                         <Text className="text-center flex text-lg text-ivory -mb-3 mt-4 font-semibold">
-                          Bio ({userEdit.info.about.length}/300)
+                         {t("inputs.bio")} ({userEdit.info.about.length}/300)
                         </Text>
                         <TextInput
                           onChangeText={(n) =>
@@ -722,7 +721,7 @@ export default function Profile() {
                   }
                 >
                   <Text className="text-xl  text-ivory font-medium text-center">
-                    Update
+                    {t("buttons.update")}
                   </Text>
                 </TouchableOpacity>
               </Reanimated.View>
