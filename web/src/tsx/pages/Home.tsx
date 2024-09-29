@@ -29,11 +29,11 @@ export default function Home() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="h-screen flex justify-center flex-col"
+        className="h-screen flex pt-24 flex-col"
       >
         <motion.div
           variants={item}
-          className="w-fit mx-auto h-1/3 aspect-square -mt-12"
+          className="w-fit mx-auto h-1/3 aspect-square "
         >
           <img className="aspect-square " src="/icon.png" />
         </motion.div>
