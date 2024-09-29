@@ -35,7 +35,13 @@ export default function CommentBlock({
   const [commentText, setCommentText] = useState("");
   const [currentComments, setCurrentComments] = useState(comments);
 
-  const { addComment, likeComment, reportComment, setUpdateComments, updateComments } = usePosts();
+  const {
+    addComment,
+    likeComment,
+    reportComment,
+    setUpdateComments,
+    updateComments,
+  } = usePosts();
 
   useEffect(() => {
     setCurrentComments(comments); // Update current comments when props change
@@ -86,12 +92,11 @@ export default function CommentBlock({
                 <TouchableOpacity
                   onPress={() => {
                     setReplyingTo(
-                      comment._id == replyingTo ? null : comment._id
+                      comment._id == replyingTo ? null : comment._id,
                     ); // Set the reply state
                   }}
                 >
-                  <Text 
-                className="text-ivory text-lg font-bold">
+                  <Text className="text-ivory text-lg font-bold">
                     {comment.name}
                   </Text>
                   <Text className="text-ivory text-md">{comment.text}</Text>
@@ -100,7 +105,7 @@ export default function CommentBlock({
                     <View className="flex flex-row space-x-6 align-middle">
                       {/* Grouped Like and Reply */}
                       <TouchableOpacity
-                      className="flex flex-row gap-x-1"
+                        className="flex flex-row gap-x-1"
                         onPress={() => {
                           setLikes(likes + (liked ? -1 : 1));
                           setLiked(!liked);
@@ -112,7 +117,9 @@ export default function CommentBlock({
                           size={24}
                           color={liked ? "red" : "gray"}
                         />
-                        <Text className="text-ivory text-center my-auto">{likes}</Text>
+                        <Text className="text-ivory text-center my-auto">
+                          {likes}
+                        </Text>
                       </TouchableOpacity>
 
                       {/* Reply Button - Toggles the Report Button */}

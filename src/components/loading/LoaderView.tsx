@@ -1,6 +1,6 @@
+import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import Loader from "./Loader";
-import { useTranslation } from "react-i18next";
 
 export default function LoaderView() {
   const { t } = useTranslation();

@@ -30,12 +30,14 @@
     "expo-camera": "~15.0.16",
     "expo-constants": "~16.0.2",
     "expo-dev-client": "~4.0.27",
+    "expo-device": "~6.0.2",
     "expo-file-system": "~17.0.1",
     "expo-font": "~12.0.10",
     "expo-image": "~1.13.0",
     "expo-image-picker": "~15.0.7",
     "expo-linking": "~6.3.1",
     "expo-localization": "~15.0.3",
+    "expo-notifications": "~0.28.17",
     "expo-router": "~3.5.23",
     "expo-secure-store": "~13.0.2",
     "expo-splash-screen": "~0.27.6",
@@ -61,8 +63,7 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.2.0",
     "react-native-web": "~0.19.10",
-    "expo-notifications": "~0.28.17",
-    "expo-device": "~6.0.2"
+    "socket.io-client": "^4.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

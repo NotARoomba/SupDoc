@@ -1,7 +1,6 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
 import { Doctor } from "../models/doctor";
 import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";

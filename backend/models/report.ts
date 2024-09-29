@@ -17,7 +17,7 @@ export default interface Report {
   reported: ObjectId;
   reporter: Reporter;
   timestamp: number;
-  parent?: ObjectId,
+  parent?: ObjectId;
   reason?: REPORT_REASONS;
   evidence?: string;
 }

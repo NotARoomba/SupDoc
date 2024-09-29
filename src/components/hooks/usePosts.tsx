@@ -3,7 +3,12 @@ import { PatientMetrics } from "@/backend/models/metrics";
 import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
-import { callAPI, handleReport, logout, uploadImages } from "components/utils/Functions";
+import {
+  callAPI,
+  handleReport,
+  logout,
+  uploadImages,
+} from "components/utils/Functions";
 import { Image } from "expo-image";
 import { SplashScreen, router } from "expo-router";
 import { ObjectId } from "mongodb";
@@ -28,7 +33,7 @@ interface PostsContextType {
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
-  updateComments: boolean,
+  updateComments: boolean;
   setUpdateComments: (u: boolean) => void;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
@@ -149,19 +154,19 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     // Update posts
     setPosts((prevPosts) =>
       prevPosts.map((p) =>
-        post == (p._id)
+        post == p._id
           ? { ...p, comments: res.comments } // Make sure to update the comments array
-          : p
-      )
+          : p,
+      ),
     );
 
     // Update saved posts, if necessary
     setSavedPosts((prevSavedPosts) =>
       prevSavedPosts.map((p) =>
-      post == (p._id)
+        post == p._id
           ? { ...p, comments: res.comments } // Update saved posts' comments array
-          : p
-      )
+          : p,
+      ),
     );
     setUpdateComments(true);
     // await fetchPosts(); // Re-fetch posts to include the new comment
@@ -185,30 +190,42 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   // Reporting a comment
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
-    const {reason, evidence} = await handleReport(userType as UserType, false)
-    if (!reason) return
-    const res = await callAPI(
-      `/posts/${post}/comments/${commentID}/report`,
-      "POST",{
-        reason,
-        evidence
+    try {
+      const { reason, evidence } = await handleReport(
+        userType as UserType,
+        false,
+      );
+      const res = await callAPI(
+        `/posts/${post}/comments/${commentID}/report`,
+        "POST",
+        {
+          reason,
+          evidence,
+        },
+      );
+      if (res.status !== STATUS_CODES.SUCCESS) {
+        return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
       }
-    );
-    if (res.status !== STATUS_CODES.SUCCESS) {
-      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
-    }
-    Alert.alert(t("success"), t("successes.reportComment"));
+      Alert.alert(t("success"), t("successes.reportComment"));
+    } catch {}
   };
   const reportPost = async (id: string) => {
-    const {reason, evidence} = await handleReport(userType as UserType, false)
-    if (!reason) return
-    const res = await callAPI(`/posts/${id}/report`, "POST", {reason, evidence});
-    if (res.status !== STATUS_CODES.SUCCESS)
-      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
-    
-    
-    Alert.alert(t("success"), t("successes.submitReport"));
-  }
+    try {
+      const { reason, evidence } = await handleReport(
+        userType as UserType,
+        false,
+      );
+      if (!reason) return;
+      const res = await callAPI(`/posts/${id}/report`, "POST", {
+        reason,
+        evidence,
+      });
+      if (res.status !== STATUS_CODES.SUCCESS)
+        return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+
+      Alert.alert(t("success"), t("successes.submitReport"));
+    } catch {}
+  };
   const resetPostEdit = () => {
     setPostEdit({
       title: "",
@@ -236,7 +253,10 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     const imgRes = await uploadImages(postEdit.images);
     if (imgRes.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
-      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[imgRes.status]}`));
+      return Alert.alert(
+        t("error"),
+        t(`errors.${STATUS_CODES[imgRes.status]}`),
+      );
     }
     const res = await callAPI(`/posts/create`, "POST", {
       ...postEdit,

@@ -6,16 +6,18 @@ import Patient from "../models/patient";
 import Post from "../models/post";
 import Report from "../models/report";
 import { STATUS_CODES, UserType } from "../models/util";
-import { collections, createKey, encryption } from "../services/database.service";
+import { collections, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl } from "../services/storage.service";
-import { data } from "cheerio/dist/commonjs/api/attributes";
 
 export const postsRouter = express.Router();
 
 postsRouter.use(express.json());
 
-function findCommentById(comments: Comment[], commentId: ObjectId): Comment | null {
+function findCommentById(
+  comments: Comment[],
+  commentId: ObjectId,
+): Comment | null {
   for (let comment of comments) {
     if (comment._id.equals(commentId)) {
       return comment;
@@ -27,7 +29,6 @@ function findCommentById(comments: Comment[], commentId: ObjectId): Comment | nu
   }
   return null;
 }
-
 
 // GETS POST FROM POST ID
 postsRouter.get("/:id", async (req: Request, res: Response) => {
@@ -229,17 +230,19 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
 
   // Fetch the parent post
-  let parentPost = await collections.posts.findOne({
+  let parentPost = (await collections.posts.findOne({
     _id: postID,
-  }) as Post;
+  })) as Post;
 
   if (!parentPost) {
-    return res.status(200).send(
-      encrypt(
-        { status: STATUS_CODES.DOES_NOT_EXIST },
-        req.headers.authorization,
-      ),
-    );
+    return res
+      .status(200)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.DOES_NOT_EXIST },
+          req.headers.authorization,
+        ),
+      );
   }
   const commentDocument = {
     _id: new ObjectId(),
@@ -253,8 +256,8 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     likes: [],
     reports: [],
     replies: [],
-    timestamp: Date.now()
-  } as unknown as Comment
+    timestamp: Date.now(),
+  } as unknown as Comment;
 
   // Check if the comment is a reply to an existing comment
   if (comment.parent) {
@@ -262,45 +265,56 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     let parentComment = findCommentById(parentPost.comments, comment.parent);
 
     if (!parentComment) {
-      return res.status(200).send(
-        encrypt(
-          { status: STATUS_CODES.DOES_NOT_EXIST },
-          req.headers.authorization,
-        ),
-      );
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.DOES_NOT_EXIST },
+            req.headers.authorization,
+          ),
+        );
     }
 
     // Add the reply to the parent comment's replies array
     parentComment.replies.push(commentDocument);
-
   } else {
     // The comment is a top-level comment, add it to the post's comments array
     if (parentPost.comments.length > 2) {
-      return res.status(200).send(
-        encrypt(
-          { status: STATUS_CODES.COMMENT_LIMIT_REACHED },
-          req.headers.authorization,
-        ),
-      );
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.COMMENT_LIMIT_REACHED },
+            req.headers.authorization,
+          ),
+        );
     }
 
     if (patient) {
-      return res.status(200).send(
-        encrypt(
-          { status: STATUS_CODES.COMMENT_NOT_ALLOWED },
-          req.headers.authorization,
-        ),
-      );
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.COMMENT_NOT_ALLOWED },
+            req.headers.authorization,
+          ),
+        );
     }
 
     // Check if the doctor has already commented
-    if (parentPost.comments.some(c => c.commenter.equals(new ObjectId(comment.commenter)))) {
-      return res.status(200).send(
-        encrypt(
-          { status: STATUS_CODES.ALREADY_COMMENTED },
-          req.headers.authorization,
-        ),
-      );
+    if (
+      parentPost.comments.some((c) =>
+        c.commenter.equals(new ObjectId(comment.commenter)),
+      )
+    ) {
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.ALREADY_COMMENTED },
+            req.headers.authorization,
+          ),
+        );
     }
 
     // Add the new comment to the post's comments array
@@ -308,200 +322,241 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   }
 
   // Update the post in the database with the modified comments
-  const updated = await collections.posts.findOneAndUpdate(
+  const updated = (await collections.posts.findOneAndUpdate(
     { _id: postID },
-    { $set: { comments: parentPost.comments } }, {returnDocument: 'after'}
-  ) as Post;
+    { $set: { comments: parentPost.comments } },
+    { returnDocument: "after" },
+  )) as Post;
 
   if (updated) {
-    return res.status(200).send(
-      encrypt({ comments: updated.comments,status: STATUS_CODES.SUCCESS }, req.headers.authorization),
-    );
+    return res
+      .status(200)
+      .send(
+        encrypt(
+          { comments: updated.comments, status: STATUS_CODES.SUCCESS },
+          req.headers.authorization,
+        ),
+      );
   } else {
-    return res.status(200).send(
-      encrypt(
-        { status: STATUS_CODES.GENERIC_ERROR },
-        req.headers.authorization,
-      ),
-    );
-  }
-});
-
-
-postsRouter.post("/:postID/comments/:commentID/like", async (req: Request, res: Response) => {
-  const postID = new ObjectId(req.params.postID);
-  const commentID = new ObjectId(req.params.commentID);
-
-  // Fetch doctor or patient based on authorization token
-  const doctor = (await collections.doctors.findOne({
-    publicKey: req.headers.authorization,
-  })) as Doctor;
-
-  const patient = (await collections.patients.findOne({
-    publicKey: req.headers.authorization,
-  })) as Patient;
-
-  const user = doctor ? doctor : patient;
-
-  try {
-    // Find the post and comment
-    const post = await collections.posts.findOne({ _id: postID }) as Post;
-    if (!post) {
-      return res.status(200).send(
-        encrypt(
-          { status: STATUS_CODES.POST_NOT_FOUND },
-          req.headers.authorization
-        )
-      );
-    }
-
-    // Find the specific comment within the post's comments
-    const comment = findCommentById(post.comments, commentID);
-    if (!comment) {
-      return res.status(404).send(
-        encrypt(
-          { status: STATUS_CODES.COMMENT_NOT_FOUND },
-          req.headers.authorization
-        )
-      );
-    }
-
-    // Toggle like (if user already liked, remove; otherwise, add)
-    if (comment.likes.some(like => like.equals(user._id))) {
-      comment.likes = comment.likes.filter(like => !like.equals(user._id));
-    } else {
-      comment.likes.push(user._id as ObjectId);
-    }
-
-    // Update the post with the modified comment
-    const updated = await collections.posts.updateOne(
-      { _id: postID },
-      { $set: { comments: post.comments } }
-    );
-
-    if (updated.acknowledged) {
-      return res.status(200).send(
-        encrypt({ comments: post.comments, status: STATUS_CODES.SUCCESS }, req.headers.authorization)
-      );
-    } else {
-      return res.status(200).send(
+    return res
+      .status(200)
+      .send(
         encrypt(
           { status: STATUS_CODES.GENERIC_ERROR },
-          req.headers.authorization
-        )
+          req.headers.authorization,
+        ),
       );
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(200).send(
-      encrypt(
-        { status: STATUS_CODES.GENERIC_ERROR },
-        req.headers.authorization
-      )
-    );
   }
 });
+
+postsRouter.post(
+  "/:postID/comments/:commentID/like",
+  async (req: Request, res: Response) => {
+    const postID = new ObjectId(req.params.postID);
+    const commentID = new ObjectId(req.params.commentID);
+
+    // Fetch doctor or patient based on authorization token
+    const doctor = (await collections.doctors.findOne({
+      publicKey: req.headers.authorization,
+    })) as Doctor;
+
+    const patient = (await collections.patients.findOne({
+      publicKey: req.headers.authorization,
+    })) as Patient;
+
+    const user = doctor ? doctor : patient;
+
+    try {
+      // Find the post and comment
+      const post = (await collections.posts.findOne({ _id: postID })) as Post;
+      if (!post) {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.POST_NOT_FOUND },
+              req.headers.authorization,
+            ),
+          );
+      }
+
+      // Find the specific comment within the post's comments
+      const comment = findCommentById(post.comments, commentID);
+      if (!comment) {
+        return res
+          .status(404)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.COMMENT_NOT_FOUND },
+              req.headers.authorization,
+            ),
+          );
+      }
+
+      // Toggle like (if user already liked, remove; otherwise, add)
+      if (comment.likes.some((like) => like.equals(user._id))) {
+        comment.likes = comment.likes.filter((like) => !like.equals(user._id));
+      } else {
+        comment.likes.push(user._id as ObjectId);
+      }
+
+      // Update the post with the modified comment
+      const updated = await collections.posts.updateOne(
+        { _id: postID },
+        { $set: { comments: post.comments } },
+      );
+
+      if (updated.acknowledged) {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { comments: post.comments, status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
+      } else {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.GENERIC_ERROR },
+              req.headers.authorization,
+            ),
+          );
+      }
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.GENERIC_ERROR },
+            req.headers.authorization,
+          ),
+        );
+    }
+  },
+);
 // Report a comment
-postsRouter.post("/:postID/comments/:commentID/report", async (req: Request, res: Response) => {
-  const postID = new ObjectId(req.params.postID);
-  const commentID = new ObjectId(req.params.commentID);
+postsRouter.post(
+  "/:postID/comments/:commentID/report",
+  async (req: Request, res: Response) => {
+    const postID = new ObjectId(req.params.postID);
+    const commentID = new ObjectId(req.params.commentID);
 
-  // Fetch doctor or patient based on authorization token
-  const doctor = (await collections.doctors.findOne({
-    publicKey: req.headers.authorization,
-  })) as Doctor;
+    // Fetch doctor or patient based on authorization token
+    const doctor = (await collections.doctors.findOne({
+      publicKey: req.headers.authorization,
+    })) as Doctor;
 
-  const patient = (await collections.patients.findOne({
-    publicKey: req.headers.authorization,
-  })) as Patient;
+    const patient = (await collections.patients.findOne({
+      publicKey: req.headers.authorization,
+    })) as Patient;
 
-  const user = doctor ? doctor : patient;
+    const user = doctor ? doctor : patient;
 
-  try {
-    // Check if the report already exists for this comment
-    const existingReport = await collections.reports.findOne({
-      reported: commentID,
-      parent: postID,
-      reporter: {
-        id: user._id,
-        type: doctor ? UserType.DOCTOR : UserType.PATIENT,
-      },
-    });
+    try {
+      // Check if the report already exists for this comment
+      const existingReport = await collections.reports.findOne({
+        reported: commentID,
+        parent: postID,
+        reporter: {
+          id: user._id,
+          type: doctor ? UserType.DOCTOR : UserType.PATIENT,
+        },
+      });
 
-    if (existingReport) {
-      return res.status(200).send(
-        encrypt(
-          { status: STATUS_CODES.ALREADY_REPORTED },
-          req.headers.authorization
-        )
+      if (existingReport) {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.ALREADY_REPORTED },
+              req.headers.authorization,
+            ),
+          );
+      }
+
+      // Create the report
+      const createdReport = await collections.reports.insertOne({
+        reported: commentID,
+        parent: postID,
+        reporter: {
+          id: user._id as ObjectId,
+          type: doctor ? UserType.DOCTOR : UserType.PATIENT,
+        },
+        reason: req.body.reason,
+        evidence: req.body.evidence,
+        timestamp: Date.now(),
+      });
+
+      // Find the post and comment
+      const post = (await collections.posts.findOne({ _id: postID })) as Post;
+      if (!post) {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.POST_NOT_FOUND },
+              req.headers.authorization,
+            ),
+          );
+      }
+
+      const comment = findCommentById(post.comments, commentID);
+      if (!comment) {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.COMMENT_NOT_FOUND },
+              req.headers.authorization,
+            ),
+          );
+      }
+
+      // Add the report to the comment
+      comment.reports.push(createdReport.insertedId);
+
+      // Update the post with the modified comment
+      const updated = await collections.posts.updateOne(
+        { _id: postID },
+        { $set: { comments: post.comments } },
       );
+
+      if (createdReport.acknowledged && updated.acknowledged) {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
+      } else {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.GENERIC_ERROR },
+              req.headers.authorization,
+            ),
+          );
+      }
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.GENERIC_ERROR },
+            req.headers.authorization,
+          ),
+        );
     }
-
-    // Create the report
-    const createdReport = await collections.reports.insertOne({
-      reported: commentID,
-      parent: postID,
-      reporter: {
-        id: user._id as ObjectId,
-        type: doctor ? UserType.DOCTOR : UserType.PATIENT,
-      },
-      reason: req.body.reason,
-      evidence: req.body.evidence,
-      timestamp: Date.now(),
-    });
-
-    // Find the post and comment
-    const post = await collections.posts.findOne({ _id: postID }) as Post;
-    if (!post) {
-      return res.status(200).send(
-        encrypt(
-          { status: STATUS_CODES.POST_NOT_FOUND },
-          req.headers.authorization
-        )
-      );
-    }
-
-    const comment = findCommentById(post.comments, commentID);
-    if (!comment) {
-      return res.status(200).send(
-        encrypt(
-          { status: STATUS_CODES.COMMENT_NOT_FOUND },
-          req.headers.authorization
-        )
-      );
-    }
-
-    // Add the report to the comment
-    comment.reports.push(createdReport.insertedId);
-
-    // Update the post with the modified comment
-    const updated = await collections.posts.updateOne(
-      { _id: postID },
-      { $set: { comments: post.comments } }
-    );
-
-    if (createdReport.acknowledged && updated.acknowledged) {
-      return res.status(200).send(
-        encrypt({ status: STATUS_CODES.SUCCESS }, req.headers.authorization)
-      );
-    } else {
-      return res.status(200).send(
-        encrypt(
-          { status: STATUS_CODES.GENERIC_ERROR },
-          req.headers.authorization
-        )
-      );
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(200).send(
-      encrypt(
-        { status: STATUS_CODES.GENERIC_ERROR },
-        req.headers.authorization
-      )
-    );
-  }
-});
+  },
+);
 
 postsRouter.get("/:id/save", async (req: Request, res: Response) => {
   //check if doctor

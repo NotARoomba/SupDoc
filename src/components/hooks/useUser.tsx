@@ -11,9 +11,9 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import { useLoading } from "./useLoading";
-import { useTranslation } from "react-i18next";
 
 // Define the types for the context
 interface UserContextType {

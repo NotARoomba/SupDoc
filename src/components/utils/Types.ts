@@ -165,6 +165,6 @@ export interface CommentBlockProps {
   comments: Comment[];
   post: ObjectId;
   parent: ObjectId | null;
-  replyingTo: ObjectId | null 
-  setReplyingTo: (reply: ObjectId | null) => void
+  replyingTo: ObjectId | null;
+  setReplyingTo: (reply: ObjectId | null) => void;
 }

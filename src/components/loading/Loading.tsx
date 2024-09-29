@@ -1,7 +1,7 @@
+import { useTranslation } from "react-i18next";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useLoading } from "../hooks/useLoading";
 import Loader from "./Loader";
-import { useTranslation } from "react-i18next";
 
 export default function Loading() {
   const { t } = useTranslation();

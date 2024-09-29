@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
-import { PatientMetrics } from "./metrics";
 import Comment from "./comment";
+import { PatientMetrics } from "./metrics";
 
 export default interface Post {
   _id?: ObjectId;
