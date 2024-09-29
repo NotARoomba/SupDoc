@@ -35,11 +35,12 @@ export default function CommentBlock({
   const [commentText, setCommentText] = useState("");
   const [currentComments, setCurrentComments] = useState(comments);
 
-  const { addComment, likeComment, reportComment } = usePosts();
+  const { addComment, likeComment, reportComment, setUpdateComments, updateComments } = usePosts();
 
   useEffect(() => {
     setCurrentComments(comments); // Update current comments when props change
-  }, [comments]);
+    if (updateComments) setUpdateComments(false);
+  }, [comments, updateComments]);
 
   const handleAddComment = async () => {
     if (commentText.trim()) {

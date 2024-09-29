@@ -28,6 +28,8 @@ interface PostsContextType {
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
+  updateComments: boolean,
+  setUpdateComments: (u: boolean) => void;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
   fetchPosts: () => Promise<void>;
@@ -57,6 +59,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
   const [postEdit, setPostEdit] = useState<Post>();
+  const [updateComments, setUpdateComments] = useState(false);
   const { userType, user } = useUser();
   const listRef = useRef<FlashList<Post> | null>(null);
   const fetchPosts = async () => {
@@ -145,14 +148,23 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     console.log(res.comments);
 
     // Update posts
-    setPosts(posts.map((p) =>
-    post == p._id ? { ...p, comments: res.comments } : p,
-  ));
+    setPosts((prevPosts) =>
+      prevPosts.map((p) =>
+        post == (p._id)
+          ? { ...p, comments: res.comments } // Make sure to update the comments array
+          : p
+      )
+    );
 
-    // Update saved posts, if needed
-    setSavedPosts(savedPosts.map((p) =>
-    post == p._id ? { ...p, comments: res.comments } : p,
-  ));
+    // Update saved posts, if necessary
+    setSavedPosts((prevSavedPosts) =>
+      prevSavedPosts.map((p) =>
+      post == (p._id)
+          ? { ...p, comments: res.comments } // Update saved posts' comments array
+          : p
+      )
+    );
+    setUpdateComments(true);
     // await fetchPosts(); // Re-fetch posts to include the new comment
   };
 
@@ -246,6 +258,8 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       postEdit,
       savedPosts,
       listRef,
+      updateComments,
+      setUpdateComments,
       setPostEdit,
       resetPostEdit,
       createPost,

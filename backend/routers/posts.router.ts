@@ -248,13 +248,13 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     text: await encryption.encrypt(comment.text, {
       keyAltName,
       algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-    }) as unknown as string,
+    }),
     parent: comment.parent,
     likes: [],
     reports: [],
     replies: [],
     timestamp: Date.now()
-  } as Comment
+  } as unknown as Comment
 
   // Check if the comment is a reply to an existing comment
   if (comment.parent) {
@@ -308,15 +308,14 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   }
 
   // Update the post in the database with the modified comments
-  console.log(parentPost.comments)
-  const updated = await collections.posts.updateOne(
+  const updated = await collections.posts.findOneAndUpdate(
     { _id: postID },
-    { $set: { comments: parentPost.comments } }
-  );
+    { $set: { comments: parentPost.comments } }, {returnDocument: 'after'}
+  ) as Post;
 
-  if (updated.acknowledged) {
+  if (updated) {
     return res.status(200).send(
-      encrypt({ comments: parentPost.comments,status: STATUS_CODES.SUCCESS }, req.headers.authorization),
+      encrypt({ comments: updated.comments,status: STATUS_CODES.SUCCESS }, req.headers.authorization),
     );
   } else {
     return res.status(200).send(
