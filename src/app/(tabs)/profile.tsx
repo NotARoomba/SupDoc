@@ -63,9 +63,12 @@ export default function Profile() {
   const fadeAnim = useFade();
   const { t } = useTranslation();
   useEffect(() => {
+    if (!user) {
+      Alert.alert(t('error'), t('errors.fetchData'))
+      return router.navigate('/');
+    }
     const fetchData = async () => {
       // setLoading(true);
-
       if (isPatientInfo(userType as UserType, user)) {
         setTrans(
           user.info.altSex != undefined && user.info.sex !== user.info.altSex,

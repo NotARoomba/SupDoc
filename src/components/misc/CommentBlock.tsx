@@ -84,9 +84,9 @@ export default function CommentBlock({
                 setReplyingTo(comment._id == replyingTo ? null : comment._id);
               }}
             >
-              <TouchableOpacity onPress={() => router.navigate({pathname: "/User", params: {id: comment.commenter.toString() as string}})}>
+              <TouchableOpacity onPress={() => router.navigate({pathname: comment.commenter == user._id ? '/(tabs)/profile':"/User", params: {id: comment.commenter.toString() as string}})}>
               <Text className="text-powder_blue text-lg font-bold">
-                {comment.name}
+                {comment.name}{" "}{comment.commenter == user._id ? "(You)" : ''}
               </Text></TouchableOpacity>
               <Text className="text-ivory text-md">{comment.text}</Text>
 

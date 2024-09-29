@@ -231,7 +231,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   })) as Patient;
   const user = doctor ? doctor : patient;
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
-
+  if (!comment.parent && patient) return res.send(encrypt({status: STATUS_CODES.COMMENT_NOT_ALLOWED}, req.headers.authorization))
   // Fetch the parent post
   let parentPost = (await collections.posts.findOne({
     _id: postID,
