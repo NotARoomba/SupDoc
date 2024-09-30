@@ -35,7 +35,7 @@ export default function Settings() {
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
   const handleScrollEnd = (event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const itemWidth = 256;
+    const itemWidth = 260;
     const index = Math.round(contentOffsetX / itemWidth);
     setCurrentIndex(index);
     setLanguage(LANGUAGES[index].locale);
@@ -48,8 +48,8 @@ export default function Settings() {
   useEffect(() => {
     const languageIndex = LANGUAGES.findIndex((v) => v.locale === language);
     if (languageIndex !== -1 && scrollRef.current) {
-      const scrollPosition = 256 * languageIndex;
-      scrollRef.current.scrollTo({ x: scrollPosition, animated: false });
+      const scrollPosition = 260 * languageIndex;
+      // scrollRef.current.scrollTo({ x: scrollPosition, animated: false });
       scrollX.value = scrollPosition;
       setCurrentIndex(languageIndex);
     }
@@ -68,7 +68,7 @@ export default function Settings() {
     if (!isConfirmDelete) {
       setIsConfirmDelete(true);
     } else {
-      Alert.alert("Logout", "Are you sure you want to delete your account?", [
+      Alert.alert(t("buttons.deleteAccount"), t("buttons.deleteAccountDesc"), [
         {
           text: t("buttons.cancel"),
           style: "cancel",
@@ -115,25 +115,18 @@ export default function Settings() {
               {t("buttons.back")}
             </Reanimated.Text>
           </TouchableOpacity>
-          <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
-            {t("titles.settings")}
-          </Text>
           <TouchableOpacity
             disabled
             className="z-50 opacity-0 w-24 px-5 h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
-              Alert.alert(
-                t("buttons.logout"),
-                "Are you sure you want to logout?",
-                [
-                  { text: t("buttons.cancel"), style: "cancel" },
-                  {
-                    text: t("buttons.logout"),
-                    style: "destructive",
-                    onPress: () => logout(),
-                  },
-                ],
-              )
+              Alert.alert(t("buttons.logout"), t("buttons.logoutDesc"), [
+                { text: t("buttons.cancel"), style: "cancel" },
+                {
+                  text: t("buttons.logout"),
+                  style: "destructive",
+                  onPress: () => logout(),
+                },
+              ])
             }
           >
             <Text className="text-ivory h-fit font-bold text-center m-auto">
@@ -141,6 +134,9 @@ export default function Settings() {
             </Text>
           </TouchableOpacity>
         </View>
+        <Text className="text-5xl text-ivory -mt-1 mx-auto font-bold">
+          {t("titles.settings")}
+        </Text>
 
         <View
           className={
@@ -169,6 +165,7 @@ export default function Settings() {
             horizontal
             ref={scrollRef}
             snapToInterval={256}
+            snapToAlignment="center"
             decelerationRate="fast"
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 80 }}
@@ -202,7 +199,7 @@ export default function Settings() {
                 <Reanimated.View
                   key={i}
                   style={animatedStyle}
-                  className={`snap-center mx-4 leading-10 transition-all duration-300 flex rounded-xl justify-center h-12 py-auto align-middle w-56`}
+                  className={`snap-center mx-4 leading-10 transition-all duration-300 flex rounded-xl justify-center h-12 py-auto align-middle max-w-56 w-56`}
                 >
                   <Text className="text-center text-2xl font-medium text-ivory">
                     {v.name}

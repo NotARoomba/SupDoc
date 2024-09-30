@@ -75,7 +75,6 @@ export default function Profile() {
         );
         setAltSexValue(user.info.sex as Sex);
       }
-      console.log(user, userEdit);
       // setLoading(false);
     };
     fetchData();
@@ -228,7 +227,12 @@ export default function Profile() {
       // keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
     >
       <Animated.View style={{ opacity: fadeAnim }} className="h-full w-full">
-        <View className="absolute w-full p-4 flex justify-between z-50 flex-row">
+        <View
+          className={
+            "absolute w-full p-4 flex justify-between z-50 flex-row " +
+            (Platform.OS == "android" ? "mt-8" : "")
+          }
+        >
           <TouchableOpacity
             onPress={() => router.navigate("/Settings")}
             className="z-50 p-1"
@@ -238,14 +242,18 @@ export default function Profile() {
           <TouchableOpacity
             className="z-50 p-1"
             onPress={() =>
-              Alert.alert(t("profile.logoutTitle"), t("profile.logoutDescription"), [
-                { text: t("buttons.cancel"), style: "cancel" },
-                {
-                  text: t("profile.logoutTitle"),
-                  style: "destructive",
-                  onPress: () => logout(),
-                },
-              ])
+              Alert.alert(
+                t("profile.logoutTitle"),
+                t("profile.logoutDescription"),
+                [
+                  { text: t("buttons.cancel"), style: "cancel" },
+                  {
+                    text: t("profile.logoutTitle"),
+                    style: "destructive",
+                    onPress: () => logout(),
+                  },
+                ],
+              )
             }
           >
             <Icons name="sign-out" size={38} color={"#fbfff1"} />

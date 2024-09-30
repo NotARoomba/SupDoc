@@ -32,7 +32,7 @@ interface PostsContextType {
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
-  refreshPosts: (saved?: boolean) => void;
+  refreshPosts: (saved?: boolean) => Promise<void>;
   addPosts: (newPosts: Post[]) => void;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
@@ -237,25 +237,28 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       comments: [],
     } as Post);
   };
-  const refreshPosts = (saved: boolean = false) => {
+  const refreshPosts = async (saved: boolean = false) => {
     if (saved) {
       setSavedPosts([]);
-      fetchSavedPosts();
+      await fetchSavedPosts();
     } else {
       setPosts([]);
-      fetchPosts();
+      await fetchPosts();
     }
-  }
+  };
   const createPost = async () => {
     setLoading(true);
     if (!postEdit) return;
-    const imgRes = await uploadImages(postEdit.images);
-    if (imgRes.status !== STATUS_CODES.SUCCESS) {
-      setLoading(false);
-      return Alert.alert(
-        t("error"),
-        t(`errors.${STATUS_CODES[imgRes.status]}`),
-      );
+    let imgRes = { status: STATUS_CODES.SUCCESS, urls: [] };
+    if (postEdit.images.length !== 0) {
+      imgRes = await uploadImages(postEdit.images);
+      if (imgRes.status !== STATUS_CODES.SUCCESS) {
+        setLoading(false);
+        return Alert.alert(
+          t("error"),
+          t(`errors.${STATUS_CODES[imgRes.status]}`),
+        );
+      }
     }
     const res = await callAPI(`/posts/create`, "POST", {
       ...postEdit,

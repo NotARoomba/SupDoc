@@ -129,12 +129,12 @@ export default function Upload() {
               }
             >
               {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
-              <Text className="text-ivory h-fit font-bold text-center m-auto">
+              <Text className="text-ivory h-fit font-bold text-center  m-auto">
                 {t("titles.upload")}
               </Text>
             </TouchableOpacity>
           </View>
-          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+          <Text className="text-center text-lg text-ivory mt-4 font-semibold">
             {t("upload.title")}
           </Text>
           <TextInput
@@ -148,9 +148,9 @@ export default function Upload() {
             keyboardType="default"
             maxLength={50}
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl my-4 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mb-4 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
-          <Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
+          <Text className="text-center flex text-lg text-ivory font-semibold">
             {t("upload.description")} ({postEdit.description.length}/1000)
           </Text>
           <TextInput
@@ -165,7 +165,7 @@ export default function Upload() {
             value={postEdit.description}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center   m-auto  h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center   m-auto  h-52 p-1 py-2.5 pl-3 text-lg  w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
           <Reanimated.ScrollView
             centerContent

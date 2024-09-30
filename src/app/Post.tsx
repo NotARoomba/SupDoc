@@ -233,105 +233,113 @@ export default function PostPage() {
                 </View>
               )}
               <View className="-z-10">
-                <View className="w-full justify-around flex flex-row">
-                  <View className="w-1/2 flex">
-                    <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                      {t("inputs.sex")}
-                    </Text>
-                    <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                      {post.info.sex}
-                    </Text>
-                    {post.info.altSex !== post.info.sex ? (
-                      <View>
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                          {t("user.altSex")}
-                        </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                          {post.info.altSex}
-                        </Text>
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                          {t("user.hormones")}
-                        </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                          {post.info.hormones ? t("yes") : t("no")}
-                        </Text>
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                          {t("user.surgery")}
-                        </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                          {post.info.surgery ? t("yes") : t("no")}
-                        </Text>
-                      </View>
-                    ) : (
-                      <View>
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                          {t("inputs.blood")}
-                        </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                          {post.info.blood}
-                        </Text>
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                          {t("user.age")}
-                        </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                          {t("user.ageValue", { years: post.info.age })}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                  <View className="w-1/2 flex">
-                    <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                      {t("inputs.height")}
-                    </Text>
-                    <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                      {post.info.height}
-                    </Text>
-                    <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                      {t("inputs.weight")}
-                    </Text>
-                    <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                      {post.info.weight}
-                    </Text>
-
-                    {post.info.altSex !== post.info.sex && (
-                      <View>
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                          {t("inputs.blood")}
-                        </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                          {post.info.blood}
-                        </Text>
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-                          {t("user.age")}
-                        </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
-                          {t("user.ageValue", { years: post.info.age })}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                </View>
                 {userType == UserType.DOCTOR && (
-                  <TouchableOpacity
-                    onPress={() =>
-                      router.navigate({
-                        pathname: "/User",
-                        params: { id: post.patient.toString() },
-                      })
-                    }
-                    className="bg-oxford_blue w-11/12 mx-auto mb-4 px-5 py-2 rounded-xl"
-                  >
-                    <Text className="text-ivory text-center font-semibold text-lg  ">
-                      {t("posts.patientProfile")}
-                    </Text>
-                  </TouchableOpacity>
+                  <View>
+                    <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4 mb-0" />
+                    <View className="w-full justify-around flex flex-row">
+                      <View className="w-1/2 flex">
+                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          {t("inputs.sex")}
+                        </Text>
+                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          {post.info.sex}
+                        </Text>
+                        {post.info.altSex !== post.info.sex ? (
+                          <View>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.altSex")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.altSex}
+                            </Text>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.hormones")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.hormones ? t("yes") : t("no")}
+                            </Text>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.surgery")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.surgery ? t("yes") : t("no")}
+                            </Text>
+                          </View>
+                        ) : (
+                          <View>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("inputs.blood")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.blood}
+                            </Text>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.age")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {t("user.ageValue", { years: post.info.age })}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                      <View className="w-1/2 flex">
+                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          {t("inputs.height")}
+                        </Text>
+                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          {post.info.height}
+                        </Text>
+                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          {t("inputs.weight")}
+                        </Text>
+                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          {post.info.weight}
+                        </Text>
+
+                        {post.info.altSex !== post.info.sex && (
+                          <View>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("inputs.blood")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.blood}
+                            </Text>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.age")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {t("user.ageValue", { years: post.info.age })}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() =>
+                        router.navigate({
+                          pathname: "/User",
+                          params: { id: post.patient.toString() },
+                        })
+                      }
+                      className="bg-oxford_blue w-11/12 mx-auto mt-4 px-5 py-2 rounded-xl"
+                    >
+                      <Text className="text-ivory text-center font-semibold text-lg  ">
+                        {t("posts.patientProfile")}
+                      </Text>
+                    </TouchableOpacity>
+                    <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
+                  </View>
                 )}
+
+                <Text className="text-4xl mb-1 font-bold text-center text-ivory">
+                  {t("posts.description")}{" "}
+                </Text>
                 <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">
                   {post.description}
                 </Text>
                 <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
                 <Text className="text-4xl font-bold text-center text-ivory">
-                  {t("comments")}
+                  {t("posts.comments")}
                 </Text>
                 {post.comments.length == 0 ? (
                   <Text className=" text-center text-powder_blue/80">

@@ -53,9 +53,11 @@
         "feedNone": "(There are no posts)",
         "none": "(You have not posted anything yet)",
         "you": "(You)",
+        "description": "Description",
         "emptyComment": "Comment cannot be empty.",
         "reportDelete": "Are you sure you want to {{reportDelete}} the post?",
         "patientProfile": "Patient Profile",
+        "commented": "{{number}}/3 Doctors have commented",
         "comments": "Comments",
         "commentsPatient": "(There are no comments on your post yet)",
         "commentsDoctor": "(There are no comments on this post yet)",
@@ -120,6 +122,8 @@
         "report": "Report",
         "delete": "Delete",
         "theme": "Theme",
+        "logoutDesc": "Are you sure you want to logout?",
+        "deleteAccountDesc": "Are you sure you want to delete your account?",
         "themes": {
             "dark": "Dark",
             "light": "Light"
