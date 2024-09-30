@@ -12,7 +12,8 @@ import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { RSA } from "react-native-rsa-native";
 import { SignupInfo, UserType } from "./Types";
-
+import { useTranslation } from "react-i18next";
+const { t } = useTranslation();
 export async function callAPI(
   endpoint: string,
   method: string,
@@ -26,6 +27,7 @@ export async function callAPI(
       key,
       process.env.EXPO_PUBLIC_SERVER_PUBLIC,
     );
+   
     const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
     const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
     const publicKey = await SecureStore.getItemAsync(
@@ -239,16 +241,16 @@ export function handleReport(userType: UserType, isComment: boolean = true) {
     (resolve, reject) => {
       const options = [
         {
-          text: "Inappropriate Behaviour",
+          text: t("report.inappropriateBehaviour"),
           onPress: () =>
             resolve({ reason: REPORT_REASONS.INNAPROPRIATE_BEHAVIOUR }),
         },
         {
-          text: "Spam",
+          text: t("report.spam"),
           onPress: () => resolve({ reason: REPORT_REASONS.SPAM }),
         },
         {
-          text: "Cancel",
+          text: t("buttons.cancel"),
           style: "cancel",
           onPress: () => reject("cancelled"),
         },
@@ -257,7 +259,7 @@ export function handleReport(userType: UserType, isComment: boolean = true) {
       // For comments, add the "Incorrect Information" option for doctors
       if (isComment) {
         options.unshift({
-          text: "Incorrect Information",
+          text: t("report.incorrectInfo.title"),
           onPress: () => {
             if (userType === UserType.DOCTOR) {
               prompt(

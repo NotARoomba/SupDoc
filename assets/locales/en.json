@@ -66,7 +66,17 @@
         "addComment": "Add a comment..."
     },
     "report": {
-        "user": "Are you sure you want to report the {{user}}?"
+        "user": "Are you sure you want to report the {{user}}?",
+        "inappropiateBehavior": "Inappropriate Behaviour",
+        "spam": "Spam",
+        "incorrectInfo": {
+            "title": "Incorrect Information",
+            "provide": {
+                "title": "Provide Scholarly Evidence",
+                "description": "As a doctor, please provide a valid scholarly link as evidence for reporting incorrect information:"
+            }
+
+        }
     },
     "titles": {
         "login": "Login",
@@ -112,7 +122,8 @@
         },
         "confirmDelete": "Confirm Delete",
         "deleteAccount": "Delete Account",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "submit": "Submit"
     },
     "successes": {
         "login": "You are now logged in",
