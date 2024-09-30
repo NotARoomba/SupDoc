@@ -116,7 +116,7 @@ export default function PostBlock({
       >
         <View className="flex flex-row rounded-xl bg-powder_blue/30 p-1 px-2 justify-between">
           <Text className="text-ivory text-lg my-auto font-medium">
-            {post.comments.length}/3 Doctors have commented
+            {t("posts.commented", { number: post.comments.length })}
           </Text>
           <View className="-mb-1">
             <Icons color={"#fbfff1"} name="arrow-right" size={36} />

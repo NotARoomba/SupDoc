@@ -3,6 +3,7 @@ import { STATUS_CODES } from "@/backend/models/util";
 import prompt from "@powerdesigninc/react-native-prompt";
 import { useLoading } from "components/hooks/useLoading";
 import { usePosts } from "components/hooks/usePosts";
+import { useSettings } from "components/hooks/useSettings";
 import { useUser } from "components/hooks/useUser";
 import {
   callAPI,
@@ -50,10 +51,12 @@ export default function Index({ setIsLogged }: IndexProps) {
   >({} as LoginInfo<UserType.PATIENT>);
   const [pageIndex, setIndex] = useState(0);
   const { setLoading } = useLoading();
+  const { fetchSettings } = useSettings();
   const { t } = useTranslation();
   useEffect(() => {
     // check if key if not then create one and if theres a key check if it exists and login
     const onLoad = async () => {
+      await fetchSettings();
       // let result = await SecureStore.getItemAsync(
       //   env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
       // );
@@ -116,7 +119,6 @@ export default function Index({ setIsLogged }: IndexProps) {
       signUpInfo.license = licence;
       signUpInfo.picture = picture;
     }
-    console.log(signUpInfo)
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
@@ -175,7 +177,6 @@ export default function Index({ setIsLogged }: IndexProps) {
       await fetchPosts();
       return setIsLogged(true);
     } else {
-      console.log(create);
       setLoading(false);
       return Alert.alert(t("error"), t("errors.createUser"));
     }

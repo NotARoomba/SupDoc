@@ -8,12 +8,13 @@ import { useEffect } from "react";
 import { Platform } from "react-native";
 
 export default function TabLayout() {
-  const { userType } = useUser();
+  const { userType, fetchUser } = useUser();
   const { fetchPosts } = usePosts();
   const { fetchSettings } = useSettings();
   useEffect(() => {
-    fetchSettings();
+    fetchUser();
     fetchPosts();
+    fetchSettings();
   }, []);
   return (
     <Tabs
@@ -75,15 +76,6 @@ export default function TabLayout() {
           href: userType != UserType.DOCTOR ? "/(tabs)/upload" : null,
           tabBarIcon: ({ color }) => (
             <Icons size={38} name="plus-circle" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name={"settings"}
-        options={{
-          href: null,
-          tabBarIcon: ({ color }) => (
-            <Icons size={38} name="gear" color={color} />
           ),
         }}
       />

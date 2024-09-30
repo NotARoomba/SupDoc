@@ -1,0 +1,202 @@
+{
+    "CFBundleDisplayName": "SupDoc",
+    "NSCameraUsageDescription": "SupDoc 需要您的相机来拍摄照片！",
+    "NSPhotoLibraryUsageDescription": "SupDoc 需要访问您的相册来上传照片！",
+    "success": "成功！",
+    "error": "错误",
+    "check": "检查",
+    "loading": "加载中",
+    "yes": "是",
+    "no": "否",
+    "doctor": "医生",
+    "doctors": "医生们",
+    "patient": "病人",
+    "patients": "病人们",
+    "confirmTitle": "确认",
+    "inputs": {
+        "first": "名字",
+        "last": "姓",
+        "number": "电话号码",
+        "identification": "身份证明",
+        "TI": "",
+        "dob": "出生日期",
+        "height": "身高（厘米）",
+        "blood": "血型",
+        "weight": "体重（公斤）",
+        "sex": "性别",
+        "pregnant": "怀孕",
+        "trans": "您是否认同与出生性别不同的性别？",
+        "hormones": "您是否正在服用激素？",
+        "surgery": "您是否接受过变性手术？",
+        "altSex": "您认同的性别是？",
+        "password": "密码",
+        "passwordChk": "重新输入密码",
+        "specialty": "专业",
+        "experience": "经验",
+        "bio": "个人简介",
+        "license": "请上传您的医生执照或学位证书",
+        "picture": "请上传您的个人照片",
+        "enterCode": "请输入验证码",
+        "enterCode2": "请输入发送至的验证码："
+    },
+    "profile": {
+        "logoutTitle": "注销",
+        "logoutDescription": "您确定要注销吗？"
+    },
+    "upload": {
+        "confirmDescription": "您确定要发布吗？",
+        "title": "标题",
+        "description": "描述"
+    },
+    "posts": {
+        "savedNone": "(您没有保存任何帖子)",
+        "feedNone": "(没有帖子)",
+        "none": "(您尚未发布任何内容)",
+        "you": "(您)",
+        "emptyComment": "评论不能为空。",
+        "reportDelete": "您确定要{{reportDelete}}这篇帖子吗？",
+        "patientInfo": "病人信息",
+        "comments": "评论",
+        "commentsPatient": "(您发布的帖子尚无评论)",
+        "commentsDoctor": "(这篇帖子尚无评论)",
+        "postReply": "回复帖子",
+        "postComment": "评论帖子",
+        "cancelReply": "取消回复",
+        "replyComment": "回复评论...",
+        "addComment": "添加评论..."
+    },
+    "report": {
+        "description": "请选择举报原因：",
+        "user": "您确定要举报{{user}}吗？",
+        "inappropiateBehavior": "不当行为",
+        "spam": "垃圾信息",
+        "incorrectInfo": {
+            "title": "信息不正确",
+            "provide": {
+                "title": "提供学术证据",
+                "description": "作为医生，请提供有效的学术链接作为举报不实信息的证据："
+            }
+        },
+        "invalidLink": {
+            "title": "无效链接",
+            "description": "请提供有效的学术链接。"
+        }
+    },
+    "titles": {
+        "login": "登录",
+        "signup": "注册",
+        "register": "注册",
+        "personal": "个人信息",
+        "fact": "有趣的事实",
+        "posts": "帖子",
+        "userPosts": "您的帖子",
+        "feed": "动态",
+        "pins": "书签",
+        "settings": "设置",
+        "upload": "上传",
+        "logout": "注销"
+    },
+    "images": {
+        "choose": "请选择",
+        "gallery": "图库",
+        "camera": "相机",
+        "readingTitle": "图像错误",
+        "readingDescription": "读取图像时出错",
+        "galleryTitle": "允许访问图库",
+        "galleryDescription": "您需要允许媒体库的权限以使其正常工作",
+        "cameraTitle": "允许访问相机",
+        "cameraDescription": "您需要允许相机的权限以使其正常工作",
+        "remove": "删除",
+        "removeTitle": "删除图像",
+        "removeDescription": "您确定要删除此图像吗？"
+    },
+    "buttons": {
+        "back": "返回",
+        "next": "下一步",
+        "finish": "完成",
+        "update": "更新",
+        "clear": "清除",
+        "post": "发布",
+        "report": "举报",
+        "delete": "删除",
+        "theme": "主题",
+        "themes": {
+            "dark": "黑暗",
+            "light": "明亮"
+        },
+        "confirmDelete": "确认删除",
+        "deleteAccount": "删除账户",
+        "cancel": "取消",
+        "submit": "提交"
+    },
+    "successes": {
+        "login": "您已登录",
+        "signup": "您已注册",
+        "deletePost": "帖子已成功删除",
+        "reportComment": "评论已成功举报！",
+        "updateData": "信息已成功更新！"
+    },
+    "errors": {
+        "createUser": "创建用户时出错",
+        "loginNotFound": "未找到该{{userType}}",
+        "password": {
+            "wrong": "输入的密码不正确。",
+            "mismatch": "密码不匹配。",
+            "uppercase": "密码必须至少包含一个大写字母。",
+            "number": "密码必须至少包含一个数字。",
+            "special": "密码必须至少包含一个特殊字符。",
+            "minChrtr": "密码必须至少包含8个字符。"
+        },
+        "missing": "缺少信息",
+        "fillmissing": "请填写缺失的信息",
+        "missingInfo": "请填写信息",
+        "fetchData": "获取您的数据时出错！",
+        "updateData": "更新您的信息时出错！",
+        "GENERIC_ERROR": "发生错误",
+        "USER_NOT_FOUND": "该用户不存在",
+        "INVALID_NUMBER": "电话号码无效",
+        "SENT_CODE": "验证码已发送至{{number}}",
+        "NUMBER_NOT_EXIST": "该号码不存在",
+        "ERROR_SENDING_CODE": "发送验证码时出错",
+        "TOO_MANY_ATTEMPTS": "您尝试次数过多，请等待5分钟",
+        "CODE_DENIED": "验证码不正确",
+        "CODE_EXPIRED": "验证码已过期",
+        "CODE_FAILED": "发送验证码时出错",
+        "NO_CONNECTION": "连接到服务器时出错，请检查您的互联网连接。",
+        "ID_IN_USE": "提供的身份已被使用",
+        "NUMBER_IN_USE": "提供的电话号码已被使用",
+        "INVALID_IDENTITY": "提供的身份无效",
+        "COMMENT_LIMIT_REACHED": "该帖子已达到最大评论限制",
+        "DOES_NOT_EXIST": "请求的资源不存在",
+        "DOCTOR_INVALID": "提供的信息中没有该医生",
+        "POST_NOT_FOUND": "未找到该帖子",
+        "ERROR_DELETING_POST": "删除帖子时出错",
+        "ERROR_UPLOADING_IMAGE": "上传图像时出错",
+        "ALREADY_REPORTED": "您已举报该评论",
+        "ALREADY_COMMENTED": "您已对此帖子评论过",
+        "COMMENT_NOT_ALLOWED": "您不能在这里评论",
+        "COMMENT_NOT_FOUND": "查找该评论时出错"
+    },
+    "verification": {
+        "title": "输入验证码",
+        "description": "请输入发送至的验证码："
+    },
+    "settings": {
+        "languages": "语言",
+        "theme": "主题",
+        "deleteAccount": "删除账户",
+        "confirmDelete": "确认删除",
+        "danger": "危险",
+        "credits": "由 Nathan Alspaugh (NotARoomba) 和 Juan Pablo Sojo 制作"
+    },
+    "user": {
+        "age": "年龄",
+        "ageValue": "{{years}}岁",
+        "altSex": "替代性别",
+        "hormones": "正在服用激素？",
+        "surgery": "您是否进行了变性手术？"
+    },
+    "fact": {
+        "test": "良好的睡眠减少了许多疾病的风险！"
+    }
+}

@@ -13,7 +13,7 @@ export default function Pins() {
   const { t } = useTranslation();
   const fadeAnim = useFade();
   const { loading } = useLoading();
-  const { savedPosts, listRef } = usePosts();
+  const { savedPosts, listRef, fetchPosts, refreshPosts } = usePosts();
   // const listRef = useRef<FlashList<Post> | null>(null);
   // const fetchData = async () => {
 
@@ -56,6 +56,8 @@ export default function Pins() {
           keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
           ListFooterComponentStyle={{ height: 125 }}
           estimatedItemSize={281}
+          onRefresh={() => refreshPosts(true)}
+          onEndReached={fetchPosts}
           data={savedPosts}
           renderItem={({ item }) => (
             <PostBlock

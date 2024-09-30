@@ -18,7 +18,7 @@ export default function FunFact() {
         </Text>
       </View>
       <Text className="text-ivory/70 text-lg font-semibold">
-      {t('fact.test')}
+        {t("fact.test")}
       </Text>
     </Animated.View>
   );

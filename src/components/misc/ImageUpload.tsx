@@ -34,11 +34,11 @@ export default function ImageUpload({
               onPress={() =>
                 Alert.alert(
                   t("images.removeTitle"),
-                  t("image.removeDescription"),
+                  t("images.removeDescription"),
                   [
-                    { text: t("cancel"), style: "cancel" },
+                    { text: t("buttons.cancel"), style: "cancel" },
                     {
-                      text: t("remove"),
+                      text: t("images.remove"),
                       style: "destructive",
                       onPress: () => removeImage(image),
                     },

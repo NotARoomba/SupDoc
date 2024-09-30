@@ -50,6 +50,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       "GET",
     );
     setLoading(false);
+    if (res.status !== STATUS_CODES.SUCCESS) setLoading(false);
     if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
     else if (res.status == STATUS_CODES.GENERIC_ERROR)
       return Alert.alert(t("error"), t("errors.fetchData"));
@@ -68,10 +69,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     try {
       const { reason, evidence } = await handleReport(
         userType as UserType,
+        t,
         false,
       );
       const res = await callAPI(`/users/report`, "POST", {
-        id,
+        reported: id,
         userType: ut,
         reason,
         evidence,

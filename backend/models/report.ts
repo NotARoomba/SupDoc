@@ -12,12 +12,17 @@ interface Reporter {
   type: UserType;
 }
 
+interface Reported {
+  id: ObjectId;
+  type: UserType | "Comment" | "Post";
+}
+
 export default interface Report {
   _id?: ObjectId;
-  reported: ObjectId;
+  reported: Reported;
   reporter: Reporter;
   timestamp: number;
-  parent?: ObjectId,
+  parent?: ObjectId;
   reason: REPORT_REASONS;
   evidence?: string;
 }

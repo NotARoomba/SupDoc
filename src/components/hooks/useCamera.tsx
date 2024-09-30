@@ -9,7 +9,7 @@ export default function useCamera() {
     const { granted } = await Camera.requestCameraPermissionsAsync();
     if (!granted) {
       Alert.alert(t("images.cameraTitle"), t("images.cameraDescription"), [
-        { text: t("cancel"), style: "cancel" },
+        { text: t("buttons.cancel"), style: "cancel" },
         {
           text: t("settings"),
           isPreferred: true,

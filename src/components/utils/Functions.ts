@@ -26,6 +26,7 @@ export async function callAPI(
       key,
       process.env.EXPO_PUBLIC_SERVER_PUBLIC,
     );
+
     const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
     const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
     const publicKey = await SecureStore.getItemAsync(
@@ -234,21 +235,25 @@ export async function logout() {
   reloadAppAsync();
 }
 
-export function handleReport(userType: UserType, isComment: boolean = true) {
+export function handleReport(
+  userType: UserType,
+  t: (locale: string) => string,
+  isComment: boolean = true,
+) {
   return new Promise<{ reason: REPORT_REASONS; evidence?: string }>(
     (resolve, reject) => {
       const options = [
         {
-          text: "Inappropriate Behaviour",
+          text: t("report.inappropriateBehaviour"),
           onPress: () =>
             resolve({ reason: REPORT_REASONS.INNAPROPRIATE_BEHAVIOUR }),
         },
         {
-          text: "Spam",
+          text: t("report.spam"),
           onPress: () => resolve({ reason: REPORT_REASONS.SPAM }),
         },
         {
-          text: "Cancel",
+          text: t("buttons.cancel"),
           style: "cancel",
           onPress: () => reject("cancelled"),
         },
@@ -257,20 +262,20 @@ export function handleReport(userType: UserType, isComment: boolean = true) {
       // For comments, add the "Incorrect Information" option for doctors
       if (isComment) {
         options.unshift({
-          text: "Incorrect Information",
+          text: t("report.incorrectInfo.title"),
           onPress: () => {
             if (userType === UserType.DOCTOR) {
               prompt(
-                "Provide Scholarly Evidence",
-                "As a doctor, please provide a valid scholarly link as evidence for reporting incorrect information:",
+                t("report.incorrectInfo.provide.title"),
+                t("report.incorrectInfo.provide.description"),
                 [
                   {
-                    text: "Cancel",
+                    text: t("buttons.cancel"),
                     style: "cancel",
                     onPress: () => reject("cancelled"),
                   },
                   {
-                    text: "Submit",
+                    text: t("buttons.submit"),
                     onPress: (input) => {
                       if (validateScholarlyLink(input ?? "")) {
                         resolve({
@@ -279,8 +284,8 @@ export function handleReport(userType: UserType, isComment: boolean = true) {
                         });
                       } else {
                         Alert.alert(
-                          "Invalid Link",
-                          "Please provide a valid scholarly link.",
+                          t("report.invalidLink.title"),
+                          t("report.invalidLink.description"),
                         );
                         reject("invalid_link");
                       }
@@ -297,8 +302,8 @@ export function handleReport(userType: UserType, isComment: boolean = true) {
       }
 
       Alert.alert(
-        "Report",
-        "Please choose a reason for reporting:",
+        t("buttons.report"),
+        t("report.description"),
         options as any,
         { cancelable: true },
       );

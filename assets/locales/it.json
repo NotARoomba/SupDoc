@@ -1,0 +1,202 @@
+{
+    "CFBundleDisplayName": "SupDoc",
+    "NSCameraUsageDescription": "SupDoc ha bisogno della tua fotocamera per scattare foto!",
+    "NSPhotoLibraryUsageDescription": "SupDoc ha bisogno di accesso alla tua galleria per caricare foto!",
+    "success": "Successo!",
+    "error": "Errore",
+    "check": "Controlla",
+    "loading": "Caricamento",
+    "yes": "Sì",
+    "no": "No",
+    "doctor": "Dottore",
+    "doctors": "Dottori",
+    "patient": "Paziente",
+    "patients": "Pazienti",
+    "confirmTitle": "Conferma",
+    "inputs": {
+        "first": "Nome",
+        "last": "Cognome",
+        "number": "Numero di telefono",
+        "identification": "Identificazione",
+        "TI": "",
+        "dob": "Data di nascita",
+        "height": "Altezza (cm)",
+        "blood": "Gruppo sanguigno",
+        "weight": "Peso (kg)",
+        "sex": "Sesso",
+        "pregnant": "Incinta",
+        "trans": "Ti identifichi con un sesso diverso da quello di nascita?",
+        "hormones": "Assumi ormoni?",
+        "surgery": "Hai subito un intervento di cambio di sesso?",
+        "altSex": "Con quale sesso ti identifichi?",
+        "password": "Password",
+        "passwordChk": "Reinserisci la password",
+        "specialty": "Specializzazione",
+        "experience": "Esperienza",
+        "bio": "Biografia",
+        "license": "Carica la licenza o la laurea del tuo medico",
+        "picture": "Carica una foto profilo",
+        "enterCode": "Inserisci il codice di verifica",
+        "enterCode2": "Inserisci il codice di verifica inviato a: "
+    },
+    "profile": {
+        "logoutTitle": "Disconnetti",
+        "logoutDescription": "Sei sicuro di voler disconnettere?"
+    },
+    "upload": {
+        "confirmDescription": "Sei sicuro di voler postare?",
+        "title": "Titolo",
+        "description": "Descrizione"
+    },
+    "posts": {
+        "savedNone": "(Non hai salvato nessun post)",
+        "feedNone": "(Non ci sono post)",
+        "none": "(Non hai ancora postato nulla)",
+        "you": "(Tu)",
+        "emptyComment": "Il commento non può essere vuoto.",
+        "reportDelete": "Sei sicuro di voler {{reportDelete}} il post?",
+        "patientInfo": "Informazioni sul paziente",
+        "comments": "Commenti",
+        "commentsPatient": "(Non ci sono commenti sul tuo post)",
+        "commentsDoctor": "(Non ci sono commenti su questo post)",
+        "postReply": "Rispondi al post",
+        "postComment": "Commenta il post",
+        "cancelReply": "Annulla risposta",
+        "replyComment": "Rispondi al commento...",
+        "addComment": "Aggiungi un commento..."
+    },
+    "report": {
+        "description": "Seleziona un motivo per segnalare:",
+        "user": "Sei sicuro di voler segnalare {{user}}?",
+        "inappropiateBehavior": "Comportamento inappropriato",
+        "spam": "Spam",
+        "incorrectInfo": {
+            "title": "Informazioni errate",
+            "provide": {
+                "title": "Fornisci prove accademiche",
+                "description": "Come medico, per favore fornisci un link accademico valido come prova per segnalare informazioni errate:"
+            }
+        },
+        "invalidLink": {
+            "title": "Link non valido",
+            "description": "Per favore fornisci un link accademico valido."
+        }
+    },
+    "titles": {
+        "login": "Accedi",
+        "signup": "Registrati",
+        "register": "Registrati",
+        "personal": "Informazioni personali",
+        "fact": "Curiosità",
+        "posts": "Post",
+        "userPosts": "I tuoi post",
+        "feed": "Feed",
+        "pins": "Fissati",
+        "settings": "Impostazioni",
+        "upload": "Carica",
+        "logout": "Disconnetti"
+    },
+    "images": {
+        "choose": "Seleziona",
+        "gallery": "Galleria",
+        "camera": "Fotocamera",
+        "readingTitle": "Errore immagine",
+        "readingDescription": "Errore nella lettura dell'immagine",
+        "galleryTitle": "Consenti accesso alla galleria",
+        "galleryDescription": "Devi consentire le autorizzazioni della libreria media affinché questo funzioni",
+        "cameraTitle": "Consenti accesso alla fotocamera",
+        "cameraDescription": "Devi consentire le autorizzazioni della fotocamera affinché questo funzioni",
+        "remove": "Rimuovi",
+        "removeTitle": "Rimuovi immagine",
+        "removeDescription": "Sei sicuro di voler rimuovere questa immagine?"
+    },
+    "buttons": {
+        "back": "Indietro",
+        "next": "Avanti",
+        "finish": "Finisci",
+        "update": "Aggiorna",
+        "clear": "Pulisci",
+        "post": "Pubblica",
+        "report": "Segnala",
+        "delete": "Elimina",
+        "theme": "Tema",
+        "themes": {
+            "dark": "Scuro",
+            "light": "Chiaro"
+        },
+        "confirmDelete": "Conferma eliminazione",
+        "deleteAccount": "Elimina account",
+        "cancel": "Annulla",
+        "submit": "Invia"
+    },
+    "successes": {
+        "login": "Ora sei connesso",
+        "signup": "Ora sei registrato",
+        "deletePost": "Post eliminato con successo",
+        "reportComment": "Commento segnalato con successo!",
+        "updateData": "Informazioni aggiornate con successo!"
+    },
+    "errors": {
+        "createUser": "Si è verificato un errore nella creazione di un utente",
+        "loginNotFound": "{{userType}} non trovato con quell'ID",
+        "password": {
+            "wrong": "La password inserita è errata.",
+            "mismatch": "Le password non corrispondono.",
+            "uppercase": "La password deve contenere almeno una lettera maiuscola.",
+            "number": "La password deve contenere almeno un numero.",
+            "special": "La password deve contenere almeno un carattere speciale.",
+            "minChrtr": "La password deve essere lunga almeno 8 caratteri."
+        },
+        "missing": "Informazioni mancanti",
+        "fillmissing": "Compila le informazioni mancanti",
+        "missingInfo": "Compila le informazioni",
+        "fetchData": "Si è verificato un errore durante il recupero dei tuoi dati!",
+        "updateData": "Si è verificato un errore durante l'aggiornamento delle tue informazioni!",
+        "GENERIC_ERROR": "Si è verificato un errore",
+        "USER_NOT_FOUND": "Questo utente non esiste",
+        "INVALID_NUMBER": "Numero di telefono non valido",
+        "SENT_CODE": "Un codice è già stato inviato a {{number}}",
+        "NUMBER_NOT_EXIST": "Questo numero non esiste",
+        "ERROR_SENDING_CODE": "Si è verificato un errore nell'invio del codice",
+        "TOO_MANY_ATTEMPTS": "Hai effettuato troppi tentativi, attendi 5 minuti",
+        "CODE_DENIED": "Il codice è errato",
+        "CODE_EXPIRED": "Il codice è scaduto",
+        "CODE_FAILED": "Si è verificato un errore durante l'invio del codice",
+        "NO_CONNECTION": "Si è verificato un errore di connessione con il server, controlla la tua connessione a Internet.",
+        "ID_IN_USE": "L'identificazione fornita è già in uso",
+        "NUMBER_IN_USE": "Il numero di telefono fornito è già in uso",
+        "INVALID_IDENTITY": "L'identificazione fornita non è valida",
+        "COMMENT_LIMIT_REACHED": "Il post ha raggiunto il limite massimo di commenti consentito",
+        "DOES_NOT_EXIST": "La risorsa richiesta non esiste",
+        "DOCTOR_INVALID": "Nessun medico trovato con le informazioni fornite",
+        "POST_NOT_FOUND": "Impossibile trovare questo post",
+        "ERROR_DELETING_POST": "Si è verificato un errore nell'eliminazione del tuo post",
+        "ERROR_UPLOADING_IMAGE": "Si è verificato un errore durante il caricamento dell'immagine",
+        "ALREADY_REPORTED": "Hai già segnalato questo commento",
+        "ALREADY_COMMENTED": "Hai già commentato questo post",
+        "COMMENT_NOT_ALLOWED": "Non puoi commentare qui",
+        "COMMENT_NOT_FOUND": "Si è verificato un errore nella ricerca di quel commento"
+    },
+    "verification": {
+        "title": "Inserisci il codice di verifica",
+        "description": "Inserisci qui il codice di verifica inviato a: "
+    },
+    "settings": {
+        "languages": "Lingue",
+        "theme": "Tema",
+        "deleteAccount": "Elimina account",
+        "confirmDelete": "Conferma eliminazione",
+        "danger": "Pericolo",
+        "credits": "Creato da Nathan Alspaugh (NotARoomba) e Juan Pablo Sojo"
+    },
+    "user": {
+        "age": "Età",
+        "ageValue": "{{years}} Anni",
+        "altSex": "Sesso alternativo",
+        "hormones": "Prendi ormoni?",
+        "surgery": "Hai già subito un intervento di cambio di sesso?"
+    },
+    "fact": {
+        "test": "Dormire a sufficienza riduce il rischio di molte malattie!"
+    }
+}

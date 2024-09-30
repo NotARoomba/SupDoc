@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert } from "react-native";
+import { Alert, useColorScheme } from "react-native";
 import { useLoading } from "./useLoading";
 
 interface SettingsContextType {
@@ -33,7 +33,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const { setLoading } = useLoading();
   const [language, setLanguageState] = useState<string | null>(null);
   const [theme, setThemeState] = useState<"light" | "dark" | null>(null);
-
+  let colorScheme = useColorScheme();
   const fetchSettings = async () => {
     setLoading(true);
     try {
@@ -47,11 +47,14 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 
       if (savedTheme === "light" || savedTheme === "dark") {
         setThemeState(savedTheme);
+      } else {
+        setThemeState(colorScheme as "dark" | "light");
+        setTheme(colorScheme as "dark" | "light");
       }
-    } catch (error) {
-      Alert.alert(t("error"), t("errors.fetchSettings"));
-    } finally {
       setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      Alert.alert(t("error"), t("errors.fetchSettings"));
     }
   };
 

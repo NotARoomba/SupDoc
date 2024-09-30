@@ -9,7 +9,7 @@ export default function useGallery() {
 
     if (!granted) {
       Alert.alert(t("images.galleryTitle"), t("images.galleryDescription"), [
-        { text: t("cancel"), style: "cancel" },
+        { text: t("buttons.cancel"), style: "cancel" },
         {
           text: t("settings"),
           isPreferred: true,

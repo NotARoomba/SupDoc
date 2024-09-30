@@ -4,7 +4,6 @@
     "NSPhotoLibraryUsageDescription": "SupDoc needs access to your gallery to upload photos!",
     "success": "Success!",
     "error": "Error",
-    "cancel": "Cancel",
     "check": "Check",
     "loading": "Loading",
     "yes": "Yes",
@@ -54,15 +53,36 @@
         "feedNone": "(There are no posts)",
         "none": "(You have not posted anything yet)",
         "you": "(You)",
+        "description": "Description",
         "emptyComment": "Comment cannot be empty.",
         "reportDelete": "Are you sure you want to {{reportDelete}} the post?",
-        "patientInfo": "Patient Info",
+        "patientProfile": "Patient Profile",
+        "commented": "{{number}}/3 Doctors have commented",
         "comments": "Comments",
         "commentsPatient": "(There are no comments on your post yet)",
         "commentsDoctor": "(There are no comments on this post yet)",
         "postReply" : "Post Reply",
         "postComment": "Post Comment",
-        "cancelReply": "Cancel Reply"
+        "cancelReply": "Cancel Reply",
+        "replyComment": "Reply to comment...",
+        "addComment": "Add a comment..."
+    },
+    "report": {
+        "description": "Please choose a reason for reporting:",
+        "user": "Are you sure you want to report the {{user}}?",
+        "inappropiateBehavior": "Inappropriate Behaviour",
+        "spam": "Spam",
+        "incorrectInfo": {
+            "title": "Incorrect Information",
+            "provide": {
+                "title": "Provide Scholarly Evidence",
+                "description": "As a doctor, please provide a valid scholarly link as evidence for reporting incorrect information:"
+            }
+        },
+        "invalidLink": {
+            "title": "Invalid Link",
+            "description": "Please provide a valid scholarly link."
+        }
     },
     "titles": {
         "login": "Login",
@@ -102,12 +122,16 @@
         "report": "Report",
         "delete": "Delete",
         "theme": "Theme",
+        "logoutDesc": "Are you sure you want to logout?",
+        "deleteAccountDesc": "Are you sure you want to delete your account?",
         "themes": {
             "dark": "Dark",
             "light": "Light"
         },
         "confirmDelete": "Confirm Delete",
-        "deleteAccount": "Delete Account"
+        "deleteAccount": "Delete Account",
+        "cancel": "Cancel",
+        "submit": "Submit"
     },
     "successes": {
         "login": "You are now logged in",

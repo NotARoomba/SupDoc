@@ -8,7 +8,7 @@ import FunFact from "components/misc/FunFact";
 import PostBlock from "components/misc/PostBlock";
 // import SkeletonContent from 'react-native-reanimated-skeleton'
 import { SplashScreen } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Animated,
@@ -19,9 +19,10 @@ import {
   View,
 } from "react-native";
 export default function Index() {
-  const { posts, listRef } = usePosts();
+  const { posts, listRef, fetchPosts, refreshPosts } = usePosts();
   // const listRef = useRef<FlashList<Post> | null>(null);
   const { userType } = useUser();
+  const [refreshing, setRefreshing] = useState(false);
   // const [loading, setLoading] = useState(false);
   const fadeAnim = useFade();
   const { t } = useTranslation();
@@ -71,6 +72,12 @@ export default function Index() {
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
+              refreshing={refreshing}
+              onRefresh={() => {
+                setRefreshing(true);
+                refreshPosts().then(() => setRefreshing(false));
+              }}
+              onEndReached={fetchPosts}
               data={posts}
               renderItem={({ item }) => (
                 <PostBlock post={item} listRef={listRef} userType={userType} />
@@ -99,6 +106,12 @@ export default function Index() {
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
+              refreshing={refreshing}
+              onRefresh={() => {
+                setRefreshing(true);
+                refreshPosts().then(() => setRefreshing(false));
+              }}
+              onEndReached={fetchPosts}
               data={posts}
               renderItem={({ item }) => (
                 <PostBlock

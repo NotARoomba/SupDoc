@@ -1,9 +1,9 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
+import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
 import { Doctor } from "../models/doctor";
 import Post from "../models/post";
-import CryptoJS from "crypto-js";
 import { STATUS_CODES } from "../models/util";
 import { collections, createKey, env } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
@@ -12,7 +12,6 @@ import {
   removeImageFromStorage,
   upload,
 } from "../services/storage.service";
-import { ObjectId } from "mongodb";
 
 export const doctorsRouter = express.Router();
 
@@ -129,10 +128,12 @@ doctorsRouter.post(
         });
         await createKey([
           CryptoJS.SHA256(inserted.insertedId.toString()).toString(),
-          CryptoJS.SHA256(data.number
-            .split("")
-            .map((bin) => String.fromCharCode(parseInt(bin, 2)))
-            .join("")).toString(),
+          CryptoJS.SHA256(
+            data.number
+              .split("")
+              .map((bin) => String.fromCharCode(parseInt(bin, 2)))
+              .join(""),
+          ).toString(),
         ]);
         res.send({ status: STATUS_CODES.SUCCESS });
       }
@@ -211,7 +212,7 @@ doctorsRouter.get("/posts/:timestamp", async (req: Request, res: Response) => {
   try {
     if (collections.posts) {
       const posts = (await collections.posts
-        .find({ timestamp: { $gt: timestamp } })
+        .find({ timestamp: { $lt: timestamp } })
         .sort({ timestamp: -1 })
         .limit(8)
         .toArray()) as unknown as Post[];

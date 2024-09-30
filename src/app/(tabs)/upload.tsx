@@ -7,8 +7,8 @@ import { usePosts } from "components/hooks/usePosts";
 import Loader from "components/loading/Loader";
 import ImageUpload from "components/misc/ImageUpload";
 import * as ImagePicker from "expo-image-picker";
-import { t } from "i18next";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Alert,
   Animated,
@@ -28,6 +28,7 @@ export default function Upload() {
   const fadeAnim = useFade();
   const gallery = useGallery();
   const camera = useCamera();
+  const { t } = useTranslation();
   const { loading, setLoading } = useLoading();
   const { createPost, resetPostEdit, setPostEdit, postEdit } = usePosts();
   const [activeChange, setActiveChange] = useState(false);
@@ -103,7 +104,7 @@ export default function Upload() {
                 exiting={FadeOut.duration(250)}
                 className="text-ivory h-fit  text font-bold text-center m-auto"
               >
-                {keyboardOpen ? t("cancel") : t("buttons.clear")}
+                {keyboardOpen ? t("buttons.cancel") : t("buttons.clear")}
               </Reanimated.Text>
             </TouchableOpacity>
             <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
@@ -114,10 +115,10 @@ export default function Upload() {
               onPress={() =>
                 postEdit.title && postEdit.description
                   ? Alert.alert(
-                      t("upload.confirmTitle"),
+                      t("confirmTitle"),
                       t("upload.confirmDescription"),
                       [
-                        { text: t("cancel"), style: "cancel" },
+                        { text: t("buttons.cancel"), style: "cancel" },
                         {
                           text: t("buttons.post"),
                           onPress: () => createPost(),
@@ -128,12 +129,12 @@ export default function Upload() {
               }
             >
               {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
-              <Text className="text-ivory h-fit font-bold text-center m-auto">
+              <Text className="text-ivory h-fit font-bold text-center  m-auto">
                 {t("titles.upload")}
               </Text>
             </TouchableOpacity>
           </View>
-          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+          <Text className="text-center text-lg text-ivory mt-4 font-semibold">
             {t("upload.title")}
           </Text>
           <TextInput
@@ -147,9 +148,9 @@ export default function Upload() {
             keyboardType="default"
             maxLength={50}
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl my-4 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mb-4 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
-          <Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
+          <Text className="text-center flex text-lg text-ivory font-semibold">
             {t("upload.description")} ({postEdit.description.length}/1000)
           </Text>
           <TextInput
@@ -164,7 +165,7 @@ export default function Upload() {
             value={postEdit.description}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center   m-auto  h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center   m-auto  h-52 p-1 py-2.5 pl-3 text-lg  w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
           <Reanimated.ScrollView
             centerContent
@@ -214,7 +215,7 @@ export default function Upload() {
                         });
                     },
                   },
-                  { text: t("cancel"), style: "cancel" },
+                  { text: t("buttons.cancel"), style: "cancel" },
                 ])
               }
               className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"

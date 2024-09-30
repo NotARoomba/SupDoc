@@ -1,0 +1,202 @@
+{
+    "CFBundleDisplayName": "SupDoc",
+    "NSCameraUsageDescription": "SupDoc는 사진을 찍기 위해 카메라가 필요합니다!",
+    "NSPhotoLibraryUsageDescription": "SupDoc는 사진을 업로드하기 위해 갤러리에 접근해야 합니다!",
+    "success": "성공!",
+    "error": "오류",
+    "check": "확인",
+    "loading": "로딩 중",
+    "yes": "예",
+    "no": "아니요",
+    "doctor": "의사",
+    "doctors": "의사들",
+    "patient": "환자",
+    "patients": "환자들",
+    "confirmTitle": "확인",
+    "inputs": {
+        "first": "이름",
+        "last": "성",
+        "number": "전화번호",
+        "identification": "신분증",
+        "TI": "",
+        "dob": "생년월일",
+        "height": "신장 (cm)",
+        "blood": "혈액형",
+        "weight": "체중 (kg)",
+        "sex": "성별",
+        "pregnant": "임신 중",
+        "trans": "출생 시 성별과 다른 성별을 인식하십니까?",
+        "hormones": "호르몬을 복용하고 있습니까?",
+        "surgery": "성전환 수술을 받으셨습니까?",
+        "altSex": "어떤 성별을 인식하십니까?",
+        "password": "비밀번호",
+        "passwordChk": "비밀번호를 다시 입력하세요",
+        "specialty": "전문 분야",
+        "experience": "경험",
+        "bio": "약력",
+        "license": "의사 면허증 또는 학위를 업로드하세요",
+        "picture": "프로필 사진을 업로드하세요",
+        "enterCode": "확인 코드를 입력하세요",
+        "enterCode2": "다음에 전송된 확인 코드를 입력하세요: "
+    },
+    "profile": {
+        "logoutTitle": "로그아웃",
+        "logoutDescription": "정말로 로그아웃 하시겠습니까?"
+    },
+    "upload": {
+        "confirmDescription": "게시물을 올리시겠습니까?",
+        "title": "제목",
+        "description": "설명"
+    },
+    "posts": {
+        "savedNone": "(저장된 게시물이 없습니다)",
+        "feedNone": "(게시물이 없습니다)",
+        "none": "(아직 아무것도 게시하지 않았습니다)",
+        "you": "(당신)",
+        "emptyComment": "댓글은 비워둘 수 없습니다.",
+        "reportDelete": "{{reportDelete}} 게시물을 삭제하시겠습니까?",
+        "patientInfo": "환자 정보",
+        "comments": "댓글",
+        "commentsPatient": "(당신의 게시물에는 아직 댓글이 없습니다)",
+        "commentsDoctor": "(이 게시물에는 아직 댓글이 없습니다)",
+        "postReply": "게시물에 답글",
+        "postComment": "게시물에 댓글",
+        "cancelReply": "답글 취소",
+        "replyComment": "댓글에 답글...",
+        "addComment": "댓글 추가..."
+    },
+    "report": {
+        "description": "보고할 이유를 선택하세요:",
+        "user": "{{user}}를 보고하시겠습니까?",
+        "inappropiateBehavior": "부적절한 행동",
+        "spam": "스팸",
+        "incorrectInfo": {
+            "title": "부정확한 정보",
+            "provide": {
+                "title": "학술적 증거 제공",
+                "description": "의사로서 부정확한 정보를 보고하기 위한 유효한 학술 링크를 제공해주세요:"
+            }
+        },
+        "invalidLink": {
+            "title": "유효하지 않은 링크",
+            "description": "유효한 학술 링크를 제공해주세요."
+        }
+    },
+    "titles": {
+        "login": "로그인",
+        "signup": "가입하기",
+        "register": "등록하기",
+        "personal": "개인 정보",
+        "fact": "재미있는 사실",
+        "posts": "게시물",
+        "userPosts": "당신의 게시물",
+        "feed": "피드",
+        "pins": "핀",
+        "settings": "설정",
+        "upload": "업로드",
+        "logout": "로그아웃"
+    },
+    "images": {
+        "choose": "선택하세요",
+        "gallery": "갤러리",
+        "camera": "카메라",
+        "readingTitle": "이미지 오류",
+        "readingDescription": "이미지를 읽는 중 오류 발생",
+        "galleryTitle": "갤러리 접근 허용",
+        "galleryDescription": "작동하려면 미디어 라이브러리 권한을 허용해야 합니다",
+        "cameraTitle": "카메라 접근 허용",
+        "cameraDescription": "작동하려면 카메라 권한을 허용해야 합니다",
+        "remove": "제거",
+        "removeTitle": "이미지 제거",
+        "removeDescription": "이 이미지를 제거하시겠습니까?"
+    },
+    "buttons": {
+        "back": "뒤로",
+        "next": "다음",
+        "finish": "완료",
+        "update": "업데이트",
+        "clear": "지우기",
+        "post": "게시",
+        "report": "신고",
+        "delete": "삭제",
+        "theme": "테마",
+        "themes": {
+            "dark": "어두운",
+            "light": "밝은"
+        },
+        "confirmDelete": "삭제 확인",
+        "deleteAccount": "계정 삭제",
+        "cancel": "취소",
+        "submit": "제출"
+    },
+    "successes": {
+        "login": "로그인되었습니다",
+        "signup": "등록되었습니다",
+        "deletePost": "게시물이 성공적으로 삭제되었습니다",
+        "reportComment": "댓글이 성공적으로 신고되었습니다!",
+        "updateData": "정보가 성공적으로 업데이트되었습니다!"
+    },
+    "errors": {
+        "createUser": "사용자를 생성하는 중 오류가 발생했습니다",
+        "loginNotFound": "{{userType}}가 해당 ID로 찾을 수 없습니다",
+        "password": {
+            "wrong": "입력한 비밀번호가 올바르지 않습니다.",
+            "mismatch": "비밀번호가 일치하지 않습니다.",
+            "uppercase": "비밀번호에는 최소한 하나의 대문자가 포함되어야 합니다.",
+            "number": "비밀번호에는 최소한 하나의 숫자가 포함되어야 합니다.",
+            "special": "비밀번호에는 최소한 하나의 특수 문자가 포함되어야 합니다.",
+            "minChrtr": "비밀번호는 최소 8자 이상이어야 합니다."
+        },
+        "missing": "정보가 누락되었습니다",
+        "fillmissing": "누락된 정보를 입력하세요",
+        "missingInfo": "정보를 입력하세요",
+        "fetchData": "데이터를 가져오는 중 오류가 발생했습니다!",
+        "updateData": "정보를 업데이트하는 중 오류가 발생했습니다!",
+        "GENERIC_ERROR": "오류가 발생했습니다",
+        "USER_NOT_FOUND": "해당 사용자가 존재하지 않습니다",
+        "INVALID_NUMBER": "유효하지 않은 전화번호입니다",
+        "SENT_CODE": "{{number}}에 이미 코드가 전송되었습니다",
+        "NUMBER_NOT_EXIST": "해당 번호는 존재하지 않습니다",
+        "ERROR_SENDING_CODE": "코드를 전송하는 중 오류가 발생했습니다",
+        "TOO_MANY_ATTEMPTS": "너무 많은 시도를 했습니다. 5분 기다려 주세요",
+        "CODE_DENIED": "코드가 올바르지 않습니다",
+        "CODE_EXPIRED": "코드가 만료되었습니다",
+        "CODE_FAILED": "코드를 전송하는 중 오류가 발생했습니다",
+        "NO_CONNECTION": "서버에 연결하는 중 오류가 발생했습니다. 인터넷 연결을 확인하세요.",
+        "ID_IN_USE": "제공된 신분증이 이미 사용 중입니다",
+        "NUMBER_IN_USE": "제공된 전화번호가 이미 사용 중입니다",
+        "INVALID_IDENTITY": "제공된 신분증이 유효하지 않습니다",
+        "COMMENT_LIMIT_REACHED": "게시물이 허용된 최대 댓글 수에 도달했습니다",
+        "DOES_NOT_EXIST": "요청된 리소스가 존재하지 않습니다",
+        "DOCTOR_INVALID": "제공된 정보의 의사가 존재하지 않습니다",
+        "POST_NOT_FOUND": "해당 게시물을 찾을 수 없습니다",
+        "ERROR_DELETING_POST": "게시물을 삭제하는 중 오류가 발생했습니다",
+        "ERROR_UPLOADING_IMAGE": "이미지 업로드 중 오류가 발생했습니다",
+        "ALREADY_REPORTED": "이미 이 댓글을 신고했습니다",
+        "ALREADY_COMMENTED": "이 게시물에 이미 댓글을 달았습니다",
+        "COMMENT_NOT_ALLOWED": "여기에 댓글을 달 수 없습니다",
+        "COMMENT_NOT_FOUND": "해당 댓글을 찾는 중 오류가 발생했습니다"
+    },
+    "verification": {
+        "title": "확인 코드 입력",
+        "description": "다음에 전송된 확인 코드를 입력하세요: "
+    },
+    "settings": {
+        "languages": "언어",
+        "theme": "테마",
+        "deleteAccount": "계정 삭제",
+        "confirmDelete": "삭제 확인",
+        "danger": "위험",
+        "credits": "Nathan Alspaugh (NotARoomba) 및 Juan Pablo Sojo에 의해 제작되었습니다"
+    },
+    "user": {
+        "age": "나이",
+        "ageValue": "{{years}}세",
+        "altSex": "대체 성별",
+        "hormones": "호르몬을 복용하고 있습니까?",
+        "surgery": "성전환 수술을 받은 적이 있습니까?"
+    },
+    "fact": {
+        "test": "적절한 수면은 많은 질병의 위험을 줄입니다!"
+    }
+}

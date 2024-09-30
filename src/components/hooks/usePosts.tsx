@@ -32,6 +32,7 @@ interface PostsContextType {
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
+  refreshPosts: (saved?: boolean) => Promise<void>;
   addPosts: (newPosts: Post[]) => void;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
@@ -65,9 +66,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const listRef = useRef<FlashList<Post> | null>(null);
   const fetchPosts = async () => {
     setLoading(true);
-    if (!userType) return;
+    if (!userType) return setLoading(false);
     const res = await callAPI(
-      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? 0 : posts[posts.length - 1].timestamp) : ""}`,
+      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
@@ -76,7 +77,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-      
+
     setPosts(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
@@ -84,13 +85,16 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const fetchSavedPosts = async () => {
     setLoading(true);
     const res = await callAPI(
-      `/doctors/saved/${posts.length == 0 ? 0 : posts[posts.length - 1].timestamp}`,
+      `/doctors/saved/${posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp}`,
       "GET",
     );
-    if (res.status !== STATUS_CODES.SUCCESS)
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+    }
+
     setSavedPosts(res.posts);
     setLoading(false);
   };
@@ -188,7 +192,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
     try {
-      const { reason, evidence } = await handleReport(userType as UserType);
+      const { reason, evidence } = await handleReport(userType as UserType, t);
       const res = await callAPI(
         `/posts/${post}/comments/${commentID}/report`,
         "POST",
@@ -207,6 +211,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     try {
       const { reason, evidence } = await handleReport(
         userType as UserType,
+        t,
         false,
       );
       if (!reason) return;
@@ -232,17 +237,28 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       comments: [],
     } as Post);
   };
-
+  const refreshPosts = async (saved: boolean = false) => {
+    if (saved) {
+      setSavedPosts([]);
+      await fetchSavedPosts();
+    } else {
+      setPosts([]);
+      await fetchPosts();
+    }
+  };
   const createPost = async () => {
     setLoading(true);
     if (!postEdit) return;
-    const imgRes = await uploadImages(postEdit.images);
-    if (imgRes.status !== STATUS_CODES.SUCCESS) {
-      setLoading(false);
-      return Alert.alert(
-        t("error"),
-        t(`errors.${STATUS_CODES[imgRes.status]}`),
-      );
+    let imgRes = { status: STATUS_CODES.SUCCESS, urls: [] };
+    if (postEdit.images.length !== 0) {
+      imgRes = await uploadImages(postEdit.images);
+      if (imgRes.status !== STATUS_CODES.SUCCESS) {
+        setLoading(false);
+        return Alert.alert(
+          t("error"),
+          t(`errors.${STATUS_CODES[imgRes.status]}`),
+        );
+      }
     }
     const res = await callAPI(`/posts/create`, "POST", {
       ...postEdit,
@@ -271,6 +287,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       postEdit,
       savedPosts,
       listRef,
+      refreshPosts,
       addPosts,
       setPostEdit,
       resetPostEdit,

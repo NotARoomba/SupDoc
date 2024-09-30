@@ -103,7 +103,7 @@ export default function PostPage() {
                 exiting={FadeOut.duration(250)}
                 className="text-ivory h-fit  text font-bold text-center m-auto"
               >
-                {keyboardOpen ? t("cancel") : t("buttons.back")}
+                {keyboardOpen ? t("buttons.cancel") : t("buttons.back")}
               </Reanimated.Text>
             </TouchableOpacity>
             {/* <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
@@ -115,12 +115,14 @@ export default function PostPage() {
                 Alert.alert(
                   t("confirmTitle"),
                   t("post.reportDelete", {
-                    reportDelete: userType == UserType.DOCTOR ? t("report") : t("delete")
+                    reportDelete:
+                      userType == UserType.DOCTOR ? t("report") : t("delete"),
                   }),
                   [
-                    { text: t("cancel"), style: "cancel" },
+                    { text: t("buttons.cancel"), style: "cancel" },
                     {
-                      text: userType == UserType.DOCTOR ? t("report") : t("delete"),
+                      text:
+                        userType == UserType.DOCTOR ? t("report") : t("delete"),
                       style: "destructive",
                       onPress: () =>
                         userType == UserType.DOCTOR
@@ -231,15 +233,113 @@ export default function PostPage() {
                 </View>
               )}
               <View className="-z-10">
-              {userType == UserType.DOCTOR && <TouchableOpacity onPress={() => router.navigate({pathname: "/User", params: {id: post.patient.toString()}})} className="bg-oxford_blue w-11/12 mx-auto mb-4 px-5 py-2 rounded-xl">
-                  <Text className="text-ivory text-center font-semibold text-lg  ">{t("posts.patientInfo")}</Text>
-                </TouchableOpacity>}
+                {userType == UserType.DOCTOR && (
+                  <View>
+                    <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4 mb-0" />
+                    <View className="w-full justify-around flex flex-row">
+                      <View className="w-1/2 flex">
+                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          {t("inputs.sex")}
+                        </Text>
+                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          {post.info.sex}
+                        </Text>
+                        {post.info.altSex !== post.info.sex ? (
+                          <View>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.altSex")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.altSex}
+                            </Text>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.hormones")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.hormones ? t("yes") : t("no")}
+                            </Text>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.surgery")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.surgery ? t("yes") : t("no")}
+                            </Text>
+                          </View>
+                        ) : (
+                          <View>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("inputs.blood")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.blood}
+                            </Text>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.age")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {t("user.ageValue", { years: post.info.age })}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                      <View className="w-1/2 flex">
+                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          {t("inputs.height")}
+                        </Text>
+                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          {post.info.height}
+                        </Text>
+                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          {t("inputs.weight")}
+                        </Text>
+                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          {post.info.weight}
+                        </Text>
+
+                        {post.info.altSex !== post.info.sex && (
+                          <View>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("inputs.blood")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {post.info.blood}
+                            </Text>
+                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                              {t("user.age")}
+                            </Text>
+                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                              {t("user.ageValue", { years: post.info.age })}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() =>
+                        router.navigate({
+                          pathname: "/User",
+                          params: { id: post.patient.toString() },
+                        })
+                      }
+                      className="bg-oxford_blue w-11/12 mx-auto mt-4 px-5 py-2 rounded-xl"
+                    >
+                      <Text className="text-ivory text-center font-semibold text-lg  ">
+                        {t("posts.patientProfile")}
+                      </Text>
+                    </TouchableOpacity>
+                    <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
+                  </View>
+                )}
+
+                <Text className="text-4xl mb-1 font-bold text-center text-ivory">
+                  {t("posts.description")}{" "}
+                </Text>
                 <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">
                   {post.description}
                 </Text>
                 <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
                 <Text className="text-4xl font-bold text-center text-ivory">
-                  {t("comments")}
+                  {t("posts.comments")}
                 </Text>
                 {post.comments.length == 0 ? (
                   <Text className=" text-center text-powder_blue/80">
@@ -263,51 +363,53 @@ export default function PostPage() {
           )}
         </Animated.View>
       </ScrollView>
-      {post?.comments.length !== 0 && userType == UserType.PATIENT && <View className="absolute flex w-full bottom-6">
-        <Reanimated.View
-          entering={FadeInUp.delay(500)}
-          exiting={FadeOutDown.duration(500)}
-          className=" mx-auto w-11/12"
-        >
-          <TextInput
-            placeholder={
-              replyingTo ? "Reply to comment..." : "Add a comment..."
-            }
-            value={commentText}
-            onChangeText={setCommentText}
-            className="bg-gray-700 text-ivory p-3 rounded-lg"
-          />
-          <TouchableOpacity
-            onPress={handleAddComment}
-            className="mt-2 bg-midnight_green p-3 rounded-lg"
+      {post?.comments.length !== 0 && userType == UserType.PATIENT && (
+        <View className="absolute flex w-full bottom-6">
+          <Reanimated.View
+            entering={FadeInUp.delay(500)}
+            exiting={FadeOutDown.duration(500)}
+            className=" mx-auto w-11/12"
           >
-            <Reanimated.Text
-              entering={FadeIn.duration(500)}
-              exiting={FadeOut.duration(500)}
-              className="text-ivory text-center font-bold"
+            <TextInput
+              placeholder={
+                replyingTo ? t("posts.replyComment") : t("posts.addComment")
+              }
+              value={commentText}
+              onChangeText={setCommentText}
+              className="bg-gray-700 text-ivory p-3 rounded-lg"
+            />
+            <TouchableOpacity
+              onPress={handleAddComment}
+              className="mt-2 bg-midnight_green p-3 rounded-lg"
             >
-              {replyingTo ? t("posts.postReply") : t("posts.postComment")}
-            </Reanimated.Text>
-          </TouchableOpacity>
-
-          {replyingTo && (
-            <Reanimated.View
-              entering={FadeInUp.duration(300)}
-              exiting={FadeOutDown.duration(300)}
-              className="mb-2"
-            >
-              <TouchableOpacity
-                onPress={handleStopReply}
-                className="mt-2 bg-red-500 p-3 rounded-lg"
+              <Reanimated.Text
+                entering={FadeIn.duration(500)}
+                exiting={FadeOut.duration(500)}
+                className="text-ivory text-center font-bold"
               >
-                <Text className="text-ivory text-center font-bold">
-                  {t("posts.cancelReply")}
-                </Text>
-              </TouchableOpacity>
-            </Reanimated.View>
-          )}
-        </Reanimated.View>
-      </View>}
+                {replyingTo ? t("posts.postReply") : t("posts.postComment")}
+              </Reanimated.Text>
+            </TouchableOpacity>
+
+            {replyingTo && (
+              <Reanimated.View
+                entering={FadeInUp.duration(300)}
+                exiting={FadeOutDown.duration(300)}
+                className="mb-2"
+              >
+                <TouchableOpacity
+                  onPress={handleStopReply}
+                  className="mt-2 bg-red-500 p-3 rounded-lg"
+                >
+                  <Text className="text-ivory text-center font-bold">
+                    {t("posts.cancelReply")}
+                  </Text>
+                </TouchableOpacity>
+              </Reanimated.View>
+            )}
+          </Reanimated.View>
+        </View>
+      )}
     </KeyboardAvoidingView>
   );
 }
