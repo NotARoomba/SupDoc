@@ -1,16 +1,108 @@
 import express, { Request, Response } from "express";
-import { MongoCryptError } from "mongodb";
+import { MongoCryptError, ObjectId } from "mongodb";
 import { User } from "../models/user";
 import { STATUS_CODES, UserType } from "../models/util";
 import { collections, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
+import CryptoJS from "crypto-js";
+import { Doctor } from "../models/doctor";
+import Patient from "../models/patient";
+import { generateSignedUrl } from "../services/storage.service";
+import Post from "../models/post";
 
 export const usersRouter = express.Router();
 
 usersRouter.use(express.json());
 
+usersRouter.get("/:id", async (req: Request, res: Response) => {
+  const id = new ObjectId(req.params.id);
+  try {
+    let user: User | null = null;
+    if (collections.doctors && collections.patients) {
+      const doctor = (await collections.doctors.findOne({
+        _id: id,
+      })) as Doctor;
+      const patient = (await collections.patients.findOne({
+       _id: id,
+      })) as Patient;
+      user = doctor ? doctor : patient;
+    
+    if (user) {
+      user.publicKey = ""
+      user.identification.number = 0
+      user.number = ""
+      if (doctor) {
+        user = user as Doctor;
+        user.identification.license = [];
+        user.comments = [];
+        user.saved = [];
+        user.publicKey = ""
+        user.privateKey = ""
+        user.reports = []
+        res.status(200).send(
+          encrypt(
+            {
+              user: { ...user, picture: await generateSignedUrl(user.picture) },
+              status: STATUS_CODES.SUCCESS,
+            },
+            req.headers.authorization,
+          ),
+        );
+      } else {
+        user = user as Patient;
+      const posts = (await collections.posts
+        .find({
+          _id: {
+            $in: user.posts.map((v) => new ObjectId(v)),
+          },
+        })
+        .sort({ _id: -1 })
+        .toArray()) as unknown as Post[];
+        res.status(200).send(
+          encrypt(
+            {
+              user: { ...user, posts: await Promise.all(
+                posts.map(async (v) => ({
+                  ...v,
+                  images: await Promise.all(
+                    v.images.map(async (v) => await generateSignedUrl(v)),
+                  ),
+                })),
+              ) },
+              status: STATUS_CODES.SUCCESS,
+            },
+            req.headers.authorization,
+          ),
+        );
+      }
+        }
+    } else {
+      res.status(404).send(
+        encrypt(
+          {
+            user: null,
+            status: STATUS_CODES.USER_NOT_FOUND,
+          },
+          req.headers.authorization,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(404)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+  }
+});
+
 usersRouter.post("/check", async (req: Request, res: Response) => {
   const id: number = req.body.id;
+  const idHash = CryptoJS.SHA256(id.toString(2)).toString()
   const number: string | null = req.body.number;
   try {
     let user: User | null = null;
@@ -29,21 +121,21 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
         if (user.identification.number == id)
           return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
         else if (user.number == number)
-          res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+          return res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
       }
-      user = (await encryption.getKeyByAltName(id.toString(2)))
+      user = (await encryption.getKeyByAltName(idHash))
         ? ((await collections.patients.findOne({
             $or: [
               {
                 "identification.number": await encryption.encrypt(id, {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                  keyAltName: id.toString(2),
+                  keyAltName: idHash,
                 }),
               },
               {
                 number: await encryption.encrypt(number ?? "", {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                  keyAltName: id.toString(2),
+                  keyAltName: idHash,
                 }),
               },
             ],
@@ -53,7 +145,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
       else if (user.identification.number == id)
         return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
       else if (user.number == number)
-        res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+        return res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
     }
   } catch (error) {
     if (error instanceof MongoCryptError) {
@@ -65,6 +157,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
 
 usersRouter.post("/keys", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
+  const idHash = CryptoJS.SHA256(id.toString(2)).toString()
   const userType: UserType = req.body.userType;
   // const number: string = req.body.number;
   // try {
@@ -84,11 +177,11 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
           ? await collections.doctors.findOne({
               "identification.number": id,
             })
-          : (await encryption.getKeyByAltName(id.toString(2)))
+          : (await encryption.getKeyByAltName(idHash))
             ? ((await collections.patients.findOne({
                 "identification.number": await encryption.encrypt(id, {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                  keyAltName: id.toString(2),
+                  keyAltName: idHash,
                 }),
               })) as User)
             : null;

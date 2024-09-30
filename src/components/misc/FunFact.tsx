@@ -18,7 +18,7 @@ export default function FunFact() {
         </Text>
       </View>
       <Text className="text-ivory/70 text-lg font-semibold">
-        Your stomach becomes more resistant when you eat rotten tomatoes!
+      {t('fact.test')}
       </Text>
     </Animated.View>
   );

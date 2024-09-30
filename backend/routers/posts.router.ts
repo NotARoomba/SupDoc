@@ -5,8 +5,9 @@ import { Doctor } from "../models/doctor";
 import Patient from "../models/patient";
 import Post from "../models/post";
 import Report from "../models/report";
+import CryptoJS from "crypto-js";
 import { STATUS_CODES, UserType } from "../models/util";
-import { collections, encryption } from "../services/database.service";
+import { collections, createKey, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl } from "../services/storage.service";
 
@@ -123,9 +124,10 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
   const patient = (await collections.patients.findOne({
     publicKey: req.headers.authorization,
   })) as Patient;
-  data.patient = patient.identification.number;
+  if (!patient._id) return res.send(encrypt({status: STATUS_CODES.USER_NOT_FOUND}, req.headers.authorization))
+  data.patient = patient._id;
 
-  const keyAltName = data.patient.toString(2);
+  const keyAltName = CryptoJS.SHA256(data.patient.toString()).toString();
   try {
     if (collections.posts) {
       const postInsert = await collections.posts.insertOne({
@@ -214,12 +216,9 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
 
   // TODOOOO MIGRATE ALL collections? to collections
   // FIX ALL TO OBJECTID
-  // await createKey([
-  //   comment.doctor,
-  // ]);
   const comment: Comment = req.body;
   const postID = new ObjectId(req.params.id);
-  const keyAltName = comment.commenter.toString();
+  const keyAltName = CryptoJS.SHA256(comment.commenter.toString()).toString();
   const doctor = (await collections.doctors.findOne({
     publicKey: req.headers.authorization,
   })) as Doctor;
@@ -228,7 +227,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   })) as Patient;
   const user = doctor ? doctor : patient;
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
-
+  if (!comment.parent && patient) return res.send(encrypt({status: STATUS_CODES.COMMENT_NOT_ALLOWED}, req.headers.authorization))
   // Fetch the parent post
   let parentPost = (await collections.posts.findOne({
     _id: postID,

@@ -57,6 +57,13 @@ export default function RootLayout() {
                     }}
                   />
                   <Stack.Screen
+                    name="User"
+                    options={{
+                      headerShown: false,
+                      presentation: "fullScreenModal",
+                    }}
+                  />
+                  <Stack.Screen
                     name="Settings"
                     options={{
                       headerShown: false,

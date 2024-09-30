@@ -32,6 +32,7 @@ interface PostsContextType {
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
+  addPosts: (newPosts: Post[]) => void;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
   fetchPosts: () => Promise<void>;
@@ -69,10 +70,13 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? 0 : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
     );
-    if (res.status !== STATUS_CODES.SUCCESS)
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+    }
+      
     setPosts(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
@@ -102,6 +106,14 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       : [...savedPosts, post];
     setSavedPosts(updatedSavedPosts);
     return true;
+  };
+
+  const addPosts = (newPosts: Post[]) => {
+    let finalPosts: Post[] = [];
+    newPosts.forEach((v) =>
+      !posts.find((z) => z._id == v._id) ? finalPosts.push(v) : 0,
+    );
+    setPosts([...posts, ...finalPosts]);
   };
 
   const deletePost = async (id: string) => {
@@ -176,10 +188,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
     try {
-      const { reason, evidence } = await handleReport(
-        userType as UserType,
-        false,
-      );
+      const { reason, evidence } = await handleReport(userType as UserType);
       const res = await callAPI(
         `/posts/${post}/comments/${commentID}/report`,
         "POST",
@@ -216,7 +225,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       title: "",
       description: "",
       images: [],
-      patient: 0,
+      patient: "0" as unknown as ObjectId,
       reports: [],
       info: {} as PatientMetrics,
       timestamp: 0,
@@ -239,9 +248,10 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       ...postEdit,
       images: imgRes.urls,
     });
-    if (res.status !== STATUS_CODES.SUCCESS)
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
       return Alert.alert(t("error"), t("errors.postUploading"));
-    else {
+    } else {
       setPosts([...posts, res.post]);
       resetPostEdit();
       setLoading(false);
@@ -261,6 +271,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       postEdit,
       savedPosts,
       listRef,
+      addPosts,
       setPostEdit,
       resetPostEdit,
       createPost,

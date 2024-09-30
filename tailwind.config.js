@@ -6,6 +6,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        '3xs': '0.5rem',  // 8px
+        '2xs': '0.625rem', // 10px
+      },
       colors: {
         richer_black: {
           DEFAULT: "#020912",

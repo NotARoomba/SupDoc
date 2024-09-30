@@ -234,7 +234,7 @@ export async function logout() {
   reloadAppAsync();
 }
 
-export function handleReport(userType: UserType, isPost: boolean = false) {
+export function handleReport(userType: UserType, isComment: boolean = true) {
   return new Promise<{ reason: REPORT_REASONS; evidence?: string }>(
     (resolve, reject) => {
       const options = [
@@ -255,7 +255,7 @@ export function handleReport(userType: UserType, isPost: boolean = false) {
       ];
 
       // For comments, add the "Incorrect Information" option for doctors
-      if (!isPost) {
+      if (isComment) {
         options.unshift({
           text: "Incorrect Information",
           onPress: () => {

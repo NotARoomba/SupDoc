@@ -52,6 +52,9 @@ export async function decryptionMiddleware(
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists))
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
+    //need to add protected routes
+    // else if ((doctorExists && ![""].includes(req.originalUrl)) || (patientExists && ![""].includes(req.originalUrl)))
+    //   return res.send({ status: STATUS_CODES.UNAUTHORIZED });
   }
   if (req.originalUrl == "/images/upload") {
     console.log(req.body);

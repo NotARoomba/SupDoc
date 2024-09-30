@@ -3,8 +3,10 @@ import Icons from "@expo/vector-icons/Octicons";
 import { usePosts } from "components/hooks/usePosts";
 import { useUser } from "components/hooks/useUser";
 import { CommentBlockProps } from "components/utils/Types";
+import { router } from "expo-router";
 import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import Reanimated, {
   FadeInDown,
@@ -20,6 +22,7 @@ export default function CommentBlock({
   replyingTo,
   setReplyingTo,
 }: CommentBlockProps) {
+  const { t } = useTranslation();
   const { user } = useUser();
   const [currentComments, setCurrentComments] = useState(comments);
   const [likesData, setLikesData] = useState<{
@@ -83,9 +86,22 @@ export default function CommentBlock({
                 setReplyingTo(comment._id == replyingTo ? null : comment._id);
               }}
             >
-              <Text className="text-ivory text-lg font-bold">
-                {comment.name}
-              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  router.navigate({
+                    pathname:
+                      comment.commenter == user._id
+                        ? "/(tabs)/profile"
+                        : "/User",
+                    params: { id: comment.commenter.toString() as string },
+                  })
+                }
+              >
+                <Text className="text-powder_blue text-lg font-bold">
+                  {comment.name}{" "}
+                  {comment.commenter == user._id ? t("posts.you") : ""}
+                </Text>
+              </TouchableOpacity>
               <Text className="text-ivory text-md">{comment.text}</Text>
 
               <View className="flex flex-row mt-2 justify-between">

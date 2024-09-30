@@ -5,6 +5,7 @@
     "success": "Success!",
     "error": "Error",
     "cancel": "Cancel",
+    "check": "Check",
     "loading": "Loading",
     "yes": "Yes",
     "no": "No",
@@ -16,8 +17,8 @@
         "first": "First Name",
         "last": "Last Name",
         "number": "Phone Number",
-        "identification": "Identification over 18",
-        "TI": "Identification under 18",
+        "identification": "Identification",
+        "TI": "",
         "dob": "Date of Birth",
         "height": "Height (cm)",
         "blood": "Blood Type",
@@ -38,10 +39,21 @@
         "enterCode": "Enter Verification Code",
         "enterCode2": "Enter the verification code sent to: "
     },
+    "profile": {
+        "logoutTitle": "Logout",
+        "logoutDescription": "Are you sure you want to logout?"
+    },
+    "upload": {
+        "confirmTitle": "Confirm",
+        "confirmDescription": "Are you sure you want to post?",
+        "title": "Title",
+        "description": "Description"
+    },
     "posts": {
         "savedNone": "(You have not saved any posts)",
         "feedNone": "(There are no posts)",
-        "none": "(You have not posted anything yet)"
+        "none": "(You have not posted anything yet)",
+        "you": "(You)"
     },
     "titles": {
         "login": "Login",
@@ -49,10 +61,12 @@
         "register": "Register",
         "personal": "Personal Information",
         "fact": "Fun Fact",
-        "posts": "Your Posts",
+        "posts": "Posts",
+        "userPosts": "Your Posts",
         "feed": "Feed",
         "pins": "Pins",
-        "settings": "Settings"
+        "settings": "Settings",
+        "upload": "Upload"
     },
     "images": {
         "choose": "Please choose",
@@ -71,13 +85,17 @@
     "buttons": {
         "back": "Back",
         "next": "Next",
-        "finish": "Finish"
+        "finish": "Finish",
+        "update": "Update",
+        "clear": "Clear",
+        "post": "Post"
     },
     "successes": {
         "login": "You are now logged in",
         "signup": "You are now registered",
         "deletePost": "Sucessfully deleted your post",
-        "reportComment": "Successfully reported the comment!"
+        "reportComment": "Successfully reported the comment!",
+        "updateData": "Successfully updated your information!"
     },
     "errors": {
         "createUser": "There was an error creating a user",
@@ -91,6 +109,7 @@
             "minChrtr": "Password must be at least 8 characters long."
         },
         "missing": "Missing Info",
+        "fillmissing": "Please fill out the missing infromation",
         "missingInfo": "Please fill out the information",
         "fetchData": "There was an error fetching your data!",
         "updateData": "There was an error updating your information!",
@@ -119,15 +138,26 @@
         "COMMENT_NOT_ALLOWED": "You cannot comment here",
         "COMMENT_NOT_FOUND": "There was an error finding that comment"
     },
-    "succeses": {
-        "updateData": "Successfully updated your information!"
-    },
     "verification": {
         "title": "Enter Verification Code",
         "description": "Enter the verification code sent to: "
     },
     "settings": {
         "languages": "Languages",
-        "theme": "Theme"
+        "theme": "Theme",
+        "deleteAccount": "Delete Account",
+        "confirmDelete": "Confirm Delete",
+        "danger": "Danger",
+        "credits": "Made by Nathan Alspaugh (NotARoomba) and Juan Pablo Sojo"
+    },
+    "user": {
+        "age": "Age",
+        "ageValue": "{{years}} Years",
+        "altSex": "Alternate Sex",
+        "hormones": "Takes Hormones?",
+        "surgery": "Has had a sex-changing surgery?"
+    },
+    "fact": {
+        "test": "¡Dormir adecuadamente reduce tu riesgo de muchas enfermedades!"
     }
 }

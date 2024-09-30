@@ -5,7 +5,7 @@ import { useUser } from "components/hooks/useUser";
 import { logout } from "components/utils/Functions";
 import { LANGUAGES } from "components/utils/Types";
 import { router } from "expo-router";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -26,7 +26,7 @@ import Reanimated, {
 
 export default function Settings() {
   const fadeAnim = useFade();
-  const { setLanguage, setTheme, theme } = useSettings();
+  const { setLanguage, setTheme, theme, language } = useSettings();
   const { deleteUser } = useUser();
   const { t } = useTranslation();
   const scrollX = useSharedValue(0);
@@ -44,6 +44,16 @@ export default function Settings() {
   const handleScroll = (event: any) => {
     scrollX.value = event.nativeEvent.contentOffset.x;
   };
+
+  useEffect(() => {
+    const languageIndex = LANGUAGES.findIndex((v) => v.locale === language);
+    if (languageIndex !== -1 && scrollRef.current) {
+      const scrollPosition = 256 * languageIndex;
+      scrollRef.current.scrollTo({ x: scrollPosition, animated: false });
+      scrollX.value = scrollPosition;
+      setCurrentIndex(languageIndex);
+    }
+  }, [language, scrollRef.current]);
 
   const colorPalette = ["#124081", "#082540", "#071932", "#12528e"];
 
@@ -196,7 +206,7 @@ export default function Settings() {
             })}
           </ScrollView>
           <Text className="text-ivory text-3xl font-bold text-center mt-8 mb-2">
-            {t("settings.delete")}
+            {t("settings.danger")}
           </Text>
 
           {/* Double-click button */}
@@ -206,15 +216,17 @@ export default function Settings() {
           >
             <TouchableOpacity onPress={handleButtonPress}>
               <Text className="text-center text-2xl font-medium text-ivory">
-                {isConfirmDelete ? "Confirm Delete" : "Delete Account"}
+                {isConfirmDelete
+                  ? t("settings.confirmDelete")
+                  : t("settings.deleteAccount")}
               </Text>
             </TouchableOpacity>
           </Reanimated.View>
         </View>
       </Animated.View>
       <Reanimated.View className="w-full absolute bottom-6">
-        <Text className=" text-powder_blue font-bold text-center text-xs w-11/12 mx-auto">
-          {process.env.EXPO_PUBLIC_CREDITS}
+        <Text className=" text-powder_blue/50 font-bold text-center text-xs w-11/12 mx-auto">
+          {t("settings.credits")}
         </Text>
       </Reanimated.View>
     </View>

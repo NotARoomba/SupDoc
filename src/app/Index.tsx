@@ -116,6 +116,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       signUpInfo.license = licence;
       signUpInfo.picture = picture;
     }
+    console.log(signUpInfo)
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",
@@ -126,7 +127,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               number: signUpInfo.identification,
             },
             info: {
-              age: new Date(Date.now() - (signUpInfo.dob ?? 0)).getFullYear(),
+              age: new Date(Date.now() - signUpInfo.dob).getFullYear(),
               weight: signUpInfo.weight,
               height: signUpInfo.height,
               dob: signUpInfo.dob,
@@ -169,7 +170,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         signUpInfo.password,
       );
-      // setLoading(false);
+      setLoading(false);
       await fetchUser();
       await fetchPosts();
       return setIsLogged(true);
@@ -220,7 +221,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         password: "",
       } as LoginInfo);
     }
-  }, [userType]);
+  }, [userType, isLogin]);
   const parseLogin = async () => {
     setLoading(true);
     const doesExist = await callAPI(`/users/check`, "POST", {
@@ -284,6 +285,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       res.public,
     );
     try {
+      setLoading(false);
       const decrypted = CryptoJS.AES.decrypt(
         res.private,
         loginInfo.password,
@@ -308,7 +310,6 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         loginInfo.password,
       );
-      setLoading(false);
       await fetchUser();
       Alert.alert(t("success"), t("successMsg.login"));
       return setIsLogged(true);
