@@ -129,12 +129,12 @@ export default function Upload() {
             >
               {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
               <Text className="text-ivory h-fit font-bold text-center m-auto">
-                {"title.upload"}
+                {t("titles.upload")}
               </Text>
             </TouchableOpacity>
           </View>
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            {"upload.title"}
+            {t("upload.title")}
           </Text>
           <TextInput
             onChangeText={(n) =>
@@ -150,7 +150,7 @@ export default function Upload() {
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl my-4 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
           <Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
-            {"upload.description"} ({postEdit.description.length}/1000)
+            {t("upload.description")} ({postEdit.description.length}/1000)
           </Text>
           <TextInput
             onChangeText={(n) =>

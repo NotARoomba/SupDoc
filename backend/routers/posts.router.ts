@@ -127,7 +127,7 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
   if (!patient._id) return res.send(encrypt({status: STATUS_CODES.USER_NOT_FOUND}, req.headers.authorization))
   data.patient = patient._id;
 
-  const keyAltName = data.patient.toString('hex');
+  const keyAltName = CryptoJS.SHA256(data.patient.toString()).toString();
   try {
     if (collections.posts) {
       const postInsert = await collections.posts.insertOne({
@@ -217,10 +217,6 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   // TODOOOO MIGRATE ALL collections? to collections
   // FIX ALL TO OBJECTID
   const comment: Comment = req.body;
-  
-  await createKey([
-    CryptoJS.SHA256(comment.commenter.toString()).toString(),
-  ]);
   const postID = new ObjectId(req.params.id);
   const keyAltName = CryptoJS.SHA256(comment.commenter.toString()).toString();
   const doctor = (await collections.doctors.findOne({

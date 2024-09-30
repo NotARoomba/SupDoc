@@ -245,8 +245,11 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       ...postEdit,
       images: imgRes.urls,
     });
-    if (res.status !== STATUS_CODES.SUCCESS)
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
       return Alert.alert(t("error"), t("errors.postUploading"));
+    }
+      
     else {
       setPosts([...posts, res.post]);
       resetPostEdit();
