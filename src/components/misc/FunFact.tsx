@@ -18,7 +18,7 @@ export default function FunFact() {
         </Text>
       </View>
       <Text className="text-ivory/70 text-lg font-semibold">
-      ¡Dormir adecuadamente reduce tu riesgo de muchas enfermedades!
+      {t('fact.test')}
       </Text>
     </Animated.View>
   );

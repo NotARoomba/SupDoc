@@ -156,5 +156,8 @@
         "altSex": "Alternate Sex",
         "hormones": "Takes Hormones?",
         "surgery": "Has had a sex-changing surgery?"
+    },
+    "fact": {
+        "test": "¡Dormir adecuadamente reduce tu riesgo de muchas enfermedades!"
     }
 }
