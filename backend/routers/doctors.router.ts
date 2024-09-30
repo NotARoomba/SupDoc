@@ -212,7 +212,7 @@ doctorsRouter.get("/posts/:timestamp", async (req: Request, res: Response) => {
   try {
     if (collections.posts) {
       const posts = (await collections.posts
-        .find({ timestamp: { $gt: timestamp } })
+        .find({ timestamp: { $lt: timestamp } })
         .sort({ timestamp: -1 })
         .limit(8)
         .toArray()) as unknown as Post[];

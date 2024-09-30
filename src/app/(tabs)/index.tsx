@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 export default function Index() {
-  const { posts, listRef } = usePosts();
+  const { posts, listRef, fetchPosts, refreshPosts } = usePosts();
   // const listRef = useRef<FlashList<Post> | null>(null);
   const { userType } = useUser();
   // const [loading, setLoading] = useState(false);
@@ -71,6 +71,8 @@ export default function Index() {
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
+              onRefresh={refreshPosts}
+              onEndReached={fetchPosts}
               data={posts}
               renderItem={({ item }) => (
                 <PostBlock post={item} listRef={listRef} userType={userType} />
@@ -99,6 +101,8 @@ export default function Index() {
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
+              onRefresh={refreshPosts}
+              onEndReached={fetchPosts}
               data={posts}
               renderItem={({ item }) => (
                 <PostBlock

@@ -32,6 +32,7 @@ interface PostsContextType {
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
+  refreshPosts: (saved?: boolean) => void;
   addPosts: (newPosts: Post[]) => void;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
@@ -67,7 +68,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     setLoading(true);
     if (!userType) return setLoading(false);
     const res = await callAPI(
-      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? 0 : posts[posts.length - 1].timestamp) : ""}`,
+      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
@@ -84,7 +85,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const fetchSavedPosts = async () => {
     setLoading(true);
     const res = await callAPI(
-      `/doctors/saved/${posts.length == 0 ? 0 : posts[posts.length - 1].timestamp}`,
+      `/doctors/saved/${posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp}`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
@@ -236,7 +237,15 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       comments: [],
     } as Post);
   };
-
+  const refreshPosts = (saved: boolean = false) => {
+    if (saved) {
+      setSavedPosts([]);
+      fetchSavedPosts();
+    } else {
+      setPosts([]);
+      fetchPosts();
+    }
+  }
   const createPost = async () => {
     setLoading(true);
     if (!postEdit) return;
@@ -275,6 +284,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       postEdit,
       savedPosts,
       listRef,
+      refreshPosts,
       addPosts,
       setPostEdit,
       resetPostEdit,
