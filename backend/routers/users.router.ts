@@ -121,7 +121,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
         if (user.identification.number == id)
           return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
         else if (user.number == number)
-          res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+          return res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
       }
       user = (await encryption.getKeyByAltName(idHash))
         ? ((await collections.patients.findOne({
