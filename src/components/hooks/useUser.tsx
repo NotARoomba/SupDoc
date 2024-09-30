@@ -67,7 +67,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const reportUser = async (id: string, ut: UserType) => {
     try {
       const { reason, evidence } = await handleReport(
-        userType as UserType,
+        userType as UserType,t,
         false,
       );
       const res = await callAPI(`/users/report`, "POST", {

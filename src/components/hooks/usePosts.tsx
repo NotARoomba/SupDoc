@@ -188,7 +188,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
     try {
-      const { reason, evidence } = await handleReport(userType as UserType);
+      const { reason, evidence } = await handleReport(userType as UserType, t);
       const res = await callAPI(
         `/posts/${post}/comments/${commentID}/report`,
         "POST",
@@ -206,7 +206,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const reportPost = async (id: string) => {
     try {
       const { reason, evidence } = await handleReport(
-        userType as UserType,
+        userType as UserType,t,
         false,
       );
       if (!reason) return;
