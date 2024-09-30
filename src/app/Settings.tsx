@@ -70,12 +70,12 @@ export default function Settings() {
     } else {
       Alert.alert("Logout", "Are you sure you want to delete your account?", [
         {
-          text: "Cancel",
+          text: t("cancel"),
           style: "cancel",
           onPress: () => setIsConfirmDelete(false),
         },
         {
-          text: "Delete",
+          text: t("buttons.delete"),
           style: "destructive",
           onPress: deleteUser,
         },
@@ -112,20 +112,20 @@ export default function Settings() {
             className="z-50 w-24 px-5 h-8 py-0 bg-ivory/20 rounded-full"
           >
             <Reanimated.Text className="text-ivory h-fit text font-bold text-center m-auto">
-              Back
+              {t("buttons.back")}
             </Reanimated.Text>
           </TouchableOpacity>
           <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
-            Settings
+            {t("titles.settings")}
           </Text>
           <TouchableOpacity
             disabled
             className="z-50 opacity-0 w-24 px-5 h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
-              Alert.alert("Logout", "Are you sure you want to logout?", [
-                { text: "Cancel", style: "cancel" },
+              Alert.alert(t("buttons.logout"), "Are you sure you want to logout?", [
+                { text: t("cancel"), style: "cancel" },
                 {
-                  text: "Logout",
+                  text: t("buttons.logout"),
                   style: "destructive",
                   onPress: () => logout(),
                 },
@@ -133,7 +133,7 @@ export default function Settings() {
             }
           >
             <Text className="text-ivory h-fit font-bold text-center m-auto">
-              Logout
+              {("titles.logout")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -145,13 +145,13 @@ export default function Settings() {
           }
         >
           <Text className="text-ivory text-3xl font-bold text-center mb-2">
-            Theme
+            {t("buttons.theme")}
           </Text>
           <Slider
-            options={["Dark", "Light"]}
+            options={[t("buttons.themes.dark"), t("buttons.themes.light")]}
             setOption={(v) => setTheme(v.toLowerCase() as any)}
             selected={
-              theme ? theme.charAt(0).toUpperCase() + theme.slice(1) : "Dark"
+              theme ? theme.charAt(0).toUpperCase() + theme.slice(1) : t("buttons.themes.dark")
             }
           />
           <Text className="text-ivory text-3xl font-bold text-center mt-8 mb-2">

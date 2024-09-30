@@ -153,7 +153,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           } as Doctor),
     );
     if (create.status === STATUS_CODES.SUCCESS) {
-      Alert.alert(t("success"), t("successMsg.signup"));
+      Alert.alert(t("success"), t("successes.signup"));
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
         keys.private,
@@ -236,7 +236,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     });
     setLoading(false);
     if (res.status === STATUS_CODES.ERROR_SENDING_CODE)
-      return Alert.alert(t("error"), "errors.CODE_FAILED");
+      return Alert.alert(t("error"), t("errors.CODE_FAILED"));
     else {
       setTimeout(() => {
         return prompt(
@@ -311,7 +311,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         loginInfo.password,
       );
       await fetchUser();
-      Alert.alert(t("success"), t("successMsg.login"));
+      Alert.alert(t("success"), t("successes.login"));
       return setIsLogged(true);
     } catch (e) {
       setLoading(false);
