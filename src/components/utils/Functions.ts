@@ -263,16 +263,16 @@ export function handleReport(userType: UserType, isComment: boolean = true) {
           onPress: () => {
             if (userType === UserType.DOCTOR) {
               prompt(
-                "Provide Scholarly Evidence",
-                "As a doctor, please provide a valid scholarly link as evidence for reporting incorrect information:",
+                t("report.incorrectInfo.provide.title"),
+                t("report.incorrectInfo.provide.description"),
                 [
                   {
-                    text: "Cancel",
+                    text: t("buttons.cancel"),
                     style: "cancel",
                     onPress: () => reject("cancelled"),
                   },
                   {
-                    text: "Submit",
+                    text: t("buttons.submit"),
                     onPress: (input) => {
                       if (validateScholarlyLink(input ?? "")) {
                         resolve({
