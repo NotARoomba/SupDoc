@@ -4,7 +4,7 @@
     "NSPhotoLibraryUsageDescription": "¡SupDoc necesita acceso a tu galería para subir fotos!",
     "success": "¡Éxito!",
     "error": "Error",
-    "cancel": "Cancelar",
+    "check": "Verificar",
     "loading": "Cargando",
     "yes": "Sí",
     "no": "No",
@@ -12,36 +12,75 @@
     "doctors": "Doctores",
     "patient": "Paciente",
     "patients": "Pacientes",
+    "confirmTitle": "Confirmar",
     "inputs": {
         "first": "Nombre",
         "last": "Apellido",
         "number": "Número de Teléfono",
-        "identification": "Cedula",
-        "TI": "/TI",
+        "identification": "Identificación",
+        "TI": "",
         "dob": "Fecha de Nacimiento",
         "height": "Altura (cm)",
-        "blood": "Tipo de Sangre",
+        "blood": "Grupo Sanguíneo",
         "weight": "Peso (kg)",
         "sex": "Sexo",
         "pregnant": "Embarazada",
-        "trans": "¿Te identificas con un sexo diferente al de tu nacimiento?",
+        "trans": "¿Te identificas como de un sexo diferente al sexo de tu nacimiento?",
         "hormones": "¿Tomas hormonas?",
-        "surgery": "¿Te has sometido a una cirugía de cambio de sexo?",
+        "surgery": "¿Has tenido una cirugía de cambio de sexo?",
         "altSex": "¿Con qué sexo te identificas?",
         "password": "Contraseña",
-        "passwordChk": "Reingresa la Contraseña",
+        "passwordChk": "Reingresar Contraseña",
         "specialty": "Especialidad",
         "experience": "Experiencia",
         "bio": "Biografía",
-        "license": "Sube tu licencia o título de médico",
+        "license": "Sube la licencia o título de tu doctor",
         "picture": "Sube una foto de perfil",
         "enterCode": "Ingresa el Código de Verificación",
         "enterCode2": "Ingresa el código de verificación enviado a: "
     },
+    "profile": {
+        "logoutTitle": "Cerrar Sesión",
+        "logoutDescription": "¿Estás seguro de que quieres cerrar sesión?"
+    },
+    "upload": {
+        "confirmDescription": "¿Estás seguro de que quieres publicar?",
+        "title": "Título",
+        "description": "Descripción"
+    },
     "posts": {
         "savedNone": "(No has guardado ninguna publicación)",
         "feedNone": "(No hay publicaciones)",
-        "none": "(Aún no has publicado nada)"
+        "none": "(Aún no has publicado nada)",
+        "you": "(Tú)",
+        "emptyComment": "El comentario no puede estar vacío.",
+        "reportDelete": "¿Estás seguro de que quieres {{reportDelete}} la publicación?",
+        "patientInfo": "Información del Paciente",
+        "comments": "Comentarios",
+        "commentsPatient": "(Aún no hay comentarios en tu publicación)",
+        "commentsDoctor": "(Aún no hay comentarios en esta publicación)",
+        "postReply": "Responder Publicación",
+        "postComment": "Comentar Publicación",
+        "cancelReply": "Cancelar Respuesta",
+        "replyComment": "Responder al comentario...",
+        "addComment": "Agregar un comentario..."
+    },
+    "report": {
+        "description": "Por favor elige un motivo para reportar:",
+        "user": "¿Estás seguro de que quieres reportar al {{user}}?",
+        "inappropiateBehavior": "Comportamiento Inapropiado",
+        "spam": "Spam",
+        "incorrectInfo": {
+            "title": "Información Incorrecta",
+            "provide": {
+                "title": "Proporcionar Evidencia Académica",
+                "description": "Como doctor, por favor proporciona un enlace académico válido como evidencia para reportar información incorrecta:"
+            }
+        },
+        "invalidLink": {
+            "title": "Enlace Inválido",
+            "description": "Por favor proporciona un enlace académico válido."
+        }
     },
     "titles": {
         "login": "Iniciar Sesión",
@@ -52,8 +91,10 @@
         "posts": "Publicaciones",
         "userPosts": "Tus Publicaciones",
         "feed": "Feed",
-        "pins": "Guardados",
-        "settings": "Configuración"
+        "pins": "Pines",
+        "settings": "Configuraciones",
+        "upload": "Subir",
+        "logout": "Cerrar Sesión"
     },
     "images": {
         "choose": "Por favor elige",
@@ -62,7 +103,7 @@
         "readingTitle": "Error de Imagen",
         "readingDescription": "Error al leer la imagen",
         "galleryTitle": "Permitir Acceso a la Galería",
-        "galleryDescription": "Necesitas permitir permisos de la galería de medios para que esto funcione",
+        "galleryDescription": "Necesitas permitir permisos de la biblioteca de medios para que esto funcione",
         "cameraTitle": "Permitir Acceso a la Cámara",
         "cameraDescription": "Necesitas permitir permisos de la cámara para que esto funcione",
         "remove": "Eliminar",
@@ -72,17 +113,32 @@
     "buttons": {
         "back": "Atrás",
         "next": "Siguiente",
-        "finish": "Finalizar"
+        "finish": "Finalizar",
+        "update": "Actualizar",
+        "clear": "Limpiar",
+        "post": "Publicar",
+        "report": "Reportar",
+        "delete": "Eliminar",
+        "theme": "Tema",
+        "themes": {
+            "dark": "Oscuro",
+            "light": "Claro"
+        },
+        "confirmDelete": "Confirmar Eliminación",
+        "deleteAccount": "Eliminar Cuenta",
+        "cancel": "Cancelar",
+        "submit": "Enviar"
     },
     "successes": {
-        "login": "Has iniciado sesión",
-        "signup": "Te has registrado",
-        "deletePost": "Has eliminado tu publicación exitosamente",
-        "reportComment": "¡Has reportado el comentario exitosamente!"
+        "login": "Ahora has iniciado sesión",
+        "signup": "Ahora estás registrado",
+        "deletePost": "Publicación eliminada con éxito",
+        "reportComment": "Comentario reportado con éxito!",
+        "updateData": "Información actualizada con éxito!"
     },
     "errors": {
         "createUser": "Hubo un error al crear un usuario",
-        "loginNotFound": "{{userType}} no encontrado con ese ID",
+        "loginNotFound": "{{userType}} no encontrado con esa ID",
         "password": {
             "wrong": "La contraseña ingresada es incorrecta.",
             "mismatch": "Las contraseñas no coinciden.",
@@ -91,37 +147,35 @@
             "special": "La contraseña debe contener al menos un carácter especial.",
             "minChrtr": "La contraseña debe tener al menos 8 caracteres."
         },
-        "missing": "Falta Información",
+        "missing": "Información Faltante",
+        "fillmissing": "Por favor completa la información faltante",
         "missingInfo": "Por favor completa la información",
-        "fetchData": "¡Hubo un error al obtener tus datos!",
-        "updateData": "¡Hubo un error al actualizar tu información!",
+        "fetchData": "Hubo un error al obtener tus datos!",
+        "updateData": "Hubo un error al actualizar tu información!",
         "GENERIC_ERROR": "Ha ocurrido un error",
         "USER_NOT_FOUND": "Ese usuario no existe",
         "INVALID_NUMBER": "El número de teléfono es inválido",
-        "SENT_CODE": "Ya se ha enviado un código a {{number}}",
+        "SENT_CODE": "Un código ya ha sido enviado a {{number}}",
         "NUMBER_NOT_EXIST": "Ese número no existe",
         "ERROR_SENDING_CODE": "Hubo un error al enviar el código",
         "TOO_MANY_ATTEMPTS": "Has intentado demasiadas veces, por favor espera 5 minutos",
         "CODE_DENIED": "El código es incorrecto",
         "CODE_EXPIRED": "El código ha expirado",
         "CODE_FAILED": "Hubo un error al enviar el código",
-        "NO_CONNECTION": "Hubo un error al conectar con el servidor, por favor verifica tu conexión a internet.",
+        "NO_CONNECTION": "Hubo un error al conectarse al servidor, por favor verifica tu conexión a Internet.",
         "ID_IN_USE": "La identificación proporcionada ya está en uso",
         "NUMBER_IN_USE": "El número de teléfono proporcionado ya está en uso",
         "INVALID_IDENTITY": "La identificación proporcionada es inválida",
         "COMMENT_LIMIT_REACHED": "La publicación ha alcanzado el límite máximo de comentarios permitidos",
         "DOES_NOT_EXIST": "El recurso solicitado no existe",
         "DOCTOR_INVALID": "El doctor con la información proporcionada no existe",
-        "POST_NOT_FOUND": "No se pudo encontrar esa publicación",
+        "POST_NOT_FOUND": "Esa publicación no pudo ser encontrada",
         "ERROR_DELETING_POST": "Hubo un error al eliminar tu publicación",
-        "ERROR_UPLOADING_IMAGE": "Ocurrió un error al subir la imagen",
+        "ERROR_UPLOADING_IMAGE": "Ha ocurrido un error al subir la imagen",
         "ALREADY_REPORTED": "Ya has reportado este comentario",
         "ALREADY_COMMENTED": "Ya has comentado en esta publicación",
         "COMMENT_NOT_ALLOWED": "No puedes comentar aquí",
         "COMMENT_NOT_FOUND": "Hubo un error al encontrar ese comentario"
-    },
-    "succeses": {
-        "updateData": "¡Tu información ha sido actualizada exitosamente!"
     },
     "verification": {
         "title": "Ingresa el Código de Verificación",
@@ -129,6 +183,20 @@
     },
     "settings": {
         "languages": "Idiomas",
-        "theme": "Tema"
+        "theme": "Tema",
+        "deleteAccount": "Eliminar Cuenta",
+        "confirmDelete": "Confirmar Eliminación",
+        "danger": "Peligro",
+        "credits": "Hecho por Nathan Alspaugh (NotARoomba) y Juan Pablo Sojo"
+    },
+    "user": {
+        "age": "Edad",
+        "ageValue": "{{years}} Años",
+        "altSex": "Sexo Alternativo",
+        "hormones": "¿Toma Hormonas?",
+        "surgery": "¿Ha tenido una cirugía de cambio de sexo?"
+    },
+    "fact": {
+        "test": "¡Dormir adecuadamente reduce tu riesgo de muchas enfermedades!"
     }
 }
