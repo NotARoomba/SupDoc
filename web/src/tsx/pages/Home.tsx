@@ -111,7 +111,7 @@ export default function Home() {
               variants={item}
               className="text-7xl sm:text-4xl font-bold text-center my-8"
             >
-              La plena pelao
+              Beneficios de SupDoc
             </motion.p>
             <div className="bg-gray-700 p-4 rounded-lg">
               <table className="min-w-full border-collapse">
@@ -120,7 +120,7 @@ export default function Home() {
                     <th className="border-b border-gray-600 text-left text-lg font-semibold text-gray-300 px-4 py-2 text-center">
                       Problemas de EPS
                     </th>
-                    <th className="border-b border-gray-600 text-left text-lg font-semibold text-gray-300 px-4 py-2 text-center">
+                    <th className="border-b border-gray-600 text-left text-lg font-semibold text-gray-300 px-4 py-5 text-center">
                       Soluciones de SupDoc
                     </th>
                   </tr>
