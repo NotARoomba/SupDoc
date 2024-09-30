@@ -244,7 +244,7 @@ export default function PostPage() {
                     </Text>
                   </TouchableOpacity>
                 )}
-                <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">
+                <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-medium ">
                   {post.description}
                 </Text>
                 <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />

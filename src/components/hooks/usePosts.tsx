@@ -70,10 +70,13 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? 0 : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
     );
-    if (res.status !== STATUS_CODES.SUCCESS)
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+    }
+      
     setPosts(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
@@ -248,9 +251,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
       return Alert.alert(t("error"), t("errors.postUploading"));
-    }
-      
-    else {
+    } else {
       setPosts([...posts, res.post]);
       resetPostEdit();
       setLoading(false);

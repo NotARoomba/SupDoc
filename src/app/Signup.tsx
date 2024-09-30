@@ -291,8 +291,8 @@ export default function Signup({
                 <DateTimePicker
                   value={new Date(info.dob ?? new Date())}
                   maximumDate={new Date()}
-                  onChange={(d) => {
-                    setInfo({ ...info, dob: d.nativeEvent.timestamp });
+                  onChange={(e, d) => {
+                    setInfo({ ...info, dob: d ? d.getTime() : info.dob });
                   }}
                   style={{
                     marginHorizontal: "auto",

@@ -49,6 +49,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       `/${ut == UserType.DOCTOR ? "doctors" : "patients"}`,
       "GET",
     );
+    setLoading(false);
     if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
     else if (res.status == STATUS_CODES.GENERIC_ERROR)
       return Alert.alert(t("error"), t("errors.fetchData"));
