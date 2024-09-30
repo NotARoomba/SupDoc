@@ -115,7 +115,7 @@ export default function Upload() {
               onPress={() =>
                 postEdit.title && postEdit.description
                   ? Alert.alert(
-                      t("upload.confirmTitle"),
+                      t("confirmTitle"),
                       t("upload.confirmDescription"),
                       [
                         { text: t("buttons.cancel"), style: "cancel" },
