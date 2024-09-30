@@ -55,7 +55,7 @@
         "you": "(You)",
         "emptyComment": "Comment cannot be empty.",
         "reportDelete": "Are you sure you want to {{reportDelete}} the post?",
-        "patientInfo": "Patient Info",
+        "patientProfile": "Patient Profile",
         "comments": "Comments",
         "commentsPatient": "(There are no comments on your post yet)",
         "commentsDoctor": "(There are no comments on this post yet)",

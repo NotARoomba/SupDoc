@@ -7,7 +7,7 @@ import { usePosts } from "components/hooks/usePosts";
 import Loader from "components/loading/Loader";
 import ImageUpload from "components/misc/ImageUpload";
 import * as ImagePicker from "expo-image-picker";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -28,6 +28,7 @@ export default function Upload() {
   const fadeAnim = useFade();
   const gallery = useGallery();
   const camera = useCamera();
+  const {t} = useTranslation();
   const { loading, setLoading } = useLoading();
   const { createPost, resetPostEdit, setPostEdit, postEdit } = usePosts();
   const [activeChange, setActiveChange] = useState(false);
