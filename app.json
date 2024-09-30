@@ -18,7 +18,7 @@
       "es": "./assets/locales/es.json"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "config": {
         "usesNonExemptEncryption": false
       },

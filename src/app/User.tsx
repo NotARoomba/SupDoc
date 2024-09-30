@@ -87,7 +87,7 @@ export default function UserPage() {
               exiting={FadeOut.duration(250)}
               className="text-ivory h-fit  text font-bold text-center m-auto"
             >
-              Back
+              {t("buttons.back")}
             </Reanimated.Text>
           </TouchableOpacity>
           {/* <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
@@ -99,12 +99,12 @@ Post
             className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
               Alert.alert(
-                "Confirm",
-                `Are you sure you want to report the ${(ut as string).toLowerCase()}?`,
+                t("Confirm"),
+                t(`report.user`, {user: (ut as string).toLowerCase() == UserType.DOCTOR ? t("doctor") : t("patient")}),
                 [
-                  { text: "Cancel", style: "cancel" },
+                  { text: t("buttons.cancel"), style: "cancel" },
                   {
-                    text: "Report",
+                    text: t("buttons.report"),
                     style: "destructive",
                     onPress: () =>
                       reportUser(routes.id as string, ut as UserType),
@@ -115,7 +115,7 @@ Post
           >
             {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
             <Text className="text-ivory h-fit font-bold text-center m-auto">
-              Report
+              {t("buttons.report")}
             </Text>
           </TouchableOpacity>
         </View>

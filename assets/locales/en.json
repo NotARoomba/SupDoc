@@ -4,7 +4,6 @@
     "NSPhotoLibraryUsageDescription": "SupDoc needs access to your gallery to upload photos!",
     "success": "Success!",
     "error": "Error",
-    "cancel": "Cancel",
     "check": "Check",
     "loading": "Loading",
     "yes": "Yes",
@@ -62,7 +61,12 @@
         "commentsDoctor": "(There are no comments on this post yet)",
         "postReply" : "Post Reply",
         "postComment": "Post Comment",
-        "cancelReply": "Cancel Reply"
+        "cancelReply": "Cancel Reply",
+        "replyComment": "Reply to comment...",
+        "addComment": "Add a comment..."
+    },
+    "report": {
+        "user": "Are you sure you want to report the {{user}}?"
     },
     "titles": {
         "login": "Login",
@@ -107,7 +111,8 @@
             "light": "Light"
         },
         "confirmDelete": "Confirm Delete",
-        "deleteAccount": "Delete Account"
+        "deleteAccount": "Delete Account",
+        "cancel": "Cancel"
     },
     "successes": {
         "login": "You are now logged in",

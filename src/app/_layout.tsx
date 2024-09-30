@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Platform, SafeAreaView, View } from "react-native";
 import { useLanguageUpdater } from "../components/utils/i18n";
 import Index from "./Index";
+// import { logout } from "components/utils/Functions";
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {

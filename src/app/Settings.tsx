@@ -70,7 +70,7 @@ export default function Settings() {
     } else {
       Alert.alert("Logout", "Are you sure you want to delete your account?", [
         {
-          text: t("cancel"),
+          text: t("buttons.cancel"),
           style: "cancel",
           onPress: () => setIsConfirmDelete(false),
         },
@@ -123,7 +123,7 @@ export default function Settings() {
             className="z-50 opacity-0 w-24 px-5 h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
               Alert.alert(t("buttons.logout"), "Are you sure you want to logout?", [
-                { text: t("cancel"), style: "cancel" },
+                { text: t("buttons.cancel"), style: "cancel" },
                 {
                   text: t("buttons.logout"),
                   style: "destructive",

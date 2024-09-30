@@ -103,7 +103,7 @@ export default function Upload() {
                 exiting={FadeOut.duration(250)}
                 className="text-ivory h-fit  text font-bold text-center m-auto"
               >
-                {keyboardOpen ? t("cancel") : t("buttons.clear")}
+                {keyboardOpen ? t("buttons.cancel") : t("buttons.clear")}
               </Reanimated.Text>
             </TouchableOpacity>
             <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
@@ -117,7 +117,7 @@ export default function Upload() {
                       t("upload.confirmTitle"),
                       t("upload.confirmDescription"),
                       [
-                        { text: t("cancel"), style: "cancel" },
+                        { text: t("buttons.cancel"), style: "cancel" },
                         {
                           text: t("buttons.post"),
                           onPress: () => createPost(),
@@ -214,7 +214,7 @@ export default function Upload() {
                         });
                     },
                   },
-                  { text: t("cancel"), style: "cancel" },
+                  { text: t("buttons.cancel"), style: "cancel" },
                 ])
               }
               className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"

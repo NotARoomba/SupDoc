@@ -260,7 +260,7 @@ export default function Signup({
             />
           </View>
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            {userType == UserType.DOCTOR ? "Cedula" : "Cedula/TI"}
+            {userType == UserType.DOCTOR ? t("inputs.identification") : (t("inputs.identification") + t("inputs.TI"))}
           </Text>
           <TextInput
             onChangeText={(id) =>
@@ -907,7 +907,7 @@ export default function Signup({
                         setInfo({ ...info, license: [...info.license, i] });
                     },
                   },
-                  { text: t("cancel"), style: "cancel" },
+                  { text: t("buttons.cancel"), style: "cancel" },
                 ])
               }
               className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
@@ -943,7 +943,7 @@ export default function Signup({
                         picture: (await selectImage("camera")) ?? info.picture,
                       }),
                   },
-                  { text: t("cancel"), style: "cancel" },
+                  { text: t("buttons.cancel"), style: "cancel" },
                 ])
               }
               className=" w-64 h-64 mx-auto  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
@@ -994,7 +994,7 @@ export default function Signup({
                                   (await selectImage("camera")) ?? info.picture,
                               }),
                           },
-                          { text: t("cancel"), style: "cancel" },
+                          { text: t("buttons.cancel"), style: "cancel" },
                         ])
                       }
                       className="m-auto p-4"

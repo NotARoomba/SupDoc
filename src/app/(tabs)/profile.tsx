@@ -159,7 +159,7 @@ export default function Profile() {
             userEdit?.number,
           [
             {
-              text: t("cancel"),
+              text: t("buttons.cancel"),
               style: "cancel",
               onPress: () => {
                 setLoading(false);
@@ -238,7 +238,7 @@ export default function Profile() {
             className="z-50 p-1"
             onPress={() =>
               Alert.alert(t("profile.logoutTitle"), t("logoutDescription"), [
-                { text: t("cancel"), style: "cancel" },
+                { text: t("buttons.cancel"), style: "cancel" },
                 {
                   text: t("profile.logoutTitle"),
                   style: "destructive",
@@ -347,7 +347,7 @@ export default function Profile() {
                                                 }),
                                             },
                                             {
-                                              text: t("cancel"),
+                                              text: t("buttons.cancel"),
                                               style: "cancel",
                                             },
                                           ],

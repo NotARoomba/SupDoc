@@ -103,7 +103,7 @@ export default function PostPage() {
                 exiting={FadeOut.duration(250)}
                 className="text-ivory h-fit  text font-bold text-center m-auto"
               >
-                {keyboardOpen ? t("cancel") : t("buttons.back")}
+                {keyboardOpen ? t("buttons.cancel") : t("buttons.back")}
               </Reanimated.Text>
             </TouchableOpacity>
             {/* <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
@@ -118,7 +118,7 @@ export default function PostPage() {
                     reportDelete: userType == UserType.DOCTOR ? t("report") : t("delete")
                   }),
                   [
-                    { text: t("cancel"), style: "cancel" },
+                    { text: t("buttons.cancel"), style: "cancel" },
                     {
                       text: userType == UserType.DOCTOR ? t("report") : t("delete"),
                       style: "destructive",
@@ -271,7 +271,7 @@ export default function PostPage() {
         >
           <TextInput
             placeholder={
-              replyingTo ? "Reply to comment..." : "Add a comment..."
+              replyingTo ? t("posts.replyComment") : t("posts.addComment")
             }
             value={commentText}
             onChangeText={setCommentText}

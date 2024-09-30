@@ -36,7 +36,7 @@ export default function ImageUpload({
                   t("images.removeTitle"),
                   t("image.removeDescription"),
                   [
-                    { text: t("cancel"), style: "cancel" },
+                    { text: t("buttons.cancel"), style: "cancel" },
                     {
                       text: t("remove"),
                       style: "destructive",
