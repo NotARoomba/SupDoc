@@ -122,7 +122,7 @@ export default function Settings() {
             disabled
             className="z-50 opacity-0 w-24 px-5 h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
-              Alert.alert("Logout", "Are you sure you want to logout?", [
+              Alert.alert(t("buttons.logout"), "Are you sure you want to logout?", [
                 { text: t("cancel"), style: "cancel" },
                 {
                   text: t("buttons.logout"),
@@ -145,7 +145,7 @@ export default function Settings() {
           }
         >
           <Text className="text-ivory text-3xl font-bold text-center mb-2">
-            {("buttons.theme")}
+            {t("buttons.theme")}
           </Text>
           <Slider
             options={[t("buttons.themes.dark"), t("buttons.themes.light")]}
