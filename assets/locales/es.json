@@ -18,7 +18,7 @@
         "last": "Apellido",
         "number": "Número de Teléfono",
         "identification": "Identificación",
-        "TI": "",
+        "TI": "/TI",
         "dob": "Fecha de Nacimiento",
         "height": "Altura (cm)",
         "blood": "Grupo Sanguíneo",
