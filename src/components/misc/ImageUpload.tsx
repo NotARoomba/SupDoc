@@ -38,7 +38,7 @@ export default function ImageUpload({
                   [
                     { text: t("buttons.cancel"), style: "cancel" },
                     {
-                      text: t("remove"),
+                      text: t("images.remove"),
                       style: "destructive",
                       onPress: () => removeImage(image),
                     },
