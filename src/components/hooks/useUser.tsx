@@ -14,13 +14,12 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import { useLoading } from "./useLoading";
-import { ObjectId } from "mongodb";
 
 interface UserContextType {
   user: User;
   userEdit: User;
   userType: UserType | undefined;
-  reportUser: (id: string, userType: UserType) => void
+  reportUser: (id: string, userType: UserType) => void;
   deleteUser: () => void;
   fetchUser: () => Promise<void>;
   setUser: (user: User) => void;
@@ -50,6 +49,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       `/${ut == UserType.DOCTOR ? "doctors" : "patients"}`,
       "GET",
     );
+    setLoading(false);
     if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
     else if (res.status == STATUS_CODES.GENERIC_ERROR)
       return Alert.alert(t("error"), t("errors.fetchData"));
@@ -70,21 +70,18 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         userType as UserType,
         false,
       );
-      const res = await callAPI(
-        `/users/report`,
-        "POST",
-        {
-          id,
-          userType: ut,
-          reason, evidence
-        },
-      );
+      const res = await callAPI(`/users/report`, "POST", {
+        id,
+        userType: ut,
+        reason,
+        evidence,
+      });
       if (res.status !== STATUS_CODES.SUCCESS) {
         return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
       }
       Alert.alert(t("success"), t("successes.reportComment"));
     } catch {}
-  }
+  };
 
   const deleteUser = async () => {
     const res = await callAPI("/users/delete", "POST", { userType });

@@ -52,7 +52,7 @@ export default function Index() {
           <FunFact />
           <View className="h-0.5 rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
           <Text className="text-4xl font-bold text-center text-ivory">
-            {t("titles.posts")}
+            {t("titles.userPosts")}
           </Text>
           {posts.length == 0 ? (
             !userType ? (

@@ -70,7 +70,8 @@
         "register": "Register",
         "personal": "Personal Information",
         "fact": "Fun Fact",
-        "posts": "Your Posts",
+        "posts": "Posts",
+        "userPosts": "Your Posts",
         "feed": "Feed",
         "pins": "Pins",
         "settings": "Settings",
@@ -112,7 +113,8 @@
         "login": "You are now logged in",
         "signup": "You are now registered",
         "deletePost": "Sucessfully deleted your post",
-        "reportComment": "Successfully reported the comment!"
+        "reportComment": "Successfully reported the comment!",
+        "updateData": "Successfully updated your information!"
     },
     "errors": {
         "createUser": "There was an error creating a user",
@@ -155,9 +157,6 @@
         "COMMENT_NOT_ALLOWED": "You cannot comment here",
         "COMMENT_NOT_FOUND": "There was an error finding that comment"
     },
-    "succeses": {
-        "updateData": "Successfully updated your information!"
-    },
     "verification": {
         "title": "Enter Verification Code",
         "description": "Enter the verification code sent to: "
@@ -165,6 +164,19 @@
     "settings": {
         "languages": "Languages",
         "theme": "Theme",
-        "credits": "Made By Nathan Alspaugh and Juan Pablo Sojo"
+        "deleteAccount": "Delete Account",
+        "confirmDelete": "Confirm Delete",
+        "danger": "Danger",
+        "credits": "Made by Nathan Alspaugh (NotARoomba) and Juan Pablo Sojo"
+    },
+    "user": {
+        "age": "Age",
+        "ageValue": "{{years}} Years",
+        "altSex": "Alternate Sex",
+        "hormones": "Takes Hormones?",
+        "surgery": "Has had a sex-changing surgery?"
+    },
+    "fact": {
+        "test": "¡Dormir adecuadamente reduce tu riesgo de muchas enfermedades!"
     }
 }

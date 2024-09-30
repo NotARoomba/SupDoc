@@ -291,8 +291,8 @@ export default function Signup({
                 <DateTimePicker
                   value={new Date(info.dob ?? new Date())}
                   maximumDate={new Date()}
-                  onChange={(d) => {
-                    setInfo({ ...info, dob: d.nativeEvent.timestamp });
+                  onChange={(e, d) => {
+                    setInfo({ ...info, dob: d ? d.getTime() : info.dob });
                   }}
                   style={{
                     marginHorizontal: "auto",
@@ -707,7 +707,7 @@ export default function Signup({
               secureTextEntry
               keyboardType="default"
               placeholderTextColor={"#ffffff"}
-              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
             />
             <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
               {t("inputs.passwordChk")}
@@ -719,7 +719,7 @@ export default function Signup({
               secureTextEntry
               keyboardType="default"
               placeholderTextColor={"#ffffff"}
-              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
             />
           </Animated.View>
         )

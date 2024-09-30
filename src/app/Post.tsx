@@ -41,7 +41,7 @@ export default function PostPage() {
   const routes = useLocalSearchParams();
   const fadeAnim = useFade();
   const { userType } = useUser();
-  const {loading, setLoading} = useLoading();
+  const { loading, setLoading } = useLoading();
   const { deletePost, reportPost, addComment, likeComment, posts } = usePosts();
   const [post, setPost] = useState<Post>();
   const [commentText, setCommentText] = useState("");
@@ -52,7 +52,8 @@ export default function PostPage() {
   const { t } = useTranslation();
   useEffect(() => {
     setPost(posts.find((v) => v._id?.toString() == routes.id));
-  }, [posts]);
+    setReplyingTo(null);
+  }, [posts, routes]);
 
   const handleAddComment = async () => {
     setLoading(true);
@@ -75,7 +76,8 @@ export default function PostPage() {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "position" : "position"}
       style={{ flex: 1 }}
-    ><Loading/>
+    >
+      <Loading />
       <ScrollView className="flex h-full">
         <SafeAreaView className="bg-richer_black" />
         <Animated.View

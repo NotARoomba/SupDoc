@@ -64,8 +64,8 @@ export default function Profile() {
   const { t } = useTranslation();
   useEffect(() => {
     if (!user) {
-      Alert.alert(t('error'), t('errors.fetchData'))
-      return router.navigate('/');
+      Alert.alert(t("error"), t("errors.fetchData"));
+      return router.navigate("/");
     }
     const fetchData = async () => {
       // setLoading(true);
@@ -87,15 +87,21 @@ export default function Profile() {
       userEdit &&
       user &&
       isDoctorInfo(userType, userEdit) &&
-      isDoctorInfo(userType, user) &&
-      userEdit.picture !== user.picture
+      isDoctorInfo(userType, user)
     ) {
-      const res = await uploadImages([userEdit.picture]);
-      if (res.status !== STATUS_CODES.SUCCESS) {
-        setLoading(false);
-        return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+      if (userEdit.picture !== user.picture) {
+        const res = await uploadImages([userEdit.picture]);
+        if (res.status !== STATUS_CODES.SUCCESS) {
+          setLoading(false);
+          return Alert.alert(
+            t("error"),
+            t(`errors.${STATUS_CODES[res.status]}`),
+          );
+        }
+        doctorStuff = { picture: res.urls[0] };
+      } else {
+        doctorStuff = { picture: null };
       }
-      doctorStuff = { picture: res.urls[0] };
     }
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/update`,
@@ -139,45 +145,51 @@ export default function Profile() {
       });
       if (verify.status !== STATUS_CODES.SUCCESS) {
         setLoading(false);
-        return Alert.alert(t("error"), t(`errors.${STATUS_CODES[verify.status]}`));
+        return Alert.alert(
+          t("error"),
+          t(`errors.${STATUS_CODES[verify.status]}`),
+        );
       }
-        setLoading(false);
-        setTimeout(() => {
-          return prompt(
-            t("verification.title"),
-            t("verification.description") +
-              countryCode.slice(4) +
-              userEdit?.number,
-            [
-              {
-                text: t("cancel"),
-                style: "cancel",
-                onPress: () => {
+      setLoading(false);
+      setTimeout(() => {
+        return prompt(
+          t("verification.title"),
+          t("verification.description") +
+            countryCode.slice(4) +
+            userEdit?.number,
+          [
+            {
+              text: t("cancel"),
+              style: "cancel",
+              onPress: () => {
+                setLoading(false);
+              },
+            },
+            {
+              text: t("check"),
+              isPreferred: true,
+              onPress: async (input) => {
+                setLoading(true);
+                const v = await callAPI("/verify/code/check", "POST", {
+                  number: countryCode.slice(4) + userEdit?.number,
+                  input,
+                });
+                if (v.status !== STATUS_CODES.SUCCESS) {
                   setLoading(false);
-                },
+                  return Alert.alert(
+                    t("error"),
+                    `errors.${STATUS_CODES[v.status]}`,
+                  );
+                }
+                updateUser();
               },
-              {
-                text: t("check"),
-                isPreferred: true,
-                onPress: async (input) => {
-                  setLoading(true);
-                  const v = await callAPI("/verify/code/check", "POST", {
-                    number: countryCode.slice(4) + userEdit?.number,
-                    input,
-                  });
-                  if (v.status !== STATUS_CODES.SUCCESS) {
-                    setLoading(false);
-                    return Alert.alert(t("error"), `errors.${STATUS_CODES[v.status]}`);
-                  }
-                  updateUser();
-                },
-              },
-            ],
-            "plain-text",
-            "",
-            "number-pad",
-          );
-        }, 250);
+            },
+          ],
+          "plain-text",
+          "",
+          "number-pad",
+        );
+      }, 250);
     } else await updateUser();
   };
   const selectImage = async (pickerType: "camera" | "gallery") => {
@@ -334,7 +346,10 @@ export default function Profile() {
                                                     )) ?? userEdit.picture,
                                                 }),
                                             },
-                                            { text: t("cancel"), style: "cancel" },
+                                            {
+                                              text: t("cancel"),
+                                              style: "cancel",
+                                            },
                                           ],
                                         )
                                       }
@@ -482,7 +497,9 @@ export default function Profile() {
                                   },
                                 })
                               }
-                              selected={userEdit.info.pregnant ? t("yes") : t("no")}
+                              selected={
+                                userEdit.info.pregnant ? t("yes") : t("no")
+                              }
                             />
                           </View>
                         )}
@@ -596,7 +613,9 @@ export default function Profile() {
                                   },
                                 })
                               }
-                              selected={userEdit.info.hormones ? t("yes") : t("no")}
+                              selected={
+                                userEdit.info.hormones ? t("yes") : t("no")
+                              }
                             />
                             <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
                               {t("inputs.surgery")}
@@ -612,7 +631,9 @@ export default function Profile() {
                                   },
                                 })
                               }
-                              selected={userEdit.info.surgery ? t("yes") : t("no")}
+                              selected={
+                                userEdit.info.surgery ? t("yes") : t("no")
+                              }
                             />
                           </Reanimated.View>
                         )}
@@ -639,7 +660,7 @@ export default function Profile() {
                           className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
                         />
                         <Text className="text-center flex text-lg text-ivory -mb-3 mt-4 font-semibold">
-                         {t("inputs.bio")} ({userEdit.info.about.length}/300)
+                          {t("inputs.bio")} ({userEdit.info.about.length}/300)
                         </Text>
                         <TextInput
                           onChangeText={(n) =>

@@ -60,54 +60,6 @@ doctorsRouter.get("/", async (req: Request, res: Response) => {
       );
   }
 });
-doctorsRouter.get("/id/:id", async (req: Request, res: Response) => {
-  const id = new ObjectId(req.params.id);
-  try {
-    let user: Doctor | null = null;
-    if (collections.doctors) {
-      user = (await collections.doctors.findOne({
-        _id: id,
-      })) as unknown as Doctor;
-    }
-    if (user) {
-      user.identification.license = [];
-      user.comments = [];
-      user.saved = [];
-      user.publicKey = ""
-      user.privateKey = ""
-      user.reports = []
-      res.status(200).send(
-        encrypt(
-          {
-            user: { ...user, picture: await generateSignedUrl(user.picture) },
-            status: STATUS_CODES.SUCCESS,
-          },
-          req.headers.authorization,
-        ),
-      );
-    } else {
-      res.status(404).send(
-        encrypt(
-          {
-            user: null,
-            status: STATUS_CODES.USER_NOT_FOUND,
-          },
-          req.headers.authorization,
-        ),
-      );
-    }
-  } catch (error) {
-    console.log(error);
-    res
-      .status(404)
-      .send(
-        encrypt(
-          { status: STATUS_CODES.GENERIC_ERROR },
-          req.headers.authorization,
-        ),
-      );
-  }
-});
 
 doctorsRouter.post(
   "/create",
