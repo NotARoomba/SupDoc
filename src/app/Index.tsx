@@ -220,7 +220,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         password: "",
       } as LoginInfo);
     }
-  }, [userType]);
+  }, [userType, isLogin]);
   const parseLogin = async () => {
     setLoading(true);
     const doesExist = await callAPI(`/users/check`, "POST", {

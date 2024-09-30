@@ -32,6 +32,7 @@ interface PostsContextType {
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
+  addPosts: (newPosts: Post[]) => void;
   setPostEdit: (post: Post) => void;
   resetPostEdit: () => void;
   fetchPosts: () => Promise<void>;
@@ -102,6 +103,14 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       : [...savedPosts, post];
     setSavedPosts(updatedSavedPosts);
     return true;
+  };
+
+  const addPosts = (newPosts: Post[]) => {
+    let finalPosts: Post[] = [];
+    newPosts.forEach((v) =>
+      !posts.find((z) => z._id == v._id) ? finalPosts.push(v) : 0,
+    );
+    setPosts([...posts, ...finalPosts]);
   };
 
   const deletePost = async (id: string) => {
@@ -176,9 +185,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
     try {
-      const { reason, evidence } = await handleReport(
-        userType as UserType,
-      );
+      const { reason, evidence } = await handleReport(userType as UserType);
       const res = await callAPI(
         `/posts/${post}/comments/${commentID}/report`,
         "POST",
@@ -260,6 +267,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       postEdit,
       savedPosts,
       listRef,
+      addPosts,
       setPostEdit,
       resetPostEdit,
       createPost,

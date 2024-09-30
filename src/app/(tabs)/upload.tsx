@@ -113,17 +113,18 @@ export default function Upload() {
               className="z-50 w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
               onPress={() =>
                 postEdit.title && postEdit.description
-                  ? Alert.alert(t("upload.confirmTitle"), t("upload.confirmDescription"), [
-                      { text: t("cancel"), style: "cancel" },
-                      {
-                        text: t("buttons.post"),
-                        onPress: () => createPost(),
-                      },
-                    ])
-                  : Alert.alert(
-                      t("error"),
-                      t("errors.fillmissing"),
+                  ? Alert.alert(
+                      t("upload.confirmTitle"),
+                      t("upload.confirmDescription"),
+                      [
+                        { text: t("cancel"), style: "cancel" },
+                        {
+                          text: t("buttons.post"),
+                          onPress: () => createPost(),
+                        },
+                      ],
                     )
+                  : Alert.alert(t("error"), t("errors.fillmissing"))
               }
             >
               {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}

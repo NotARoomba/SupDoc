@@ -18,7 +18,7 @@ export default function Login({ info, setInfo, index, userType }: LoginProps) {
       <View>
         <Text className="text-center text-lg text-ivory -mb-2 mt-4 font-semibold">
           {t("inputs.identification")}
-          {userType == UserType.PATIENT && "/" + t("inputs.TI")}
+          {userType == UserType.PATIENT && t("inputs.TI")}
         </Text>
         <TextInput
           onChangeText={(id) =>

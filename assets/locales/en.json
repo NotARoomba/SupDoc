@@ -61,7 +61,8 @@
         "register": "Register",
         "personal": "Personal Information",
         "fact": "Fun Fact",
-        "posts": "Your Posts",
+        "posts": "Posts",
+        "userPosts": "Your Posts",
         "feed": "Feed",
         "pins": "Pins",
         "settings": "Settings",
@@ -146,6 +147,16 @@
     "settings": {
         "languages": "Languages",
         "theme": "Theme",
-        "credits": "Made By Nathan Alspaugh and Juan Pablo Sojo"
+        "deleteAccount": "Delete Account",
+        "confirmDelete": "Confirm Delete",
+        "danger": "Danger",
+        "credits": "Made by Nathan Alspaugh (NotARoomba) and Juan Pablo Sojo"
+    },
+    "user": {
+        "age": "Age",
+        "ageValue": "{{years}} Years",
+        "altSex": "Alternate Sex",
+        "hormones": "Takes Hormones?",
+        "surgery": "Has had a sex-changing surgery?"
     }
 }

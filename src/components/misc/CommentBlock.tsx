@@ -6,8 +6,8 @@ import { CommentBlockProps } from "components/utils/Types";
 import { router } from "expo-router";
 import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
+import { Text, TouchableOpacity, View } from "react-native";
 import Reanimated, {
   FadeInDown,
   FadeInUp,
@@ -86,10 +86,22 @@ export default function CommentBlock({
                 setReplyingTo(comment._id == replyingTo ? null : comment._id);
               }}
             >
-              <TouchableOpacity onPress={() => router.navigate({pathname: comment.commenter == user._id ? '/(tabs)/profile':"/User", params: {id: comment.commenter.toString() as string}})}>
-              <Text className="text-powder_blue text-lg font-bold">
-                {comment.name}{" "}{comment.commenter == user._id ? t("you") : ''}
-              </Text></TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  router.navigate({
+                    pathname:
+                      comment.commenter == user._id
+                        ? "/(tabs)/profile"
+                        : "/User",
+                    params: { id: comment.commenter.toString() as string },
+                  })
+                }
+              >
+                <Text className="text-powder_blue text-lg font-bold">
+                  {comment.name}{" "}
+                  {comment.commenter == user._id ? t("posts.you") : ""}
+                </Text>
+              </TouchableOpacity>
               <Text className="text-ivory text-md">{comment.text}</Text>
 
               <View className="flex flex-row mt-2 justify-between">

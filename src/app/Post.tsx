@@ -41,7 +41,7 @@ export default function PostPage() {
   const routes = useLocalSearchParams();
   const fadeAnim = useFade();
   const { userType } = useUser();
-  const {loading, setLoading} = useLoading();
+  const { loading, setLoading } = useLoading();
   const { deletePost, reportPost, addComment, likeComment, posts } = usePosts();
   const [post, setPost] = useState<Post>();
   const [commentText, setCommentText] = useState("");
@@ -52,7 +52,8 @@ export default function PostPage() {
   const { t } = useTranslation();
   useEffect(() => {
     setPost(posts.find((v) => v._id?.toString() == routes.id));
-  }, [posts]);
+    setReplyingTo(null);
+  }, [posts, routes]);
 
   const handleAddComment = async () => {
     setLoading(true);
@@ -75,7 +76,8 @@ export default function PostPage() {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "position" : "position"}
       style={{ flex: 1 }}
-    ><Loading/>
+    >
+      <Loading />
       <ScrollView className="flex h-full">
         <SafeAreaView className="bg-richer_black" />
         <Animated.View
@@ -227,9 +229,21 @@ export default function PostPage() {
                 </View>
               )}
               <View className="-z-10">
-              {userType == UserType.DOCTOR && <TouchableOpacity onPress={() => router.navigate({pathname: "/User", params: {id: post.patient.toString()}})} className="bg-oxford_blue w-11/12 mx-auto mb-4 px-5 py-2 rounded-xl">
-                  <Text className="text-ivory text-center font-semibold text-lg  ">Patient Info</Text>
-                </TouchableOpacity>}
+                {userType == UserType.DOCTOR && (
+                  <TouchableOpacity
+                    onPress={() =>
+                      router.navigate({
+                        pathname: "/User",
+                        params: { id: post.patient.toString() },
+                      })
+                    }
+                    className="bg-oxford_blue w-11/12 mx-auto mb-4 px-5 py-2 rounded-xl"
+                  >
+                    <Text className="text-ivory text-center font-semibold text-lg  ">
+                      Patient Info
+                    </Text>
+                  </TouchableOpacity>
+                )}
                 <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">
                   {post.description}
                 </Text>
@@ -259,51 +273,54 @@ export default function PostPage() {
           )}
         </Animated.View>
       </ScrollView>
-      {post?.comments.length !== 0 && userType == UserType.PATIENT && <View className="absolute flex w-full bottom-6">
-        <Reanimated.View
-          entering={FadeInUp.delay(500)}
-          exiting={FadeOutDown.duration(500)}
-          className=" mx-auto w-11/12"
-        >
-          <TextInput
-            placeholder={
-              replyingTo ? "Reply to comment..." : "Add a comment..."
-            }
-            value={commentText}
-            onChangeText={setCommentText}
-            className="bg-gray-700 text-ivory p-3 rounded-lg"
-          />
-          <TouchableOpacity
-            onPress={handleAddComment}
-            className="mt-2 bg-midnight_green p-3 rounded-lg"
-          >
-            <Reanimated.Text
-              entering={FadeIn.duration(500)}
-              exiting={FadeOut.duration(500)}
-              className="text-ivory text-center font-bold"
-            >
-              {replyingTo ? "Post Reply" : "Post Comment"}
-            </Reanimated.Text>
-          </TouchableOpacity>
-
-          {replyingTo && (
+      {(post?.comments.length !== 0 && userType == UserType.PATIENT) ||
+        (userType == UserType.DOCTOR && (
+          <View className="absolute flex w-full bottom-6">
             <Reanimated.View
-              entering={FadeInUp.duration(300)}
-              exiting={FadeOutDown.duration(300)}
-              className="mb-2"
+              entering={FadeInUp.delay(500)}
+              exiting={FadeOutDown.duration(500)}
+              className=" mx-auto w-11/12"
             >
+              <TextInput
+                placeholder={
+                  replyingTo ? "Reply to comment..." : "Add a comment..."
+                }
+                value={commentText}
+                onChangeText={setCommentText}
+                className="bg-gray-700 text-ivory p-3 rounded-lg"
+              />
               <TouchableOpacity
-                onPress={handleStopReply}
-                className="mt-2 bg-red-500 p-3 rounded-lg"
+                onPress={handleAddComment}
+                className="mt-2 bg-midnight_green p-3 rounded-lg"
               >
-                <Text className="text-ivory text-center font-bold">
-                  Cancel Reply
-                </Text>
+                <Reanimated.Text
+                  entering={FadeIn.duration(500)}
+                  exiting={FadeOut.duration(500)}
+                  className="text-ivory text-center font-bold"
+                >
+                  {replyingTo ? "Post Reply" : "Post Comment"}
+                </Reanimated.Text>
               </TouchableOpacity>
+
+              {replyingTo && (
+                <Reanimated.View
+                  entering={FadeInUp.duration(300)}
+                  exiting={FadeOutDown.duration(300)}
+                  className="mb-2"
+                >
+                  <TouchableOpacity
+                    onPress={handleStopReply}
+                    className="mt-2 bg-red-500 p-3 rounded-lg"
+                  >
+                    <Text className="text-ivory text-center font-bold">
+                      Cancel Reply
+                    </Text>
+                  </TouchableOpacity>
+                </Reanimated.View>
+              )}
             </Reanimated.View>
-          )}
-        </Reanimated.View>
-      </View>}
+          </View>
+        ))}
     </KeyboardAvoidingView>
   );
 }

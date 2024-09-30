@@ -17,7 +17,7 @@
         "last": "Apellido",
         "number": "Número de Teléfono",
         "identification": "Cedula",
-        "TI": "TI",
+        "TI": "/TI",
         "dob": "Fecha de Nacimiento",
         "height": "Altura (cm)",
         "blood": "Tipo de Sangre",
@@ -49,7 +49,8 @@
         "register": "Registrar",
         "personal": "Información Personal",
         "fact": "Dato Curioso",
-        "posts": "Tus Publicaciones",
+        "posts": "Publicaciones",
+        "userPosts": "Tus Publicaciones",
         "feed": "Feed",
         "pins": "Guardados",
         "settings": "Configuración"

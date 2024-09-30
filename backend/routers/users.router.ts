@@ -61,7 +61,14 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
         res.status(200).send(
           encrypt(
             {
-              user: { ...user, posts },
+              user: { ...user, posts: await Promise.all(
+                posts.map(async (v) => ({
+                  ...v,
+                  images: await Promise.all(
+                    v.images.map(async (v) => await generateSignedUrl(v)),
+                  ),
+                })),
+              ) },
               status: STATUS_CODES.SUCCESS,
             },
             req.headers.authorization,
@@ -138,7 +145,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
       else if (user.identification.number == id)
         return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
       else if (user.number == number)
-        res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
+        return res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
     }
   } catch (error) {
     if (error instanceof MongoCryptError) {

@@ -58,7 +58,7 @@ export async function callAPI(
         method === "POST"
           ? (
               await axios.post(
-                (process.env.EXPO_PUBLIC_API_URL + endpoint),
+                process.env.EXPO_PUBLIC_API_URL + endpoint,
                 magic,
                 {
                   method: method,
@@ -71,7 +71,7 @@ export async function callAPI(
               )
             ).data
           : (
-              await axios.get((process.env.EXPO_PUBLIC_API_URL + endpoint), {
+              await axios.get(process.env.EXPO_PUBLIC_API_URL + endpoint, {
                 method: method,
                 headers: {
                   Accept: "application/json",
