@@ -75,6 +75,7 @@ export default function Profile() {
         );
         setAltSexValue(user.info.sex as Sex);
       }
+      console.log(user, userEdit);
       // setLoading(false);
     };
     fetchData();

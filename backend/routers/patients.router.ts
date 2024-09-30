@@ -1,9 +1,9 @@
+import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import Patient from "../models/patient";
 import Post from "../models/post";
 import { STATUS_CODES } from "../models/util";
-import CryptoJS from "crypto-js";
 import {
   collections,
   createKey,
@@ -69,41 +69,19 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
   // console.log(ret.data.text);
   // if (!ret.data.text.includes(data.identification.number.toString()))
   //   return res.status(200).send({ status: STATUS_CODES.INVALID_IDENTITY });
-  const keyAltName = CryptoJS.SHA256(data.identification.number.toString(2)).toString();
+  const keyAltName = CryptoJS.SHA256(
+    data.identification.number.toString(2),
+  ).toString();
   try {
     const keyUDID = await createKey([
       keyAltName,
-      CryptoJS.SHA256(data.number
-        .split("")
-        .map((bin) => bin.charCodeAt(0).toString(2))
-        .join("")).toString(),
+      CryptoJS.SHA256(
+        data.number
+          .split("")
+          .map((bin) => bin.charCodeAt(0).toString(2))
+          .join(""),
+      ).toString(),
     ]);
-    const sexData =
-      data.info.altSex && data.info.altSex !== data.info.sex
-        ? {
-            altSex: await encryption.encrypt(data.info.altSex, {
-              keyAltName,
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-            }),
-            hormones: await encryption.encrypt(data.info.hormones, {
-              keyAltName,
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-            }),
-            surgery: await encryption.encrypt(data.info.surgery, {
-              keyAltName,
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-            }),
-            sex: await encryption.encrypt(data.info.sex, {
-              keyAltName,
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-            }),
-          }
-        : {
-            sex: await encryption.encrypt(data.info.sex, {
-              keyAltName,
-              algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-            }),
-          };
     if (collections.patients) {
       const ins = await collections.patients.insertOne({
         // UserBase fields
@@ -163,14 +141,27 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
             keyAltName,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
           }),
-          ...sexData,
+          altSex: await encryption.encrypt(data.info.altSex ?? data.info.sex, {
+            keyAltName,
+            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+          }),
+          hormones: await encryption.encrypt(data.info.hormones ?? false, {
+            keyAltName,
+            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+          }),
+          surgery: await encryption.encrypt(data.info.surgery ?? false, {
+            keyAltName,
+            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+          }),
+          sex: await encryption.encrypt(data.info.sex, {
+            keyAltName,
+            algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+          }),
         },
         // Posts field
         posts: [],
       });
-      await createKey([
-        CryptoJS.SHA256(ins.insertedId.toString()).toString(),
-      ]);
+      await createKey([CryptoJS.SHA256(ins.insertedId.toString()).toString()]);
       res.send(
         encrypt({ status: STATUS_CODES.SUCCESS }, req.headers.authorization),
       );
@@ -188,14 +179,18 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
 
 patientsRouter.post("/update", async (req: Request, res: Response) => {
   const data: Patient = req.body;
-  const keyAltName = CryptoJS.SHA256(data.identification.number.toString(2)).toString();
+  const keyAltName = CryptoJS.SHA256(
+    data.identification.number.toString(2),
+  ).toString();
   try {
     const keyUDID = await createKey([
       keyAltName,
-      CryptoJS.SHA256(data.number
-        .split("")
-        .map((bin) => String.fromCharCode(parseInt(bin, 2)))
-        .join("")).toString(),
+      CryptoJS.SHA256(
+        data.number
+          .split("")
+          .map((bin) => String.fromCharCode(parseInt(bin, 2)))
+          .join(""),
+      ).toString(),
     ]);
     if (collections.patients) {
       const upd = await collections.patients.findOneAndUpdate(

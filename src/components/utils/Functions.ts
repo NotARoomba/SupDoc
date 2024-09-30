@@ -12,8 +12,7 @@ import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { RSA } from "react-native-rsa-native";
 import { SignupInfo, UserType } from "./Types";
-import { useTranslation } from "react-i18next";
-const { t } = useTranslation();
+
 export async function callAPI(
   endpoint: string,
   method: string,
@@ -27,7 +26,7 @@ export async function callAPI(
       key,
       process.env.EXPO_PUBLIC_SERVER_PUBLIC,
     );
-   
+
     const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
     const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
     const publicKey = await SecureStore.getItemAsync(
@@ -236,7 +235,11 @@ export async function logout() {
   reloadAppAsync();
 }
 
-export function handleReport(userType: UserType, isComment: boolean = true) {
+export function handleReport(
+  userType: UserType,
+  t: (locale: string) => string,
+  isComment: boolean = true,
+) {
   return new Promise<{ reason: REPORT_REASONS; evidence?: string }>(
     (resolve, reject) => {
       const options = [

@@ -65,7 +65,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const listRef = useRef<FlashList<Post> | null>(null);
   const fetchPosts = async () => {
     setLoading(true);
-    if (!userType) return;
+    if (!userType) return setLoading(false);
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? 0 : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
@@ -76,7 +76,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-      
+
     setPosts(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     setLoading(false);
@@ -87,10 +87,13 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       `/doctors/saved/${posts.length == 0 ? 0 : posts[posts.length - 1].timestamp}`,
       "GET",
     );
-    if (res.status !== STATUS_CODES.SUCCESS)
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+    }
+
     setSavedPosts(res.posts);
     setLoading(false);
   };
@@ -188,7 +191,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
     try {
-      const { reason, evidence } = await handleReport(userType as UserType);
+      const { reason, evidence } = await handleReport(userType as UserType, t);
       const res = await callAPI(
         `/posts/${post}/comments/${commentID}/report`,
         "POST",
@@ -207,6 +210,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     try {
       const { reason, evidence } = await handleReport(
         userType as UserType,
+        t,
         false,
       );
       if (!reason) return;

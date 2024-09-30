@@ -1,3 +1,4 @@
+import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
 import { DeleteResult, ObjectId, PushOperator } from "mongodb";
 import Comment from "../models/comment";
@@ -5,9 +6,8 @@ import { Doctor } from "../models/doctor";
 import Patient from "../models/patient";
 import Post from "../models/post";
 import Report from "../models/report";
-import CryptoJS from "crypto-js";
 import { STATUS_CODES, UserType } from "../models/util";
-import { collections, createKey, encryption } from "../services/database.service";
+import { collections, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl } from "../services/storage.service";
 
@@ -124,7 +124,13 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
   const patient = (await collections.patients.findOne({
     publicKey: req.headers.authorization,
   })) as Patient;
-  if (!patient._id) return res.send(encrypt({status: STATUS_CODES.USER_NOT_FOUND}, req.headers.authorization))
+  if (!patient._id)
+    return res.send(
+      encrypt(
+        { status: STATUS_CODES.USER_NOT_FOUND },
+        req.headers.authorization,
+      ),
+    );
   data.patient = patient._id;
 
   const keyAltName = CryptoJS.SHA256(data.patient.toString()).toString();
@@ -227,7 +233,13 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   })) as Patient;
   const user = doctor ? doctor : patient;
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
-  if (!comment.parent && patient) return res.send(encrypt({status: STATUS_CODES.COMMENT_NOT_ALLOWED}, req.headers.authorization))
+  if (!comment.parent && patient)
+    return res.send(
+      encrypt(
+        { status: STATUS_CODES.COMMENT_NOT_ALLOWED },
+        req.headers.authorization,
+      ),
+    );
   // Fetch the parent post
   let parentPost = (await collections.posts.findOne({
     _id: postID,
@@ -458,7 +470,7 @@ postsRouter.post(
     try {
       // Check if the report already exists for this comment
       const existingReport = await collections.reports.findOne({
-        reported: commentID,
+        reported: { id: commentID, type: "Comment" },
         parent: postID,
         reporter: {
           id: user._id,
@@ -479,7 +491,7 @@ postsRouter.post(
 
       // Create the report
       const createdReport = await collections.reports.insertOne({
-        reported: commentID,
+        reported: { id: commentID, type: "Comment" },
         parent: postID,
         reporter: {
           id: user._id as ObjectId,
@@ -524,7 +536,22 @@ postsRouter.post(
         { $set: { comments: post.comments } },
       );
 
-      if (createdReport.acknowledged && updated.acknowledged) {
+      const updatedUser = await (
+        doctor ? collections.doctors : collections.patients
+      ).updateOne(
+        { publicKey: req.headers.authorization },
+        {
+          $push: {
+            reports: createdReport.insertedId,
+          } as PushOperator<Document>,
+        },
+      );
+
+      if (
+        createdReport.acknowledged &&
+        updated.acknowledged &&
+        updatedUser.acknowledged
+      ) {
         return res
           .status(200)
           .send(
@@ -622,7 +649,7 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
       })) as Doctor;
       if (
         await collections.reports.findOne({
-          reported: id,
+          reported: { id, type: "Post" },
           reporter: { id: doctor._id, type: UserType.DOCTOR },
         })
       )
@@ -634,10 +661,18 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
         );
       const created = await collections.reports.insertOne({
         ...report,
-        reported: id,
+        reported: { id, type: "Post" },
         reporter: { id: doctor._id, type: UserType.DOCTOR },
       } as Report);
-      const updated = await collections.posts.updateOne(
+      const updatedUser = await collections.doctors.updateOne(
+        { publicKey: req.headers.authorization },
+        {
+          $push: {
+            reports: created.insertedId,
+          } as PushOperator<Document>,
+        },
+      );
+      const updatedPost = await collections.posts.updateOne(
         { _id: id },
         {
           $push: {
@@ -645,7 +680,11 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
           } as PushOperator<Document>,
         },
       );
-      if (created.acknowledged && updated.acknowledged) {
+      if (
+        created.acknowledged &&
+        updatedUser.acknowledged &&
+        updatedPost.acknowledged
+      ) {
         res
           .status(200)
           .send(

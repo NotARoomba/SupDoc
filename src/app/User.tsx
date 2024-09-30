@@ -100,7 +100,12 @@ Post
             onPress={() =>
               Alert.alert(
                 t("Confirm"),
-                t(`report.user`, {user: (ut as string).toLowerCase() == UserType.DOCTOR ? t("doctor") : t("patient")}),
+                t(`report.user`, {
+                  user:
+                    (ut as string).toLowerCase() == UserType.DOCTOR
+                      ? t("doctor")
+                      : t("patient"),
+                }),
                 [
                   { text: t("buttons.cancel"), style: "cancel" },
                   {

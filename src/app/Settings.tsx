@@ -122,18 +122,22 @@ export default function Settings() {
             disabled
             className="z-50 opacity-0 w-24 px-5 h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
-              Alert.alert(t("buttons.logout"), "Are you sure you want to logout?", [
-                { text: t("buttons.cancel"), style: "cancel" },
-                {
-                  text: t("buttons.logout"),
-                  style: "destructive",
-                  onPress: () => logout(),
-                },
-              ])
+              Alert.alert(
+                t("buttons.logout"),
+                "Are you sure you want to logout?",
+                [
+                  { text: t("buttons.cancel"), style: "cancel" },
+                  {
+                    text: t("buttons.logout"),
+                    style: "destructive",
+                    onPress: () => logout(),
+                  },
+                ],
+              )
             }
           >
             <Text className="text-ivory h-fit font-bold text-center m-auto">
-              {("titles.logout")}
+              {"titles.logout"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -151,7 +155,9 @@ export default function Settings() {
             options={[t("buttons.themes.dark"), t("buttons.themes.light")]}
             setOption={(v) => setTheme(v.toLowerCase() as any)}
             selected={
-              theme ? theme.charAt(0).toUpperCase() + theme.slice(1) : t("buttons.themes.dark")
+              theme
+                ? theme.charAt(0).toUpperCase() + theme.slice(1)
+                : t("buttons.themes.dark")
             }
           />
           <Text className="text-ivory text-3xl font-bold text-center mt-8 mb-2">
