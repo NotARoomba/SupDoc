@@ -260,7 +260,9 @@ export default function Signup({
             />
           </View>
           <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
-            {userType == UserType.DOCTOR ? t("inputs.identification") : (t("inputs.identification") + t("inputs.TI"))}
+            {userType == UserType.DOCTOR
+              ? t("inputs.identification")
+              : t("inputs.identification") + t("inputs.TI")}
           </Text>
           <TextInput
             onChangeText={(id) =>

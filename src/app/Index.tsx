@@ -116,7 +116,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       signUpInfo.license = licence;
       signUpInfo.picture = picture;
     }
-    console.log(signUpInfo)
+    console.log(signUpInfo);
     const create = await callAPI(
       `/${userType == UserType.PATIENT ? "patients" : "doctors"}/create`,
       "POST",

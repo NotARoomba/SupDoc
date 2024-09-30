@@ -8,12 +8,13 @@ import { useEffect } from "react";
 import { Platform } from "react-native";
 
 export default function TabLayout() {
-  const { userType } = useUser();
+  const { userType, fetchUser } = useUser();
   const { fetchPosts } = usePosts();
   const { fetchSettings } = useSettings();
   useEffect(() => {
-    fetchSettings();
+    fetchUser();
     fetchPosts();
+    fetchSettings();
   }, []);
   return (
     <Tabs

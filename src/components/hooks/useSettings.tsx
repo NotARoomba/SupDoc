@@ -48,10 +48,10 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       if (savedTheme === "light" || savedTheme === "dark") {
         setThemeState(savedTheme);
       }
-    } catch (error) {
-      Alert.alert(t("error"), t("errors.fetchSettings"));
-    } finally {
       setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      Alert.alert(t("error"), t("errors.fetchSettings"));
     }
   };
 

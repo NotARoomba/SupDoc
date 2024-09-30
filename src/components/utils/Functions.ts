@@ -26,7 +26,7 @@ export async function callAPI(
       key,
       process.env.EXPO_PUBLIC_SERVER_PUBLIC,
     );
-   
+
     const encryptedData = CryptoJS.AES.encrypt(data, key).toString();
     const magic = JSON.stringify({ key: encryptedKey, data: encryptedData });
     const publicKey = await SecureStore.getItemAsync(
@@ -235,7 +235,11 @@ export async function logout() {
   reloadAppAsync();
 }
 
-export function handleReport(userType: UserType, t: (locale: string) => string, isComment: boolean = true) {
+export function handleReport(
+  userType: UserType,
+  t: (locale: string) => string,
+  isComment: boolean = true,
+) {
   return new Promise<{ reason: REPORT_REASONS; evidence?: string }>(
     (resolve, reject) => {
       const options = [
