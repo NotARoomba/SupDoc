@@ -238,7 +238,7 @@ export default function Profile() {
           <TouchableOpacity
             className="z-50 p-1"
             onPress={() =>
-              Alert.alert(t("profile.logoutTitle"), t("logoutDescription"), [
+              Alert.alert(t("profile.logoutTitle"), t("profile.logoutDescription"), [
                 { text: t("buttons.cancel"), style: "cancel" },
                 {
                   text: t("profile.logoutTitle"),
