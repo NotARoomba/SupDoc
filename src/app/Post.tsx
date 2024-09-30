@@ -63,7 +63,7 @@ export default function PostPage() {
       setReplyingTo(null);
       setLoading(false);
     } else {
-      Alert.alert("Comment cannot be empty.");
+      Alert.alert(t("posts.emptyComment"));
       setLoading(false);
     }
   };
@@ -101,7 +101,7 @@ export default function PostPage() {
                 exiting={FadeOut.duration(250)}
                 className="text-ivory h-fit  text font-bold text-center m-auto"
               >
-                {keyboardOpen ? "Cancel" : "Back"}
+                {keyboardOpen ? t("cancel") : t("buttons.back")}
               </Reanimated.Text>
             </TouchableOpacity>
             {/* <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
@@ -111,12 +111,14 @@ export default function PostPage() {
               className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
               onPress={() =>
                 Alert.alert(
-                  "Confirm",
-                  `Are you sure you want to ${userType == UserType.DOCTOR ? "report" : "delete"} the post?`,
+                  t("confirmTitle"),
+                  t("post.reportDelete", {
+                    reportDelete: userType == UserType.DOCTOR ? t("report") : t("delete")
+                  }),
                   [
-                    { text: "Cancel", style: "cancel" },
+                    { text: t("cancel"), style: "cancel" },
                     {
-                      text: userType == UserType.DOCTOR ? "Report" : "Delete",
+                      text: userType == UserType.DOCTOR ? t("report") : t("delete"),
                       style: "destructive",
                       onPress: () =>
                         userType == UserType.DOCTOR
@@ -129,7 +131,7 @@ export default function PostPage() {
             >
               {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
               <Text className="text-ivory h-fit font-bold text-center m-auto">
-                {userType == UserType.DOCTOR ? "Report" : "Delete"}
+                {userType == UserType.DOCTOR ? t("report") : t("delete")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -228,20 +230,20 @@ export default function PostPage() {
               )}
               <View className="-z-10">
               {userType == UserType.DOCTOR && <TouchableOpacity onPress={() => router.navigate({pathname: "/User", params: {id: post.patient.toString()}})} className="bg-oxford_blue w-11/12 mx-auto mb-4 px-5 py-2 rounded-xl">
-                  <Text className="text-ivory text-center font-semibold text-lg  ">Patient Info</Text>
+                  <Text className="text-ivory text-center font-semibold text-lg  ">{t("posts.patientInfo")}</Text>
                 </TouchableOpacity>}
                 <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">
                   {post.description}
                 </Text>
                 <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
                 <Text className="text-4xl font-bold text-center text-ivory">
-                  Comments
+                  {t("comments")}
                 </Text>
                 {post.comments.length == 0 ? (
                   <Text className=" text-center text-powder_blue/80">
                     {userType == UserType.PATIENT
-                      ? "(There are no comments on your post yet)"
-                      : "(There are no comments on this post yet)"}
+                      ? t("posts.commentsPatient")
+                      : t("posts.commentsDoctor")}
                   </Text>
                 ) : (
                   <CommentBlock
@@ -282,7 +284,7 @@ export default function PostPage() {
               exiting={FadeOut.duration(500)}
               className="text-ivory text-center font-bold"
             >
-              {replyingTo ? "Post Reply" : "Post Comment"}
+              {replyingTo ? t("posts.postReply") : t("posts.postComment")}
             </Reanimated.Text>
           </TouchableOpacity>
 
@@ -297,7 +299,7 @@ export default function PostPage() {
                 className="mt-2 bg-red-500 p-3 rounded-lg"
               >
                 <Text className="text-ivory text-center font-bold">
-                  Cancel Reply
+                  {t("posts.cancelReply")}
                 </Text>
               </TouchableOpacity>
             </Reanimated.View>

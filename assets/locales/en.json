@@ -13,6 +13,7 @@
     "doctors": "Doctors",
     "patient": "Patient",
     "patients": "Patients",
+    "confirmTitle": "Confirm",
     "inputs": {
         "first": "First Name",
         "last": "Last Name",
@@ -44,7 +45,6 @@
         "logoutDescription": "Are you sure you want to logout?"
     },
     "upload": {
-        "confirmTitle": "Confirm",
         "confirmDescription": "Are you sure you want to post?",
         "title": "Title",
         "description": "Description"
@@ -53,7 +53,16 @@
         "savedNone": "(You have not saved any posts)",
         "feedNone": "(There are no posts)",
         "none": "(You have not posted anything yet)",
-        "you": "(You)"
+        "you": "(You)",
+        "emptyComment": "Comment cannot be empty.",
+        "reportDelete": "Are you sure you want to {{reportDelete}} the post?",
+        "patientInfo": "Patient Info",
+        "comments": "Comments",
+        "commentsPatient": "(There are no comments on your post yet)",
+        "commentsDoctor": "(There are no comments on this post yet)",
+        "postReply" : "Post Reply",
+        "postComment": "Post Comment",
+        "cancelReply": "Cancel Reply"
     },
     "titles": {
         "login": "Login",
@@ -65,7 +74,8 @@
         "feed": "Feed",
         "pins": "Pins",
         "settings": "Settings",
-        "upload": "Upload"
+        "upload": "Upload",
+        "logout": "Logout"
     },
     "images": {
         "choose": "Please choose",
@@ -87,7 +97,16 @@
         "finish": "Finish",
         "update": "Update",
         "clear": "Clear",
-        "post": "Post"
+        "post": "Post",
+        "report": "Report",
+        "delete": "Delete",
+        "theme": "Theme",
+        "themes": {
+            "dark": "Dark",
+            "light": "Light"
+        },
+        "confirmDelete": "Confirm Delete",
+        "deleteAccount": "Delete Account"
     },
     "successes": {
         "login": "You are now logged in",
