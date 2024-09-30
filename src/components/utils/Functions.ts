@@ -281,8 +281,8 @@ export function handleReport(userType: UserType, isComment: boolean = true) {
                         });
                       } else {
                         Alert.alert(
-                          "Invalid Link",
-                          "Please provide a valid scholarly link.",
+                          t("report.invalidLink.title"),
+                          t("report.invalidLink.description"),
                         );
                         reject("invalid_link");
                       }
@@ -299,8 +299,8 @@ export function handleReport(userType: UserType, isComment: boolean = true) {
       }
 
       Alert.alert(
-        "Report",
-        "Please choose a reason for reporting:",
+        t("buttons.report"),
+        t("report.description"),
         options as any,
         { cancelable: true },
       );
