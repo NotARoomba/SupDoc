@@ -63,17 +63,17 @@ export default function Home() {
           animate="show"
           className="h-full flex items-center justify-center"
         >
-          <motion.div
-            variants={item}
-            className="flex items-center w-full max-w-4xl mx-auto"
-          >
+          <motion.div variants={item} className="flex items-center w-full max-w-4xl mx-auto">
             {/* Imagen */}
-            <div className="w-1/2 flex justify-center">
+            <div className="w-1/2 flex flex-col justify-center items-center mt-8">
               <img className="aspect-square w-1/2" src="/icon.png" />
+              {/* dato */}
+              <span className="text-gray-400 text-lg block text-center mt-20">
+                Las quejas ante la Superintendencia de Salud han incrementado hasta en un 12% en el último año.
+              </span>
             </div>
-
             {/* texto */}
-            <div className="w-1/2 text-right ml-4">
+            <div className="w-1/2 text-right ml-8">
               <motion.p
                 variants={item}
                 className="text-7xl sm:text-4xl font-bold text-center my-8"
@@ -82,18 +82,23 @@ export default function Home() {
               </motion.p>
               <motion.p
                 variants={item}
-                className="text-lg sm:text-xl mt-4 text-justify text-center max-w-2xl mx-auto"
+                className="text-lg sm:text-xl mt-4 text-center max-w-2xl mx-auto"
               >
-                SupDoc is a healthcare app designed to reduce the overload in specialist consultations and healthcare services. It provides a simple, reliable, and secure platform, allowing users to receive virtual medical attention completely anonymously. SupDoc ensures effective communication between patients and specialists, delivering accurate and professional responses at all times.
+                SupDoc is a healthcare app designed to reduce the overload in specialist consultations and healthcare services. It provides a simple, reliable, and secure platform, allowing users to receive virtual medical attention completely anonymously.
               </motion.p>
-              {/* Asterisco */}
-              <span className="text-gray-400 text-lg block text-center mt-2">
-                * Las quejas ante la Superintendencia de Salud han incrementado hasta en un 12% en el último año.
-              </span>
+              <motion.p
+                variants={item}
+                className="text-lg sm:text-xl mt-6 text-center max-w-2xl mx-auto"
+              >
+                SupDoc ensures effective communication between patients and specialists, delivering accurate and professional responses at all times.
+              </motion.p>
             </div>
           </motion.div>
         </motion.div>
       </div>
+
+
+
 
       {/* Sección 2*/}
       <div className="h-screen bg-gray-800">
