@@ -34,6 +34,7 @@ export const env = dotenv.load({
   VERIFY_URL: String,
   VERIFY_BODY_1: String,
   VERIFY_BODY_2: String,
+  GEMINI_API_KEY: String,
 });
 
 export const collections: {
