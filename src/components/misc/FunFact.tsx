@@ -6,18 +6,26 @@ import { FunFactProps } from "components/utils/Types";
 import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import Skeleton from "react-native-reanimated-skeleton";
 
 export default function FunFact({ fact }: FunFactProps) {
   const { t, i18n } = useTranslation();
-  const {user} = useUser();
-  const { likeFact, facts } = usePosts();  
+  const { user } = useUser();
+  const { likeFact, facts } = usePosts();
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    setLiked(facts.find((v) => v._id == fact._id && v.likes.includes(user?._id?.toString() as string)) ? true : false);
+    setLiked(
+      facts.find(
+        (v) =>
+          v._id == fact._id &&
+          v.likes.includes(user?._id?.toString() as string),
+      )
+        ? true
+        : false,
+    );
   }, [facts]);
 
   return (
@@ -31,14 +39,17 @@ export default function FunFact({ fact }: FunFactProps) {
         <Text className="text-ivory text-3xl my-auto mr-auto font-bold">
           {t("titles.fact")}
         </Text>
-        
-      <View className="flex flex-row justify-end ml-auto">
-        <TouchableOpacity onPress={() => {setLiked(!liked);likeFact(fact._id as ObjectId)}}>
-          <Icons name="heart"
-                      size={30}
-                      color={liked ? "red" : "#fbfff1"} />
-        </TouchableOpacity>
-      </View>
+
+        <View className="flex flex-row justify-end ml-auto">
+          <TouchableOpacity
+            onPress={() => {
+              setLiked(!liked);
+              likeFact(fact._id as ObjectId);
+            }}
+          >
+            <Icons name="heart" size={30} color={liked ? "red" : "#fbfff1"} />
+          </TouchableOpacity>
+        </View>
       </View>
       <Skeleton
         animationDirection="horizontalRight"

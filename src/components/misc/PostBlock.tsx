@@ -62,8 +62,18 @@ export default function PostBlock({
           </TouchableOpacity>
         )}
       </View>
-      <View className={"flex h-44 flex-row w-full mb-4 " + (post.images.length > 0 ? " gap-x-4" : "")}>
-        <View className={" aspect-square relative rounded-xl overflow-hidden " + (post.images.length > 0 ? "w-6/12" : "w-0")}>
+      <View
+        className={
+          "flex h-44 flex-row w-full mb-4 " +
+          (post.images.length > 0 ? " gap-x-4" : "")
+        }
+      >
+        <View
+          className={
+            " aspect-square relative rounded-xl overflow-hidden " +
+            (post.images.length > 0 ? "w-6/12" : "w-0")
+          }
+        >
           <TouchableOpacity
             className="h-full"
             onPress={(e) => {
@@ -100,7 +110,7 @@ export default function PostBlock({
             </View>
           </TouchableOpacity>
         </View>
-        <View className={(post.images.length > 0 ? "w-5/12" : "w-full")}>
+        <View className={post.images.length > 0 ? "w-5/12" : "w-full"}>
           <Text className="text-ivory font-medium overflow-ellipsis">
             {post.description}
           </Text>

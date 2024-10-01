@@ -1,4 +1,5 @@
 import Comment from "@/backend/models/comment";
+import Fact from "@/backend/models/fact";
 import { PatientMetrics } from "@/backend/models/metrics";
 import Post from "@/backend/models/post";
 import { STATUS_CODES, UserType } from "@/backend/models/util";
@@ -26,7 +27,6 @@ import { useTranslation } from "react-i18next";
 import { Alert, LayoutAnimation } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
-import Fact from "@/backend/models/fact";
 
 interface PostsContextType {
   posts: Post[];
@@ -75,7 +75,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   const shuffleFactsIntoFeed = (posts: Post[], facts: Fact[]) => {
     let shuffledFeed: Array<Post | Fact> = [...posts];
-    
+
     if (facts.length > 0) {
       let factIndex = 0;
       let postIndex = 0;
@@ -96,8 +96,8 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const fetchFacts = async () => {
     setLoading(true);
     if (!userType) return setLoading(false);
-    
-    const res = await callAPI('/facts', "GET");
+
+    const res = await callAPI("/facts", "GET");
 
     if (res.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
@@ -112,38 +112,31 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     // setFeed(newFeed);
 
     setLoading(false);
-    return res.facts
+    return res.facts;
   };
 
-
   const likeFact = async (id: ObjectId) => {
-    const res = await callAPI(
-      `/facts/${id.toString()}/like`,
-      "GET",
-    );
+    const res = await callAPI(`/facts/${id.toString()}/like`, "GET");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-  }
+  };
 
   const dislikeFact = async (id: ObjectId) => {
-    const res = await callAPI(
-      `/facts/${id.toString()}/dislike`,
-      "GET",
-    );
+    const res = await callAPI(`/facts/${id.toString()}/dislike`, "GET");
     if (res.status !== STATUS_CODES.SUCCESS) {
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-  }
+  };
 
   const fetchPosts = async () => {
     setLoading(true);
     if (!userType) return setLoading(false);
-    const f = await fetchFacts()
+    const f = await fetchFacts();
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
@@ -199,9 +192,8 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     newPosts.forEach((v) =>
       !posts.find((z) => z._id == v._id) ? finalPosts.push(v) : 0,
     );
-    if (userType == UserType.DOCTOR) setFeed(
-      shuffleFactsIntoFeed([...posts, ...finalPosts], facts),
-    );
+    if (userType == UserType.DOCTOR)
+      setFeed(shuffleFactsIntoFeed([...posts, ...finalPosts], facts));
     setPosts([...posts, ...finalPosts]);
   };
 
@@ -248,9 +240,10 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
     );
 
-    if (userType == UserType.DOCTOR) setFeed(
-      feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
-    );
+    if (userType == UserType.DOCTOR)
+      setFeed(
+        feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+      );
 
     setSavedPosts(
       savedPosts.map((p) =>
@@ -268,9 +261,10 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
 
-    if (userType == UserType.DOCTOR) setFeed(
-      feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
-    );
+    if (userType == UserType.DOCTOR)
+      setFeed(
+        feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+      );
 
     setPosts(
       posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),

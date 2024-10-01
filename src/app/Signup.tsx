@@ -1,6 +1,7 @@
 import { Specialty } from "@/backend/models/specialty";
 import { STATUS_CODES } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
+import prompt from "@powerdesigninc/react-native-prompt";
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
@@ -45,7 +46,6 @@ import {
   SignupProps,
   UserType,
 } from "../components/utils/Types";
-import prompt from "@powerdesigninc/react-native-prompt";
 
 export default function Signup({
   info,
@@ -134,32 +134,59 @@ export default function Signup({
           const verify = await callAPI("/verify/code/send", "POST", {
             number: info.countryCode + info.number,
           });
-          if (verify.status === STATUS_CODES.INVALID_NUMBER)
-           { setIndex(index-1);
-            setLoading(false);return Alert.alert(t("error"), t(`errors.${STATUS_CODES[verify.status]}`));}
-          else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
-           { setIndex(index-1);
-            setLoading(false);return Alert.alert(t("error"), t(`errors.${STATUS_CODES[verify.status]}`));}
-          else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
-          {  setIndex(index-1);
-            setLoading(false);return Alert.alert(t("error"), t(`errors.${STATUS_CODES[verify.status]}`));}
-          else {
+          if (verify.status === STATUS_CODES.INVALID_NUMBER) {
+            setIndex(index - 1);
+            setLoading(false);
+            return Alert.alert(
+              t("error"),
+              t(`errors.${STATUS_CODES[verify.status]}`),
+            );
+          } else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST) {
+            setIndex(index - 1);
+            setLoading(false);
+            return Alert.alert(
+              t("error"),
+              t(`errors.${STATUS_CODES[verify.status]}`),
+            );
+          } else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE) {
+            setIndex(index - 1);
+            setLoading(false);
+            return Alert.alert(
+              t("error"),
+              t(`errors.${STATUS_CODES[verify.status]}`),
+            );
+          } else {
             setTimeout(() => {
               return prompt(
                 t("inputs.enterCode"),
-                t("inputs.enterCode2") +
-                  (info.countryCode + info.number),
-                [{text: t('buttons.cancel'), style: 'cancel', onPress: () => {setIndex(index-1);
-                  setLoading(false)}}, {text: t('check'), isPreferred: true, onPress: async (input) => {
-                  setLoading(true);
-                  const v = await callAPI("/verify/code/check", "POST", {
-                    number: info.countryCode + info.number,
-                    input,
-                  });
-                  setLoading(false);
-                  if (v.status !== STATUS_CODES.SUCCESS) return Alert.alert((t("error"), t(`errors.${STATUS_CODES[v.status]}`)));
-                  setIsVerified(true);
-                }}],
+                t("inputs.enterCode2") + (info.countryCode + info.number),
+                [
+                  {
+                    text: t("buttons.cancel"),
+                    style: "cancel",
+                    onPress: () => {
+                      setIndex(index - 1);
+                      setLoading(false);
+                    },
+                  },
+                  {
+                    text: t("check"),
+                    isPreferred: true,
+                    onPress: async (input) => {
+                      setLoading(true);
+                      const v = await callAPI("/verify/code/check", "POST", {
+                        number: info.countryCode + info.number,
+                        input,
+                      });
+                      setLoading(false);
+                      if (v.status !== STATUS_CODES.SUCCESS)
+                        return Alert.alert(
+                          (t("error"), t(`errors.${STATUS_CODES[v.status]}`)),
+                        );
+                      setIsVerified(true);
+                    },
+                  },
+                ],
                 "plain-text",
                 "",
                 "number-pad",

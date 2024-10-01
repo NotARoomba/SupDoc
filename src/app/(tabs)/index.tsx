@@ -1,5 +1,3 @@
-import Fact from "@/backend/models/fact";
-import Post from "@/backend/models/post";
 import { UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import useFade from "components/hooks/useFade";
@@ -9,19 +7,18 @@ import LoaderView from "components/loading/LoaderView";
 import FunFact from "components/misc/FunFact";
 import PostBlock from "components/misc/PostBlock";
 // import SkeletonContent from 'react-native-reanimated-skeleton'
-import { SplashScreen } from "expo-router";
-import { MutableRefObject, useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Animated,
-  LayoutAnimation,
   Platform,
+  RefreshControl,
   ScrollView,
   Text,
   View,
 } from "react-native";
 export default function Index() {
-  const { posts, listRef, fetchPosts, refreshPosts, facts, feed  } = usePosts();
+  const { posts, listRef, fetchPosts, refreshPosts, facts, feed } = usePosts();
   // const listRef = useRef<FlashList<Post> | null>(null);
   const { userType } = useUser();
   const [refreshing, setRefreshing] = useState(false);
@@ -49,6 +46,14 @@ export default function Index() {
     > */}
       {userType == UserType.PATIENT ? (
         <ScrollView className="h-full flex">
+          <RefreshControl
+            enabled
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              refreshPosts().then(() => setRefreshing(false));
+            }}
+          />
           <FunFact fact={facts[0]} />
           <View className="h-0.5 rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
           <Text className="text-4xl font-bold text-center text-ivory">
@@ -71,14 +76,9 @@ export default function Index() {
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
-              refreshing={refreshing}
-              onRefresh={() => {
-                setRefreshing(true);
-                refreshPosts().then(() => setRefreshing(false));
-              }}
               onEndReached={fetchPosts}
               data={posts}
-              renderItem={({ item }) =>  (
+              renderItem={({ item }) => (
                 <PostBlock post={item} listRef={listRef} userType={userType} />
               )}
             />
@@ -86,6 +86,14 @@ export default function Index() {
         </ScrollView>
       ) : (
         <ScrollView className="h-full flex">
+          <RefreshControl
+            enabled
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              refreshPosts().then(() => setRefreshing(false));
+            }}
+          />
           <Text className="text-6xl font-bold text-center text-ivory">
             {t("titles.feed")}
           </Text>
@@ -105,21 +113,19 @@ export default function Index() {
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
-              refreshing={refreshing}
-              onRefresh={() => {
-                setRefreshing(true);
-                refreshPosts().then(() => setRefreshing(false));
-              }}
               onEndReached={fetchPosts}
               data={feed}
-              renderItem={({ item }) => (
-                'likes' in item ? <FunFact fact={item} /> :
-                <PostBlock
-                  post={item}
-                  listRef={listRef}
-                  userType={userType as UserType.DOCTOR}
-                />
-              )}
+              renderItem={({ item }) =>
+                "likes" in item ? (
+                  <FunFact fact={item} />
+                ) : (
+                  <PostBlock
+                    post={item}
+                    listRef={listRef}
+                    userType={userType as UserType.DOCTOR}
+                  />
+                )
+              }
             />
           )}
         </ScrollView>

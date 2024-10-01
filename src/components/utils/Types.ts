@@ -208,5 +208,5 @@ export const LANGUAGE_COLORS: Record<LanguageCodes, string> = {
 };
 
 export interface FunFactProps {
-  fact: Fact
+  fact: Fact;
 }
