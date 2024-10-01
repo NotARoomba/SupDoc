@@ -15,8 +15,18 @@
     },
     "locales": {
       "en": "./assets/locales/en.json",
-      "es": "./assets/locales/es.json"
-    },
+      "es": "./assets/locales/es.json",
+      "zh": "./assets/locales/zh.json",
+      "hi": "./assets/locales/hi.json",
+      "pt": "./assets/locales/pt.json",
+      "ar": "./assets/locales/ar.json",
+      "fr": "./assets/locales/fr.json",
+      "de": "./assets/locales/de.json",
+      "ru": "./assets/locales/ru.json",
+      "ja": "./assets/locales/ja.json",
+      "ko": "./assets/locales/ko.json",
+      "it": "./assets/locales/it.json"
+    },    
     "ios": {
       "supportsTablet": false,
       "config": {
