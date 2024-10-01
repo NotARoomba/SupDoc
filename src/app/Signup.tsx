@@ -136,20 +136,20 @@ export default function Signup({
           });
           if (verify.status === STATUS_CODES.INVALID_NUMBER)
            { setIndex(index-1);
-            setLoading(false);return Alert.alert("Error", "That number is invalid!");}
+            setLoading(false);return Alert.alert(t("error"), t(`errors.${STATUS_CODES[verify.status]}`));}
           else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
            { setIndex(index-1);
-            setLoading(false);return Alert.alert("Error", "That number does not exist!");}
+            setLoading(false);return Alert.alert(t("error"), t(`errors.${STATUS_CODES[verify.status]}`));}
           else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
           {  setIndex(index-1);
-            setLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
+            setLoading(false);return Alert.alert(t("error"), t(`errors.${STATUS_CODES[verify.status]}`));}
           else {
             setTimeout(() => {
               return prompt(
-                "Enter Verification Code",
-                "Enter the verification code sent to: " +
+                t("inputs.enterCode"),
+                t("inputs.enterCode2") +
                   (info.countryCode + info.number),
-                [{text: 'Cancel', style: 'cancel', onPress: () => {setIndex(index-1);
+                [{text: t('buttons.cancel'), style: 'cancel', onPress: () => {setIndex(index-1);
                   setLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
                   setLoading(true);
                   const v = await callAPI("/verify/code/check", "POST", {
@@ -157,7 +157,7 @@ export default function Signup({
                     input,
                   });
                   setLoading(false);
-                  if (v.status !== STATUS_CODES.SUCCESS) return Alert.alert("Error", "The code is incorrect!");
+                  if (v.status !== STATUS_CODES.SUCCESS) return Alert.alert((t("error"), t(`errors.${STATUS_CODES[v.status]}`)));
                   setIsVerified(true);
                 }}],
                 "plain-text",
