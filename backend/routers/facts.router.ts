@@ -120,8 +120,71 @@ factsRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
+factsRouter.get("/:id/like", async (req: Request, res: Response) => {
+  const id = new ObjectId(req.params.id);
+  const doctor = await collections.doctors.findOne({
+    publicKey: req.headers.authorization,
+  });
 
-factsRouter.post("/:id/dislike", async (req: Request, res: Response) => {
+  try {
+    if (collections.facts) {
+      const update = await collections.facts.updateOne(
+        {
+          _id: id,
+        },
+        [
+          {
+            $set: {
+              likes: {
+                $cond: {
+                  if: { $in: [doctor?._id, "$likes"] }, // Check if 'doctor' is in 'dislikes' array
+                  then: { $setDifference: ["$likes", [doctor?._id]] }, // Remove 'doctor' from 'dislikes' if it exists
+                  else: { $concatArrays: ["$likes", [doctor?._id]] }, // Add 'doctor' to 'dislikes' if it doesn't exist
+                },
+              },
+              dislikes: {
+                $setDifference: ["$dislikes", [doctor?._id]], // Always remove 'doctor' from 'likes' if they dislike the fact
+              },
+            },
+          },
+        ],
+      );
+
+      if (update.acknowledged) {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
+      } else {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.GENERIC_ERROR },
+              req.headers.authorization,
+            ),
+          );
+      }
+    }
+  } catch (error) {
+    console.error("Error liking fact:", error);
+    res
+      .status(200)
+      .send(
+        encrypt(
+          { status: STATUS_CODES.GENERIC_ERROR },
+          req.headers.authorization,
+        ),
+      );
+  }
+});
+
+
+factsRouter.get("/:id/dislike", async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id);
   const doctor = await collections.doctors.findOne({
     publicKey: req.headers.authorization,
