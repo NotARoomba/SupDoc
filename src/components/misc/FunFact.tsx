@@ -1,4 +1,4 @@
-import { LanguageCodes } from "@/backend/models/util";
+import { LanguageCodes, UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import { usePosts } from "components/hooks/usePosts";
 import { useUser } from "components/hooks/useUser";
@@ -12,7 +12,7 @@ import Skeleton from "react-native-reanimated-skeleton";
 
 export default function FunFact({ fact }: FunFactProps) {
   const { t, i18n } = useTranslation();
-  const { user } = useUser();
+  const { user, userType } = useUser();
   const { likeFact, facts } = usePosts();
   const [liked, setLiked] = useState(false);
 
@@ -40,16 +40,18 @@ export default function FunFact({ fact }: FunFactProps) {
           {t("titles.fact")}
         </Text>
 
-        <View className="flex flex-row justify-end ml-auto">
-          <TouchableOpacity
-            onPress={() => {
-              setLiked(!liked);
-              likeFact(fact._id as ObjectId);
-            }}
-          >
-            <Icons name="heart" size={30} color={liked ? "red" : "#fbfff1"} />
-          </TouchableOpacity>
-        </View>
+        {userType == UserType.DOCTOR && (
+          <View className="flex flex-row justify-end ml-auto">
+            <TouchableOpacity
+              onPress={() => {
+                setLiked(!liked);
+                likeFact(fact._id as ObjectId);
+              }}
+            >
+              <Icons name="heart" size={30} color={liked ? "red" : "#fbfff1"} />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       <Skeleton
         animationDirection="horizontalRight"

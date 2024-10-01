@@ -13,6 +13,7 @@ import {
 } from "components/utils/Functions";
 import CryptoJS from "crypto-es";
 import { Image } from "expo-image";
+import { SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,7 +37,6 @@ import {
 } from "../components/utils/Types";
 import Login from "./Login";
 import Signup from "./Signup";
-import { SplashScreen } from "expo-router";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
@@ -55,8 +55,8 @@ export default function Index({ setIsLogged }: IndexProps) {
   const { fetchSettings } = useSettings();
   const { t } = useTranslation();
   useEffect(() => {
-      fetchSettings();
-      SplashScreen.hideAsync();
+    fetchSettings();
+    SplashScreen.hideAsync();
   }, []);
   const signup = async () => {
     if (!userType) return;

@@ -2,6 +2,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import express, { Request, Response } from "express";
 import { Twilio } from "twilio";
+import CryptoJS from "crypto-js";
 import { STATUS_CODES, UserType } from "../models/util";
 import { collections, encryption, env } from "../services/database.service";
 

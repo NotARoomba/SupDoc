@@ -11,7 +11,7 @@ import {
   uploadImages,
 } from "components/utils/Functions";
 import { Image } from "expo-image";
-import { SplashScreen, router } from "expo-router";
+import { router } from "expo-router";
 import { ObjectId } from "mongodb";
 import React, {
   MutableRefObject,
