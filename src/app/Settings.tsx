@@ -5,7 +5,7 @@ import { useUser } from "components/hooks/useUser";
 import { logout } from "components/utils/Functions";
 import { LANGUAGES } from "components/utils/Types";
 import { router } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -18,7 +18,6 @@ import {
   View,
 } from "react-native";
 import Reanimated, {
-  interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -33,9 +32,9 @@ export default function Settings() {
   const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
+  const itemWidth = 256;
   const handleScrollEnd = (event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const itemWidth = 260;
     const index = Math.round(contentOffsetX / itemWidth);
     setCurrentIndex(index);
     setLanguage(LANGUAGES[index].locale);
@@ -48,21 +47,12 @@ export default function Settings() {
   useEffect(() => {
     const languageIndex = LANGUAGES.findIndex((v) => v.locale === language);
     if (languageIndex !== -1 && scrollRef.current) {
-      const scrollPosition = 260 * languageIndex;
-      // scrollRef.current.scrollTo({ x: scrollPosition, animated: false });
+      const scrollPosition = itemWidth * languageIndex;
       scrollX.value = scrollPosition;
+      scrollRef.current?.scrollTo({ x: scrollPosition });
       setCurrentIndex(languageIndex);
     }
   }, [language, scrollRef.current]);
-
-  const colorPalette = ["#124081", "#082540", "#071932", "#12528e"];
-
-  const colors = useMemo(() => {
-    return LANGUAGES.map(() => {
-      const randomColorIndex = Math.floor(Math.random() * colorPalette.length);
-      return colorPalette[randomColorIndex];
-    });
-  }, []);
 
   const handleButtonPress = () => {
     if (!isConfirmDelete) {
@@ -98,13 +88,13 @@ export default function Settings() {
         style={{ opacity: fadeAnim }}
         className={
           "h-full bg-richer_black red relative " +
-          (Platform.OS == "ios" ? "pt-16" : "pt-24")
+          (Platform.OS === "ios" ? "pt-16" : "pt-24")
         }
       >
         <View
           className={
             "absolute w-full p-4 flex justify-between z-50 flex-row " +
-            (Platform.OS == "android" ? "top-7" : "")
+            (Platform.OS === "android" ? "top-7" : "")
           }
         >
           <TouchableOpacity
@@ -141,7 +131,7 @@ export default function Settings() {
         <View
           className={
             "m-auto " +
-            (Platform.OS == "ios" ? "-translate-y-16" : "-translate-y-24")
+            (Platform.OS === "ios" ? "-translate-y-16" : "-translate-y-24")
           }
         >
           <Text className="text-ivory text-3xl font-bold text-center mb-2">
@@ -164,46 +154,45 @@ export default function Settings() {
           <ScrollView
             horizontal
             ref={scrollRef}
-            snapToInterval={256}
+            snapToOffsets={LANGUAGES.map((_, i) =>
+              i == 0
+                ? 0
+                : i == LANGUAGES.length - 1
+                  ? i * LANGUAGES.length - 1 - 80
+                  : i * itemWidth,
+            )}
             snapToAlignment="center"
             decelerationRate="fast"
-            showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 80 }}
+            showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={handleScrollEnd}
             onScroll={handleScroll}
-            scrollEventThrottle={16}
-            className="flex flex-row h-12 overflow-scroll no-scrollbar"
+            // scrollEventThrottle={16}
+            className="flex flex-row h-12 overflow-scroll"
           >
             {LANGUAGES.map((v, i) => {
               const animatedStyle = useAnimatedStyle(() => {
-                const inputRange = [(i - 1) * 256, i * 256, (i + 1) * 256];
-                const backgroundColor = interpolateColor(
-                  scrollX.value,
-                  inputRange,
-                  [
-                    colors[i % colors.length],
-                    colors[(i + 1) % colors.length],
-                    colors[(i + 2) % colors.length],
-                  ],
-                );
-                const opacity = withTiming(i === currentIndex ? 1 : 1, {
-                  duration: 300,
-                });
                 const scale = withTiming(i === currentIndex ? 1.1 : 1, {
                   duration: 300,
                 });
-                return { backgroundColor, opacity, transform: [{ scale }] };
+                const color = withTiming(
+                  i === currentIndex ? "#023c4d" : "#082540",
+                  {
+                    duration: 300,
+                  },
+                );
+                return { transform: [{ scale }], backgroundColor: color };
               });
 
               return (
                 <Reanimated.View
                   key={i}
                   style={animatedStyle}
-                  className={`snap-center mx-4 leading-10 transition-all duration-300 flex rounded-xl justify-center h-12 py-auto align-middle max-w-56 w-56`}
+                  className={`snap-center mx-4 leading-10 transition-all duration-300 flex rounded-xl justify-center h-12 py-auto align-middle max-w-56 w-56 `}
                 >
-                  <Text className="text-center text-2xl font-medium text-ivory">
+                  <Reanimated.Text className="text-center bg-transparent text-ivory text-2xl font-medium">
                     {v.name}
-                  </Text>
+                  </Reanimated.Text>
                 </Reanimated.View>
               );
             })}

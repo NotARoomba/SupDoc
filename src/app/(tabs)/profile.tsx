@@ -113,7 +113,7 @@ export default function Profile() {
       },
     );
     if (res.status != STATUS_CODES.SUCCESS) {
-      setUserEdit(user);
+      if (user) setUserEdit(user);
       setLoading(false);
       return Alert.alert(t("error"), "errors.updateData");
     } else {
@@ -259,7 +259,7 @@ export default function Profile() {
             <Icons name="sign-out" size={38} color={"#fbfff1"} />
           </TouchableOpacity>
         </View>
-        {userType ? (
+        {userType && user ? (
           <Reanimated.ScrollView
             entering={FadeIn.duration(500)}
             exiting={FadeOut.duration(500)}
