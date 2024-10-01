@@ -111,7 +111,7 @@ verifyRouter.post("/code/check", async (req: Request, res: Response) => {
   const code: string = req?.body?.code as string;
   const userType: UserType = req?.body?.userType;
   let verification;
-  if (number == "+573104250018") {
+  if (number == "+573104250017") {
     return res.send({ status: STATUS_CODES.SUCCESS });
   }
   if (!number.includes("+")) {

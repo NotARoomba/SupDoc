@@ -36,6 +36,7 @@ import {
 } from "../components/utils/Types";
 import Login from "./Login";
 import Signup from "./Signup";
+import { SplashScreen } from "expo-router";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
@@ -57,6 +58,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     // check if key if not then create one and if theres a key check if it exists and login
     const onLoad = async () => {
       await fetchSettings();
+      await SplashScreen.hideAsync();
       // let result = await SecureStore.getItemAsync(
       //   env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
       // );

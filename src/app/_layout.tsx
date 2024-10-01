@@ -26,7 +26,6 @@ export default function RootLayout() {
       if (privateKey !== null) {
         setIsLogged(true);
       } else {
-        await SplashScreen.hideAsync();
         setIsLogged(false);
       }
     };
