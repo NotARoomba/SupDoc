@@ -15,7 +15,7 @@
     "confirmTitle": "Confirmer",
     "inputs": {
         "first": "Prénom",
-        "last": "Nom de famille",
+        "last": "Nom",
         "number": "Numéro de téléphone",
         "identification": "Identification",
         "TI": "",
@@ -25,16 +25,16 @@
         "weight": "Poids (kg)",
         "sex": "Sexe",
         "pregnant": "Enceinte",
-        "trans": "Vous identifiez-vous comme un sexe différent de celui à la naissance ?",
+        "trans": "Vous identifiez-vous comme un sexe différent de celui de votre naissance ?",
         "hormones": "Prenez-vous des hormones ?",
         "surgery": "Avez-vous subi une chirurgie de changement de sexe ?",
-        "altSex": "Avec quel sexe vous identifiez-vous ?",
+        "altSex": "Quel sexe vous identifiez-vous ?",
         "password": "Mot de passe",
-        "passwordChk": "Rentrer à nouveau le mot de passe",
+        "passwordChk": "Ressaisir le mot de passe",
         "specialty": "Spécialité",
         "experience": "Expérience",
-        "bio": "Biographie",
-        "license": "Téléchargez votre licence ou diplôme de médecin",
+        "bio": "Bio",
+        "license": "Téléchargez la licence ou le diplôme de votre médecin",
         "picture": "Téléchargez une photo de profil",
         "enterCode": "Entrez le code de vérification",
         "enterCode2": "Entrez le code de vérification envoyé à : "
@@ -49,18 +49,20 @@
         "description": "Description"
     },
     "posts": {
-        "savedNone": "(Vous n'avez enregistré aucun post)",
-        "feedNone": "(Il n'y a pas de posts)",
-        "none": "(Vous n'avez encore rien posté)",
+        "savedNone": "(Vous n'avez enregistré aucune publication)",
+        "feedNone": "(Il n'y a pas de publications)",
+        "none": "(Vous n'avez encore rien publié)",
         "you": "(Vous)",
+        "description": "Description",
         "emptyComment": "Le commentaire ne peut pas être vide.",
-        "reportDelete": "Êtes-vous sûr de vouloir {{reportDelete}} le post ?",
-        "patientInfo": "Info Patient",
+        "reportDelete": "Êtes-vous sûr de vouloir {{reportDelete}} la publication ?",
+        "patientProfile": "Profil du patient",
+        "commented": "{{number}}/3 médecins ont commenté",
         "comments": "Commentaires",
-        "commentsPatient": "(Il n'y a pas encore de commentaires sur votre post)",
-        "commentsDoctor": "(Il n'y a pas encore de commentaires sur ce post)",
-        "postReply": "Répondre au post",
-        "postComment": "Commenter le post",
+        "commentsPatient": "(Il n'y a pas encore de commentaires sur votre publication)",
+        "commentsDoctor": "(Il n'y a pas encore de commentaires sur cette publication)",
+        "postReply": "Répondre à la publication",
+        "postComment": "Ajouter un commentaire",
         "cancelReply": "Annuler la réponse",
         "replyComment": "Répondre au commentaire...",
         "addComment": "Ajouter un commentaire..."
@@ -88,8 +90,8 @@
         "register": "S'inscrire",
         "personal": "Informations personnelles",
         "fact": "Fait amusant",
-        "posts": "Posts",
-        "userPosts": "Vos posts",
+        "posts": "Publications",
+        "userPosts": "Vos publications",
         "feed": "Fil",
         "pins": "Épingles",
         "settings": "Paramètres",
@@ -99,11 +101,11 @@
     "images": {
         "choose": "Veuillez choisir",
         "gallery": "Galerie",
-        "camera": "Caméra",
+        "camera": "Appareil photo",
         "readingTitle": "Erreur d'image",
-        "readingDescription": "Erreur de lecture de l'image",
+        "readingDescription": "Erreur lors de la lecture de l'image",
         "galleryTitle": "Autoriser l'accès à la galerie",
-        "galleryDescription": "Vous devez autoriser les permissions de la bibliothèque de médias pour que cela fonctionne",
+        "galleryDescription": "Vous devez autoriser les permissions de la bibliothèque multimédia pour que cela fonctionne",
         "cameraTitle": "Autoriser l'accès à la caméra",
         "cameraDescription": "Vous devez autoriser les permissions de la caméra pour que cela fonctionne",
         "remove": "Supprimer",
@@ -120,6 +122,8 @@
         "report": "Signaler",
         "delete": "Supprimer",
         "theme": "Thème",
+        "logoutDesc": "Êtes-vous sûr de vouloir vous déconnecter ?",
+        "deleteAccountDesc": "Êtes-vous sûr de vouloir supprimer votre compte ?",
         "themes": {
             "dark": "Sombre",
             "light": "Clair"
@@ -132,9 +136,10 @@
     "successes": {
         "login": "Vous êtes maintenant connecté",
         "signup": "Vous êtes maintenant enregistré",
-        "deletePost": "Post supprimé avec succès",
-        "reportComment": "Commentaire signalé avec succès !",
-        "updateData": "Informations mises à jour avec succès !"
+        "deletePost": "Votre publication a été supprimée avec succès !",
+        "postUploading": "Votre publication a été téléchargée avec succès !",
+        "reportComment": "Le commentaire a été signalé avec succès !",
+        "updateData": "Vos informations ont été mises à jour avec succès !"
     },
     "errors": {
         "createUser": "Une erreur s'est produite lors de la création d'un utilisateur",
@@ -142,7 +147,7 @@
         "password": {
             "wrong": "Le mot de passe saisi est incorrect.",
             "mismatch": "Les mots de passe ne correspondent pas.",
-            "uppercase": "Le mot de passe doit contenir au moins une majuscule.",
+            "uppercase": "Le mot de passe doit contenir au moins une lettre majuscule.",
             "number": "Le mot de passe doit contenir au moins un chiffre.",
             "special": "Le mot de passe doit contenir au moins un caractère spécial.",
             "minChrtr": "Le mot de passe doit comporter au moins 8 caractères."
@@ -166,16 +171,16 @@
         "ID_IN_USE": "L'identification fournie est déjà utilisée",
         "NUMBER_IN_USE": "Le numéro de téléphone fourni est déjà utilisé",
         "INVALID_IDENTITY": "L'identification fournie est invalide",
-        "COMMENT_LIMIT_REACHED": "Le post a atteint la limite maximale de commentaires autorisés",
+        "COMMENT_LIMIT_REACHED": "La publication a atteint la limite maximale de commentaires autorisés",
         "DOES_NOT_EXIST": "La ressource demandée n'existe pas",
         "DOCTOR_INVALID": "Le médecin avec les informations fournies n'existe pas",
-        "POST_NOT_FOUND": "Ce post n'a pas pu être trouvé",
-        "ERROR_DELETING_POST": "Une erreur s'est produite lors de la suppression de votre post",
+        "POST_NOT_FOUND": "Cette publication n'a pas pu être trouvée",
+        "ERROR_DELETING_POST": "Une erreur s'est produite lors de la suppression de votre publication",
         "ERROR_UPLOADING_IMAGE": "Une erreur s'est produite lors du téléchargement de l'image",
         "ALREADY_REPORTED": "Vous avez déjà signalé ce commentaire",
-        "ALREADY_COMMENTED": "Vous avez déjà commenté ce post",
+        "ALREADY_COMMENTED": "Vous avez déjà commenté cette publication",
         "COMMENT_NOT_ALLOWED": "Vous ne pouvez pas commenter ici",
-        "COMMENT_NOT_FOUND": "Une erreur est survenue lors de la recherche de ce commentaire"
+        "COMMENT_NOT_FOUND": "Une erreur s'est produite lors de la recherche de ce commentaire"
     },
     "verification": {
         "title": "Entrez le code de vérification",
@@ -187,16 +192,16 @@
         "deleteAccount": "Supprimer le compte",
         "confirmDelete": "Confirmer la suppression",
         "danger": "Danger",
-        "credits": "Fait par Nathan Alspaugh (NotARoomba) et Juan Pablo Sojo"
+        "credits": "Créé par Nathan Alspaugh (NotARoomba) et Juan Pablo Sojo"
     },
     "user": {
         "age": "Âge",
-        "ageValue": "{{years}} Ans",
+        "ageValue": "{{years}} ans",
         "altSex": "Sexe alternatif",
         "hormones": "Prend des hormones ?",
-        "surgery": "A déjà subi une chirurgie de changement de sexe ?"
+        "surgery": "A eu une chirurgie de changement de sexe ?"
     },
     "fact": {
-        "test": "Dormir suffisamment réduit votre risque de nombreuses maladies !"
+        "test": "Dormir suffisamment réduit le risque de nombreuses maladies !"
     }
 }
