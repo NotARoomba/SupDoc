@@ -1,11 +1,11 @@
 {
     "CFBundleDisplayName": "SupDoc",
-    "NSCameraUsageDescription": "SupDoc benötigt deine Kamera, um Fotos zu machen!",
-    "NSPhotoLibraryUsageDescription": "SupDoc benötigt Zugriff auf deine Galerie, um Fotos hochzuladen!",
+    "NSCameraUsageDescription": "SupDoc benötigt Ihre Kamera, um Fotos zu machen!",
+    "NSPhotoLibraryUsageDescription": "SupDoc benötigt Zugriff auf Ihre Galerie, um Fotos hochzuladen!",
     "success": "Erfolg!",
     "error": "Fehler",
     "check": "Überprüfen",
-    "loading": "Lädt",
+    "loading": "Laden",
     "yes": "Ja",
     "no": "Nein",
     "doctor": "Arzt",
@@ -25,61 +25,63 @@
         "weight": "Gewicht (kg)",
         "sex": "Geschlecht",
         "pregnant": "Schwanger",
-        "trans": "Identifizierst du dich als ein anderes Geschlecht als bei deiner Geburt?",
-        "hormones": "Nimmst du Hormone?",
-        "surgery": "Hast du eine Geschlechtsumwandlung vorgenommen?",
-        "altSex": "Mit welchem Geschlecht identifizierst du dich?",
+        "trans": "Identifizieren Sie sich als ein anderes Geschlecht als Ihr Geburtsgeschlecht?",
+        "hormones": "Nehmen Sie Hormone?",
+        "surgery": "Haben Sie eine geschlechtsändernde Operation gehabt?",
+        "altSex": "Mit welchem Geschlecht identifizieren Sie sich?",
         "password": "Passwort",
         "passwordChk": "Passwort erneut eingeben",
-        "specialty": "Fachgebiet",
+        "specialty": "Spezialität",
         "experience": "Erfahrung",
         "bio": "Biografie",
-        "license": "Lade deine Arztlizenz oder deinen Abschluss hoch",
-        "picture": "Lade ein Profilfoto hoch",
-        "enterCode": "Gib den Bestätigungscode ein",
-        "enterCode2": "Gib den an folgende Adresse gesendeten Bestätigungscode ein: "
+        "license": "Laden Sie die Lizenz oder das Diplom Ihres Arztes hoch",
+        "picture": "Laden Sie ein Profilbild hoch",
+        "enterCode": "Verifizierungscode eingeben",
+        "enterCode2": "Geben Sie den an folgende Adresse gesendeten Verifizierungscode ein: "
     },
     "profile": {
         "logoutTitle": "Abmelden",
-        "logoutDescription": "Bist du sicher, dass du dich abmelden möchtest?"
+        "logoutDescription": "Sind Sie sicher, dass Sie sich abmelden möchten?"
     },
     "upload": {
-        "confirmDescription": "Bist du sicher, dass du posten möchtest?",
+        "confirmDescription": "Sind Sie sicher, dass Sie posten möchten?",
         "title": "Titel",
         "description": "Beschreibung"
     },
     "posts": {
-        "savedNone": "(Du hast keine Beiträge gespeichert)",
+        "savedNone": "(Sie haben keine Beiträge gespeichert)",
         "feedNone": "(Es gibt keine Beiträge)",
-        "none": "(Du hast noch nichts gepostet)",
-        "you": "(Du)",
+        "none": "(Sie haben noch nichts gepostet)",
+        "you": "(Sie)",
+        "description": "Beschreibung",
         "emptyComment": "Der Kommentar darf nicht leer sein.",
-        "reportDelete": "Bist du sicher, dass du den Beitrag {{reportDelete}} möchtest?",
-        "patientInfo": "Patienteninfo",
+        "reportDelete": "Sind Sie sicher, dass Sie den Beitrag {{reportDelete}} möchten?",
+        "patientProfile": "Patientenprofil",
+        "commented": "{{number}}/3 Ärzte haben kommentiert",
         "comments": "Kommentare",
-        "commentsPatient": "(Es gibt noch keine Kommentare zu deinem Beitrag)",
+        "commentsPatient": "(Es gibt noch keine Kommentare zu Ihrem Beitrag)",
         "commentsDoctor": "(Es gibt noch keine Kommentare zu diesem Beitrag)",
-        "postReply": "Beitrag antworten",
-        "postComment": "Beitrag kommentieren",
+        "postReply": "Antwort auf den Beitrag",
+        "postComment": "Kommentar posten",
         "cancelReply": "Antwort abbrechen",
         "replyComment": "Auf Kommentar antworten...",
         "addComment": "Einen Kommentar hinzufügen..."
     },
     "report": {
-        "description": "Bitte wähle einen Grund für die Meldung:",
-        "user": "Bist du sicher, dass du {{user}} melden möchtest?",
+        "description": "Bitte wählen Sie einen Grund für die Meldung aus:",
+        "user": "Sind Sie sicher, dass Sie {{user}} melden möchten?",
         "inappropiateBehavior": "Unangemessenes Verhalten",
         "spam": "Spam",
         "incorrectInfo": {
             "title": "Falsche Informationen",
             "provide": {
-                "title": "Wissenschaftlichen Nachweis erbringen",
-                "description": "Als Arzt bitte einen gültigen wissenschaftlichen Link als Nachweis für die Meldung falscher Informationen angeben:"
+                "title": "Liefern Sie akademische Beweise",
+                "description": "Bitte geben Sie als Arzt einen gültigen akademischen Link als Beweis für die Meldung falscher Informationen an:"
             }
         },
         "invalidLink": {
             "title": "Ungültiger Link",
-            "description": "Bitte einen gültigen wissenschaftlichen Link angeben."
+            "description": "Bitte geben Sie einen gültigen akademischen Link an."
         }
     },
     "titles": {
@@ -87,9 +89,9 @@
         "signup": "Registrieren",
         "register": "Registrieren",
         "personal": "Persönliche Informationen",
-        "fact": "Interessante Tatsache",
+        "fact": "Spaßfakt",
         "posts": "Beiträge",
-        "userPosts": "Deine Beiträge",
+        "userPosts": "Ihre Beiträge",
         "feed": "Feed",
         "pins": "Pins",
         "settings": "Einstellungen",
@@ -102,13 +104,13 @@
         "camera": "Kamera",
         "readingTitle": "Bildfehler",
         "readingDescription": "Fehler beim Lesen des Bildes",
-        "galleryTitle": "Zugriff auf die Galerie erlauben",
-        "galleryDescription": "Du musst die Berechtigungen für die Medienbibliothek aktivieren, damit dies funktioniert",
-        "cameraTitle": "Zugriff auf die Kamera erlauben",
-        "cameraDescription": "Du musst die Berechtigungen für die Kamera aktivieren, damit dies funktioniert",
+        "galleryTitle": "Zugriff auf Galerie erlauben",
+        "galleryDescription": "Sie müssen die Berechtigungen für die Mediathek erlauben, damit dies funktioniert",
+        "cameraTitle": "Zugriff auf Kamera erlauben",
+        "cameraDescription": "Sie müssen die Berechtigungen für die Kamera erlauben, damit dies funktioniert",
         "remove": "Entfernen",
         "removeTitle": "Bild entfernen",
-        "removeDescription": "Bist du sicher, dass du dieses Bild entfernen möchtest?"
+        "removeDescription": "Sind Sie sicher, dass Sie dieses Bild entfernen möchten?"
     },
     "buttons": {
         "back": "Zurück",
@@ -116,10 +118,12 @@
         "finish": "Fertig",
         "update": "Aktualisieren",
         "clear": "Löschen",
-        "post": "Posten",
+        "post": "Beitrag",
         "report": "Melden",
         "delete": "Löschen",
         "theme": "Thema",
+        "logoutDesc": "Sind Sie sicher, dass Sie sich abmelden möchten?",
+        "deleteAccountDesc": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?",
         "themes": {
             "dark": "Dunkel",
             "light": "Hell"
@@ -127,18 +131,19 @@
         "confirmDelete": "Löschen bestätigen",
         "deleteAccount": "Konto löschen",
         "cancel": "Abbrechen",
-        "submit": "Einreichen"
+        "submit": "Absenden"
     },
     "successes": {
-        "login": "Du bist jetzt angemeldet",
-        "signup": "Du bist jetzt registriert",
-        "deletePost": "Beitrag erfolgreich gelöscht",
-        "reportComment": "Kommentar erfolgreich gemeldet!",
-        "updateData": "Deine Informationen wurden erfolgreich aktualisiert!"
+        "login": "Sie sind jetzt angemeldet",
+        "signup": "Sie sind jetzt registriert",
+        "deletePost": "Ihr Beitrag wurde erfolgreich gelöscht!",
+        "postUploading": "Ihr Beitrag wurde erfolgreich hochgeladen!",
+        "reportComment": "Der Kommentar wurde erfolgreich gemeldet!",
+        "updateData": "Ihre Informationen wurden erfolgreich aktualisiert!"
     },
     "errors": {
-        "createUser": "Beim Erstellen eines Benutzers ist ein Fehler aufgetreten",
-        "loginNotFound": "{{userType}} nicht mit dieser ID gefunden",
+        "createUser": "Bei der Erstellung eines Benutzers ist ein Fehler aufgetreten",
+        "loginNotFound": "{{userType}} mit dieser ID nicht gefunden",
         "password": {
             "wrong": "Das eingegebene Passwort ist falsch.",
             "mismatch": "Die Passwörter stimmen nicht überein.",
@@ -148,55 +153,55 @@
             "minChrtr": "Das Passwort muss mindestens 8 Zeichen lang sein."
         },
         "missing": "Fehlende Informationen",
-        "fillmissing": "Bitte die fehlenden Informationen ausfüllen",
-        "missingInfo": "Bitte die Informationen ausfüllen",
-        "fetchData": "Beim Abrufen deiner Daten ist ein Fehler aufgetreten!",
-        "updateData": "Beim Aktualisieren deiner Informationen ist ein Fehler aufgetreten!",
+        "fillmissing": "Bitte füllen Sie die fehlenden Informationen aus",
+        "missingInfo": "Bitte füllen Sie die Informationen aus",
+        "fetchData": "Es gab einen Fehler beim Abrufen Ihrer Daten!",
+        "updateData": "Es gab einen Fehler beim Aktualisieren Ihrer Informationen!",
         "GENERIC_ERROR": "Es ist ein Fehler aufgetreten",
         "USER_NOT_FOUND": "Dieser Benutzer existiert nicht",
         "INVALID_NUMBER": "Die Telefonnummer ist ungültig",
         "SENT_CODE": "Ein Code wurde bereits an {{number}} gesendet",
         "NUMBER_NOT_EXIST": "Diese Nummer existiert nicht",
-        "ERROR_SENDING_CODE": "Beim Senden des Codes ist ein Fehler aufgetreten",
-        "TOO_MANY_ATTEMPTS": "Du hast zu oft versucht, bitte warte 5 Minuten",
+        "ERROR_SENDING_CODE": "Es gab einen Fehler beim Senden des Codes",
+        "TOO_MANY_ATTEMPTS": "Sie haben zu viele Versuche unternommen, bitte warten Sie 5 Minuten",
         "CODE_DENIED": "Der Code ist falsch",
         "CODE_EXPIRED": "Der Code ist abgelaufen",
-        "CODE_FAILED": "Beim Senden des Codes ist ein Fehler aufgetreten",
-        "NO_CONNECTION": "Beim Verbinden mit dem Server ist ein Fehler aufgetreten, bitte überprüfe deine Internetverbindung.",
-        "ID_IN_USE": "Die angegebene Identifikation wird bereits verwendet",
-        "NUMBER_IN_USE": "Die angegebene Telefonnummer wird bereits verwendet",
-        "INVALID_IDENTITY": "Die angegebene Identifikation ist ungültig",
-        "COMMENT_LIMIT_REACHED": "Der Beitrag hat das maximale Limit an erlaubten Kommentaren erreicht",
+        "CODE_FAILED": "Es gab einen Fehler beim Senden des Codes",
+        "NO_CONNECTION": "Es gab einen Fehler beim Verbinden mit dem Server, bitte überprüfen Sie Ihre Internetverbindung.",
+        "ID_IN_USE": "Die angegebenen Identifikationen sind bereits in Verwendung",
+        "NUMBER_IN_USE": "Die angegebene Telefonnummer ist bereits in Verwendung",
+        "INVALID_IDENTITY": "Die angegebenen Identifikationen sind ungültig",
+        "COMMENT_LIMIT_REACHED": "Der Beitrag hat das maximale Kommentarlimit erreicht",
         "DOES_NOT_EXIST": "Die angeforderte Ressource existiert nicht",
-        "DOCTOR_INVALID": "Der Arzt mit den angegebenen Informationen existiert nicht",
-        "POST_NOT_FOUND": "Dieser Beitrag konnte nicht gefunden werden",
-        "ERROR_DELETING_POST": "Beim Löschen deines Beitrags ist ein Fehler aufgetreten",
-        "ERROR_UPLOADING_IMAGE": "Beim Hochladen des Bildes ist ein Fehler aufgetreten",
-        "ALREADY_REPORTED": "Du hast diesen Kommentar bereits gemeldet",
-        "ALREADY_COMMENTED": "Du hast bereits auf diesen Beitrag kommentiert",
-        "COMMENT_NOT_ALLOWED": "Du kannst hier keinen Kommentar abgeben",
+        "DOCTOR_INVALID": "Der Arzt mit den eingegebenen Informationen existiert nicht",
+        "POST_NOT_FOUND": "Dieser Beitrag wurde nicht gefunden",
+        "ERROR_DELETING_POST": "Es gab einen Fehler beim Löschen Ihres Beitrags",
+        "ERROR_UPLOADING_IMAGE": "Es gab einen Fehler beim Hochladen des Bildes",
+        "ALREADY_REPORTED": "Sie haben diesen Kommentar bereits gemeldet",
+        "ALREADY_COMMENTED": "Sie haben bereits zu diesem Beitrag kommentiert",
+        "COMMENT_NOT_ALLOWED": "Sie können hier keinen Kommentar abgeben",
         "COMMENT_NOT_FOUND": "Es gab einen Fehler beim Finden dieses Kommentars"
     },
     "verification": {
-        "title": "Gib den Bestätigungscode ein",
-        "description": "Gib den an folgende Adresse gesendeten Bestätigungscode ein: "
+        "title": "Geben Sie den Verifizierungscode ein",
+        "description": "Geben Sie den an folgende Adresse gesendeten Verifizierungscode ein: "
     },
-    "settings":    {
+    "settings": {
         "languages": "Sprachen",
         "theme": "Thema",
         "deleteAccount": "Konto löschen",
         "confirmDelete": "Löschen bestätigen",
         "danger": "Gefahr",
-        "credits": "Erstellt von Nathan Albo (NotARoomba) und Juan Pablo Sujo"
+        "credits": "Erstellt von Nathan Alspaugh (NotARoomba) und Juan Pablo Sujo"
     },
     "user": {
         "age": "Alter",
         "ageValue": "{{years}} Jahre",
         "altSex": "Alternatives Geschlecht",
-        "hormones": "Nimmst du Hormone?",
-        "surgery": "Hast du eine Geschlechtsumwandlung vorgenommen?"
+        "hormones": "Nimmt Hormone?",
+        "surgery": "Hat eine geschlechtsändernde Operation gehabt?"
     },
     "fact": {
-        "test": "Ausreichender Schlaf verringert das Risiko vieler Krankheiten!"
+        "test": "Ausreichend Schlaf reduziert das Risiko für viele Krankheiten!"
     }
 }
