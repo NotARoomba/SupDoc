@@ -105,7 +105,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-
     setFacts(res.facts);
 
     // Combine posts and facts into the feed, shuffling facts randomly between posts
@@ -143,7 +142,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const fetchPosts = async () => {
     setLoading(true);
     if (!userType) return setLoading(false);
-
+    await fetchFacts()
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
@@ -157,9 +156,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
     setPosts(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
-
     // After fetching posts, combine with facts into feed
     const newFeed = shuffleFactsIntoFeed(res.posts, facts);
+    console.log(newFeed)
     setFeed(newFeed);
 
     setLoading(false);
@@ -198,6 +197,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     let finalPosts: Post[] = [];
     newPosts.forEach((v) =>
       !posts.find((z) => z._id == v._id) ? finalPosts.push(v) : 0,
+    );
+    if (userType == UserType.DOCTOR) setFeed(
+      shuffleFactsIntoFeed([...posts, ...finalPosts], facts),
     );
     setPosts([...posts, ...finalPosts]);
   };
@@ -245,6 +247,10 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
     );
 
+    if (userType == UserType.DOCTOR) setFeed(
+      feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+    );
+
     setSavedPosts(
       savedPosts.map((p) =>
         post == p._id ? { ...p, comments: res.comments } : p,
@@ -260,6 +266,10 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
+
+    if (userType == UserType.DOCTOR) setFeed(
+      feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+    );
 
     setPosts(
       posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),

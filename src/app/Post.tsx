@@ -232,6 +232,7 @@ export default function PostPage() {
                   {/* <View className="absolute flex justify-between w-full h-full"><View className="w-full m-auto flex flex-row justify-between px-4"><TouchableOpacity disabled={index == 0} className={index == 0 ? " animate-hide" : " animate-show"} onPress={() => galleryRef.current?.setIndex(index-1, true)}><Icons name="chevron-left" size={40} color="#fbfff1" /></TouchableOpacity><TouchableOpacity disabled={index == post.images.length-1} className={index == post.images.length-1 ? " animate-hide" : " animate-show"} onPress={() => galleryRef.current?.setIndex(index+1, true)}><Icons name="chevron-right" size={40} color="#fbfff1" /></TouchableOpacity></View></View> */}
                 </View>
               )}
+               {post.images.length == 0 && userType == UserType.DOCTOR&&  <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4 " />}
               <View className="-z-10">
                 {userType == UserType.DOCTOR && (
                   <View>
@@ -330,9 +331,10 @@ export default function PostPage() {
                     <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
                   </View>
                 )}
+                                    {post.images.length == 0 && <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4 " />}
 
                 <Text className="text-4xl mb-1 font-bold text-center text-ivory">
-                  {t("posts.description")}{" "}
+                  {t("posts.description")}
                 </Text>
                 <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">
                   {post.description}

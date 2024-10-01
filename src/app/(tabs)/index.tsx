@@ -90,7 +90,7 @@ export default function Index() {
           <Text className="text-6xl font-bold text-center text-ivory">
             {t("titles.feed")}
           </Text>
-          {posts.length == 0 ? (
+          {feed.length == 0 ? (
             !userType ? (
               // <View>
               <LoaderView />

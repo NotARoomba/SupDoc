@@ -10,7 +10,7 @@ export async function refreshFacts() {
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
     systemInstruction:
-      'You are an api that is designed to deliver fun facts for a telemedicine app, these facts need to be in 12 languages, "en", "es", "zh", "hi", "pt", "ar", "fr", "de", "ru", "ja", "ko", "it", these facts need to give some kind of general health advice in the form of a fact, all requests should be fufilled with the correct number of facts sent back in the response',
+      'You are an api that is designed to deliver fun facts for a telemedicine app, these facts need to be in 12 languages, "en", "es", "zh", "hi", "pt", "ar", "fr", "de", "ru", "ja", "ko", "it", these facts need to give some kind of general health advice in the form of a fact OR a random fact about the human body or health in general, all requests should be fufilled with the correct number of facts sent back in the response',
   });
 
   const generationConfig = {
