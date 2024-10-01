@@ -45,6 +45,7 @@ import {
   SignupProps,
   UserType,
 } from "../components/utils/Types";
+import prompt from "@powerdesigninc/react-native-prompt";
 
 export default function Signup({
   info,
@@ -130,43 +131,41 @@ export default function Signup({
             setLoading(false);
             return Alert.alert(t("error"), t("errors.INVALID_NUMBER"));
           }
-          // const verify = await callAPI("/verify/code/send", "POST", {
-          //   number: info.countryCode + info.number,
-          // });
-          // if (verify.status === STATUS_CODES.INVALID_NUMBER)
-          //  { setIndex(index-1);
-          //   setLoading(false);return Alert.alert("Error", "That number is invalid!");}
-          // else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
-          //  { setIndex(index-1);
-          //   setLoading(false);return Alert.alert("Error", "That number does not exist!");}
-          // else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
-          // {  setIndex(index-1);
-          //   setLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
-          // else {
-          //   setTimeout(() => {
-          //     return prompt(
-          //       "Enter Verification Code",
-          //       "Enter the verification code sent to: " +
-          //         (info.countryCode + info.number),
-          //       [{text: 'Cancel', style: 'cancel', onPress: () => {setIndex(index-1);
-          //         setLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
-          //         setLoading(true);
-          //         const v = await callAPI("/verify/code/check", "POST", {
-          //           number: info.countryCode + info.number,
-          //           input,
-          //         });
-          //         if (v.status !== STATUS_CODES.SUCCESS) {
-          //           setLoading(false);
-          //           return Alert.alert("Error", "The code is incorrect!");
-          //         }
-          //         setIsVerified(true);
-          //       }}],
-          //       "plain-text",
-          //       "",
-          //       "number-pad",
-          //     );
-          //   }, 250);
-          // }
+          const verify = await callAPI("/verify/code/send", "POST", {
+            number: info.countryCode + info.number,
+          });
+          if (verify.status === STATUS_CODES.INVALID_NUMBER)
+           { setIndex(index-1);
+            setLoading(false);return Alert.alert("Error", "That number is invalid!");}
+          else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST)
+           { setIndex(index-1);
+            setLoading(false);return Alert.alert("Error", "That number does not exist!");}
+          else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE)
+          {  setIndex(index-1);
+            setLoading(false);return Alert.alert("Error", "There was an error sending the code!");}
+          else {
+            setTimeout(() => {
+              return prompt(
+                "Enter Verification Code",
+                "Enter the verification code sent to: " +
+                  (info.countryCode + info.number),
+                [{text: 'Cancel', style: 'cancel', onPress: () => {setIndex(index-1);
+                  setLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
+                  setLoading(true);
+                  const v = await callAPI("/verify/code/check", "POST", {
+                    number: info.countryCode + info.number,
+                    input,
+                  });
+                  setLoading(false);
+                  if (v.status !== STATUS_CODES.SUCCESS) return Alert.alert("Error", "The code is incorrect!");
+                  setIsVerified(true);
+                }}],
+                "plain-text",
+                "",
+                "number-pad",
+              );
+            }, 250);
+          }
         }
         setLoading(false);
       } else if (
@@ -823,7 +822,7 @@ export default function Signup({
             placeholderTextColor={"#ffffff"}
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
-          <Text className="text-center flex text-lg text-ivory -mb-3 font-semibold">
+          <Text className="text-center flex text-lg text-ivory -mb-3 mt-4 font-semibold">
             {t("inputs.bio")} ({info.about.length}/300)
           </Text>
           <TextInput
@@ -1021,7 +1020,7 @@ export default function Signup({
             secureTextEntry
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl  w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
           <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
             {t("inputs.passwordChk")}
@@ -1033,7 +1032,7 @@ export default function Signup({
             secureTextEntry
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl  w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
           />
         </Animated.View>
       )}

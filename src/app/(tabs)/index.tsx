@@ -1,3 +1,5 @@
+import Fact from "@/backend/models/fact";
+import Post from "@/backend/models/post";
 import { UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import useFade from "components/hooks/useFade";
@@ -8,7 +10,7 @@ import FunFact from "components/misc/FunFact";
 import PostBlock from "components/misc/PostBlock";
 // import SkeletonContent from 'react-native-reanimated-skeleton'
 import { SplashScreen } from "expo-router";
-import { useEffect, useState } from "react";
+import { MutableRefObject, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Animated,
@@ -26,15 +28,12 @@ export default function Index() {
   // const [loading, setLoading] = useState(false);
   const fadeAnim = useFade();
   const { t } = useTranslation();
-  const fetchData = async () => {
-    listRef.current?.prepareForLayoutAnimationRender();
-    // After removing the item, we can start the animation.
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    await SplashScreen.hideAsync();
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // const fetchData = async () => {
+  //   listRef.current?.prepareForLayoutAnimationRender();
+  //   // After removing the item, we can start the animation.
+  //   LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  //   await SplashScreen.hideAsync();
+  // };
   return (
     <Animated.View
       style={{ opacity: fadeAnim }}
@@ -79,7 +78,7 @@ export default function Index() {
               }}
               onEndReached={fetchPosts}
               data={posts}
-              renderItem={({ item }) => (
+              renderItem={({ item }) =>  (
                 <PostBlock post={item} listRef={listRef} userType={userType} />
               )}
             />
@@ -102,7 +101,7 @@ export default function Index() {
             )
           ) : (
             <FlashList
-              // ref={listRef}
+              // ref={listRef as unknown as MutableRefObject<FlashList<Post> | null>}
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}

@@ -254,15 +254,15 @@ export default function Index({ setIsLogged }: IndexProps) {
   const checkLogin = async (code: string, number: string) => {
     if (!userType) return;
     setLoading(true);
-    // const v = await callAPI("/verify/code/check", "POST", {
-    //   number,
-    //   code,
-    // });
-    // if (v.status !== STATUS_CODES.SUCCESS) {
-    //   setLoading(false);
-    //   // need to update wth localizations
-    //   return Alert.alert("Error", v.status);
-    // }
+    const v = await callAPI("/verify/code/check", "POST", {
+      number,
+      code,
+    });
+    if (v.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
+      // need to update wth localizations
+      return Alert.alert("Error", v.status);
+    }
     const res = await callAPI(`/users/keys`, "POST", {
       id: loginInfo.identification,
       userType,
@@ -480,7 +480,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                     : (!isLogin ? verifyPassword(signUpInfo.password) : true)
                       ? !isLogin
                         ? signup()
-                        : checkLogin("7", "8")
+                        : parseLogin()
                       : 0
                 }
                 className={

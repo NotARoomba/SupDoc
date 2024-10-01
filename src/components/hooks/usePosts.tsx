@@ -82,7 +82,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
       // Randomly shuffle a fact between 3-10 posts
       while (factIndex < facts.length && postIndex < shuffledFeed.length) {
-        const randomInterval = Math.floor(Math.random() * (10 - 3 + 1)) + 3; // Random between 3 to 10
+        const randomInterval = Math.floor(Math.random() * (4 - 3 + 1)) + 3; // Random between 3 to 10
         postIndex = Math.min(postIndex + randomInterval, shuffledFeed.length);
         shuffledFeed.splice(postIndex, 0, facts[factIndex]); // Insert fact at random interval
         factIndex++;
@@ -108,10 +108,11 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     setFacts(res.facts);
 
     // Combine posts and facts into the feed, shuffling facts randomly between posts
-    const newFeed = shuffleFactsIntoFeed(posts, res.facts);
-    setFeed(newFeed);
+    // const newFeed = shuffleFactsIntoFeed(posts, res.facts);
+    // setFeed(newFeed);
 
     setLoading(false);
+    return res.facts
   };
 
 
@@ -142,7 +143,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const fetchPosts = async () => {
     setLoading(true);
     if (!userType) return setLoading(false);
-    await fetchFacts()
+    const f = await fetchFacts()
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
@@ -153,13 +154,13 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
-
-    setPosts(res.posts);
+    setPosts(posts.length == 0 ? res.posts : [...posts, ...res.posts]);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     // After fetching posts, combine with facts into feed
-    const newFeed = shuffleFactsIntoFeed(res.posts, facts);
-    console.log(newFeed)
-    setFeed(newFeed);
+    if (res.posts.length !== 0) {
+      const newFeed = shuffleFactsIntoFeed(res.posts, f);
+      setFeed(newFeed);
+    }
 
     setLoading(false);
   };
@@ -397,7 +398,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       savePost,
       fetchPosts,
     }),
-    [posts, postEdit, savedPosts, listRef],
+    [posts, feed, postEdit, savedPosts, listRef],
   );
   return (
     <PostsContext.Provider value={postsContextValue}>

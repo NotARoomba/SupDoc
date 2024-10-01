@@ -94,8 +94,8 @@ export default function UserPage() {
 Post
 </Text> */}
           <TouchableOpacity
-            disabled={user._id?.toString() == routes.id}
-            style={{ opacity: user._id?.toString() == routes.id ? 0 : 1 }}
+            disabled={user?._id?.toString() == routes.id}
+            style={{ opacity: user?._id?.toString() == routes.id ? 0 : 1 }}
             className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
             onPress={() =>
               Alert.alert(
