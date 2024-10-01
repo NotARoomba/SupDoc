@@ -150,7 +150,7 @@ export default function Signup({
                 t("inputs.enterCode2") +
                   (info.countryCode + info.number),
                 [{text: t('buttons.cancel'), style: 'cancel', onPress: () => {setIndex(index-1);
-                  setLoading(false)}}, {text: 'Check', isPreferred: true, onPress: async (input) => {
+                  setLoading(false)}}, {text: t('check'), isPreferred: true, onPress: async (input) => {
                   setLoading(true);
                   const v = await callAPI("/verify/code/check", "POST", {
                     number: info.countryCode + info.number,
