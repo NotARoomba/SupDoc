@@ -32,7 +32,7 @@ patientsRouter.get("/", async (req: Request, res: Response) => {
         .status(200)
         .send(
           encrypt(
-            { user, status: STATUS_CODES.SUCCESS },
+            { user: {...user, identification: {...user.identification, number: parseInt(user.identification.number as unknown as string)}}, status: STATUS_CODES.SUCCESS },
             req.headers.authorization,
           ),
         );
@@ -105,7 +105,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
           //   keyAltName,
           //   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
           // }),
-          number: await encryption.encrypt(data.identification.number, {
+          number: await encryption.encrypt(data.identification.number.toString(), {
             keyId: keyUDID,
             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
           }),

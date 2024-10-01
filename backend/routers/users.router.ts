@@ -134,7 +134,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
         ? ((await collections.patients.findOne({
             $or: [
               {
-                "identification.number": await encryption.encrypt(id, {
+                "identification.number": await encryption.encrypt(id.toString(), {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                   keyAltName: idHash,
                 }),
@@ -149,7 +149,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
           })) as User)
         : null;
       if (!user) return res.status(200).send({ status: STATUS_CODES.SUCCESS });
-      else if (user.identification.number == id)
+      else if (user.identification.number.toString() == id.toString())
         return res.status(200).send({ status: STATUS_CODES.ID_IN_USE });
       else if (user.number == number)
         return res.status(200).send({ status: STATUS_CODES.NUMBER_IN_USE });
