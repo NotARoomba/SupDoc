@@ -364,7 +364,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
   useEffect(() => {
     if (userType) {
-      fetchPosts().then(async () => await SplashScreen.hideAsync());
+      fetchPosts();
       if (userType == UserType.DOCTOR) fetchSavedPosts();
     }
   }, [userType]);

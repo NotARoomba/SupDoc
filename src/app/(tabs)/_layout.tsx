@@ -3,7 +3,7 @@ import { usePosts } from "components/hooks/usePosts";
 import { useSettings } from "components/hooks/useSettings";
 import { useUser } from "components/hooks/useUser";
 import { UserType } from "components/utils/Types";
-import { Tabs } from "expo-router";
+import { SplashScreen, Tabs } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 
@@ -15,6 +15,7 @@ export default function TabLayout() {
     fetchUser();
     fetchPosts();
     fetchSettings();
+    SplashScreen.hideAsync();
   }, []);
   return (
     <Tabs

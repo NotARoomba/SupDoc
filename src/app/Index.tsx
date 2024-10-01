@@ -55,26 +55,8 @@ export default function Index({ setIsLogged }: IndexProps) {
   const { fetchSettings } = useSettings();
   const { t } = useTranslation();
   useEffect(() => {
-    // check if key if not then create one and if theres a key check if it exists and login
-    const onLoad = async () => {
-      await fetchSettings();
-      await SplashScreen.hideAsync();
-      // let result = await SecureStore.getItemAsync(
-      //   env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
-      // );
-      // if (!result) {
-      //   const keys = await RSA.generateKeys(2048);
-      //   await SecureStore.setItemAsync(
-      //     env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
-      //     keys.public,
-      //   );
-      //   await SecureStore.setItemAsync(
-      //     env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
-      //     keys.private,
-      //   );
-      // }
-    };
-    onLoad();
+      fetchSettings();
+      SplashScreen.hideAsync();
   }, []);
   const signup = async () => {
     if (!userType) return;
