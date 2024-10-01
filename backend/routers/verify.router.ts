@@ -71,7 +71,9 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
             identification: {
               number: await encryption.encrypt(number, {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                keyAltName: number.toString(2),
+                keyAltName: CryptoJS.SHA256(
+                  number.toString(2),
+                ).toString(),
               }),
             },
           });
@@ -107,7 +109,7 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
 });
 
 verifyRouter.post("/code/check", async (req: Request, res: Response) => {
-  let number: string = req?.body?.number;
+  let number: string = String(req?.body?.number);
   const code: string = req?.body?.code as string;
   const userType: UserType = req?.body?.userType;
   let verification;
@@ -119,17 +121,16 @@ verifyRouter.post("/code/check", async (req: Request, res: Response) => {
       userType == UserType.DOCTOR
         ? await collections.doctors?.findOne({
             identification: {
-              number: await encryption.encrypt(parseInt(number), {
-                algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                keyAltName: parseInt(number).toString(2),
-              }),
+              number: parseInt(number),
             },
           })
         : await collections.patients?.findOne({
             identification: {
               number: await encryption.encrypt(parseInt(number), {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                keyAltName: parseInt(number).toString(2),
+                keyAltName: CryptoJS.SHA256(
+                  parseInt(number).toString(2),
+                ).toString(),
               }),
             },
           });
