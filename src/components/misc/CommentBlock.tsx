@@ -34,7 +34,7 @@ export default function CommentBlock({
     const initialLikesData = comments.reduce(
       (acc, comment) => {
         acc[comment._id.toString()] = {
-          liked: comment.likes.includes(user._id as ObjectId),
+          liked: comment.likes.includes(user?._id as ObjectId),
           likes: comment.likes.length,
         };
         return acc;
@@ -90,7 +90,7 @@ export default function CommentBlock({
                 onPress={() =>
                   router.navigate({
                     pathname:
-                      comment.commenter == user._id
+                      comment.commenter == user?._id
                         ? "/(tabs)/profile"
                         : "/User",
                     params: { id: comment.commenter.toString() as string },
@@ -99,7 +99,7 @@ export default function CommentBlock({
               >
                 <Text className="text-powder_blue text-lg font-bold">
                   {comment.name}{" "}
-                  {comment.commenter == user._id ? t("posts.you") : ""}
+                  {comment.commenter == user?._id ? t("posts.you") : ""}
                 </Text>
               </TouchableOpacity>
               <Text className="text-ivory text-md">{comment.text}</Text>

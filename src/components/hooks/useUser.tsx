@@ -16,9 +16,9 @@ import { Alert } from "react-native";
 import { useLoading } from "./useLoading";
 
 interface UserContextType {
-  user: User;
-  userEdit: User;
-  userType: UserType | undefined;
+  user: User | null;
+  userEdit: User | null;
+  userType: UserType | null;
   reportUser: (id: string, userType: UserType) => void;
   deleteUser: () => void;
   fetchUser: () => Promise<void>;
@@ -35,9 +35,9 @@ interface UserProviderProps {
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const { t } = useTranslation();
   const { setLoading } = useLoading();
-  const [user, setUser] = useState<User>({} as User);
-  const [userEdit, setUserEdit] = useState<User>({} as User);
-  const [userType, setUserType] = useState<UserType>();
+  const [user, setUser] = useState<User | null>(null);
+  const [userEdit, setUserEdit] = useState<User | null>(null);
+  const [userType, setUserType] = useState<UserType | null>(null);
   const fetchUser = async () => {
     setLoading(true);
     const ut = (await SecureStore.getItemAsync(
