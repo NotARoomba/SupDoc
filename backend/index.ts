@@ -10,6 +10,7 @@ import { usersRouter } from "./routers/users.router";
 import { verifyRouter } from "./routers/verify.router";
 import { connectToDatabase } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
+import { refreshFacts } from "./services/facts.service";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -37,6 +38,9 @@ connectToDatabase()
     app.use("/", async (_req: Request, res: Response) => {
       res.status(200).send("You arent supposed to be here");
     });
+
+    refreshFacts();
+    setInterval(() => refreshFacts(), 1000 * 3600 * 2);
 
     app.listen(port);
     console.log("Server started!");
