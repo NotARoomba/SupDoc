@@ -1,10 +1,12 @@
+import { LanguageCodes } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
+import { FunFactProps } from "components/utils/Types";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
-export default function FunFact() {
-  const { t } = useTranslation();
+export default function FunFact({fact}: FunFactProps) {
+  const { t, i18n } = useTranslation();
   return (
     <Animated.View
       entering={FadeIn.duration(500)}
@@ -18,7 +20,7 @@ export default function FunFact() {
         </Text>
       </View>
       <Text className="text-ivory/70 text-lg font-semibold">
-        {t("fact.test")}
+        {fact.text[i18n.language as LanguageCodes]}
       </Text>
     </Animated.View>
   );

@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 export default function Index() {
-  const { posts, listRef, fetchPosts, refreshPosts } = usePosts();
+  const { posts, listRef, fetchPosts, refreshPosts, facts, feed  } = usePosts();
   // const listRef = useRef<FlashList<Post> | null>(null);
   const { userType } = useUser();
   const [refreshing, setRefreshing] = useState(false);
@@ -50,7 +50,7 @@ export default function Index() {
     > */}
       {userType == UserType.PATIENT ? (
         <ScrollView className="h-full flex">
-          <FunFact />
+          <FunFact fact={facts[0]} />
           <View className="h-0.5 rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
           <Text className="text-4xl font-bold text-center text-ivory">
             {t("titles.userPosts")}
@@ -102,7 +102,7 @@ export default function Index() {
             )
           ) : (
             <FlashList
-              ref={listRef}
+              // ref={listRef}
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
@@ -112,8 +112,9 @@ export default function Index() {
                 refreshPosts().then(() => setRefreshing(false));
               }}
               onEndReached={fetchPosts}
-              data={posts}
+              data={feed}
               renderItem={({ item }) => (
+                'likes' in item ? <FunFact fact={item} /> :
                 <PostBlock
                   post={item}
                   listRef={listRef}

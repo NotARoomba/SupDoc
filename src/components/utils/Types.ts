@@ -1,7 +1,9 @@
 /// <reference types="nativewind/types" />
 
 import Comment from "@/backend/models/comment";
+import Fact from "@/backend/models/fact";
 import Post from "@/backend/models/post";
+import { LanguageCodes } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import { ObjectId } from "mongodb";
 import { Ref } from "react";
@@ -174,21 +176,6 @@ type Language = {
   name: string;
 };
 
-// Define the available language codes as a union type
-type LanguageCodes =
-  | "en"
-  | "es"
-  | "zh"
-  | "hi"
-  | "pt"
-  | "ar"
-  | "fr"
-  | "de"
-  | "ru"
-  | "ja"
-  | "ko"
-  | "it";
-
 // Define the LANGUAGES array using the Language type
 export const LANGUAGES: Language[] = [
   { locale: "en", name: "English" },
@@ -219,3 +206,7 @@ export const LANGUAGE_COLORS: Record<LanguageCodes, string> = {
   ko: "#06bcf4",
   it: "#047b9f",
 };
+
+export interface FunFactProps {
+  fact: Fact
+}

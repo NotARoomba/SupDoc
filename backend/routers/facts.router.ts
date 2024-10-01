@@ -4,6 +4,8 @@ import Fact from "../models/fact";
 import { STATUS_CODES } from "../models/util";
 import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
+import { Doctor } from "../models/doctor";
+import Patient from "../models/patient";
 
 export const factsRouter = express.Router();
 
@@ -23,48 +25,90 @@ const getStartAndEndOfDay = () => {
 
   return { startOfDay, endOfDay };
 };
-
+//for doctors
 factsRouter.get("/", async (req: Request, res: Response) => {
   try {
-    let fact: Fact | null = null;
+    // Fetch doctor or patient based on authorization token
+    const doctor = (await collections.doctors.findOne({
+      publicKey: req.headers.authorization,
+    })) as Doctor;
+
+    const patient = (await collections.patients.findOne({
+      publicKey: req.headers.authorization,
+    })) as Patient;
+
+    const user = doctor ? doctor : patient;
+
+    if (!user) {
+      return res
+        .status(200)
+        .send(
+          encrypt(
+            { status: STATUS_CODES.UNAUTHORIZED },
+            req.headers.authorization,
+          ),
+        );
+    }
+
     if (collections.facts) {
-      const { startOfDay, endOfDay } = getStartAndEndOfDay();
-      const randomFact = (await collections.facts
-        .aggregate([
-          {
-            $match: {
-              timestamp: {
-                $gte: startOfDay.getTime(),
-                $lte: endOfDay.getTime(),
+      let facts: Fact[] | null = null;
+
+      // If the user is a doctor, fetch all random facts within the day
+      if (doctor) {
+        const { startOfDay, endOfDay } = getStartAndEndOfDay();
+        const randomFacts = (await collections.facts
+          .find({
+            timestamp: {
+              $gte: startOfDay.getTime(),
+              $lte: endOfDay.getTime(),
+            },
+          })
+          .toArray()) as Fact[];
+
+        facts = randomFacts.length > 0 ? randomFacts : null;
+      }
+
+      // If the user is a patient, get a random fact from the top 3 most liked facts
+      if (patient) {
+        const topLikedFacts = (await collections.facts
+          .aggregate([
+            {
+              $addFields: {
+                likesCount: { $size: "$likes" }, // Add a field that counts the number of likes
               },
             },
-          },
-          { $sample: { size: 1 } }, // Get a random fact
-        ])
-        .toArray()) as Fact[];
+            { $sort: { likesCount: -1 } }, // Sort by number of likes in descending order
+            { $limit: 3 }, // Limit to top 3 most liked facts
+            { $sample: { size: 1 } }, // Pick a random fact from these top 3
+          ])
+          .toArray()) as Fact[];
 
-      fact = randomFact.length > 0 ? randomFact[0] : null;
+        facts = topLikedFacts.length > 0 ? [topLikedFacts[0]] : null;
+      }
+
+      // Send response based on retrieved facts
+      if (facts) {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { facts, status: STATUS_CODES.SUCCESS },
+              req.headers.authorization,
+            ),
+          );
+      } else {
+        return res
+          .status(200)
+          .send(
+            encrypt(
+              { status: STATUS_CODES.NO_FACTS_FOUND },
+              req.headers.authorization,
+            ),
+          );
+      }
     }
-    if (fact)
-      res
-        .status(200)
-        .send(
-          encrypt(
-            { fact, status: STATUS_CODES.SUCCESS },
-            req.headers.authorization,
-          ),
-        );
-    else
-      res
-        .status(200)
-        .send(
-          encrypt(
-            { status: STATUS_CODES.GENERIC_ERROR },
-            req.headers.authorization,
-          ),
-        );
   } catch (error) {
-    console.error("Error fetching fact:", error);
+    console.error("Error fetching facts:", error);
     res
       .status(200)
       .send(
@@ -76,18 +120,38 @@ factsRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
-factsRouter.post("/like", async (req: Request, res: Response) => {
-  const id: string = req.body.id;
-  const doctorID: string = req.body.doctorID;
+
+factsRouter.post("/:id/dislike", async (req: Request, res: Response) => {
+  const id = new ObjectId(req.params.id);
+  const doctor = await collections.doctors.findOne({
+    publicKey: req.headers.authorization,
+  });
+
   try {
     if (collections.facts) {
       const update = await collections.facts.updateOne(
         {
-          _id: new ObjectId(id),
+          _id: id,
         },
-        { $push: { likes: doctorID } },
+        [
+          {
+            $set: {
+              dislikes: {
+                $cond: {
+                  if: { $in: [doctor?._id, "$dislikes"] }, // Check if 'doctor' is in 'dislikes' array
+                  then: { $setDifference: ["$dislikes", [doctor?._id]] }, // Remove 'doctor' from 'dislikes' if it exists
+                  else: { $concatArrays: ["$dislikes", [doctor?._id]] }, // Add 'doctor' to 'dislikes' if it doesn't exist
+                },
+              },
+              likes: {
+                $setDifference: ["$likes", [doctor?._id]], // Always remove 'doctor' from 'likes' if they dislike the fact
+              },
+            },
+          },
+        ],
       );
-      if (update.acknowledged)
+
+      if (update.acknowledged) {
         return res
           .status(200)
           .send(
@@ -96,7 +160,7 @@ factsRouter.post("/like", async (req: Request, res: Response) => {
               req.headers.authorization,
             ),
           );
-      else
+      } else {
         return res
           .status(200)
           .send(
@@ -105,9 +169,10 @@ factsRouter.post("/like", async (req: Request, res: Response) => {
               req.headers.authorization,
             ),
           );
+      }
     }
   } catch (error) {
-    console.error("Error liking fact:", error);
+    console.error("Error disliking fact:", error);
     res
       .status(200)
       .send(

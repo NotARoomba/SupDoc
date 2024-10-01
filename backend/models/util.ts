@@ -29,7 +29,23 @@ export enum STATUS_CODES {
   COMMENT_NOT_ALLOWED,
   COMMENT_NOT_FOUND,
   ERROR_DELETING_USER,
+  NO_FACTS_FOUND
 }
+
+// Define the available language codes as a union type
+export type LanguageCodes =
+  | "en"
+  | "es"
+  | "zh"
+  | "hi"
+  | "pt"
+  | "ar"
+  | "fr"
+  | "de"
+  | "ru"
+  | "ja"
+  | "ko"
+  | "it";
 
 type ConditionalType<T, U> = T extends Binary ? T : U;
 

@@ -26,12 +26,18 @@ import { useTranslation } from "react-i18next";
 import { Alert, LayoutAnimation } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
+import Fact from "@/backend/models/fact";
 
 interface PostsContextType {
   posts: Post[];
+  facts: Fact[];
+  feed: Array<Post | Fact>;
   postEdit: Post | undefined;
   savedPosts: Post[];
   listRef: MutableRefObject<FlashList<Post> | null>;
+  fetchFacts: () => Promise<void>;
+  likeFact: (id: ObjectId) => Promise<void>;
+  dislikeFact: (id: ObjectId) => Promise<void>;
   refreshPosts: (saved?: boolean) => Promise<void>;
   addPosts: (newPosts: Post[]) => void;
   setPostEdit: (post: Post) => void;
@@ -61,12 +67,83 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const { setLoading } = useLoading();
   const [posts, setPosts] = useState<Post[]>([]);
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
+  const [facts, setFacts] = useState<Fact[]>([]);
+  const [feed, setFeed] = useState<Array<Post | Fact>>([]); // Feed contains both posts and facts
   const [postEdit, setPostEdit] = useState<Post>();
   const { userType, user } = useUser();
   const listRef = useRef<FlashList<Post> | null>(null);
+
+  const shuffleFactsIntoFeed = (posts: Post[], facts: Fact[]) => {
+    let shuffledFeed: Array<Post | Fact> = [...posts];
+    
+    if (facts.length > 0) {
+      let factIndex = 0;
+      let postIndex = 0;
+
+      // Randomly shuffle a fact between 3-10 posts
+      while (factIndex < facts.length && postIndex < shuffledFeed.length) {
+        const randomInterval = Math.floor(Math.random() * (10 - 3 + 1)) + 3; // Random between 3 to 10
+        postIndex = Math.min(postIndex + randomInterval, shuffledFeed.length);
+        shuffledFeed.splice(postIndex, 0, facts[factIndex]); // Insert fact at random interval
+        factIndex++;
+        postIndex++; // Increment to avoid endless loop
+      }
+    }
+
+    return shuffledFeed;
+  };
+
+  const fetchFacts = async () => {
+    setLoading(true);
+    if (!userType) return setLoading(false);
+    
+    const res = await callAPI('/facts', "GET");
+
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      setLoading(false);
+      return res.status == STATUS_CODES.UNAUTHORIZED
+        ? await logout()
+        : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+    }
+
+    setFacts(res.facts);
+
+    // Combine posts and facts into the feed, shuffling facts randomly between posts
+    const newFeed = shuffleFactsIntoFeed(posts, res.facts);
+    setFeed(newFeed);
+
+    setLoading(false);
+  };
+
+
+  const likeFact = async (id: ObjectId) => {
+    const res = await callAPI(
+      `/facts/${id.toString()}/like`,
+      "GET",
+    );
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      return res.status == STATUS_CODES.UNAUTHORIZED
+        ? await logout()
+        : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+    }
+  }
+
+  const dislikeFact = async (id: ObjectId) => {
+    const res = await callAPI(
+      `/facts/${id.toString()}/dislike`,
+      "GET",
+    );
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      return res.status == STATUS_CODES.UNAUTHORIZED
+        ? await logout()
+        : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+    }
+  }
+
   const fetchPosts = async () => {
     setLoading(true);
     if (!userType) return setLoading(false);
+
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
@@ -80,6 +157,11 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
     setPosts(res.posts);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
+
+    // After fetching posts, combine with facts into feed
+    const newFeed = shuffleFactsIntoFeed(res.posts, facts);
+    setFeed(newFeed);
+
     setLoading(false);
   };
   const fetchSavedPosts = async () => {
@@ -153,7 +235,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     const res = await callAPI(`/posts/${post}/comment`, "POST", {
       text,
       parent,
-      commenter: user._id,
+      commenter: user?._id,
     });
     if (res.status !== STATUS_CODES.SUCCESS) {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
@@ -284,9 +366,14 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const postsContextValue = useMemo(
     () => ({
       posts,
+      facts,
       postEdit,
       savedPosts,
       listRef,
+      feed,
+      fetchFacts,
+      likeFact,
+      dislikeFact,
       refreshPosts,
       addPosts,
       setPostEdit,

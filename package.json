@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "cloc-src": "npx cloc --exclude-dir=node_modules,docs,.expo,__tests__,package.json,package-lock.json,ios,android --fullpath --not-match-d=web/node_modules ."
+    "cloc-src": "npx cloc --exclude-dir=node_modules,docs,.expo,__tests__,package.json,package-lock.json,ios,android,backend --fullpath --not-match-d=web/node_modules,backend/node_modules ."
   },
   "jest": {
     "preset": "jest-expo"

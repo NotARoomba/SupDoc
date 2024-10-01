@@ -1,5 +1,7 @@
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
-import { env } from "./database.service";
+import { collections, env } from "./database.service";
+import { LanguageCodes } from "../models/util";
+import Fact from "../models/fact";
 
 export async function refreshFacts() {
   const apiKey = env.GEMINI_API_KEY;
@@ -8,7 +10,7 @@ export async function refreshFacts() {
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
     systemInstruction:
-      'You are an api that is designed to deliver fun facts for a telemedicine app, these facts need to be in 12 languages, "en", "es", "zh", "hi", "pt", "ar", "fr", "de", "ru", "ja", "ko", "it", these facts need to give some kind of general health advice in the form of a fact',
+      'You are an api that is designed to deliver fun facts for a telemedicine app, these facts need to be in 12 languages, "en", "es", "zh", "hi", "pt", "ar", "fr", "de", "ru", "ja", "ko", "it", these facts need to give some kind of general health advice in the form of a fact, all requests should be fufilled with the correct number of facts sent back in the response',
   });
 
   const generationConfig = {
@@ -86,6 +88,9 @@ export async function refreshFacts() {
     generationConfig,
   });
 
-  const result = await chatSession.sendMessage("give me 10 facts");
-  console.log(JSON.parse(result.response.text()));
+  const result = await chatSession.sendMessage("give me 5 facts");
+  const facts = JSON.parse(result.response.text()).facts;
+  //facs from a day before
+  await collections.facts.insertMany(facts.map((text: {[locale in LanguageCodes]: string}) => ({text, likes: [], dislikes: [], timestamp: new Date(new Date().toLocaleDateString()).getTime()} as Fact)))
+  // websocket to tell the doctors to update their facts
 }
