@@ -60,26 +60,20 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
   if (req?.body?.number === "") {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
   }
-  console.log(req.body)
   if (typeof number === "number") {
     const user =
       userType == UserType.DOCTOR
         ? await collections.doctors?.findOne({
-            identification: {
-              number,
-            },
+            'identification.number':  number,
           })
         : await collections.patients?.findOne({
-            identification: {
-              number: await encryption.encrypt(number.toString(), {
+            'identification.number': await encryption.encrypt(number.toString(), {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                 keyAltName: CryptoJS.SHA256(
                   number.toString(2),
                 ).toString(),
               }),
-            },
           });
-          console.log(user)
     number = user?.number as string;
   }
   let verification;
@@ -120,24 +114,19 @@ verifyRouter.post("/code/check", async (req: Request, res: Response) => {
   if (number == "+573104250017") {
     return res.send({ status: STATUS_CODES.SUCCESS });
   }
-  console.log(!number.includes("+"), number)
   if (!number.includes("+")) {
     const user =
       userType == UserType.DOCTOR
         ? await collections.doctors?.findOne({
-            identification: {
-              number: parseInt(number),
-            },
+            'identification.number': parseInt(number),
           })
         : await collections.patients?.findOne({
-            identification: {
-              number: await encryption.encrypt(number, {
+            'identification.number': await encryption.encrypt(number, {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                 keyAltName: CryptoJS.SHA256(
                   parseInt(number).toString(2),
                 ).toString(),
               }),
-            },
           });
     number = user?.number as string;
   }
