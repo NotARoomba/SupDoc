@@ -60,6 +60,7 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
   if (req?.body?.number === "") {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
   }
+  console.log(req.body)
   if (typeof number === "number") {
     const user =
       userType == UserType.DOCTOR

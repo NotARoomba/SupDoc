@@ -217,7 +217,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       return setLoading(false);
     }
     const res = await callAPI("/verify/code/send", "POST", {
-      number: loginInfo.identification,
+      number: parseInt(loginInfo.identification.toString()),
       userType,
     });
     setLoading(false);
