@@ -373,7 +373,7 @@ export default function PostPage() {
           )}
         </Animated.View>
       </ScrollView>
-      {post?.comments.length !== 0 && userType == UserType.PATIENT && (
+      {((post?.comments.length !== 0 && userType == UserType.PATIENT) || (userType == UserType.DOCTOR)) && (
         <View className="absolute flex w-full bottom-6">
           <Reanimated.View
             entering={FadeInUp.delay(500)}

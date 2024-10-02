@@ -61,7 +61,7 @@ const PostsContext = createContext<PostsContextType | undefined>(undefined);
 interface PostsProviderProps {
   children: ReactNode;
 }
-
+// TODO, FIX DOCTOR UPDATE, FIX CRASH WHEN LOGGING IN OR SIGNING UP
 export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const { t } = useTranslation();
   const { setLoading } = useLoading();
@@ -330,7 +330,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       await fetchSavedPosts();
     } else {
       setPosts([]);
-      setFeed([]);
+      // setFeed([]);
       await fetchPosts();
     }
   };
