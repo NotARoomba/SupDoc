@@ -54,7 +54,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
         setThemeState(colorScheme as "dark" | "light");
         setTheme(colorScheme as "dark" | "light");
       }
-      // setLoading(false);
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       Alert.alert(t("error"), t("errors.fetchSettings"));
