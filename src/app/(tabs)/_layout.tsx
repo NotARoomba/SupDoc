@@ -12,7 +12,7 @@ export default function TabLayout() {
   const { fetchPosts } = usePosts();
   const { fetchSettings } = useSettings();
   useEffect(() => {
-    fetchUser().then(fetchPosts).then(fetchSettings)
+    fetchUser().then(fetchPosts).then(fetchSettings);
     SplashScreen.hideAsync();
   }, [userType]);
   return (

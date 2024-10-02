@@ -4,11 +4,11 @@ import { SettingsProvider } from "components/hooks/useSettings";
 import { UserProvider } from "components/hooks/useUser";
 import Loading from "components/loading/Loading";
 import "expo-dev-client";
-import 'react-native-reanimated';
 import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { Platform, SafeAreaView, StatusBar, View } from "react-native";
+import "react-native-reanimated";
 import { useLanguageUpdater } from "../components/utils/i18n";
 import Index from "./Index";
 // import { logout } from "components/utils/Functions";
@@ -39,8 +39,8 @@ export default function RootLayout() {
         <UserProvider>
           <PostsProvider>
             <SettingsProvider>
-              <SafeAreaView  className="bg-richer_black" />
-              
+              <SafeAreaView className="bg-richer_black" />
+
               {isLogged ? (
                 // <Animated.View entering={FadeIn.duration(500)}>
                 <Stack

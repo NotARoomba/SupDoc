@@ -39,18 +39,18 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [userEdit, setUserEdit] = useState<User | null>(null);
   const [userType, setUserType] = useState<UserType | null>(null);
   const fetchUser = async () => {
-    setLoading(true);
+    // setLoading(true);
     const ut = (await SecureStore.getItemAsync(
       process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
     )) as UserType;
-    if (!ut) return setLoading(false);
+    if (!ut) return; //setLoading(false);
     setUserType(ut);
     const res = await callAPI(
       `/${ut == UserType.DOCTOR ? "doctors" : "patients"}`,
       "GET",
     );
-    setLoading(false);
-    if (res.status !== STATUS_CODES.SUCCESS) setLoading(false);
+    // setLoading(false);
+    if (res.status !== STATUS_CODES.SUCCESS) return; // setLoading(false);
     if (res.status == STATUS_CODES.USER_NOT_FOUND) return await logout();
     else if (res.status == STATUS_CODES.GENERIC_ERROR)
       return Alert.alert(t("error"), t("errors.fetchData"));
@@ -60,7 +60,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       number: parsePhoneNumber(res.user.number)?.nationalNumber,
     });
     if (ut == UserType.DOCTOR) await Image.prefetch(res.user.picture);
-    setLoading(false);
+    // setLoading(false);
   };
 
   const updateUser = (user: User) => {};

@@ -18,7 +18,6 @@ import React, {
   ReactNode,
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -134,21 +133,27 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
 
   const fetchPosts = async () => {
-    // setLoading(true);
-    if (!userType) return //setTimeout(() => setLoading(false)), 300;
+    setLoading(true);
+    if (!userType) return setLoading(false);
     const f = await fetchFacts();
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
-      // setLoading(false);
-      return res.status == STATUS_CODES.UNAUTHORIZED
-        ? await logout()
-        : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+      setLoading(false);
+      if (res.status == STATUS_CODES.UNAUTHORIZED) await logout();
+      else {
+        setTimeout(
+          () =>
+            Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`)),
+          300,
+        );
+        return;
+      }
     }
     if (userType == UserType.DOCTOR) fetchSavedPosts();
-  //   // After removing the item, we can start the animation.
+    //   // After removing the item, we can start the animation.
     setPosts(posts.length == 0 ? res.posts : [...posts, ...res.posts]);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     // After fetching posts, combine with facts into feed
@@ -158,7 +163,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     }
     // listRef.current?.prepareForLayoutAnimationRender();
     // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    // setLoading(false);
+    setLoading(false);
   };
   const fetchSavedPosts = async () => {
     // setLoading(true);

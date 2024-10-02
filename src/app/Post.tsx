@@ -339,8 +339,10 @@ export default function PostPage() {
                     <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
                   </View>
                 )}
-                {post.images.length == 0 && userType == UserType.PATIENT && <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4 " />}
-                
+                {post.images.length == 0 && userType == UserType.PATIENT && (
+                  <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4 " />
+                )}
+
                 <Text className="text-4xl mb-1 font-bold text-center text-ivory">
                   {t("posts.description")}
                 </Text>
@@ -373,7 +375,8 @@ export default function PostPage() {
           )}
         </Animated.View>
       </ScrollView>
-      {((post?.comments.length !== 0 && userType == UserType.PATIENT) || (userType == UserType.DOCTOR)) && (
+      {((post?.comments.length !== 0 && userType == UserType.PATIENT) ||
+        userType == UserType.DOCTOR) && (
         <View className="absolute flex w-full bottom-6">
           <Reanimated.View
             entering={FadeInUp.delay(500)}

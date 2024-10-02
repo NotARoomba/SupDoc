@@ -113,8 +113,11 @@ export default function Profile() {
       },
     );
     if (res.status != STATUS_CODES.SUCCESS) {
-      if (user) setUserEdit({...user,
-        number: parsePhoneNumber(user.number)?.nationalNumber as string});
+      if (user)
+        setUserEdit({
+          ...user,
+          number: parsePhoneNumber(user.number)?.nationalNumber as string,
+        });
       setLoading(false);
       return Alert.alert(t("error"), "errors.updateData");
     } else {

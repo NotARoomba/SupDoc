@@ -140,7 +140,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     );
     if (create.status === STATUS_CODES.SUCCESS) {
       setLoading(false);
-      setTimeout(() => Alert.alert(t("success"), t("successes.signup")), 250)
+      setTimeout(() => Alert.alert(t("success"), t("successes.signup")), 250);
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
         keys.private,
@@ -159,7 +159,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       );
       // await fetchUser();
       // await fetchPosts();
-      return  setTimeout(() => setIsLogged(true), 250);;
+      return setTimeout(() => setIsLogged(true), 250);
     } else {
       setLoading(false);
       return Alert.alert(t("error"), t("errors.createUser"));
@@ -298,7 +298,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       );
       // await fetchUser();
       // return setTimeout(() => {Alert.alert(t("success"), t("successes.login"));;}, 250);
-      return  setTimeout(() => setIsLogged(true), 250);
+      return setTimeout(() => setIsLogged(true), 250);
     } catch (e) {
       setLoading(false);
       return Alert.alert(t("error"), t("errors.password.wrong"));
