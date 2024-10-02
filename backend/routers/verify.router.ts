@@ -117,6 +117,7 @@ verifyRouter.post("/code/check", async (req: Request, res: Response) => {
   if (number == "+573104250017") {
     return res.send({ status: STATUS_CODES.SUCCESS });
   }
+  console.log(!number.includes("+"), number)
   if (!number.includes("+")) {
     const user =
       userType == UserType.DOCTOR
@@ -127,7 +128,7 @@ verifyRouter.post("/code/check", async (req: Request, res: Response) => {
           })
         : await collections.patients?.findOne({
             identification: {
-              number: await encryption.encrypt(parseInt(number), {
+              number: await encryption.encrypt(number, {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                 keyAltName: CryptoJS.SHA256(
                   parseInt(number).toString(2),

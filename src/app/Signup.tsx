@@ -178,6 +178,7 @@ export default function Signup({
                         number: info.countryCode + info.number,
                         input,
                       });
+                      console.log(v)
                       setLoading(false);
                       if (v.status !== STATUS_CODES.SUCCESS)
                         return Alert.alert(
