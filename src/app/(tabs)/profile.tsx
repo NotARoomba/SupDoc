@@ -173,7 +173,7 @@ export default function Profile() {
                 setLoading(true);
                 const v = await callAPI("/verify/code/check", "POST", {
                   number: countryCode.slice(4) + userEdit?.number,
-                  input,
+                  code: input,
                 });
                 if (v.status !== STATUS_CODES.SUCCESS) {
                   setLoading(false);
