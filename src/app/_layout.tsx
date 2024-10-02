@@ -33,13 +33,13 @@ export default function RootLayout() {
     updateData();
   }, []);
   return (
-    <View className=" h-full dark:text-richer_black dark:text-ivory text-richer_black dark:bg-richer_black bg-ivory">
+    <View className=" h-full dark:text-ivory  text-richer_black dark:bg-richer_black bg-ivory">
       <StatusBar barStyle="dark-content" />
       <LoadingProvider>
         <UserProvider>
           <PostsProvider>
             <SettingsProvider>
-              <SafeAreaView  className="dark:bg-richer_black bg-ivory dark:dark:text-ivory text-richer_black text-richer_black" />
+              <SafeAreaView  className="bg-richer_black" />
               
               {isLogged ? (
                 // <Animated.View entering={FadeIn.duration(500)}>
