@@ -139,11 +139,13 @@ export default function Settings() {
           </Text>
           <Slider
             options={[t("buttons.themes.dark"), t("buttons.themes.light")]}
-            setOption={(v) => setTheme(v.toLowerCase() as any)}
+            setOption={(v) =>
+              setTheme(v == t("buttons.themes.dark") ? "dark" : "light")
+            }
             selected={
-              theme
-                ? theme.charAt(0).toUpperCase() + theme.slice(1)
-                : t("buttons.themes.dark")
+              theme == "dark"
+                ? t("buttons.themes.dark")
+                : t("buttons.themes.light")
             }
           />
           <Text className="text-ivory text-3xl font-bold text-center mt-8 mb-2">
