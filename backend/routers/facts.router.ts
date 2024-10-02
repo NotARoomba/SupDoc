@@ -16,7 +16,7 @@ factsRouter.use(express.json());
 //3 the fact with the most likes gets sent to the users
 
 // Utility function to get the start and end of the current day
-const getStartAndEndOfDay = () => {
+export const getStartAndEndOfDay = () => {
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
 

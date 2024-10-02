@@ -2,8 +2,19 @@ import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { collections, env } from "./database.service";
 import { LanguageCodes } from "../models/util";
 import Fact from "../models/fact";
+import { getStartAndEndOfDay } from "../routers/facts.router";
 
 export async function refreshFacts() {
+  const { startOfDay, endOfDay } = getStartAndEndOfDay();
+  const randomFacts = (await collections.facts
+    .find({
+      timestamp: {
+        $gte: startOfDay.getTime(),
+        $lte: endOfDay.getTime(),
+      },
+    })
+    .toArray()) as Fact[];
+  if (randomFacts.length > 0) return 
   const apiKey = env.GEMINI_API_KEY;
   const genAI = new GoogleGenerativeAI(apiKey);
 
