@@ -8,7 +8,7 @@ import 'react-native-reanimated';
 import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import { Platform, SafeAreaView, View } from "react-native";
+import { Platform, SafeAreaView, StatusBar, View } from "react-native";
 import { useLanguageUpdater } from "../components/utils/i18n";
 import Index from "./Index";
 // import { logout } from "components/utils/Functions";
@@ -33,12 +33,14 @@ export default function RootLayout() {
     updateData();
   }, []);
   return (
-    <View className="text-ivory h-full bg-white">
+    <View className=" h-full dark:text-richer_black dark:text-ivory text-richer_black dark:bg-richer_black bg-ivory">
+      <StatusBar barStyle="dark-content" />
       <LoadingProvider>
         <UserProvider>
           <PostsProvider>
             <SettingsProvider>
-              <SafeAreaView className="bg-richer_black" />
+              <SafeAreaView  className="dark:bg-richer_black bg-ivory dark:dark:text-ivory text-richer_black text-richer_black" />
+              
               {isLogged ? (
                 // <Animated.View entering={FadeIn.duration(500)}>
                 <Stack

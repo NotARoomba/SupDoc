@@ -7,8 +7,9 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, useColorScheme } from "react-native";
+import { Alert, StatusBar, useColorScheme } from "react-native";
 import { useLoading } from "./useLoading";
+import {NativeWindStyleSheet} from "nativewind";
 
 interface SettingsContextType {
   language: string | null;
@@ -35,7 +36,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const [theme, setThemeState] = useState<"light" | "dark" | null>(null);
   let colorScheme = useColorScheme();
   const fetchSettings = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const savedLanguage = await SecureStore.getItemAsync("language");
       const savedTheme = await SecureStore.getItemAsync("theme");
@@ -47,11 +48,13 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 
       if (savedTheme === "light" || savedTheme === "dark") {
         setThemeState(savedTheme);
+        NativeWindStyleSheet.setColorScheme(savedTheme)
+        StatusBar.setBarStyle(savedTheme !== "light" ? 'light-content' : 'dark-content', true);
       } else {
         setThemeState(colorScheme as "dark" | "light");
         setTheme(colorScheme as "dark" | "light");
       }
-      setLoading(false);
+      // setLoading(false);
     } catch (error) {
       setLoading(false);
       Alert.alert(t("error"), t("errors.fetchSettings"));
@@ -71,6 +74,9 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const setTheme = async (theme: "light" | "dark") => {
     try {
       await SecureStore.setItemAsync("theme", theme);
+      console.log(theme)
+      NativeWindStyleSheet.setColorScheme(theme)
+      StatusBar.setBarStyle(theme !== "light" ? 'light-content' : 'dark-content', true);
       setThemeState(theme);
     } catch (error) {
       Alert.alert(t("error"), t("errors.saveSettings"));

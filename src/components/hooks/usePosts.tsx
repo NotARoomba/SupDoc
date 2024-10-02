@@ -94,7 +94,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
 
   const fetchFacts = async () => {
-    setLoading(true);
+    // setLoading(true);
     if (!userType) return setLoading(false);
 
     const res = await callAPI("/facts", "GET");
@@ -111,7 +111,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     // const newFeed = shuffleFactsIntoFeed(posts, res.facts);
     // setFeed(newFeed);
 
-    setLoading(false);
+    // setLoading(false);
     return res.facts;
   };
 
@@ -134,19 +134,21 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
 
   const fetchPosts = async () => {
-    setLoading(true);
-    if (!userType) return setLoading(false);
+    // setLoading(true);
+    if (!userType) return //setTimeout(() => setLoading(false)), 300;
     const f = await fetchFacts();
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
-      setLoading(false);
+      // setLoading(false);
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
+    if (userType == UserType.DOCTOR) fetchSavedPosts();
+  //   // After removing the item, we can start the animation.
     setPosts(posts.length == 0 ? res.posts : [...posts, ...res.posts]);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     // After fetching posts, combine with facts into feed
@@ -154,24 +156,25 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       const newFeed = shuffleFactsIntoFeed(res.posts, f);
       setFeed(newFeed);
     }
-
-    setLoading(false);
+    // listRef.current?.prepareForLayoutAnimationRender();
+    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    // setLoading(false);
   };
   const fetchSavedPosts = async () => {
-    setLoading(true);
+    // setLoading(true);
     const res = await callAPI(
       `/doctors/saved/${posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp}`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
-      setLoading(false);
+      // setLoading(false);
       return res.status == STATUS_CODES.UNAUTHORIZED
         ? await logout()
         : Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
 
     setSavedPosts(res.posts);
-    setLoading(false);
+    // setLoading(false);
   };
   const savePost = async (post: Post) => {
     const res = await callAPI(`/posts/${post._id?.toString()}/save`, "GET");
@@ -200,11 +203,11 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const deletePost = async (id: string) => {
     setLoading(true);
     const res = await callAPI(`/posts/${id}/delete`, "GET");
+    setLoading(false);
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     else {
       Alert.alert(t("success"), t("sucesses.deletePost"));
-      setLoading(false);
       listRef.current?.prepareForLayoutAnimationRender();
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setPosts(posts.filter((v) => v._id?.toString() !== id));
@@ -363,12 +366,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       Alert.alert(t("success"), t("successes.postUploading"));
     }
   };
-  useEffect(() => {
-    if (userType) {
-      fetchPosts();
-      if (userType == UserType.DOCTOR) fetchSavedPosts();
-    }
-  }, [userType]);
+
   const postsContextValue = useMemo(
     () => ({
       posts,
@@ -393,7 +391,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       savePost,
       fetchPosts,
     }),
-    [posts, feed, postEdit, savedPosts, listRef],
+    [posts, feed, userType, postEdit, savedPosts, listRef],
   );
   return (
     <PostsContext.Provider value={postsContextValue}>

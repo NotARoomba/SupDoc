@@ -159,7 +159,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       );
       // await fetchUser();
       // await fetchPosts();
-      return setIsLogged(true);
+      return  setTimeout(() => setIsLogged(true), 250);;
     } else {
       setLoading(false);
       return Alert.alert(t("error"), t("errors.createUser"));
@@ -298,7 +298,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       );
       // await fetchUser();
       // return setTimeout(() => {Alert.alert(t("success"), t("successes.login"));;}, 250);
-      return setIsLogged(true)
+      return  setTimeout(() => setIsLogged(true), 250);
     } catch (e) {
       setLoading(false);
       return Alert.alert(t("error"), t("errors.password.wrong"));
