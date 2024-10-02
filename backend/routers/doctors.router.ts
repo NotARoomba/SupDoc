@@ -156,12 +156,13 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
       //       req.headers.authorization,
       //     ),
       //   );
+      const doctor = await collections.doctors.findOne({ publicKey: req.headers.authorization })
       const upd = await collections.doctors.findOneAndUpdate(
         { publicKey: req.headers.authorization },
         {
           $set: {
             number: data.number,
-            picture: data.picture,
+            picture: data.picture ?? doctor?.picture,
             // picture: pictureURL,
             info: {
               ...data.info,
