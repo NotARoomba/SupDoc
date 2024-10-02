@@ -1,7 +1,7 @@
 {
   "name": "supdoc",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "cloc-src": "npx cloc --exclude-dir=node_modules,docs,.expo,__tests__,package.json,package-lock.json,ios,android,backend --fullpath --not-match-d=web/node_modules,backend/node_modules ."
+    "cloc-src": "npx cloc --exclude-dir=node_modules,docs,.expo,__tests__,package.json,package-lock.json,ios,android,backend --fullpath --not-match-d=web/node_modules,backend/node_modules,web/public,docs ."
   },
   "jest": {
     "preset": "jest-expo"

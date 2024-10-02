@@ -2,9 +2,9 @@
   "expo": {
     "name": "SupDoc",
     "slug": "supdoc",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/imges/icon.png",
     "scheme": "supdoc",
     "privacy": "public",
     "userInterfaceStyle": "automatic",
