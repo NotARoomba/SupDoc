@@ -330,6 +330,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       await fetchSavedPosts();
     } else {
       setPosts([]);
+      setFeed([]);
       await fetchPosts();
     }
   };

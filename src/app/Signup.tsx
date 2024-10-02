@@ -155,6 +155,13 @@ export default function Signup({
               t("error"),
               t(`errors.${STATUS_CODES[verify.status]}`),
             );
+          } else if (verify.status !== STATUS_CODES.SUCCESS) {
+            setIndex(index - 1);
+            setLoading(false);
+            return Alert.alert(
+              t("error"),
+              t(`errors.${STATUS_CODES[verify.status]}`),
+            );
           } else {
             setTimeout(() => {
               return prompt(
@@ -176,14 +183,15 @@ export default function Signup({
                       setLoading(true);
                       const v = await callAPI("/verify/code/check", "POST", {
                         number: info.countryCode + info.number,
-                        input,
+                        code: input,
                       });
-                      console.log(v)
                       setLoading(false);
-                      if (v.status !== STATUS_CODES.SUCCESS)
+                      if (v.status !== STATUS_CODES.SUCCESS) {
+                        setIndex(index - 1);
                         return Alert.alert(
                           (t("error"), t(`errors.${STATUS_CODES[v.status]}`)),
                         );
+                      }
                       setIsVerified(true);
                     },
                   },

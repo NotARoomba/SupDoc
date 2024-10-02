@@ -11,7 +11,7 @@ export default function useCamera() {
       Alert.alert(t("images.cameraTitle"), t("images.cameraDescription"), [
         { text: t("buttons.cancel"), style: "cancel" },
         {
-          text: t("settings"),
+          text: t("titles.settings"),
           isPreferred: true,
           onPress: Linking.openSettings,
         },

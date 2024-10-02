@@ -11,7 +11,7 @@ export default function useGallery() {
       Alert.alert(t("images.galleryTitle"), t("images.galleryDescription"), [
         { text: t("buttons.cancel"), style: "cancel" },
         {
-          text: t("settings"),
+          text: t("titles.settings"),
           isPreferred: true,
           onPress: Linking.openSettings,
         },
