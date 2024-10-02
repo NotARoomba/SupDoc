@@ -70,7 +70,7 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
           })
         : await collections.patients?.findOne({
             identification: {
-              number: await encryption.encrypt(number, {
+              number: await encryption.encrypt(number.toString(), {
                 algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                 keyAltName: CryptoJS.SHA256(
                   number.toString(2),
