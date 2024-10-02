@@ -218,6 +218,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     }
     const res = await callAPI("/verify/code/send", "POST", {
       number: loginInfo.identification,
+      userType,
     });
     setLoading(false);
     if (res.status === STATUS_CODES.ERROR_SENDING_CODE)
