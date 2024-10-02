@@ -4,7 +4,7 @@
     "slug": "supdoc",
     "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/imges/icon.png",
+    "icon": "./assets/imgaes/icon.png",
     "scheme": "supdoc",
     "privacy": "public",
     "userInterfaceStyle": "automatic",
