@@ -139,7 +139,8 @@ export default function Index({ setIsLogged }: IndexProps) {
           } as Doctor),
     );
     if (create.status === STATUS_CODES.SUCCESS) {
-      Alert.alert(t("success"), t("successes.signup"));
+      setLoading(false);
+      setTimeout(() => Alert.alert(t("success"), t("successes.signup")), 250)
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
         keys.private,
@@ -156,9 +157,8 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         signUpInfo.password,
       );
-      setLoading(false);
-      await fetchUser();
-      await fetchPosts();
+      // await fetchUser();
+      // await fetchPosts();
       return setIsLogged(true);
     } else {
       setLoading(false);
@@ -296,9 +296,9 @@ export default function Index({ setIsLogged }: IndexProps) {
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
         loginInfo.password,
       );
-      await fetchUser();
-      Alert.alert(t("success"), t("successes.login"));
-      return setIsLogged(true);
+      // await fetchUser();
+      // return setTimeout(() => {Alert.alert(t("success"), t("successes.login"));;}, 250);
+      return setIsLogged(true)
     } catch (e) {
       setLoading(false);
       return Alert.alert(t("error"), t("errors.password.wrong"));

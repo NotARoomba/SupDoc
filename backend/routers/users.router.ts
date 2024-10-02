@@ -184,14 +184,12 @@ usersRouter.post("/keys", async (req: Request, res: Response) => {
           ? await collections.doctors.findOne({
               "identification.number": id,
             })
-          : (await encryption.getKeyByAltName(idHash))
-            ? ((await collections.patients.findOne({
-                "identification.number": await encryption.encrypt(id, {
+          :  ((await collections.patients.findOne({
+                "identification.number": await encryption.encrypt(id.toString(), {
                   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
                   keyAltName: idHash,
                 }),
               })) as User)
-            : null;
       if (!user)
         return res.status(200).send({ status: STATUS_CODES.USER_NOT_FOUND });
       res.status(200).send({
