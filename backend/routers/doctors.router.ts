@@ -156,13 +156,14 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
       //       req.headers.authorization,
       //     ),
       //   );
-      const doctor = await collections.doctors.findOne({ publicKey: req.headers.authorization })
+      console.log(data.picture)
+      const doctor = await collections.doctors.findOne({ publicKey: req.headers.authorization }) as Doctor
       const upd = await collections.doctors.findOneAndUpdate(
         { publicKey: req.headers.authorization },
         {
           $set: {
             number: data.number,
-            picture: data.picture ?? doctor?.picture,
+            picture: data.picture ?? doctor.picture,
             // picture: pictureURL,
             info: {
               ...data.info,
@@ -172,13 +173,13 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
         { returnDocument: "before" },
       );
       if (upd) {
-        await removeImageFromStorage(upd.picture);
+        if (data.picture) await removeImageFromStorage(upd.picture);
         res.status(200).send(
           encrypt(
             {
               user: {
                 ...data,
-                picture: await generateSignedUrl(data.picture),
+                picture: await generateSignedUrl(data.picture ?? doctor.picture),
               },
               status: STATUS_CODES.SUCCESS,
             },
