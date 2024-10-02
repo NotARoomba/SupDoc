@@ -158,6 +158,7 @@ verifyRouter.post("/code/check", async (req: Request, res: Response) => {
         status: STATUS_CODES.CODE_EXPIRED,
       });
     }
+    console.log(status)
     res.send({ status: STATUS_CODES.CODE_FAILED });
   }
 });
