@@ -4,6 +4,7 @@ import { SettingsProvider } from "components/hooks/useSettings";
 import { UserProvider } from "components/hooks/useUser";
 import Loading from "components/loading/Loading";
 import "expo-dev-client";
+import 'react-native-reanimated';
 import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
