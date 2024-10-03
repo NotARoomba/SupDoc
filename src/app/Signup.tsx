@@ -300,14 +300,14 @@ export default function Signup({
               : t("inputs.identification") + t("inputs.TI")}
           </Text>
           <TextInput
-            onChangeText={(id) =>
+            onChangeText={(identification) =>
               setInfo({
                 ...info,
-                identification: isNaN(parseInt(id)) ? 0 : parseInt(id),
+                identification,
               })
             }
             value={
-              info.identification == 0 ? "" : info.identification.toString()
+              info.identification
             }
             keyboardType="phone-pad"
             placeholderTextColor={"#ffffff"}

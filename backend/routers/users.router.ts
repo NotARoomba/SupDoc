@@ -108,7 +108,7 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
 });
 
 usersRouter.post("/check", async (req: Request, res: Response) => {
-  const id: number = req.body.id;
+  const id: number = parseInt(req.body.id);
   const idHash = CryptoJS.SHA256(id.toString(2)).toString();
   const number: string | null = req.body.number;
   try {

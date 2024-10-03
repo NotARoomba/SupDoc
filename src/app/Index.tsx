@@ -110,7 +110,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         ? {
             ...sharedData,
             identification: {
-              number: signUpInfo.identification,
+              number: parseInt(signUpInfo.identification),
             },
             info: {
               age: new Date(Date.now() - signUpInfo.dob).getFullYear(),
@@ -134,7 +134,7 @@ export default function Index({ setIsLogged }: IndexProps) {
             },
             identification: {
               license: signUpInfo.license,
-              number: signUpInfo.identification,
+              number: parseInt(signUpInfo.identification),
             },
           } as Doctor),
     );
@@ -179,7 +179,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           passwordchk: "",
           picture: "",
           countryCode: "+57",
-          identification: 0, // Required for Signup as Doctor
+          identification: "", // Required for Signup as Doctor
           license: Array<string>(), // Required for Signup as Doctor
           isVerified: false, // Example field for doctor signup
         } as SignupInfo<UserType.DOCTOR>);
@@ -188,7 +188,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           password: "",
           passwordchk: "",
           countryCode: "+57",
-          identification: 0,
+          identification: "",
           number: "",
           dob: Date.now(), // Required for patient signup
           weight: 0, // Required for patient signup
@@ -202,7 +202,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     } else {
       // Initialize LoginInfo for login
       setLoginInfo({
-        identification: 0, // Common field for login (both doctor and patient)
+        identification: "", // Common field for login (both doctor and patient)
         password: "",
       } as LoginInfo);
     }
@@ -453,7 +453,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                     !isLogin
                       ? signUpInfo.passwordchk.length == 0 ||
                         signUpInfo.passwordchk !== signUpInfo.password
-                      : loginInfo.identification == 0 ||
+                      : loginInfo.identification == "" ||
                         loginInfo.password.length == 0
                   )
                     ? Alert.alert(
