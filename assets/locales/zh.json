@@ -1,6 +1,6 @@
 {
     "CFBundleDisplayName": "SupDoc",
-    "NSCameraUsageDescription": "SupDoc 需要访问您的相机以拍摄照片！",
+    "NSCameraUsageDescription": "SupDoc需要您的相机来拍摄您的症状照片，以便发送给医生。",
     "NSPhotoLibraryUsageDescription": "SupDoc 需要访问您的图库以上传照片！",
     "success": "成功！",
     "error": "错误",
