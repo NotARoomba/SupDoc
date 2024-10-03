@@ -223,6 +223,7 @@ export default function Signup({
             t(`errors.${STATUS_CODES[res.status]}`),
           );
         }
+        setInfo({...info, specialty: res.specialty})
         setLoading(false);
       }
     };
