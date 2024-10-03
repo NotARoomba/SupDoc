@@ -57,9 +57,6 @@ verifyRouter.use(express.json());
 verifyRouter.post("/code/send", async (req: Request, res: Response) => {
   let number: string | number = req?.body?.number;
   let userType: UserType = req.body.userType;
-  if (number == "+572133333" || number == 1 || number == 0) {
-    return res.send({ status: STATUS_CODES.SUCCESS });
-  }
   if (req?.body?.number === "") {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
   }
@@ -77,7 +74,12 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
                 ).toString(),
               }),
           });
+          console.log(user)
+    if (user?.number == "+572133333" || number == 1 || number == 0) {
+      return res.send({ number: user?.number, status: STATUS_CODES.SUCCESS });
+    }
     number = user?.number as string;
+    
   }
   let verification;
   try {
