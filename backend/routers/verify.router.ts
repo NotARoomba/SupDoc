@@ -57,7 +57,7 @@ verifyRouter.use(express.json());
 verifyRouter.post("/code/send", async (req: Request, res: Response) => {
   let number: string | number = req?.body?.number;
   let userType: UserType = req.body.userType;
-  if (number == "+572133333") {
+  if (number == "+572133333" || number == 1 || number == 0) {
     return res.send({ status: STATUS_CODES.SUCCESS });
   }
   if (req?.body?.number === "") {
