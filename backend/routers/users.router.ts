@@ -111,7 +111,7 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
   const id: number = parseInt(req.body.id);
   const idHash = CryptoJS.SHA256(id.toString(2)).toString();
   const number: string | null = req.body.number;
-  if (number == "+571234567890") {
+  if (number == "+572133333") {
     return res.send({ status: STATUS_CODES.SUCCESS });
   }
   try {
