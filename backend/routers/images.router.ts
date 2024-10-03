@@ -83,7 +83,7 @@ imagesRouter.post(
   upload.array("files"),
   async (req: Request, res: Response) => {
     const files = req.files as Express.Multer.File[];
-    console.log(req.files);
+    // console.log(req.files);
     if (!files || files.length == 0)
       return res
         .status(200)
@@ -92,7 +92,7 @@ imagesRouter.post(
       const urls = await Promise.all(
         files.map(async (image) => await uploadImageToStorage(image.path)),
       );
-      console.log(urls);
+      // console.log(urls);
       if (!urls || urls.every((url) => url === null))
         return res
           .status(200)

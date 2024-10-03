@@ -29,7 +29,7 @@ export enum STATUS_CODES {
   COMMENT_NOT_ALLOWED,
   COMMENT_NOT_FOUND,
   ERROR_DELETING_USER,
-  NO_FACTS_FOUND
+  NO_FACTS_FOUND,
 }
 
 // Define the available language codes as a union type

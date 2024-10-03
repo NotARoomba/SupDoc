@@ -223,7 +223,7 @@ export default function Signup({
             t(`errors.${STATUS_CODES[res.status]}`),
           );
         }
-        setInfo({...info, specialty: res.specialty})
+        setInfo({ ...info, specialty: res.specialty });
         setLoading(false);
       }
     };
@@ -307,9 +307,7 @@ export default function Signup({
                 identification,
               })
             }
-            value={
-              info.identification
-            }
+            value={info.identification}
             keyboardType="phone-pad"
             placeholderTextColor={"#ffffff"}
             className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"

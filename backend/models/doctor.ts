@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
 import { DoctorIdentification } from "./identification";
 import { DoctorMetrics } from "./metrics";
-import Report from "./report";
 import { UserBase } from "./user";
 
 export interface Doctor extends UserBase {

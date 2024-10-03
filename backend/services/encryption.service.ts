@@ -57,7 +57,7 @@ export async function decryptionMiddleware(
     //   return res.send({ status: STATUS_CODES.UNAUTHORIZED });
   }
   if (req.originalUrl == "/images/upload") {
-    console.log(req.body);
+    // console.log(req.body);
     req.files = req.body.files;
     return next();
   }
