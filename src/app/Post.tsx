@@ -52,7 +52,7 @@ export default function PostPage() {
   const { t } = useTranslation();
   useEffect(() => {
     setPost(posts.find((v) => v._id?.toString() == routes.id));
-    setReplyingTo(null);
+    // setReplyingTo(null);
   }, [posts, routes]);
 
   const handleAddComment = async () => {
@@ -72,6 +72,7 @@ export default function PostPage() {
   const handleStopReply = () => {
     setReplyingTo(null);
   };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "position" : "position"}
@@ -114,15 +115,19 @@ export default function PostPage() {
               onPress={() =>
                 Alert.alert(
                   t("confirmTitle"),
-                  t("post.reportDelete", {
+                  t("posts.reportDelete", {
                     reportDelete:
-                      userType == UserType.DOCTOR ? t("report") : t("delete"),
+                      userType == UserType.DOCTOR
+                        ? t("buttons.report").toLocaleLowerCase()
+                        : t("buttons.delete").toLocaleLowerCase(),
                   }),
                   [
                     { text: t("buttons.cancel"), style: "cancel" },
                     {
                       text:
-                        userType == UserType.DOCTOR ? t("report") : t("delete"),
+                        userType == UserType.DOCTOR
+                          ? t("buttons.report")
+                          : t("buttons.delete"),
                       style: "destructive",
                       onPress: () =>
                         userType == UserType.DOCTOR
@@ -135,7 +140,9 @@ export default function PostPage() {
             >
               {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
               <Text className="text-ivory h-fit font-bold text-center m-auto">
-                {userType == UserType.DOCTOR ? t("report") : t("delete")}
+                {userType == UserType.DOCTOR
+                  ? t("buttons.report")
+                  : t("buttons.delete")}
               </Text>
             </TouchableOpacity>
           </View>
