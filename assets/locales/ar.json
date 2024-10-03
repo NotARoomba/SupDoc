@@ -1,6 +1,6 @@
 {
     "CFBundleDisplayName": "SupDoc",
-    "NSCameraUsageDescription": "يحتاج SupDoc إلى كاميرتك لالتقاط الصور!",
+    "NSCameraUsageDescription": "تحتاج SupDoc إلى كاميرتك لالتقاط صور لأعراضك وإرسالها إلى الأطباء.",
     "NSPhotoLibraryUsageDescription": "يحتاج SupDoc إلى الوصول إلى معرض الصور الخاص بك لتحميل الصور!",
     "success": "نجاح!",
     "error": "خطأ",

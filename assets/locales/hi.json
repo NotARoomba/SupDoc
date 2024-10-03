@@ -1,6 +1,6 @@
 {
     "CFBundleDisplayName": "SupDoc",
-    "NSCameraUsageDescription": "SupDoc को फ़ोटो लेने के लिए आपके कैमरे की आवश्यकता है!",
+    "NSCameraUsageDescription": "تحتاج SupDoc إلى كاميرتك لالتقاط صور لأعراضك وإرسالها إلى الأطباء.",
     "NSPhotoLibraryUsageDescription": "SupDoc को फ़ोटो अपलोड करने के लिए आपके गैलरी का एक्सेस चाहिए!",
     "success": "सफलता!",
     "error": "त्रुटि",
