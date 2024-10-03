@@ -1,0 +1,304 @@
+{
+  "configVersion": 0,
+  "apple": {
+    "version": "1.0",
+    "copyright": "2024 Mario Alberto Esmeral Palacio",
+    "release": {
+      "automaticRelease": true
+    },
+    "info": {
+      "en-US": {
+        "description": "SupDoc is a healthcare app designed to reduce the overload in specialist consultations and healthcare services. It provides a simple, reliable, and secure platform, allowing users to receive virtual medical attention anonymously. SupDoc ensures effective communication between patients and specialists, always delivering accurate and professional responses.",
+        "keywords": [
+          "Healthcare",
+          "Telemedicine",
+          "Doctor",
+          "Consultation",
+          "Virtual Care",
+          "Medical",
+          "Support",
+          "Health",
+          "Wellness"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_en.pdf"
+      },
+      "es-ES": {
+        "description": "SupDoc es una aplicación de atención médica diseñada para reducir la sobrecarga en las consultas de especialistas y los servicios de salud. Ofrece una plataforma sencilla, confiable y segura, que permite a los usuarios recibir atención médica virtual de forma anónima. SupDoc garantiza una comunicación efectiva entre pacientes y especialistas, brindando siempre respuestas precisas y profesionales.",
+        "keywords": [
+          "Salud",
+          "Telemedicina",
+          "Doctor",
+          "Consulta",
+          "Atención Virtual",
+          "Médico",
+          "Apoyo",
+          "Sanidad",
+          "Bienestar"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "en-CA": {
+        "description": "SupDoc is a healthcare app designed to reduce the overload in specialist consultations and healthcare services. It provides a simple, reliable, and secure platform, allowing users to receive virtual medical attention anonymously. SupDoc ensures effective communication between patients and specialists, always delivering accurate and professional responses.",
+        "keywords": [
+          "Healthcare",
+          "Telemedicine",
+          "Doctor",
+          "Consultation",
+          "Virtual Care",
+          "Medical",
+          "Support",
+          "Health",
+          "Wellness"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_en.pdf"
+      },
+      "ja": {
+        "description": "SupDocは、専門医の相談や医療サービスの過負荷を軽減するために設計されたヘルスケアアプリです。シンプルで信頼できる安全なプラットフォームを提供し、ユーザーは匿名でバーチャル医療を受けることができます。SupDocは、患者と専門家の間の効果的なコミュニケーションを保証し、常に正確で専門的な回答を提供します。",
+        "keywords": [
+          "健康",
+          "テレメディスン",
+          "ドクター",
+          "診察",
+          "バーチャルケア",
+          "医師",
+          "サポート",
+          "医療",
+          "ウェルビーイング"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "zh-Hans": {
+        "description": "SupDoc是一款医疗应用，旨在减少专家咨询和医疗服务的过载。它提供一个简单、可靠和安全的平台，允许用户匿名接受虚拟医疗服务。SupDoc确保患者和专家之间的有效沟通，始终提供准确和专业的回复。",
+        "keywords": [
+          "健康",
+          "远程医疗",
+          "医生",
+          "诊断",
+          "虚拟护理",
+          "医生",
+          "支持",
+          "卫生",
+          "福祉"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "en-GB": {
+        "description": "SupDoc is a healthcare app designed to reduce the overload in specialist consultations and healthcare services. It provides a simple, reliable, and secure platform, allowing users to receive virtual medical attention anonymously. SupDoc ensures effective communication between patients and specialists, always delivering accurate and professional responses.",
+        "keywords": [
+          "Healthcare",
+          "Telemedicine",
+          "Doctor",
+          "Consultation",
+          "Virtual Care",
+          "Medical",
+          "Support",
+          "Health",
+          "Wellness"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_en.pdf"
+      },
+      "pt-BR": {
+        "description": "SupDoc é um aplicativo de saúde projetado para reduzir a sobrecarga nas consultas de especialistas e nos serviços de saúde. Oferece uma plataforma simples, confiável e segura, que permite aos usuários receber atendimento médico virtual de forma anônima. O SupDoc garante uma comunicação eficaz entre pacientes e especialistas, sempre oferecendo respostas precisas e profissionais.",
+        "keywords": [
+          "Saúde",
+          "Telemedicina",
+          "Doutor",
+          "Consulta",
+          "Atendimento Virtual",
+          "Médico",
+          "Apoio",
+          "Saúde",
+          "Bem-estar"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "es-MX": {
+        "description": "SupDoc es una aplicación de atención médica diseñada para reducir la sobrecarga en las consultas de especialistas y los servicios de salud. Ofrece una plataforma sencilla, confiable y segura, que permite a los usuarios recibir atención médica virtual de forma anónima. SupDoc garantiza una comunicación efectiva entre pacientes y especialistas, brindando siempre respuestas precisas y profesionales.",
+        "keywords": [
+          "Salud",
+          "Telemedicina",
+          "Doctor",
+          "Consulta",
+          "Atención Virtual",
+          "Médico",
+          "Apoyo",
+          "Sanidad",
+          "Bienestar"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "de-DE": {
+        "description": "SupDoc ist eine Gesundheits-App, die entwickelt wurde, um die Überlastung bei Facharztkonsultationen und Gesundheitsdiensten zu verringern. Sie bietet eine einfache, zuverlässige und sichere Plattform, die es den Nutzern ermöglicht, anonym virtuelle medizinische Betreuung zu erhalten. SupDoc sorgt für eine effektive Kommunikation zwischen Patienten und Fachärzten und liefert immer genaue und professionelle Antworten.",
+        "keywords": [
+          "Gesundheit",
+          "Telemedizin",
+          "Arzt",
+          "Konsultation",
+          "Virtuelle Betreuung",
+          "Arzt",
+          "Unterstützung",
+          "Gesundheit"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "fr-FR": {
+        "description": "SupDoc est une application de santé conçue pour réduire la surcharge des consultations de spécialistes et des services de santé. Elle offre une plateforme simple, fiable et sécurisée, permettant aux utilisateurs de recevoir des soins médicaux virtuels de manière anonyme. SupDoc garantit une communication efficace entre les patients et les spécialistes, offrant toujours des réponses précises et professionnelles.",
+        "keywords": [
+          "Santé",
+          "Télémédecine",
+          "Docteur",
+          "Consultation",
+          "Soins Virtuels",
+          "Médecin",
+          "Soutien",
+          "Santé Publique"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "en-AU": {
+        "description": "SupDoc is a healthcare app designed to reduce the overload in specialist consultations and healthcare services. It provides a simple, reliable, and secure platform, allowing users to receive virtual medical attention anonymously. SupDoc ensures effective communication between patients and specialists, always delivering accurate and professional responses.",
+        "keywords": [
+          "Healthcare",
+          "Telemedicine",
+          "Doctor",
+          "Consultation",
+          "Virtual Care",
+          "Medical",
+          "Support",
+          "Health",
+          "Wellness"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_en.pdf"
+      },
+      "ru": {
+        "description": "SupDoc — это медицинское приложение, разработанное для снижения нагрузки на консультации специалистов и медицинские услуги. Оно предлагает простую, надежную и безопасную платформу, позволяющую пользователям анонимно получать виртуальную медицинскую помощь. SupDoc гарантирует эффективное общение между пациентами и специалистами, всегда предоставляя точные и профессиональные ответы.",
+        "keywords": [
+          "Здоровье",
+          "Телемедицина",
+          "Доктор",
+          "Консультация",
+          "Виртуальная помощь",
+          "Врач",
+          "Поддержка",
+          "Здравоохранение"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "it": {
+        "description": "SupDoc è un'applicazione sanitaria progettata per ridurre il sovraccarico nelle consultazioni con specialisti e nei servizi sanitari. Offre una piattaforma semplice, affidabile e sicura, che consente agli utenti di ricevere assistenza medica virtuale in modo anonimo. SupDoc garantisce una comunicazione efficace tra pazienti e specialisti, fornendo sempre risposte precise e professionali.",
+        "keywords": [
+          "Salute",
+          "Telemedicina",
+          "Dottore",
+          "Consulto",
+          "Assistenza Virtuale",
+          "Medico",
+          "Supporto",
+          "Sanità",
+          "Benessere"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "hi": {
+        "description": "SupDoc एक स्वास्थ्य देखभाल ऐप है जिसे विशेषज्ञ परामर्श और स्वास्थ्य सेवाओं में अतिभार को कम करने के लिए डिज़ाइन किया गया है। यह एक सरल, विश्वसनीय और सुरक्षित प्लेटफ़ॉर्म प्रदान करता है, जिससे उपयोगकर्ता गुमनाम रूप से वर्चुअल चिकित्सा देखभाल प्राप्त कर सकते हैं। SupDoc मरीजों और विशेषज्ञों के बीच प्रभावी संचार सुनिश्चित करता है, हमेशा सटीक और पेशेवर उत्तर प्रदान करता है।",
+        "keywords": [
+          "स्वास्थ्य",
+          "टेलीमेडिसिन",
+          "डॉक्टर",
+          "परामर्श",
+          "वर्चुअल देखभाल",
+          "चिकित्सक",
+          "समर्थन",
+          "स्वास्थ्य सेवा",
+          "कल्याण"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "ko": {
+        "description": "SupDoc는 전문가 상담 및 의료 서비스의 과부하를 줄이기 위해 설계된 헬스케어 앱입니다. 사용자가 익명으로 가상 의료 서비스를 받을 수 있는 간단하고 신뢰할 수 있으며 안전한 플랫폼을 제공합니다. SupDoc는 환자와 전문가 간의 효과적인 의사소통을 보장하며 항상 정확하고 전문적인 답변을 제공합니다.",
+        "keywords": [
+          "건강",
+          "원격진료",
+          "의사",
+          "상담",
+          "가상진료",
+          "의사",
+          "지원",
+          "의료",
+          "웰빙"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      },
+      "ar-SA": {
+        "description": "SupDoc هو تطبيق للرعاية الصحية مصمم لتقليل العبء الزائد في الاستشارات المتخصصة والخدمات الصحية. إنه يوفر منصة بسيطة وموثوقة وآمنة تسمح للمستخدمين بتلقي الرعاية الطبية الافتراضية بشكل مجهول. يضمن SupDoc التواصل الفعال بين المرضى والمتخصصين، ويقدم دائمًا إجابات دقيقة ومهنية.",
+        "keywords": [
+          "الصحة، التطبيب عن بعد، الطبيب، الاستشارة، الرعاية الافتراضية، الطبيب، الدعم، الصحة، الرفاهية"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_es.pdf"
+      }
+    },
+    "categories": [
+      "HEALTH_AND_FITNESS"
+    ],
+    "advisory": {
+      "alcoholTobaccoOrDrugUseOrReferences": "NONE",
+      "contests": "NONE",
+      "gamblingSimulated": "NONE",
+      "horrorOrFearThemes": "NONE",
+      "matureOrSuggestiveThemes": "NONE",
+      "medicalOrTreatmentInformation": "FREQUENT_OR_INTENSE",
+      "profanityOrCrudeHumor": "NONE",
+      "sexualContentGraphicAndNudity": "NONE",
+      "sexualContentOrNudity": "NONE",
+      "violenceCartoonOrFantasy": "NONE",
+      "violenceRealistic": "NONE",
+      "violenceRealisticProlongedGraphicOrSadistic": "NONE",
+      "gambling": false,
+      "unrestrictedWebAccess": false,
+      "kidsAgeBand": null,
+      "seventeenPlus": false
+    },
+    "review": {
+      "firstName": "Nathan",
+      "lastName": "Alspaugh",
+      "email": "kg5inb1@hotmail.com",
+      "phone": "+573104250018",
+      "demoUsername": "1",
+      "demoPassword": "S*!1updoc",
+      "demoRequired": true,
+      "notes": "type in any code for the verification"
+    }
+  }
+}
