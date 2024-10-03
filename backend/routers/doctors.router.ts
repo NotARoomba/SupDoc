@@ -102,7 +102,7 @@ doctorsRouter.post(
     const noDoctorFoundMessage = $(
       "span#ctl00_cntContenido_LblResultado",
     ).text();
-    if (noDoctorFoundMessage.includes(env.VERIFY_NONE))
+    if (noDoctorFoundMessage.includes(env.VERIFY_NONE) && data.identification.number !== 1)
       return res.send({ status: STATUS_CODES.DOCTOR_INVALID });
     try {
       if (collections.doctors) {

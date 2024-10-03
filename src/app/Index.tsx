@@ -162,7 +162,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       return setTimeout(() => setIsLogged(true), 250);
     } else {
       setLoading(false);
-      return Alert.alert(t("error"), t("errors.createUser"));
+      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[create.status]}`));
     }
   };
   useEffect(() => {
