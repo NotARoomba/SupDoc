@@ -134,7 +134,7 @@ export default function Settings() {
             (Platform.OS === "ios" ? "-translate-y-16" : "-translate-y-24")
           }
         >
-          <Text className="text-ivory text-3xl font-bold text-center mb-2">
+          {/* <Text className="text-ivory text-3xl font-bold text-center mb-2">
             {t("buttons.theme")}
           </Text>
           <Slider
@@ -147,7 +147,7 @@ export default function Settings() {
                 ? t("buttons.themes.dark")
                 : t("buttons.themes.light")
             }
-          />
+          /> */}
           <Text className="text-ivory text-3xl font-bold text-center mt-8 mb-2">
             {t("settings.languages")}
           </Text>
