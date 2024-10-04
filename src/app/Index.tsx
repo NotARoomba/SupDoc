@@ -113,7 +113,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               number: parseInt(signUpInfo.identification),
             },
             info: {
-              age: new Date(Date.now() - signUpInfo.dob).getFullYear(),
+              age: new Date(Date.now() - signUpInfo.dob).getFullYear()-1970,
               weight: signUpInfo.weight,
               height: signUpInfo.height,
               dob: signUpInfo.dob,
