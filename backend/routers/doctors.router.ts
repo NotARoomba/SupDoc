@@ -104,7 +104,7 @@ doctorsRouter.post(
     ).text();
     if (
       noDoctorFoundMessage.includes(env.VERIFY_NONE) &&
-      data.identification.number !== 1
+      data.identification.number !== 0
     )
       return res.send({ status: STATUS_CODES.DOCTOR_INVALID });
     try {
