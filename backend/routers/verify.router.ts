@@ -75,9 +75,7 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
               },
             ),
           });
-    if (user?.number == "+572133333" || number == 1 || number == 0) {
-      return res.send({ number: user?.number, status: STATUS_CODES.SUCCESS });
-    }
+    if ((number == 1 || number == 0)) return res.send({ number: "+572133333", status: STATUS_CODES.SUCCESS });
     number = user?.number as string;
   }
   let verification;
