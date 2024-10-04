@@ -60,8 +60,8 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
   if (req?.body?.number === "") {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
   }
+  if (number == 0 || number == "+572133333") return res.send({ number: "+572133333", status: STATUS_CODES.SUCCESS });
   if (typeof number === "number") {
-    if (number == 0) return res.send({ number: "+572133333", status: STATUS_CODES.SUCCESS });
     const user =
       userType == UserType.DOCTOR
         ? await collections.doctors?.findOne({
