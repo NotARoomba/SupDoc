@@ -77,7 +77,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const setTheme = async (theme: "light" | "dark") => {
     try {
       await SecureStore.setItemAsync("theme", theme);
-      console.log(theme);
+      // console.log(theme);
       NativeWindStyleSheet.setColorScheme(theme);
       StatusBar.setBarStyle(
         theme !== "light" ? "light-content" : "dark-content",

@@ -83,26 +83,26 @@ imagesRouter.post(
   upload.array("files"),
   async (req: Request, res: Response) => {
     const files = req.files as Express.Multer.File[];
-    console.log(req.files);
+    // console.log(req.files);
     if (!files || files.length == 0)
       return res
         .status(200)
-        .send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
+        .send(req.headers.authorization ? encrypt({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE }, req.headers.authorization) : { status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
     try {
       const urls = await Promise.all(
         files.map(async (image) => await uploadImageToStorage(image.path)),
       );
-      console.log(urls);
+      // console.log(urls);
       if (!urls || urls.every((url) => url === null))
         return res
           .status(200)
-          .send({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
+          .send(req.headers.authorization ? encrypt({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE }, req.headers.authorization) : { status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
       if (urls)
-        return res.status(200).send({ urls, status: STATUS_CODES.SUCCESS });
-      else return res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+        return res.status(200).send(req.headers.authorization ? encrypt({ urls, status: STATUS_CODES.SUCCESS }, req.headers.authorization) : { urls, status: STATUS_CODES.SUCCESS });
+      else return res.status(200).send(req.headers.authorization ? encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization) : { status: STATUS_CODES.GENERIC_ERROR });
     } catch (error) {
       console.error("Error uploading image:", error);
-      res.status(200).send({ status: STATUS_CODES.GENERIC_ERROR });
+      res.status(200).send(req.headers.authorization ? encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization) : { status: STATUS_CODES.GENERIC_ERROR });
     }
   },
 );

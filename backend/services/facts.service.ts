@@ -1,8 +1,8 @@
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
-import { collections, env } from "./database.service";
-import { LanguageCodes } from "../models/util";
 import Fact from "../models/fact";
+import { LanguageCodes } from "../models/util";
 import { getStartAndEndOfDay } from "../routers/facts.router";
+import { collections, env } from "./database.service";
 
 export async function refreshFacts() {
   const { startOfDay, endOfDay } = getStartAndEndOfDay();
@@ -14,7 +14,7 @@ export async function refreshFacts() {
       },
     })
     .toArray()) as Fact[];
-  if (randomFacts.length > 0) return 
+  if (randomFacts.length > 0) return;
   const apiKey = env.GEMINI_API_KEY;
   const genAI = new GoogleGenerativeAI(apiKey);
 
@@ -102,6 +102,16 @@ export async function refreshFacts() {
   const result = await chatSession.sendMessage("give me 5 facts");
   const facts = JSON.parse(result.response.text()).facts;
   //facs from a day before
-  await collections.facts.insertMany(facts.map((text: {[locale in LanguageCodes]: string}) => ({text, likes: [], dislikes: [], timestamp: new Date(new Date().toLocaleDateString()).getTime()} as Fact)))
+  await collections.facts.insertMany(
+    facts.map(
+      (text: { [locale in LanguageCodes]: string }) =>
+        ({
+          text,
+          likes: [],
+          dislikes: [],
+          timestamp: new Date(new Date().toLocaleDateString()).getTime(),
+        }) as Fact,
+    ),
+  );
   // websocket to tell the doctors to update their facts
 }

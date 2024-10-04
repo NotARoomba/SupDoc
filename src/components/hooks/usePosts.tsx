@@ -212,11 +212,12 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (res.status !== STATUS_CODES.SUCCESS)
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     else {
-      Alert.alert(t("success"), t("sucesses.deletePost"));
+      Alert.alert(t("success"), t("successes.deletePost"));
       listRef.current?.prepareForLayoutAnimationRender();
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setPosts(posts.filter((v) => v._id?.toString() !== id));
       setSavedPosts(savedPosts.filter((v) => v._id?.toString() !== id));
+      router.navigate("/(tabs)/")
     }
   };
 

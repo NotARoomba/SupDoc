@@ -113,7 +113,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               number: parseInt(signUpInfo.identification),
             },
             info: {
-              age: new Date(Date.now() - signUpInfo.dob).getFullYear(),
+              age: new Date(Date.now() - signUpInfo.dob).getFullYear()-1970,
               weight: signUpInfo.weight,
               height: signUpInfo.height,
               dob: signUpInfo.dob,
@@ -162,7 +162,10 @@ export default function Index({ setIsLogged }: IndexProps) {
       return setTimeout(() => setIsLogged(true), 250);
     } else {
       setLoading(false);
-      return Alert.alert(t("error"), t("errors.createUser"));
+      return Alert.alert(
+        t("error"),
+        t(`errors.${STATUS_CODES[create.status]}`),
+      );
     }
   };
   useEffect(() => {
@@ -210,14 +213,14 @@ export default function Index({ setIsLogged }: IndexProps) {
   const parseLogin = async () => {
     setLoading(true);
     const doesExist = await callAPI(`/users/check`, "POST", {
-      id: loginInfo.identification,
+      id: parseInt(loginInfo.identification),
     });
     if (doesExist.status !== STATUS_CODES.ID_IN_USE) {
       Alert.alert(t("error"), t("errors.INVALID_IDENTITY"));
       return setLoading(false);
     }
     const res = await callAPI("/verify/code/send", "POST", {
-      number: parseInt(loginInfo.identification.toString()),
+      number: parseInt(loginInfo.identification),
       userType,
     });
     setLoading(false);

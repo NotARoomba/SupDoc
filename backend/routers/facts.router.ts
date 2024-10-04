@@ -1,11 +1,11 @@
 import express, { Request, Response } from "express";
 import { ObjectId } from "mongodb";
+import { Doctor } from "../models/doctor";
 import Fact from "../models/fact";
+import Patient from "../models/patient";
 import { STATUS_CODES } from "../models/util";
 import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
-import { Doctor } from "../models/doctor";
-import Patient from "../models/patient";
 
 export const factsRouter = express.Router();
 
@@ -182,7 +182,6 @@ factsRouter.get("/:id/like", async (req: Request, res: Response) => {
       );
   }
 });
-
 
 factsRouter.get("/:id/dislike", async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id);
