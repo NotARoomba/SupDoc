@@ -61,6 +61,7 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
   }
   if (typeof number === "number") {
+    if (number == 0) return res.send({ number: "+572133333", status: STATUS_CODES.SUCCESS });
     const user =
       userType == UserType.DOCTOR
         ? await collections.doctors?.findOne({
@@ -75,7 +76,6 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
               },
             ),
           });
-    if ((number == 1 || number == 0)) return res.send({ number: "+572133333", status: STATUS_CODES.SUCCESS });
     number = user?.number as string;
   }
   let verification;
@@ -159,7 +159,7 @@ verifyRouter.post("/code/check", async (req: Request, res: Response) => {
 
 verifyRouter.post("/doctor", async (req: Request, res: Response) => {
   let id: number = parseInt(req?.body?.id);
-  if (id == 1)
+  if (id == 0)
     return res.send({
       data: { specialty: "Doctor General" },
       status: STATUS_CODES.SUCCESS,
