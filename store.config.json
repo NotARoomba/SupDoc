@@ -58,15 +58,6 @@
         "title": "SupDoc",
         "privacyPolicyUrl": "https://supdoc.org/policy_en.pdf"
       },
-      "ar-SA": {
-        "description": "SupDoc هو تطبيق للرعاية الصحية مصمم لتقليل العبء الزائد في الاستشارات المتخصصة والخدمات الصحية. إنه يوفر منصة بسيطة وموثوقة وآمنة تسمح للمستخدمين بتلقي الرعاية الطبية الافتراضية بشكل مجهول. يضمن SupDoc التواصل الفعال بين المرضى والمتخصصين، ويقدم دائمًا إجابات دقيقة ومهنية.",
-        "keywords": [
-          "الصحة، التطبيب عن بعد، الطبيب، الاستشارة، الرعاية الافتراضية، الطبيب، الدعم، الصحة، الرفاهية"
-        ],
-        "supportUrl": "https://supdoc.org",
-        "title": "SupDoc",
-        "privacyPolicyUrl": "https://supdoc.org/policy_ar.pdf"
-      },
       "ja": {
         "description": "SupDocは、専門医の相談や医療サービスの過負荷を軽減するために設計されたヘルスケアアプリです。シンプルで信頼できる安全なプラットフォームを提供し、ユーザーは匿名でバーチャル医療を受けることができます。SupDocは、患者と専門家の間の効果的なコミュニケーションを保証し、常に正確で専門的な回答を提供します。",
         "keywords": [
@@ -262,6 +253,15 @@
         "supportUrl": "https://supdoc.org",
         "title": "SupDoc",
         "privacyPolicyUrl": "https://supdoc.org/policy_ko.pdf"
+      },
+      "ar-SA": {
+        "description": "SupDoc هو تطبيق للرعاية الصحية مصمم لتقليل العبء الزائد في الاستشارات المتخصصة والخدمات الصحية. إنه يوفر منصة بسيطة وموثوقة وآمنة تسمح للمستخدمين بتلقي الرعاية الطبية الافتراضية بشكل مجهول. يضمن SupDoc التواصل الفعال بين المرضى والمتخصصين، ويقدم دائمًا إجابات دقيقة ومهنية.",
+        "keywords": [
+          "الصحة، التطبيب عن بعد، الطبيب، الاستشارة، الرعاية الافتراضية، الطبيب، الدعم، الصحة، الرفاهية"
+        ],
+        "supportUrl": "https://supdoc.org",
+        "title": "SupDoc",
+        "privacyPolicyUrl": "https://supdoc.org/policy_ar.pdf"
       }
     },
     "categories": [
@@ -293,7 +293,7 @@
       "demoUsername": "0",
       "demoPassword": "S*!1updoc",
       "demoRequired": true,
-      "notes": "PATIENT LOGIN: 0\nDOCTOR LOGIN: 1\n\nDepending on the login the identification changes but the password is the same.\nType in any number for the verification code."
+      "notes": "Type in any number for the verification code."
     }
   }
 }

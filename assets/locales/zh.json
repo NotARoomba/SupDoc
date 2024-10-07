@@ -1,7 +1,7 @@
 {
     "CFBundleDisplayName": "SupDoc",
-    "NSCameraUsageDescription": "SupDoc需要您的相机来拍摄您的症状照片，以便发送给医生。",
-    "NSPhotoLibraryUsageDescription": "SupDoc 需要访问您的图库以上传照片！",
+    "NSCameraUsageDescription": "SupDoc 需要访问您的相机，以便医生上传验证文件，患者上传症状照片。您的照片将有助于确保医生的准确验证，并为患者提供更好的诊断和护理。",
+    "NSPhotoLibraryUsageDescription": "SupDoc 需要访问您的相册，以便医生上传验证文件，患者上传症状照片。您的照片将有助于确保医生的准确验证，并为患者提供更好的诊断和护理。",
     "success": "成功！",
     "error": "错误",
     "check": "检查",

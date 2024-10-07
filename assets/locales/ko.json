@@ -1,7 +1,7 @@
 {
     "CFBundleDisplayName": "SupDoc",
-    "NSCameraUsageDescription": "SupDoc은 증상의 사진을 찍어 의사에게 보내기 위해 귀하의 카메라가 필요합니다.",
-    "NSPhotoLibraryUsageDescription": "SupDoc은 사진을 업로드하기 위해 갤러리에 접근해야 합니다!",
+    "NSCameraUsageDescription": "SupDoc는 의사가 인증 문서를 업로드하고 환자가 증상 사진을 업로드할 수 있도록 카메라에 대한 액세스가 필요합니다. 귀하의 사진은 의사의 정확한 인증과 환자의 더 나은 진단 및 치료를 보장하는 데 도움이 됩니다.",
+    "NSPhotoLibraryUsageDescription": "SupDoc는 의사가 인증 문서를 업로드하고 환자가 증상 사진을 업로드할 수 있도록 갤러리에 대한 액세스가 필요합니다. 귀하의 사진은 의사의 정확한 인증과 환자의 더 나은 진단 및 치료를 보장하는 데 도움이 됩니다.",
     "success": "성공!",
     "error": "오류",
     "check": "확인",

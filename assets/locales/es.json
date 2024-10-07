@@ -1,7 +1,7 @@
 {
     "CFBundleDisplayName": "SupDoc",
-    "NSCameraUsageDescription": "SupDoc necesita tu cámara para tomar fotos de tus síntomas y enviarlas a los doctores.",
-    "NSPhotoLibraryUsageDescription": "¡SupDoc necesita acceso a tu galería para subir fotos!",
+    "NSCameraUsageDescription": "SupDoc necesita acceso a tu cámara para permitir que los médicos carguen sus documentos de verificación y que los pacientes carguen fotos de sus síntomas. Tus fotos ayudarán a garantizar una verificación precisa para los médicos y un mejor diagnóstico y cuidado para los pacientes.",
+    "NSPhotoLibraryUsageDescription": "SupDoc necesita acceso a tu galería para permitir que los médicos carguen sus documentos de verificación y que los pacientes carguen fotos de sus síntomas. Tus fotos ayudarán a garantizar una verificación precisa para los médicos y un mejor diagnóstico y cuidado para los pacientes.",
     "success": "¡Éxito!",
     "error": "Error",
     "check": "Comprobar",
