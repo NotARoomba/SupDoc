@@ -139,10 +139,8 @@ export default function Home() {
           <iframe
             className="mx-auto w-full max-w-2xl aspect-video"
             src="https://www.youtube.com/embed/H6nWI9z4lnE?si=WSRLelSqRji_mwoc"
-            title="SupDoc"
+            title="Youtube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
           ></iframe>
         </motion.div>
       </div>
@@ -220,7 +218,7 @@ export default function Home() {
             github="https://github.com/Sojoooo"
             image="/img/team/sojo.png"
             insta="https://www.instagram.com/sojoo_oooo"
-            quote="pero es dibertido😢"
+            quote="pero es dibertido😔"
           />
         </div>
       </div>
