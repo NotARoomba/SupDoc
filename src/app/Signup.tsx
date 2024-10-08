@@ -230,21 +230,16 @@ export default function Signup({
     doChecks();
   }, [index]);
   const selectImage = async (pickerType: "camera" | "gallery") => {
-    if (
-      !(await camera.requestPermission()) &&
-      pickerType == "camera" &&
-      !(await gallery.requestPermission()) &&
-      pickerType !== "camera"
-    )
-      return;
     try {
       let result;
       if (pickerType === "camera") {
+        if (!(await camera.requestPermission())) return
         result = await camera.takePhoto({
           allowsEditing: true,
           quality: 1,
         } as ImagePicker.ImagePickerOptions);
       } else {
+        if (!(await gallery.requestPermission())) return
         result = await gallery.selectImage({
           quality: 1,
           allowsEditing: true,

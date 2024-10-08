@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import "react-slideshow-image/dist/styles.css";
-import { Localizations } from "../utils/Localizations";
 import { Link } from "react-scroll";
+import "react-slideshow-image/dist/styles.css";
+import AdvancementCard from "../components/AdvancementCard";
 import Person from "../components/PersonSection";
+import { Localizations } from "../utils/Localizations";
 
 export default function Home() {
   const container = {
@@ -34,7 +35,7 @@ export default function Home() {
           className="h-screen flex pt-4 flex-col "
         >
           <motion.div variants={item} className="mx-auto w-full md:w-1/2">
-            <img className="" src="/img/banner.png" />
+            <img className="" src="/img/banner.png" alt="Banner" />
           </motion.div>
           <div className="flex md:flex-row flex-col-reverse w-full justify-center">
             <div className="w-full mt-24 md:mt-0 md:w-1/2">
@@ -42,6 +43,7 @@ export default function Home() {
                 variants={item}
                 className="mx-auto md:ml-auto animate animate-slowBounce"
                 src="/img/splash-fade.png"
+                alt="Splash"
               />
             </div>
             <div className="flex flex-col md:pt-36 w-full md:w-1/2 gap-y-8">
@@ -49,20 +51,20 @@ export default function Home() {
                 variants={item}
                 className="text-3xl text-ivory w-9/12 mx-auto md:w-96 font-bold text-center md:text-left md:mr-auto md:ml-0 mt-6 max-w-2xl"
               >
-                {Localizations.simplificando}
+                {Localizations.simplifyingHealth}
               </motion.p>
               <motion.div
                 className="mx-auto md:ml-0  md:mr-auto"
                 variants={item}
               >
                 <Link
-                  className="text-lg bg-midnight_green font-semibold text-center text-ivory hover:bg-oxforder_blue w-64 hover:text-ivory hover:cursor-pointer transition-all duration-300 p-2 px-4 rounded-xl"
+                  className="text-lg bg-oxford_blue font-semibold text-center text-ivory hover:bg-oxforder_blue w-64 hover:text-ivory hover:cursor-pointer transition-all duration-300 p-2 px-4 rounded-xl"
                   to="about"
                   spy={true}
                   smooth={true}
                   duration={500}
                 >
-                  {Localizations.conoceProyecto}
+                  {Localizations.learnMoreProject}
                 </Link>
               </motion.div>
             </div>
@@ -90,7 +92,7 @@ export default function Home() {
               whileInView="visible"
               className="text-powder_blue w-11/12 mx-auto font-bold text-4xl block text-center md:text-right mt-20"
             >
-              {Localizations.medicinaPreventiva}
+              {Localizations.preventiveMedicine}
             </motion.p>
             <motion.p
               variants={item}
@@ -98,7 +100,7 @@ export default function Home() {
               whileInView="visible"
               className="text-ivory/80 text-center md:text-right mx-auto text-lg w-11/12"
             >
-              {Localizations.supdocDescripcion}
+              {Localizations.supdocDescription}
             </motion.p>
           </div>
           {/* texto */}
@@ -107,8 +109,9 @@ export default function Home() {
               variants={item}
               initial="hidden"
               whileInView="visible"
-              className="ml-auto mt-24 md:mx-auto md:mt-0"
+              className="mt-24 mx-auto md:mt-0"
               src="/img/home-fade.png"
+              alt="Home"
             />
           </div>
         </motion.div>
@@ -131,7 +134,7 @@ export default function Home() {
             whileInView="visible"
             className="text-6xl text-center font-bold mb-8"
           >
-            Our Advances
+            {Localizations.advances}
           </motion.p>
           <iframe
             className="mx-auto w-full max-w-2xl aspect-video"
@@ -143,6 +146,7 @@ export default function Home() {
           ></iframe>
         </motion.div>
       </div>
+
       {/* TEAM */}
       <div
         className="w-full pt-8 md:pt-0 bg-gradient-to-b from-richer_black to-richer_black from-70%"
@@ -152,7 +156,7 @@ export default function Home() {
           variants={container}
           initial="hidden"
           whileInView="visible"
-          className="h-full w-full flex flex-col justify-center"
+          className="h-full w-full flex flex-col justify-center pt-12"
         >
           <motion.p
             variants={item}
@@ -160,7 +164,7 @@ export default function Home() {
             whileInView="visible"
             className="text-3xl text-ivory/60 text-center font-bold"
           >
-            Conoce al equipo detras de esto
+            {Localizations.meetTeam}
           </motion.p>
           <motion.p
             variants={item}
@@ -175,17 +179,18 @@ export default function Home() {
           <Person
             name="Nathan Alspaugh"
             delay={0.25}
-            role="Programmer"
+            role={Localizations.roles.programmer}
             github="https://github.com/notaroomba"
             image="/img/team/alspaugh.png"
             insta="https://www.instagram.com/notaroomba"
-            quote="Lo que fue fue y lo que no se quedo"
+            linkedin="https://www.linkedin.com/in/notaroomba"
+            quote="de pena se murio un burro en cartagena"
           />
           <Person
             name="Valeria Quintero"
             rotate
             delay={0.25}
-            role="Video Director"
+            role={Localizations.roles.videoDirector}
             image="/img/team/quintero.png"
             insta="https://www.instagram.com/valequintero_j"
             quote="Roger That"
@@ -193,7 +198,7 @@ export default function Home() {
           <Person
             name="Samuel Correa"
             delay={0.25}
-            role="Programmer"
+            role={Localizations.roles.programmer}
             github="https://github.com/SupSJC"
             image="/img/team/correa.png"
             insta="https://www.instagram.com/samuel_corr_"
@@ -203,7 +208,7 @@ export default function Home() {
             name="Gabriela Cortes"
             delay={0.25}
             rotate
-            role="Graphic Designer"
+            role={Localizations.roles.graphicDesigner}
             image="/img/team/cortes.png"
             insta="https://www.instagram.com/gabycortessss"
             quote="joa no te tocaba"
@@ -211,7 +216,7 @@ export default function Home() {
           <Person
             name="Juan Pablo Sojo"
             delay={0.25}
-            role="Programmer"
+            role={Localizations.roles.programmer}
             github="https://github.com/Sojoooo"
             image="/img/team/sojo.png"
             insta="https://www.instagram.com/sojoo_oooo"
@@ -219,63 +224,123 @@ export default function Home() {
           />
         </div>
       </div>
+
+      {/* RESOURCES */}
+      <div
+        className="w-full h-screen mt-4 bg-gradient-to-b from-richer_black to-richer_black from-0%"
+        id="resources"
+      >
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="visible"
+          className="h-full w-full flex flex-col justify-center"
+        >
+          <motion.p
+            variants={item}
+            initial="hidden"
+            whileInView="visible"
+            className="text-6xl text-center font-bold mb-8"
+          >
+            {Localizations.resources}
+          </motion.p>
+          <div className="flex-row md:flex justify-center mx-auto w-full gap-3 my-8">
+            <AdvancementCard
+              title="GitHub"
+              subtitle=""
+              link="https://github.com/NotARoomba/SupDoc"
+              imagePath="/img/github.png"
+              textColor="text-ivory"
+              linkColor="text-ivory"
+              bgColor="bg-powder_blue/30"
+            />
+            <AdvancementCard
+              title={Localizations.privacyPolicy}
+              subtitle=""
+              link={`https://supdoc.org/policy_${Localizations.getLanguage()}.pdf`}
+              imagePath="/img/policy.png"
+              textColor="text-oxford_blue"
+              linkColor="text-oxford_blue"
+              bgColor="bg-richer_black/20"
+            />
+          </div>
+        </motion.div>
+      </div>
+
       {/* FOOTER */}
-      <div className="w-full bg-richer_black/80 px-8">
+      <div className="w-full bg-richer_black px-8 text-ivory">
         <div className="md:w-7/12 mx-auto justify-center py-10">
           <div className="flex flex-row">
             <div className="justify-center mx-auto">
-              <p className="mb-2 font-bold text-4xl">SupDoc</p>{" "}
+              <p className="mb-2 font-bold text-4xl">SupDoc</p>
               {/* Static Text */}
-              <p className="text-ivory">Barranquilla, Colombia</p>{" "}
+              <p className="">Barranquilla, Colombia</p>
               {/* Static Text */}
-              <p className="text-ivory">Los Mayores Insociables</p>{" "}
+              <p className="font-bold">Los Mayores Insociables</p>
               {/* Static Text */}
               <br />
-              <a
-                href="mailto:supdoc.ips@gmail.com"
-                className="my-9 underline text-ivory"
-              >
+              <a href="mailto:supdoc.ips@gmail.com" className="my-9 underline ">
                 supdoc.ips@gmail.com
               </a>
               <br />
               <a
                 href="https://github.com/NotARoomba/SupDoc"
-                className="my-9 underline text-ivory"
+                className="my-9 underline "
               >
                 GitHub
               </a>
               <br />
               <a
-                href="https://supdoc.org/policy_es.pdf"
-                className="my-9 underline text-ivory"
+                href={`https://supdoc.org/policy_${Localizations.getLanguage()}.pdf`}
+                className="my-9 underline "
               >
-                {Localizations.politica}
+                {Localizations.privacyPolicy}
               </a>
             </div>
-            <div className="justify-left mx-auto text-ivory">
-              <p className="text-2xl">{Localizations.enlaces}</p>
+            <div className="justify-left mx-auto ">
+              <p className="text-2xl">{Localizations.links}</p>
               <Link
                 className="cursor-pointer underline"
                 activeClass="active"
                 to="home"
-                href="#home"
                 spy={true}
                 smooth={true}
                 duration={500}
               >
-                {Localizations.inicio}
+                {Localizations.home}
               </Link>
               <br />
               <Link
                 className="cursor-pointer underline"
                 activeClass="active"
                 to="about"
-                href="#about"
                 spy={true}
                 smooth={true}
                 duration={500}
               >
-                {Localizations.mision}
+                {Localizations.mission}
+              </Link>
+              <br />
+              <Link
+                className="cursor-pointer underline"
+                activeClass="active"
+                to="team"
+                spy={true}
+                smooth={true}
+                duration={500}
+              >
+                {Localizations.team}
+              </Link>
+              <br />
+              <Link
+                className="cursor-pointer underline"
+                activeClass="active"
+                to="resources"
+                spy={true}
+                smooth={true}
+                duration={500}
+              >
+                {Localizations.resources}
               </Link>
             </div>
           </div>

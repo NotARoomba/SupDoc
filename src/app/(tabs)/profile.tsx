@@ -197,21 +197,16 @@ export default function Profile() {
     } else await updateUser();
   };
   const selectImage = async (pickerType: "camera" | "gallery") => {
-    if (
-      !(await camera.requestPermission()) &&
-      pickerType == "camera" &&
-      !(await gallery.requestPermission()) &&
-      pickerType !== "camera"
-    )
-      return console.log("NO PHOTOS");
     try {
       let result;
       if (pickerType === "camera") {
+        if (!(await camera.requestPermission())) return
         result = await camera.takePhoto({
           allowsEditing: true,
           quality: 1,
         });
       } else {
+        if (!(await gallery.requestPermission())) return
         result = await gallery.selectImage({
           quality: 1,
           allowsEditing: true,
