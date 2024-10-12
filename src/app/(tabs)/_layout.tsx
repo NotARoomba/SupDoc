@@ -1,18 +1,23 @@
+import { UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import { usePosts } from "components/hooks/usePosts";
 import { useSettings } from "components/hooks/useSettings";
 import { useUser } from "components/hooks/useUser";
-import { UserType } from "components/utils/Types";
+import { registerForPushNotificationsAsync } from "components/utils/Functions";
 import { SplashScreen, Tabs } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 
 export default function TabLayout() {
-  const { userType, fetchUser } = useUser();
+  const { userType, fetchUser, updateToken } = useUser();
   const { fetchPosts } = usePosts();
   const { fetchSettings } = useSettings();
   useEffect(() => {
-    fetchUser().then(fetchPosts).then(fetchSettings);
+    fetchUser()
+      .then(fetchPosts)
+      .then(fetchSettings)
+      .then(registerForPushNotificationsAsync)
+      .then((token) => updateToken(token));
     SplashScreen.hideAsync();
   }, [userType]);
   return (

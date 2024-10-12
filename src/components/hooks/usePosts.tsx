@@ -2,7 +2,8 @@ import Comment from "@/backend/models/comment";
 import Fact from "@/backend/models/fact";
 import { PatientMetrics } from "@/backend/models/metrics";
 import Post from "@/backend/models/post";
-import { STATUS_CODES, UserType } from "@/backend/models/util";
+import STATUS_CODES from "@/backend/models/status";
+import { UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import {
   callAPI,
@@ -217,7 +218,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setPosts(posts.filter((v) => v._id?.toString() !== id));
       setSavedPosts(savedPosts.filter((v) => v._id?.toString() !== id));
-      router.navigate("/(tabs)/")
+      router.navigate("/(tabs)/");
     }
   };
 

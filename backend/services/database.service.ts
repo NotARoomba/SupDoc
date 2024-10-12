@@ -35,6 +35,7 @@ export const env = dotenv.load({
   VERIFY_BODY_1: String,
   VERIFY_BODY_2: String,
   GEMINI_API_KEY: String,
+  EXPO_ACCESS_TOKEN: String,
 });
 
 export const collections: {

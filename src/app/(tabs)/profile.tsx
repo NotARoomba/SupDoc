@@ -1,6 +1,7 @@
 import { PatientMetrics } from "@/backend/models/metrics";
+import STATUS_CODES from "@/backend/models/status";
 import { User } from "@/backend/models/user";
-import { STATUS_CODES } from "@/backend/models/util";
+import { UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import prompt from "@powerdesigninc/react-native-prompt";
 import { Picker } from "@react-native-picker/picker";
@@ -18,7 +19,7 @@ import {
   logout,
   uploadImages,
 } from "components/utils/Functions";
-import { BirthSex, Sex, UserType } from "components/utils/Types";
+import { BirthSex, Sex } from "components/utils/Types";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import parsePhoneNumber from "libphonenumber-js";
@@ -200,13 +201,13 @@ export default function Profile() {
     try {
       let result;
       if (pickerType === "camera") {
-        if (!(await camera.requestPermission())) return
+        if (!(await camera.requestPermission())) return;
         result = await camera.takePhoto({
           allowsEditing: true,
           quality: 1,
         });
       } else {
-        if (!(await gallery.requestPermission())) return
+        if (!(await gallery.requestPermission())) return;
         result = await gallery.selectImage({
           quality: 1,
           allowsEditing: true,

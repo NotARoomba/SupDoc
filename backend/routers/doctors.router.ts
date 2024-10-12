@@ -4,7 +4,7 @@ import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
 import { Doctor } from "../models/doctor";
 import Post from "../models/post";
-import { STATUS_CODES } from "../models/util";
+import STATUS_CODES from "../models/status";
 import { collections, createKey, env } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import {
@@ -19,18 +19,15 @@ doctorsRouter.use(express.json());
 
 doctorsRouter.get("/", async (req: Request, res: Response) => {
   try {
-    let user: Doctor | null = null;
-    if (collections.doctors) {
-      user = (await collections.doctors.findOne({
-        publicKey: req.headers.authorization,
-      })) as unknown as Doctor;
-    }
-    if (user) {
-      user.identification.license = [];
+    if (res.locals.doctor) {
+      res.locals.doctor.identification.license = [];
       res.status(200).send(
         encrypt(
           {
-            user: { ...user, picture: await generateSignedUrl(user.picture) },
+            user: {
+              ...res.locals.doctor,
+              picture: await generateSignedUrl(res.locals.doctor.picture),
+            },
             status: STATUS_CODES.SUCCESS,
           },
           req.headers.authorization,
@@ -128,6 +125,7 @@ doctorsRouter.post(
           comments: [],
           reports: [],
           saved: [],
+          pushTokens: [],
         });
         await createKey([
           CryptoJS.SHA256(inserted.insertedId.toString()).toString(),
@@ -160,15 +158,12 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
       //     ),
       //   );
       console.log(data.picture);
-      const doctor = (await collections.doctors.findOne({
-        publicKey: req.headers.authorization,
-      })) as Doctor;
       const upd = await collections.doctors.findOneAndUpdate(
         { publicKey: req.headers.authorization },
         {
           $set: {
             number: data.number,
-            picture: data.picture ?? doctor.picture,
+            picture: data.picture ?? res.locals.doctor.picture,
             // picture: pictureURL,
             info: {
               ...data.info,
@@ -185,7 +180,7 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
               user: {
                 ...data,
                 picture: await generateSignedUrl(
-                  data.picture ?? doctor.picture,
+                  data.picture ?? res.locals.doctor.picture,
                 ),
               },
               status: STATUS_CODES.SUCCESS,
@@ -257,13 +252,8 @@ doctorsRouter.get("/posts/:timestamp", async (req: Request, res: Response) => {
 doctorsRouter.get("/saved/:timestamp", async (req: Request, res: Response) => {
   const timestamp: number = parseInt(req.params.timestamp);
   try {
-    if (collections.posts && collections.doctors) {
-      const postIDs = (
-        (await collections.doctors.findOne({
-          publicKey: req.headers.authorization,
-        })) as Doctor
-      ).saved;
-      if (postIDs.length == 0)
+    if (collections.doctors) {
+      if (res.locals.doctor.saved.length == 0)
         return res.send(
           encrypt(
             { posts: [], status: STATUS_CODES.SUCCESS },
@@ -273,7 +263,7 @@ doctorsRouter.get("/saved/:timestamp", async (req: Request, res: Response) => {
       const posts = (await collections.posts
         .find({
           _id: {
-            $in: postIDs,
+            $in: res.locals.doctor.saved,
           },
           timestamp: { $gt: timestamp },
         })

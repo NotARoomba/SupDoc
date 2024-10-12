@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import { Doctor } from "../models/doctor";
 import Fact from "../models/fact";
 import Patient from "../models/patient";
-import { STATUS_CODES } from "../models/util";
+import STATUS_CODES from "../models/status";
 import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 

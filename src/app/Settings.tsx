@@ -1,4 +1,3 @@
-import Slider from "components/buttons/Slider";
 import useFade from "components/hooks/useFade";
 import { useSettings } from "components/hooks/useSettings";
 import { useUser } from "components/hooks/useUser";

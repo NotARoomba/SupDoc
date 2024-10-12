@@ -1,5 +1,6 @@
+import STATUS_CODES from "@/backend/models/status";
 import { User } from "@/backend/models/user";
-import { STATUS_CODES, UserType } from "@/backend/models/util";
+import { UserType } from "@/backend/models/util";
 import { callAPI, handleReport, logout } from "components/utils/Functions";
 import { Image } from "expo-image";
 import * as SecureStore from "expo-secure-store";
@@ -24,6 +25,7 @@ interface UserContextType {
   fetchUser: () => Promise<void>;
   setUser: (user: User) => void;
   setUserEdit: (user: User) => void;
+  updateToken: (pushToken: string) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -93,6 +95,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     await logout();
   };
 
+  const updateToken = async (pushToken: string) => {
+    const res = await callAPI("/users/token", "POST", { pushToken });
+    if (res.status !== STATUS_CODES.SUCCESS) {
+      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+    }
+  };
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -105,6 +114,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         reportUser,
         setUserEdit,
         setUser,
+        updateToken,
         fetchUser,
         deleteUser,
       }}

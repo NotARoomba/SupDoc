@@ -1,7 +1,7 @@
 import CryptoJS from "crypto-js";
 import { NextFunction, Request, Response } from "express";
 import NodeRSA from "node-rsa";
-import { STATUS_CODES } from "../models/util";
+import STATUS_CODES from "../models/status";
 import { collections, env } from "./database.service";
 const nodeRSA = new NodeRSA(env.SERVER_PRIVATE, "pkcs1", {
   encryptionScheme: "pkcs1",
@@ -52,6 +52,10 @@ export async function decryptionMiddleware(
     // await encryption.decrypt(doctorExists?.publicKey)
     if (!(doctorExists || patientExists))
       return res.send({ status: STATUS_CODES.UNAUTHORIZED });
+    else {
+      res.locals.doctor = doctorExists;
+      res.locals.patient = patientExists;
+    }
     //need to add protected routes
     // else if ((doctorExists && ![""].includes(req.originalUrl)) || (patientExists && ![""].includes(req.originalUrl)))
     //   return res.send({ status: STATUS_CODES.UNAUTHORIZED });

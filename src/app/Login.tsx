@@ -1,7 +1,8 @@
+import { UserType } from "@/backend/models/util";
 import { useTranslation } from "react-i18next";
 import { Text, TextInput, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { LoginProps, UserType } from "../components/utils/Types";
+import { LoginProps } from "../components/utils/Types";
 
 export default function Login({ info, setInfo, index, userType }: LoginProps) {
   const { t } = useTranslation();

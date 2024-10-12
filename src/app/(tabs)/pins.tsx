@@ -1,10 +1,10 @@
+import { UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import useFade from "components/hooks/useFade";
 import { useLoading } from "components/hooks/useLoading";
 import { usePosts } from "components/hooks/usePosts";
 import LoaderView from "components/loading/LoaderView";
 import PostBlock from "components/misc/PostBlock";
-import { UserType } from "components/utils/Types";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Animated, Platform, RefreshControl, Text, View } from "react-native";

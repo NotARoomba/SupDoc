@@ -26,7 +26,7 @@
       "ja": "./assets/locales/ja.json",
       "ko": "./assets/locales/ko.json",
       "it": "./assets/locales/it.json"
-    },    
+    },
     "ios": {
       "supportsTablet": false,
       "config": {
@@ -34,7 +34,20 @@
       },
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
-        "CFBundleLocalizations": ["en", "es", "zh", "hi", "pt", "ar", "fr", "de", "ru", "ja", "ko", "it"],
+        "CFBundleLocalizations": [
+          "en",
+          "es",
+          "zh",
+          "hi",
+          "pt",
+          "ar",
+          "fr",
+          "de",
+          "ru",
+          "ja",
+          "ko",
+          "it"
+        ],
         "CFBundleDevelopmentRegion": "es"
       },
       "bundleIdentifier": "com.notaroomba.supdoc"

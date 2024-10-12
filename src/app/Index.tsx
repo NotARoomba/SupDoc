@@ -1,5 +1,5 @@
 import { Doctor } from "@/backend/models/doctor";
-import { STATUS_CODES } from "@/backend/models/util";
+import STATUS_CODES from "@/backend/models/status";
 import prompt from "@powerdesigninc/react-native-prompt";
 import { useLoading } from "components/hooks/useLoading";
 import { usePosts } from "components/hooks/usePosts";
@@ -113,7 +113,7 @@ export default function Index({ setIsLogged }: IndexProps) {
               number: parseInt(signUpInfo.identification),
             },
             info: {
-              age: new Date(Date.now() - signUpInfo.dob).getFullYear()-1970,
+              age: new Date(Date.now() - signUpInfo.dob).getFullYear() - 1970,
               weight: signUpInfo.weight,
               height: signUpInfo.height,
               dob: signUpInfo.dob,

@@ -264,9 +264,7 @@
         "privacyPolicyUrl": "https://supdoc.org/policy_ar.pdf"
       }
     },
-    "categories": [
-      "HEALTH_AND_FITNESS"
-    ],
+    "categories": ["HEALTH_AND_FITNESS"],
     "advisory": {
       "alcoholTobaccoOrDrugUseOrReferences": "NONE",
       "contests": "NONE",

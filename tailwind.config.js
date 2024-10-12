@@ -7,8 +7,8 @@ module.exports = {
   theme: {
     extend: {
       fontSize: {
-        '3xs': '0.5rem',  // 8px
-        '2xs': '0.625rem', // 10px
+        "3xs": "0.5rem", // 8px
+        "2xs": "0.625rem", // 10px
       },
       colors: {
         richer_black: {
@@ -71,7 +71,30 @@ module.exports = {
           800: "#56d4fb",
           900: "#aaeafd",
         },
-        'blue_munsell': { DEFAULT: '#5b95a5', 100: '#121e21', 200: '#243b42', 300: '#365963', 400: '#487784', 500: '#5b95a5', 600: '#7baab7', 700: '#9cbfc9', 800: '#bdd4db', 900: '#deeaed' }, 'prussian_blue': { DEFAULT: '#1e3350', 100: '#060a10', 200: '#0c1521', 300: '#131f31', 400: '#192a41', 500: '#1e3350', 600: '#35598b', 700: '#527fbd', 800: '#8ca9d3', 900: '#c5d4e9' }, 
+        blue_munsell: {
+          DEFAULT: "#5b95a5",
+          100: "#121e21",
+          200: "#243b42",
+          300: "#365963",
+          400: "#487784",
+          500: "#5b95a5",
+          600: "#7baab7",
+          700: "#9cbfc9",
+          800: "#bdd4db",
+          900: "#deeaed",
+        },
+        prussian_blue: {
+          DEFAULT: "#1e3350",
+          100: "#060a10",
+          200: "#0c1521",
+          300: "#131f31",
+          400: "#192a41",
+          500: "#1e3350",
+          600: "#35598b",
+          700: "#527fbd",
+          800: "#8ca9d3",
+          900: "#c5d4e9",
+        },
         powder_blue: {
           DEFAULT: "#b4c5e4",
           100: "#16233c",
@@ -109,29 +132,29 @@ module.exports = {
         "100%": { opacity: "0", display: "none", zIndex: "-50" },
       },
       travelFade: {
-        '0%': {
+        "0%": {
           opacity: 0,
-          'stroke-dashoffset': 100
+          "stroke-dashoffset": 100,
         },
-        '20%': {
-          opacity: 1
+        "20%": {
+          opacity: 1,
         },
-        '55%': {
-          opacity: 1
+        "55%": {
+          opacity: 1,
         },
-    
-        '75%': {
-          'stroke-dashoffset': 0
+
+        "75%": {
+          "stroke-dashoffset": 0,
         },
-        '100%': {
-          opacity: 0
-        }
+        "100%": {
+          opacity: 0,
+        },
       },
       animation: {
         show: "show 500ms ease forwards",
         hide: "hide 500ms ease forwards",
         animatedLetters: "lettersAnimation 25s linear infinite",
-        travelFade: 'travelFade 1 ease-in-out infinite',
+        travelFade: "travelFade 1 ease-in-out infinite",
       },
     },
   },

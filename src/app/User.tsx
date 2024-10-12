@@ -1,7 +1,8 @@
 import { Doctor } from "@/backend/models/doctor";
 import Post from "@/backend/models/post";
+import STATUS_CODES from "@/backend/models/status";
 import { User } from "@/backend/models/user";
-import { STATUS_CODES } from "@/backend/models/util";
+import { UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import { FlashList } from "@shopify/flash-list";
 import useFade from "components/hooks/useFade";
@@ -11,7 +12,6 @@ import { useUser } from "components/hooks/useUser";
 import Loading from "components/loading/Loading";
 import PostBlock from "components/misc/PostBlock";
 import { callAPI, isDoctorInfo } from "components/utils/Functions";
-import { UserType } from "components/utils/Types";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";

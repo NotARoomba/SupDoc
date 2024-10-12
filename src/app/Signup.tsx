@@ -1,5 +1,6 @@
 import { Specialty } from "@/backend/models/specialty";
-import { STATUS_CODES } from "@/backend/models/util";
+import STATUS_CODES from "@/backend/models/status";
+import { UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
 import prompt from "@powerdesigninc/react-native-prompt";
 import DateTimePicker, {
@@ -39,13 +40,7 @@ import {
   isDoctorSignupInfo,
   isPatientSignupInfo,
 } from "../components/utils/Functions";
-import {
-  BirthSex,
-  GS,
-  Sex,
-  SignupProps,
-  UserType,
-} from "../components/utils/Types";
+import { BirthSex, GS, Sex, SignupProps } from "../components/utils/Types";
 
 export default function Signup({
   info,
@@ -233,13 +228,13 @@ export default function Signup({
     try {
       let result;
       if (pickerType === "camera") {
-        if (!(await camera.requestPermission())) return
+        if (!(await camera.requestPermission())) return;
         result = await camera.takePhoto({
           allowsEditing: true,
           quality: 1,
         } as ImagePicker.ImagePickerOptions);
       } else {
-        if (!(await gallery.requestPermission())) return
+        if (!(await gallery.requestPermission())) return;
         result = await gallery.selectImage({
           quality: 1,
           allowsEditing: true,

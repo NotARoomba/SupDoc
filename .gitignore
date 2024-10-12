@@ -23,3 +23,5 @@ expo-env.d.ts
 /android
 /ios
 *.ipa
+
+google-services.json

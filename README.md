@@ -1,4 +1,3 @@
-
 <h1 align="center">
   <br>
   <a href="http://supdoc.org"><img src="https://raw.githubusercontent.com/NotARoomba/SupDoc/master/web/public/icon_rounded.gif" alt="SupDoc" width="200"></a>
@@ -24,17 +23,15 @@
   <a href="#license">License</a>
 </p>
 
-
-
 ## Features
 
-* Data encrypted with AES-256/RSA-2048
-* Smooth animations through ```react-native-reanimated```
-* Live updates with ```socket.io```
-* Dark/Light mode
-
+- Data encrypted with AES-256/RSA-2048
+- Smooth animations through `react-native-reanimated`
+- Live updates with `socket.io`
+- Dark/Light mode
 
 ## Download
+
 Check out the [website](https://supdoc.org) for links.
 
 ## Credits
@@ -61,4 +58,3 @@ MIT
 
 > Website [notaroomba.dev](https://notaroomba.dev) &nbsp;&middot;&nbsp;
 > GitHub [@NotARoomba](https://github.com/NotARoomba) &nbsp;&middot;&nbsp;
-

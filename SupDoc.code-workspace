@@ -1,11 +1,17 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../NivelesDeNiveles/web"
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "../NivelesDeNiveles/web",
+    },
+    {
+      "path": "../NivelesDeNiveles/backend",
+    },
+    {
+      "path": "../ForoPEC/backend",
+    },
+  ],
+  "settings": {},
 }

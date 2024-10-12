@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import Patient from "../models/patient";
 import Post from "../models/post";
-import { STATUS_CODES } from "../models/util";
+import STATUS_CODES from "../models/status";
 import {
   collections,
   createKey,
@@ -19,34 +19,24 @@ patientsRouter.use(express.json());
 
 patientsRouter.get("/", async (req: Request, res: Response) => {
   try {
-    let user: Patient | null = null;
-    if (collections.patients) {
-      //check if is a number
-      user = (await collections.patients.findOne({
-        publicKey: req.headers.authorization,
-      })) as unknown as Patient;
-    }
-    // console.log("GET USER", user)
-    if (user) {
-      res
-        .status(200)
-        .send(
-          encrypt(
-            {
-              user: {
-                ...user,
-                identification: {
-                  ...user.identification,
-                  number: parseInt(
-                    user.identification.number as unknown as string,
-                  ),
-                },
+    if (res.locals.patient) {
+      res.status(200).send(
+        encrypt(
+          {
+            user: {
+              ...res.locals.patient,
+              identification: {
+                ...res.locals.patient.identification,
+                number: parseInt(
+                  res.locals.patient.identification.number as unknown as string,
+                ),
               },
-              status: STATUS_CODES.SUCCESS,
             },
-            req.headers.authorization,
-          ),
-        );
+            status: STATUS_CODES.SUCCESS,
+          },
+          req.headers.authorization,
+        ),
+      );
     } else {
       res.status(404).send(
         encrypt(
@@ -174,6 +164,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
         },
         // Posts field
         posts: [],
+        pushTokens: [],
       });
       await createKey([CryptoJS.SHA256(ins.insertedId.toString()).toString()]);
       res.send(
@@ -263,16 +254,13 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
 
 patientsRouter.get("/posts", async (req: Request, res: Response) => {
   try {
-    if (collections.patients && collections.posts) {
-      const postIDs = (
-        (await collections.patients.findOne({
-          publicKey: req.headers.authorization,
-        })) as Patient
-      ).posts;
+    if (collections.posts) {
       const posts = (await collections.posts
         .find({
           _id: {
-            $in: postIDs.map((v) => new ObjectId(v)),
+            $in: (res.locals.patient.posts as ObjectId[]).map(
+              (v) => new ObjectId(v),
+            ),
           },
         })
         .sort({ _id: -1 })

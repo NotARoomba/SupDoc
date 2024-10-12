@@ -39,7 +39,7 @@ export default function Upload() {
     try {
       let result;
       if (pickerType === "camera") {
-        if (!(await camera.requestPermission())) return
+        if (!(await camera.requestPermission())) return;
         result = await camera.takePhoto({
           allowsEditing: true,
           quality: 0.5,

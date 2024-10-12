@@ -3,7 +3,8 @@ import * as cheerio from "cheerio";
 import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
 import { Twilio } from "twilio";
-import { STATUS_CODES, UserType } from "../models/util";
+import STATUS_CODES from "../models/status";
+import { UserType } from "../models/util";
 import { collections, encryption, env } from "../services/database.service";
 
 const twilio: Twilio = new Twilio(env.TW_SID, env.TW_TOKEN);
@@ -60,7 +61,8 @@ verifyRouter.post("/code/send", async (req: Request, res: Response) => {
   if (req?.body?.number === "") {
     return res.send({ status: STATUS_CODES.INVALID_NUMBER });
   }
-  if (number == 0 || number == "+572133333") return res.send({ number: "+572133333", status: STATUS_CODES.SUCCESS });
+  if (number == 0 || number == "+572133333")
+    return res.send({ number: "+572133333", status: STATUS_CODES.SUCCESS });
   if (typeof number === "number") {
     const user =
       userType == UserType.DOCTOR

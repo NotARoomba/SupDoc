@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { STATUS_CODES } from "../models/util";
+import STATUS_CODES from "../models/status";
 import { encrypt } from "../services/encryption.service";
 import {
   generateSignedUrl,
@@ -87,7 +87,14 @@ imagesRouter.post(
     if (!files || files.length == 0)
       return res
         .status(200)
-        .send(req.headers.authorization ? encrypt({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE }, req.headers.authorization) : { status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
+        .send(
+          req.headers.authorization
+            ? encrypt(
+                { status: STATUS_CODES.ERROR_UPLOADING_IMAGE },
+                req.headers.authorization,
+              )
+            : { status: STATUS_CODES.ERROR_UPLOADING_IMAGE },
+        );
     try {
       const urls = await Promise.all(
         files.map(async (image) => await uploadImageToStorage(image.path)),
@@ -96,13 +103,48 @@ imagesRouter.post(
       if (!urls || urls.every((url) => url === null))
         return res
           .status(200)
-          .send(req.headers.authorization ? encrypt({ status: STATUS_CODES.ERROR_UPLOADING_IMAGE }, req.headers.authorization) : { status: STATUS_CODES.ERROR_UPLOADING_IMAGE });
+          .send(
+            req.headers.authorization
+              ? encrypt(
+                  { status: STATUS_CODES.ERROR_UPLOADING_IMAGE },
+                  req.headers.authorization,
+                )
+              : { status: STATUS_CODES.ERROR_UPLOADING_IMAGE },
+          );
       if (urls)
-        return res.status(200).send(req.headers.authorization ? encrypt({ urls, status: STATUS_CODES.SUCCESS }, req.headers.authorization) : { urls, status: STATUS_CODES.SUCCESS });
-      else return res.status(200).send(req.headers.authorization ? encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization) : { status: STATUS_CODES.GENERIC_ERROR });
+        return res
+          .status(200)
+          .send(
+            req.headers.authorization
+              ? encrypt(
+                  { urls, status: STATUS_CODES.SUCCESS },
+                  req.headers.authorization,
+                )
+              : { urls, status: STATUS_CODES.SUCCESS },
+          );
+      else
+        return res
+          .status(200)
+          .send(
+            req.headers.authorization
+              ? encrypt(
+                  { status: STATUS_CODES.GENERIC_ERROR },
+                  req.headers.authorization,
+                )
+              : { status: STATUS_CODES.GENERIC_ERROR },
+          );
     } catch (error) {
       console.error("Error uploading image:", error);
-      res.status(200).send(req.headers.authorization ? encrypt({ status: STATUS_CODES.GENERIC_ERROR }, req.headers.authorization) : { status: STATUS_CODES.GENERIC_ERROR });
+      res
+        .status(200)
+        .send(
+          req.headers.authorization
+            ? encrypt(
+                { status: STATUS_CODES.GENERIC_ERROR },
+                req.headers.authorization,
+              )
+            : { status: STATUS_CODES.GENERIC_ERROR },
+        );
     }
   },
 );

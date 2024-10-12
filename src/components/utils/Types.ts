@@ -3,7 +3,7 @@
 import Comment from "@/backend/models/comment";
 import Fact from "@/backend/models/fact";
 import Post from "@/backend/models/post";
-import { LanguageCodes } from "@/backend/models/util";
+import { LanguageCodes, UserType } from "@/backend/models/util";
 import { FlashList } from "@shopify/flash-list";
 import { ObjectId } from "mongodb";
 import { Ref } from "react";
@@ -32,11 +32,6 @@ declare global {
 //   EXPO_PUBLIC_API_URL: String,
 //   EXPO_PUBLIC_LIMITED_AUTH: String,
 // });
-
-export enum UserType {
-  DOCTOR = "Doctor",
-  PATIENT = "Patient",
-}
 
 export enum BirthSex {
   MALE = "M",

@@ -8,6 +8,7 @@ export interface UserBase {
   dateJoined: number; // D
   publicKey: string; // R
   privateKey: string; // R
+  pushTokens: string[];
 }
 
 export type User = Patient | Doctor;

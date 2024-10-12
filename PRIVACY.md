@@ -8,7 +8,6 @@ This Privacy Policy governs the collection, use, and protection of your personal
 
 ### 2. Information We Collect
 
-
 1. Phone Number:
 
    We may collect your phone number when you voluntarily provide it for account registration, verification, and two-factor authentication purposes.
@@ -43,13 +42,16 @@ This Privacy Policy governs the collection, use, and protection of your personal
    We use chat logs to provide a seamless communication experience, maintain continuity of care, and improve our services based on user feedback.
 
 ### 4. Data Sharing
-   We do not sell, trade, or share your personal information with third parties unless we have obtained your explicit consent, are required to do so by law, or when sharing is necessary to provide our services (e.g., with healthcare professionals you choose to consult).
+
+We do not sell, trade, or share your personal information with third parties unless we have obtained your explicit consent, are required to do so by law, or when sharing is necessary to provide our services (e.g., with healthcare professionals you choose to consult).
 
 ### 5. Data Security
-   We employ reasonable security measures to protect your personal information from unauthorized access, disclosure, alteration, and destruction. This includes encryption of sensitive data and secure server practices. However, no data transmission or storage is completely secure, and we cannot guarantee the absolute security of your information.
+
+We employ reasonable security measures to protect your personal information from unauthorized access, disclosure, alteration, and destruction. This includes encryption of sensitive data and secure server practices. However, no data transmission or storage is completely secure, and we cannot guarantee the absolute security of your information.
 
 ### 6. Your Rights
-   You have the following rights with respect to your personal information:
+
+You have the following rights with respect to your personal information:
 
 - Access: You can request access to your personal data and details about how we use it.
 - Rectification: You can request corrections to inaccurate or incomplete data.
