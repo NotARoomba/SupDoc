@@ -33,12 +33,12 @@ export default function SocketProvider({ children }: SocketProviderProps) {
           publicKey: user.publicKey,
         },
       });
-      s.on("connect", () => {
+      s.on(SupDocEvents.CONNECT, () => {
         setConnected(true);
         setSocket(s);
         setLoading(false);
       });
-      s.on("disconnect", () => {
+      s.on(SupDocEvents.DISCONNECT, () => {
         setConnected(false);
         setSocket(null);
         setLoading(false);
