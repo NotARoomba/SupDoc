@@ -33,10 +33,10 @@ import {
   IndexProps,
   LoginInfo,
   SignupInfo,
-  UserType,
 } from "../components/utils/Types";
 import Login from "./Login";
 import Signup from "./Signup";
+import { UserType } from "@/backend/models/util";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);
