@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import io, { Socket } from "socket.io-client";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
+import SupDocEvents from "@/backend/models/events";
 
 export type SocketContextType = {
   connected: boolean;

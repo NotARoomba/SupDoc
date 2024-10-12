@@ -13,6 +13,7 @@ import { verifyRouter } from "./routers/verify.router";
 import { connectToDatabase, env } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
+import SupDocEvents from "./models/events";
 
 export const app = express();
 const httpServer = createServer(app);

@@ -5,3 +5,5 @@ enum SupDocEvents {
   LIKE_COMMENT = "like_comment",
   LIKE_FACT = "like_fact",
 }
+
+export default SupDocEvents
