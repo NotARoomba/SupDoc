@@ -3,6 +3,8 @@ import { Expo } from "expo-server-sdk";
 import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
+import SupDocEvents from "./models/events";
+import { UserType } from "./models/util";
 import { doctorsRouter } from "./routers/doctors.router";
 import { factsRouter } from "./routers/facts.router";
 import { imagesRouter } from "./routers/images.router";
@@ -13,8 +15,6 @@ import { verifyRouter } from "./routers/verify.router";
 import { connectToDatabase, env } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
-import SupDocEvents from "./models/events";
-import { UserType } from "./models/util";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -31,7 +31,9 @@ let expo = new Expo({
   useFcmV1: true,
 });
 
-export let usersConnected: { [key: string]: {sockets: string[], userType: UserType}} = {};
+export let usersConnected: {
+  [key: string]: { sockets: string[]; userType: UserType };
+} = {};
 
 connectToDatabase(io)
   .then(() => {
@@ -54,12 +56,30 @@ connectToDatabase(io)
     io.on(SupDocEvents.CONNECT, (socket: Socket) => {
       console.log(`New client connected: ${socket.id}`);
       // store the id of the socket with the public key of the user using socket.handshake.query.publicKey
-      if (socket.handshake.query.publicKey && socket.handshake.query.id && socket.handshake.query.userType) {
-        if (!usersConnected[socket.handshake.query.id as string]) usersConnected[socket.handshake.query.id as string] = {sockets: [], userType: socket.handshake.query.userType as UserType};
-        else usersConnected[socket.handshake.query.id as string].sockets.push(socket.id);
-        if (!usersConnected[socket.handshake.query.publicKey as string]) usersConnected[socket.handshake.query.publicKey as string] = {sockets: [], userType: socket.handshake.query.userType as UserType};
-        else usersConnected[socket.handshake.query.publicKey as string].sockets.push(socket.id);
-      } 
+      if (
+        socket.handshake.query.publicKey &&
+        socket.handshake.query.id &&
+        socket.handshake.query.userType
+      ) {
+        if (!usersConnected[socket.handshake.query.id as string])
+          usersConnected[socket.handshake.query.id as string] = {
+            sockets: [],
+            userType: socket.handshake.query.userType as UserType,
+          };
+        else
+          usersConnected[socket.handshake.query.id as string].sockets.push(
+            socket.id,
+          );
+        if (!usersConnected[socket.handshake.query.publicKey as string])
+          usersConnected[socket.handshake.query.publicKey as string] = {
+            sockets: [],
+            userType: socket.handshake.query.userType as UserType,
+          };
+        else
+          usersConnected[
+            socket.handshake.query.publicKey as string
+          ].sockets.push(socket.id);
+      }
     });
 
     refreshFacts();

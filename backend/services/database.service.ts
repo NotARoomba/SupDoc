@@ -1,13 +1,12 @@
 import * as mongoDB from "mongodb";
+import { Server } from "socket.io";
 import * as dotenv from "ts-dotenv";
+import { usersConnected } from "..";
+import Comment from "../models/comment";
 import { Doctor } from "../models/doctor";
+import SupDocEvents from "../models/events";
 import Fact from "../models/fact";
 import Report from "../models/report";
-import { Server, Socket } from "socket.io";
-import { usersConnected } from "..";
-import { ObjectId } from "mongodb";
-import Comment from "../models/comment";
-import SupDocEvents from "../models/events";
 
 export const env = dotenv.load({
   MONGODB: String,
@@ -111,7 +110,10 @@ export async function connectToDatabase(io: Server) {
 
   const userDB = client.db(env.USER_DB_NAME);
   const interactionDB = client.db(env.INTERACTION_DB_NAME);
-  interactionDB.command ( { collMod: env.POST_COLLECTION, changeStreamPreAndPostImages: { enabled: true } } );
+  interactionDB.command({
+    collMod: env.POST_COLLECTION,
+    changeStreamPreAndPostImages: { enabled: true },
+  });
   collections.patients = userDB.collection(env.PATIENT_COLLECTION);
   collections.doctors = userDB.collection(env.DOCTOR_COLLECTION);
 
@@ -122,33 +124,45 @@ export async function connectToDatabase(io: Server) {
   collections.facts = interactionDB.collection(env.FACT_COLLECTION);
   const pipeline = [
     {
-      $match: {operationType: 'update'},
+      $match: { operationType: "update" },
     },
   ];
-  collections.posts.watch(pipeline, {fullDocument: 'required'}).on("change", async (change) => {
-    if (change.operationType === "update" && change.fullDocument && change.updateDescription.updatedFields?.comments) {
-      /// flatten the comments array and get all the unique users, and sub comments
-      console.log(change)
-      // from this ``````
-      // filter the array to only include users that are connected
-      io.to([...(await getUsers(change.updateDescription.updatedFields.comments)).concat(change.fullDocument.patient.toString()).filter(id => id in usersConnected)]).emit(SupDocEvents.UPDATE_COMMENTS, change.fullDocument);
-      // check if the likes have changed and if si, send a notification to the user using a socket
-      // if (
-      //   change.updateDescription.updatedFields.likes &&
-      //   change.updateDescription.updatedFields.likes.length >
-      //     change.fullDocumentBeforeChange.likes.length
-      // ) {
-      //   const user = usersConnected[change.fullDocumentBeforeChange.author];c
+  collections.posts
+    .watch(pipeline, { fullDocument: "required" })
+    .on("change", async (change) => {
+      if (
+        change.operationType === "update" &&
+        change.fullDocument &&
+        change.updateDescription.updatedFields?.comments
+      ) {
+        /// flatten the comments array and get all the unique users, and sub comments
+        // console.log(change);
+        // from this ``````
+        // filter the array to only include users that are connected
+        console.log((await getUsers(change.updateDescription.updatedFields.comments))
+        .concat(change.fullDocument.patient.toString()))
+        console.log("Connected: ", usersConnected)
+        // .filter((id) => id in usersConnected))
+        io.to([
+          ...(await getUsers(change.updateDescription.updatedFields.comments))
+            .concat(change.fullDocument.patient.toString())
+            .filter((id) => id in usersConnected),
+        ]).emit(SupDocEvents.UPDATE_COMMENTS, {post: change.fullDocument._id, comments: change.updateDescription.updatedFields.comments});
+        // check if the likes have changed and if si, send a notification to the user using a socket
+        // if (
+        //   change.updateDescription.updatedFields.likes &&
+        //   change.updateDescription.updatedFields.likes.length >
+        //     change.fullDocumentBeforeChange.likes.length
+        // ) {
+        //   const user = usersConnected[change.fullDocumentBeforeChange.author];c
 
-
-      //   const user = usersConnected[change.fullDocumentBeforeChange.author];
-      // }
-    }
-  })
+        //   const user = usersConnected[change.fullDocumentBeforeChange.author];
+        // }
+      }
+    });
 
   console.log("Successfully connected to database!");
 }
-
 
 const getUsers = (comments: Comment[]): Promise<string[]> => {
   const users: string[] = [];
@@ -168,4 +182,3 @@ const getUsers = (comments: Comment[]): Promise<string[]> => {
     resolve(users);
   });
 };
-

@@ -5,4 +5,4 @@ enum SupDocEvents {
   UPDATE_FACT = "update_fact",
 }
 
-export default SupDocEvents
+export default SupDocEvents;

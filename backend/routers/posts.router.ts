@@ -2,13 +2,15 @@ import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
 import { DeleteResult, ObjectId, PushOperator } from "mongodb";
 import Comment from "../models/comment";
-import { Doctor } from "../models/doctor";
-import Patient from "../models/patient";
 import Post from "../models/post";
 import Report from "../models/report";
 import STATUS_CODES from "../models/status";
 import { UserType } from "../models/util";
-import { collections, createKey, encryption } from "../services/database.service";
+import {
+  collections,
+  createKey,
+  encryption,
+} from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl } from "../services/storage.service";
 
@@ -224,7 +226,9 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   const postID = new ObjectId(req.params.id);
   console.log(comment);
   const user = res.locals.doctor ?? res.locals.patient;
-  const keyId = await createKey([CryptoJS.SHA256(user._id.toString()).toString()]);
+  const keyId = await createKey([
+    CryptoJS.SHA256(user._id.toString()).toString(),
+  ]);
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
   if (!comment.parent && res.locals.patient)
     return res.send(
