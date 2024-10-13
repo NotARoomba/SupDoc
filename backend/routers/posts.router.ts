@@ -1,7 +1,7 @@
 import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
 import { DeleteResult, ObjectId, PushOperator } from "mongodb";
-import Comment from "../models/comment";
+import Comment, { findCommentById, likeComment } from "../models/comment";
 import Post from "../models/post";
 import Report from "../models/report";
 import STATUS_CODES from "../models/status";
@@ -17,22 +17,6 @@ import { generateSignedUrl } from "../services/storage.service";
 export const postsRouter = express.Router();
 
 postsRouter.use(express.json());
-
-function findCommentById(
-  comments: Comment[],
-  commentId: ObjectId,
-): Comment | null {
-  for (let comment of comments) {
-    if (comment._id.equals(commentId)) {
-      return comment;
-    }
-    const foundInReplies = findCommentById(comment.replies, commentId);
-    if (foundInReplies) {
-      return foundInReplies;
-    }
-  }
-  return null;
-}
 
 // GETS POST FROM POST ID
 postsRouter.get("/:id", async (req: Request, res: Response) => {
@@ -356,45 +340,6 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
       );
   }
 });
-
-export async function likeComment(
-  post: Post,
-  commentID: ObjectId,
-  userID: ObjectId,
-): Promise<{ status: STATUS_CODES; comments?: Comment[] }> {
-  // Find the post and comment
-  try {
-    if (!post) {
-      return { status: STATUS_CODES.POST_NOT_FOUND };
-    }
-
-    // Find the specific comment within the post's comments
-    const comment = findCommentById(post.comments, commentID);
-    if (!comment) {
-      return { status: STATUS_CODES.COMMENT_NOT_FOUND };
-    }
-
-    // Toggle like (if user already liked, remove; otherwise, add)
-    if (comment.likes.some((like) => like.equals(userID))) {
-      comment.likes = comment.likes.filter((like) => !like.equals(userID));
-    } else {
-      comment.likes.push(userID as ObjectId);
-    }
-
-    // Update the post with the modified comment
-    const updated = await collections.posts.updateOne(
-      { _id: post._id },
-      { $set: { comments: post.comments } },
-    );
-
-    if (updated.acknowledged)
-      return { status: STATUS_CODES.SUCCESS, comments: post.comments };
-    else return { status: STATUS_CODES.GENERIC_ERROR };
-  } catch (error) {
-    console.error(error);
-    return { status: STATUS_CODES.GENERIC_ERROR };
-  }
-}
 
 postsRouter.post(
   "/:postID/comments/:commentID/like",

@@ -13,7 +13,7 @@ import { doctorsRouter } from "./routers/doctors.router";
 import { factsRouter } from "./routers/facts.router";
 import { imagesRouter } from "./routers/images.router";
 import { patientsRouter } from "./routers/patients.router";
-import { likeComment, postsRouter } from "./routers/posts.router";
+import { postsRouter } from "./routers/posts.router";
 import { usersRouter } from "./routers/users.router";
 import { verifyRouter } from "./routers/verify.router";
 import {
@@ -26,6 +26,7 @@ import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
 import Patient from "./models/patient";
 import { Doctor } from "./models/doctor";
+import { flattenComments, likeComment } from "./models/comment";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -113,8 +114,8 @@ connectToDatabase(io)
             });
           }
           // send notification to the author of the comment if they are not connected
-          const comment = (post.comments.flatMap(v => v.replies).find((v) => v._id.toString() == commentID.toString()))
-          console.log(comment, post.comments.flatMap(v => v.replies))
+          const comment = (flattenComments(post.comments).find((v) => v._id.toString() == commentID.toString()))
+          console.log(comment, flattenComments(post.comments))
           if (comment?.name == "Patient") {
             const patient = (await collections.patients.findOne({
               _id: new ObjectId(comment.commenter),
