@@ -117,7 +117,7 @@ export async function connectToDatabase(io: Server) {
   collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
   collections.facts = interactionDB.collection(env.FACT_COLLECTION);
 
-  collections.posts.watch([], {fullDocument: 'required', fullDocumentBeforeChange: 'required'}).on("change", (change) => {
+  collections.posts.watch().on("change", (change) => {
     console.log(change)
     if (change.operationType === "update" && change.updateDescription.updatedFields && change.fullDocumentBeforeChange) {
       // check if the likes have changed and if si, send a notification to the user using a socket
