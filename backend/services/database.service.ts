@@ -3,6 +3,8 @@ import * as dotenv from "ts-dotenv";
 import { Doctor } from "../models/doctor";
 import Fact from "../models/fact";
 import Report from "../models/report";
+import { Server, Socket } from "socket.io";
+import { usersConnected } from "..";
 
 export const env = dotenv.load({
   MONGODB: String,
@@ -65,7 +67,7 @@ export async function createKey(altName: string[]) {
   }
 }
 
-export async function connectToDatabase() {
+export async function connectToDatabase(io: Server) {
   const kmsProviders = {
     gcp: {
       email: env.GCP_EMAIL,
@@ -114,6 +116,33 @@ export async function connectToDatabase() {
   // collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
   collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
   collections.facts = interactionDB.collection(env.FACT_COLLECTION);
+
+  collections.posts.watch([], {fullDocument: 'required', fullDocumentBeforeChange: 'required'}).on("change", (change) => {
+    console.log(change)
+    if (change.operationType === "update" && change.updateDescription.updatedFields && change.fullDocumentBeforeChange) {
+      // check if the likes have changed and if si, send a notification to the user using a socket
+      // if (
+      //   change.updateDescription.updatedFields.likes &&
+      //   change.updateDescription.updatedFields.likes.length >
+      //     change.fullDocumentBeforeChange.likes.length
+      // ) {
+
+      //   const findUser = (comments, id) => {
+      //     for (let comment of comments) {
+      //       if (comment._id === id) return comment.author;
+      //       if (comment.comments) {
+      //         const user = findUser(comment.comments, id);
+      //         if (user) return user;
+      //       }
+      //     }
+      //     return null;
+      //   }
+
+
+      //   const user = usersConnected[change.fullDocumentBeforeChange.author];
+      // }
+    }
+  })
 
   console.log("Successfully connected to database!");
 }

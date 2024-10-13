@@ -32,7 +32,7 @@ let expo = new Expo({
 
 export let usersConnected: { [key: string]: string[] } = {};
 
-connectToDatabase()
+connectToDatabase(io)
   .then(() => {
     app.use(cors());
     app.use(express.json({ limit: "50mb", type: "application/json" }));
@@ -53,14 +53,18 @@ connectToDatabase()
     io.on(SupDocEvents.CONNECT, (socket: Socket) => {
       console.log(`New client connected: ${socket.id}`);
       // store the id of the socket with the public key of the user using socket.handshake.query.publicKey
-      if (socket.handshake.query.publicKey) {
+      if (socket.handshake.query.publicKey && socket.handshake.query._id) {
+        if (!usersConnected[socket.handshake.query._id as string]) {
+          usersConnected[socket.handshake.query._id as string] = [];
+        }
         if (!usersConnected[socket.handshake.query.publicKey as string]) {
           usersConnected[socket.handshake.query.publicKey as string] = [];
         }
         usersConnected[socket.handshake.query.publicKey as string].push(
           socket.id,
         );
-      }
+        usersConnected[socket.handshake.query._id as string].push(socket.id);
+      } 
     });
 
     refreshFacts();

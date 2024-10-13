@@ -19,6 +19,7 @@ import React, {
   ReactNode,
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -27,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import { Alert, LayoutAnimation } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
+import SupDocEvents from "@/backend/models/events";
 
 interface PostsContextType {
   posts: Post[];
@@ -70,7 +72,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const [facts, setFacts] = useState<Fact[]>([]);
   const [feed, setFeed] = useState<Array<Post | Fact>>([]); // Feed contains both posts and facts
   const [postEdit, setPostEdit] = useState<Post>();
-  const { userType, user } = useUser();
+  const { userType, user, socket } = useUser();
   const listRef = useRef<FlashList<Post> | null>(null);
 
   const shuffleFactsIntoFeed = (posts: Post[], facts: Fact[]) => {
@@ -373,6 +375,48 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       Alert.alert(t("success"), t("successes.postUploading"));
     }
   };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on(SupDocEvents.UPDATE_COMMENTS, (data: { post: ObjectId; comments: Comment[] }) => {
+        setPosts(
+          posts.map((p) =>
+            data.post == p._id ? { ...p, comments: data.comments } : p,
+          ),
+        );
+
+        if (userType == UserType.DOCTOR) {
+          setFeed(
+            feed.map((p) =>
+              data.post == p._id ? { ...p, comments: data.comments } : p,
+            ),
+          );
+
+          setSavedPosts(
+            savedPosts.map((p) =>
+              data.post == p._id ? { ...p, comments: data.comments } : p,
+            ),
+          );
+        }
+      });
+      
+      if (userType == UserType.DOCTOR) socket.on(SupDocEvents.UPDATE_FACT, (data: { fact: ObjectId; likes: string[]}) => {
+        setFacts(
+          facts.map((f) =>
+            data.fact == f._id ? { ...f, likes: data.likes} : f,
+          ),
+        );
+
+        setFeed(
+          feed.map((p) =>
+            data.fact == p._id ? { ...p, likes: data.likes} : p,
+          ),
+        );
+      })
+
+      
+    }
+  }, [socket])
 
   const postsContextValue = useMemo(
     () => ({

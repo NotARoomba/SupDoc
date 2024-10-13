@@ -22,6 +22,7 @@ interface UserContextType {
   user: User | null;
   userEdit: User | null;
   userType: UserType | null;
+  socket: Socket | null;
   reportUser: (id: string, userType: UserType) => void;
   deleteUser: () => void;
   fetchUser: () => Promise<void>;
@@ -114,11 +115,9 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     });
     s.on(SupDocEvents.CONNECT, () => {
       setSocket(s);
-      setLoading(false);
     });
     s.on(SupDocEvents.DISCONNECT, () => {
       setSocket(null);
-      setLoading(false);
     });
     setSocket(s)
   }
@@ -129,6 +128,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         user,
         userEdit,
         userType,
+        socket,
         reportUser,
         setUserEdit,
         setUser,

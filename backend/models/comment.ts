@@ -8,6 +8,6 @@ export default interface Comment {
   text: string; // R
   likes: ObjectId[]; // D
   reports: ObjectId[];
-  replies: Comment[]; // OBJECT IDS OF COMMENTS
+  replies: Comment[];
   timestamp: number; // D
 }
