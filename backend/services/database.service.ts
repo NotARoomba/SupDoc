@@ -1,10 +1,8 @@
 import * as mongoDB from "mongodb";
 import { Server } from "socket.io";
 import * as dotenv from "ts-dotenv";
-import { usersConnected } from "..";
 import Comment from "../models/comment";
 import { Doctor } from "../models/doctor";
-import SupDocEvents from "../models/events";
 import Fact from "../models/fact";
 import Report from "../models/report";
 

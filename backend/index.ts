@@ -4,6 +4,7 @@ import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import SupDocEvents from "./models/events";
+import STATUS_CODES from "./models/status";
 import { UserType } from "./models/util";
 import { doctorsRouter } from "./routers/doctors.router";
 import { factsRouter } from "./routers/facts.router";
@@ -20,7 +21,6 @@ import {
 } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
-import STATUS_CODES from "./models/status";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -95,11 +95,14 @@ connectToDatabase(io)
       socket.on(
         SupDocEvents.LIKE_COMMENT,
         async (post, commentID, callback) => {
-          const res = await likeComment(post, commentID, user._id)
-          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return callback(res);
+          const res = await likeComment(post, commentID, user._id);
+          if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
+            return callback(res);
           io.to([
             ...(await getUsers(res.comments))
-              .filter((id) => id in usersConnected && id !== user._id.toString())
+              .filter(
+                (id) => id in usersConnected && id !== user._id.toString(),
+              )
               .map((id) => usersConnected[id].sockets)
               .flat(),
           ]).emit(SupDocEvents.UPDATE_COMMENTS, {
