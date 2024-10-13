@@ -88,7 +88,7 @@ connectToDatabase(io)
         SupDocEvents.LIKE_COMMENT,
         async (postID: ObjectId, commentID: ObjectId, callback) => {
           const post = (await collections.posts.findOne({
-            _id: postID,
+            _id: new ObjectId(postID),
           })) as Post;
           const res = await likeComment(
             post,
