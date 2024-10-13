@@ -25,6 +25,7 @@ import {
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
 import Patient from "./models/patient";
+import { Doctor } from "./models/doctor";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -114,8 +115,8 @@ connectToDatabase(io)
           // send notification to the author of the comment if they are not connected
           const comment = (post.comments.flat().find((v) => v._id.equals(commentID)))
           if (comment?.name == "Patient") {
-            const patient = (await collections.patients?.findOne({
-              _id: comment.commenter,
+            const patient = (await collections.patients.findOne({
+              _id: new ObjectId(comment.commenter),
             })) as Patient;
             if (!patient) return;
             if (!usersConnected[patient._id?.toString() as string]) {
@@ -130,9 +131,9 @@ connectToDatabase(io)
             }
           } else {
             if (!comment) return;
-            const doctor = (await collections.doctors?.findOne({
-              _id: comment.commenter,
-            })) as User;
+            const doctor = (await collections.doctors.findOne({
+              _id: new ObjectId(comment.commenter),
+            })) as Doctor;
             if (!doctor) return;
             if (!usersConnected[doctor._id?.toString() as string]) {
               const messages: ExpoPushMessage[] = doctor.pushTokens.map((v) => ({
