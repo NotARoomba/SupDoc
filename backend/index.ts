@@ -115,19 +115,17 @@ connectToDatabase(io)
           }
           // send notification to the author of the comment if they are not connected
           const comment = (flattenComments(post.comments).find((v) => v._id.toString() == commentID.toString()))
-          console.log(comment, flattenComments(post.comments))
           if (comment?.name == "Patient") {
             const patient = (await collections.patients.findOne({
               _id: new ObjectId(comment.commenter),
             })) as Patient;
-            console.log(patient)
             if (!patient) return;
             if (!usersConnected[patient._id?.toString() as string]) {
               const messages: ExpoPushMessage[] = patient.pushTokens.map((v) => ({
                 to: v,
                 sound: "default",
                 title: "New Like",
-                body: `${doctorExists ? doctorExists.name : "The patient"}} liked your comment`,
+                body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
               }));
               console.log("PATIENT LIKED COMMENT")
               await expo.sendPushNotificationsAsync(messages);
@@ -137,14 +135,13 @@ connectToDatabase(io)
             const doctor = (await collections.doctors.findOne({
               _id: new ObjectId(comment.commenter),
             })) as Doctor;
-            console.log(doctor)
             if (!doctor) return;
             if (!usersConnected[doctor._id?.toString() as string]) {
               const messages: ExpoPushMessage[] = doctor.pushTokens.map((v) => ({
                 to: v,
                 sound: "default",
                 title: "New Like",
-                body: `${doctorExists ? doctorExists.name : "The patient"}} liked your comment`,
+                body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
               }));
               console.log("DOCTOR LIKED COMMENT")
               await expo.sendPushNotificationsAsync(messages);
