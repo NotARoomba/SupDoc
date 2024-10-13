@@ -5,6 +5,7 @@ import { createServer } from "http";
 import { ObjectId } from "mongodb";
 import { Server, Socket } from "socket.io";
 import SupDocEvents from "./models/events";
+import Post from "./models/post";
 import STATUS_CODES from "./models/status";
 import { User } from "./models/user";
 import { UserType } from "./models/util";
@@ -85,9 +86,12 @@ connectToDatabase(io)
       }
       socket.on(
         SupDocEvents.LIKE_COMMENT,
-        async (post: ObjectId, commentID: ObjectId, callback) => {
+        async (postID: ObjectId, commentID: ObjectId, callback) => {
+          const post = (await collections.posts.findOne({
+            _id: postID,
+          })) as Post;
           const res = await likeComment(
-            new ObjectId(post),
+            post,
             new ObjectId(commentID),
             user._id as ObjectId,
           );
@@ -95,15 +99,14 @@ connectToDatabase(io)
             return callback(res);
           callback(res);
           for (const conn in (await getUsers(res.comments))
+            .concat(post.patient.toString())
             .filter((id) => id in usersConnected && id !== user._id?.toString())
             .map((id) => usersConnected[id].sockets)
             .flat()) {
-            io.sockets.sockets
-              .get(conn)
-              ?.emit(SupDocEvents.UPDATE_COMMENTS, {
-                post,
-                comments: res.comments,
-              });
+            io.sockets.sockets.get(conn)?.emit(SupDocEvents.UPDATE_COMMENTS, {
+              post: postID,
+              comments: res.comments,
+            });
           }
         },
       );

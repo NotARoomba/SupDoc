@@ -358,13 +358,12 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
 });
 
 export async function likeComment(
-  postID: ObjectId,
+  post: Post,
   commentID: ObjectId,
   userID: ObjectId,
 ): Promise<{ status: STATUS_CODES; comments?: Comment[] }> {
   // Find the post and comment
   try {
-    const post = (await collections.posts.findOne({ _id: postID })) as Post;
     if (!post) {
       return { status: STATUS_CODES.POST_NOT_FOUND };
     }
@@ -384,7 +383,7 @@ export async function likeComment(
 
     // Update the post with the modified comment
     const updated = await collections.posts.updateOne(
-      { _id: postID },
+      { _id: post._id },
       { $set: { comments: post.comments } },
     );
 
@@ -406,7 +405,8 @@ postsRouter.post(
     // Fetch doctor or patient based on authorization token
     const user = res.locals.doctor ?? res.locals.patient;
 
-    const result = await likeComment(postID, commentID, user._id);
+    const post = (await collections.posts.findOne({ _id: postID })) as Post;
+    const result = await likeComment(post, commentID, user._id);
 
     if (result.status == STATUS_CODES.SUCCESS) {
       return res.status(200).send(encrypt(result, req.headers.authorization));
