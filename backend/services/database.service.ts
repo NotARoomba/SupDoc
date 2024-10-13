@@ -111,22 +111,21 @@ export async function connectToDatabase(io: Server) {
 
   const userDB = client.db(env.USER_DB_NAME);
   const interactionDB = client.db(env.INTERACTION_DB_NAME);
-
+  interactionDB.command ( { collMod: env.POST_COLLECTION, changeStreamPreAndPostImages: { enabled: true } } );
   collections.patients = userDB.collection(env.PATIENT_COLLECTION);
   collections.doctors = userDB.collection(env.DOCTOR_COLLECTION);
 
   collections.posts = interactionDB.collection(env.POST_COLLECTION);
-  interactionDB.command( {
-    setClusterParameter:
-       { changeStreamOptions: {
-          preAndPostImages: { expireAfterSeconds: 100 }
-       } }
- } )
+
   // collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
   collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
   collections.facts = interactionDB.collection(env.FACT_COLLECTION);
-
-  collections.posts.watch([], {fullDocument: 'required'}).on("change", async (change) => {
+  const pipeline = [
+    {
+      $match: {operationType: 'update'},
+    },
+  ];
+  collections.posts.watch(pipeline, {fullDocument: 'required'}).on("change", async (change) => {
     if (change.operationType === "update" && change.fullDocument && change.updateDescription.updatedFields?.comments) {
       /// flatten the comments array and get all the unique users, and sub comments
       console.log(change)
