@@ -105,7 +105,7 @@ connectToDatabase(io)
           console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
           for (const conn in connections) {
             // console.log(io.to(conn));
-            socket.broadcast.emit(SupDocEvents.UPDATE_COMMENTS, {
+            io.to(conn).emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,
               comments: res.comments,
             });
