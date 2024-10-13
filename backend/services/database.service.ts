@@ -116,6 +116,12 @@ export async function connectToDatabase(io: Server) {
   collections.doctors = userDB.collection(env.DOCTOR_COLLECTION);
 
   collections.posts = interactionDB.collection(env.POST_COLLECTION);
+  interactionDB.command( {
+    setClusterParameter:
+       { changeStreamOptions: {
+          preAndPostImages: { expireAfterSeconds: 100 }
+       } }
+ } )
   // collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
   collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
   collections.facts = interactionDB.collection(env.FACT_COLLECTION);
