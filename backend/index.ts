@@ -100,6 +100,17 @@ connectToDatabase(io)
             return callback(res);
           callback(res);
           // Send to all users connected to the post
+          const messages: ExpoPushMessage[] = [];
+          if ("name" in user) {
+            const messages: ExpoPushMessage[] = user.pushTokens.map((v) => ({
+              to: v,
+              sound: "default",
+              title: "Notification",
+              body: `TEST NOTIFICATION`,
+            }));
+            await expo.sendPushNotificationsAsync(messages);
+          }
+
           for (const conn in (await getUsers(res.comments))
             .concat(post.patient.toString())
             .filter((id) => id in usersConnected && id !== user._id?.toString())

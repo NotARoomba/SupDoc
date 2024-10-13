@@ -248,7 +248,7 @@ export function handleReport(
     (resolve, reject) => {
       const options = [
         {
-          text: t("report.inappropriateBehaviour"),
+          text: t("report.inappropiateBehavior"),
           onPress: () =>
             resolve({ reason: REPORT_REASONS.INNAPROPRIATE_BEHAVIOUR }),
         },
