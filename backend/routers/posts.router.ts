@@ -357,6 +357,46 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   }
 });
 
+export async function likeComment(
+  postID: ObjectId,
+  commentID: ObjectId,
+  userID: ObjectId,
+): Promise<{ status: STATUS_CODES; comments?: Comment[] }> {
+  // Find the post and comment
+  try {
+    const post = (await collections.posts.findOne({ _id: postID })) as Post;
+    if (!post) {
+      return { status: STATUS_CODES.POST_NOT_FOUND };
+    }
+
+    // Find the specific comment within the post's comments
+    const comment = findCommentById(post.comments, commentID);
+    if (!comment) {
+      return { status: STATUS_CODES.COMMENT_NOT_FOUND };
+    }
+
+    // Toggle like (if user already liked, remove; otherwise, add)
+    if (comment.likes.some((like) => like.equals(userID))) {
+      comment.likes = comment.likes.filter((like) => !like.equals(userID));
+    } else {
+      comment.likes.push(userID as ObjectId);
+    }
+
+    // Update the post with the modified comment
+    const updated = await collections.posts.updateOne(
+      { _id: postID },
+      { $set: { comments: post.comments } },
+    );
+
+    if (updated.acknowledged)
+      return { status: STATUS_CODES.SUCCESS, comments: post.comments };
+    else return { status: STATUS_CODES.GENERIC_ERROR };
+  } catch (error) {
+    console.error(error);
+    return { status: STATUS_CODES.GENERIC_ERROR };
+  }
+}
+
 postsRouter.post(
   "/:postID/comments/:commentID/like",
   async (req: Request, res: Response) => {
@@ -366,75 +406,12 @@ postsRouter.post(
     // Fetch doctor or patient based on authorization token
     const user = res.locals.doctor ?? res.locals.patient;
 
-    try {
-      // Find the post and comment
-      const post = (await collections.posts.findOne({ _id: postID })) as Post;
-      if (!post) {
-        return res
-          .status(200)
-          .send(
-            encrypt(
-              { status: STATUS_CODES.POST_NOT_FOUND },
-              req.headers.authorization,
-            ),
-          );
-      }
+    const result = await likeComment(postID, commentID, user._id);
 
-      // Find the specific comment within the post's comments
-      const comment = findCommentById(post.comments, commentID);
-      if (!comment) {
-        return res
-          .status(404)
-          .send(
-            encrypt(
-              { status: STATUS_CODES.COMMENT_NOT_FOUND },
-              req.headers.authorization,
-            ),
-          );
-      }
-
-      // Toggle like (if user already liked, remove; otherwise, add)
-      if (comment.likes.some((like) => like.equals(user._id))) {
-        comment.likes = comment.likes.filter((like) => !like.equals(user._id));
-      } else {
-        comment.likes.push(user._id as ObjectId);
-      }
-
-      // Update the post with the modified comment
-      const updated = await collections.posts.updateOne(
-        { _id: postID },
-        { $set: { comments: post.comments } },
-      );
-
-      if (updated.acknowledged) {
-        return res
-          .status(200)
-          .send(
-            encrypt(
-              { comments: post.comments, status: STATUS_CODES.SUCCESS },
-              req.headers.authorization,
-            ),
-          );
-      } else {
-        return res
-          .status(200)
-          .send(
-            encrypt(
-              { status: STATUS_CODES.GENERIC_ERROR },
-              req.headers.authorization,
-            ),
-          );
-      }
-    } catch (error) {
-      console.error(error);
-      return res
-        .status(200)
-        .send(
-          encrypt(
-            { status: STATUS_CODES.GENERIC_ERROR },
-            req.headers.authorization,
-          ),
-        );
+    if (result.status == STATUS_CODES.SUCCESS) {
+      return res.status(200).send(encrypt(result, req.headers.authorization));
+    } else {
+      return res.status(200).send(encrypt(result, req.headers.authorization));
     }
   },
 );

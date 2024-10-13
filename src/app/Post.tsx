@@ -12,7 +12,7 @@ import CommentBlock from "components/misc/CommentBlock";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { ObjectId } from "mongodb";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -50,9 +50,18 @@ export default function PostPage() {
   const [index, setIndex] = useState(0);
   const [replyingTo, setReplyingTo] = useState<ObjectId | null>(null);
   const { t } = useTranslation();
+  const [comments, setComments] = useState<Comment[]>([]);
   useEffect(() => {
-    setPost(posts.find((v) => v._id?.toString() == routes.id));
-    // setReplyingTo(null);
+    const currentPost = posts.find((v) => v._id?.toString() === routes.id);
+    
+    // Only update if the current post or its comments change
+    if (currentPost) {
+      const newComments = currentPost.comments || comments; // Assuming comments is an array
+      if (JSON.stringify(newComments) !== JSON.stringify(comments)) {
+        setPost(currentPost);
+        setComments(newComments);
+      }
+    }
   }, [posts, routes]);
 
   const handleAddComment = async () => {
@@ -372,7 +381,7 @@ export default function PostPage() {
                     parent={null}
                     replyingTo={replyingTo}
                     setReplyingTo={setReplyingTo}
-                    comments={post.comments as unknown as Comment[]}
+                    comments={comments}
                   />
                 )}
               </View>

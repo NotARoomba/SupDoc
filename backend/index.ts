@@ -9,12 +9,18 @@ import { doctorsRouter } from "./routers/doctors.router";
 import { factsRouter } from "./routers/facts.router";
 import { imagesRouter } from "./routers/images.router";
 import { patientsRouter } from "./routers/patients.router";
-import { postsRouter } from "./routers/posts.router";
+import { likeComment, postsRouter } from "./routers/posts.router";
 import { usersRouter } from "./routers/users.router";
 import { verifyRouter } from "./routers/verify.router";
-import { connectToDatabase, env } from "./services/database.service";
+import {
+  collections,
+  connectToDatabase,
+  env,
+  getUsers,
+} from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
+import STATUS_CODES from "./models/status";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -24,7 +30,7 @@ const port = 3001;
 //   // allowedHeaders: 'Authorization'
 // };
 
-const io = new Server(httpServer);
+export const io = new Server(httpServer);
 
 let expo = new Expo({
   accessToken: env.EXPO_ACCESS_TOKEN,
@@ -53,9 +59,15 @@ connectToDatabase(io)
     });
 
     // WEBSICKET INITIALIZATION
-    io.on(SupDocEvents.CONNECT, (socket: Socket) => {
+    io.on(SupDocEvents.CONNECT, async (socket: Socket) => {
       console.log(`New client connected: ${socket.id}`);
       // store the id of the socket with the public key of the user using socket.handshake.query.publicKey
+      const user = await (
+        socket.handshake.query.userType == UserType.DOCTOR
+          ? collections.doctors
+          : collections.patients
+      ).findOne({ publicKey: socket.handshake.query.publicKey });
+      if (!user) return socket.disconnect(true);
       if (
         socket.handshake.query.publicKey &&
         socket.handshake.query.id &&
@@ -80,6 +92,23 @@ connectToDatabase(io)
             socket.handshake.query.publicKey as string
           ].sockets.push(socket.id);
       }
+      socket.on(
+        SupDocEvents.LIKE_COMMENT,
+        async (post, commentID, callback) => {
+          const res = await likeComment(post, commentID, user._id)
+          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return callback(res);
+          io.to([
+            ...(await getUsers(res.comments))
+              .filter((id) => id in usersConnected && id !== user._id.toString())
+              .map((id) => usersConnected[id].sockets)
+              .flat(),
+          ]).emit(SupDocEvents.UPDATE_COMMENTS, {
+            post,
+            comments: res.comments,
+          });
+          callback();
+        },
+      );
     });
 
     refreshFacts();

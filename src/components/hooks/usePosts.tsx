@@ -136,15 +136,14 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
 
   const fetchPosts = async () => {
-    setLoading(true);
-    if (!userType) return setLoading(false);
+    // setLoading(true);
+    if (!userType) return
     const f = await fetchFacts();
     const res = await callAPI(
       `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
-      setLoading(false);
       if (res.status == STATUS_CODES.UNAUTHORIZED) await logout();
       else {
         setTimeout(
@@ -166,7 +165,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     }
     // listRef.current?.prepareForLayoutAnimationRender();
     // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setLoading(false);
+    // setLoading(false);
   };
   const fetchSavedPosts = async () => {
     // setLoading(true);
@@ -265,13 +264,18 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
 
   const likeComment = async (post: ObjectId, commentID: ObjectId) => {
-    const res = await callAPI(
-      `/posts/${post}/comments/${commentID}/like`,
-      "POST",
-    );
-    if (res.status !== STATUS_CODES.SUCCESS) {
-      return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
-    }
+    let res: { status: STATUS_CODES; comments: Comment[]; };
+    if (socket) {
+      socket.emit(SupDocEvents.LIKE_COMMENT, { post, commentID }, (data: { status: STATUS_CODES; comments: Comment[]; }) => res = data);
+    } else {
+      res = await callAPI(
+        `/posts/${post}/comments/${commentID}/like`,
+        "POST",
+      );
+      if (res.status !== STATUS_CODES.SUCCESS) {
+        return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+      }
+  }
 
     if (userType == UserType.DOCTOR)
       setFeed(

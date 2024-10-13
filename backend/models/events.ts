@@ -3,6 +3,9 @@ enum SupDocEvents {
   DISCONNECT = "disconnect",
   UPDATE_COMMENTS = "update_comments",
   UPDATE_FACT = "update_fact",
+  POST_COMMENT = "post_comment",
+  LIKE_COMMENT = "like_comment",
+  LIKE_FACT = "like_fact",
 }
 
 export default SupDocEvents;

@@ -112,7 +112,7 @@ export default function Index() {
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
-              onEndReached={fetchPosts}
+              onEndReached={() => {console.log("asd");fetchPosts()}}
               data={feed}
               renderItem={({ item }) =>
                 "likes" in item ? (

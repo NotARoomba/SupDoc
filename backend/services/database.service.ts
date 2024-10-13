@@ -122,49 +122,57 @@ export async function connectToDatabase(io: Server) {
   // collections.comments = interactionDB.collection(env.COMMENT_COLLECTION);
   collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
   collections.facts = interactionDB.collection(env.FACT_COLLECTION);
-  const pipeline = [
-    {
-      $match: { operationType: "update" },
-    },
-  ];
-  collections.posts
-    .watch(pipeline, { fullDocument: "required" })
-    .on("change", async (change) => {
-      if (
-        change.operationType === "update" &&
-        change.fullDocument &&
-        change.updateDescription.updatedFields?.comments
-      ) {
-        /// flatten the comments array and get all the unique users, and sub comments
-        // console.log(change);
-        // from this ``````
-        // filter the array to only include users that are connected
-        console.log((await getUsers(change.updateDescription.updatedFields.comments))
-        .concat(change.fullDocument.patient.toString()))
-        console.log("Connected: ", usersConnected)
-        // .filter((id) => id in usersConnected))
-        io.to([
-          ...(await getUsers(change.updateDescription.updatedFields.comments))
-            .concat(change.fullDocument.patient.toString())
-            .filter((id) => id in usersConnected).map((id) => (usersConnected[id].sockets)).flat(),
-        ]).emit(SupDocEvents.UPDATE_COMMENTS, {post: change.fullDocument._id, comments: change.updateDescription.updatedFields.comments});
-        // check if the likes have changed and if si, send a notification to the user using a socket
-        // if (
-        //   change.updateDescription.updatedFields.likes &&
-        //   change.updateDescription.updatedFields.likes.length >
-        //     change.fullDocumentBeforeChange.likes.length
-        // ) {
-        //   const user = usersConnected[change.fullDocumentBeforeChange.author];c
+  // const pipeline = [
+  //   {
+  //     $match: { operationType: "update" },
+  //   },
+  // ];
+  // collections.posts
+  //   .watch(pipeline, { fullDocument: "required" })
+  //   .on("change", async (change) => {
+  //     if (
+  //       change.operationType === "update" &&
+  //       change.fullDocument &&
+  //       change.updateDescription.updatedFields?.comments
+  //     ) {
+  //       /// flatten the comments array and get all the unique users, and sub comments
+  //       // console.log(change);
+  //       // from this ``````
+  //       // filter the array to only include users that are connected
+  //       console.log(
+  //         (
+  //           await getUsers(change.updateDescription.updatedFields.comments)
+  //         ).concat(change.fullDocument.patient.toString()),
+  //       );
+  //       console.log("Connected: ", usersConnected);
+  //       // .filter((id) => id in usersConnected))
+  //       io.to([
+  //         ...(await getUsers(change.updateDescription.updatedFields.comments))
+  //           .concat(change.fullDocument.patient.toString())
+  //           .filter((id) => id in usersConnected)
+  //           .map((id) => usersConnected[id].sockets)
+  //           .flat(),
+  //       ]).emit(SupDocEvents.UPDATE_COMMENTS, {
+  //         post: change.fullDocument._id,
+  //         comments: change.updateDescription.updatedFields.comments,
+  //       });
+  //       // check if the likes have changed and if si, send a notification to the user using a socket
+  //       // if (
+  //       //   change.updateDescription.updatedFields.likes &&
+  //       //   change.updateDescription.updatedFields.likes.length >
+  //       //     change.fullDocumentBeforeChange.likes.length
+  //       // ) {
+  //       //   const user = usersConnected[change.fullDocumentBeforeChange.author];c
 
-        //   const user = usersConnected[change.fullDocumentBeforeChange.author];
-        // }
-      }
-    });
+  //       //   const user = usersConnected[change.fullDocumentBeforeChange.author];
+  //       // }
+  //     }
+  //   });
 
   console.log("Successfully connected to database!");
 }
 
-const getUsers = (comments: Comment[]): Promise<string[]> => {
+export const getUsers = (comments: Comment[]): Promise<string[]> => {
   const users: string[] = [];
   return new Promise((resolve) => {
     const processComments = (comments: Comment[]) => {
