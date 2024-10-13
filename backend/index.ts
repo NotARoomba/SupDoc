@@ -100,6 +100,7 @@ connectToDatabase(io)
           const res = await likeComment(new ObjectId(post), new ObjectId(commentID), user._id);
           if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
             return callback(res);
+          callback(res);
           io.to([
             ...(await getUsers(res.comments))
               .filter(
@@ -111,7 +112,6 @@ connectToDatabase(io)
             post,
             comments: res.comments,
           });
-          callback();
         },
       );
     });
