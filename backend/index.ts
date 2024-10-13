@@ -102,14 +102,15 @@ connectToDatabase(io)
           // Send to all users connected to the post
           const messages: ExpoPushMessage[] = [];
           if ("name" in user) {
-            console.log(user)
+            // console.log(user)
             const messages: ExpoPushMessage[] = user.pushTokens.map((v) => ({
               to: v,
               sound: "default",
               title: "Notification",
               body: `TEST NOTIFICATION`,
             }));
-            await expo.sendPushNotificationsAsync(messages);
+           const push =  await expo.sendPushNotificationsAsync(messages);
+           console.log(push)
           }
 
           for (const conn in (await getUsers(res.comments))
