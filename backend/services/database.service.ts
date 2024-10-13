@@ -129,7 +129,9 @@ export async function connectToDatabase(io: Server) {
     if (change.operationType === "update" && change.fullDocument && change.updateDescription.updatedFields?.comments) {
       /// flatten the comments array and get all the unique users, and sub comments
       console.log(change)
-      io.to([...usersConnected[change.fullDocument.patient.toString()].sockets, ...(await getUsers(change.updateDescription.updatedFields.comments))]).emit(SupDocEvents.UPDATE_COMMENTS,{post: change.fullDocument._id, comments: change.updateDescription.updatedFields.comments});
+      // from this ``````
+      // filter the array to only include users that are connected
+      io.to([...(await getUsers(change.updateDescription.updatedFields.comments)).concat(change.fullDocument.patient.toString()).filter(id => id in usersConnected)]).emit(SupDocEvents.UPDATE_COMMENTS, change.fullDocument);
       // check if the likes have changed and if si, send a notification to the user using a socket
       // if (
       //   change.updateDescription.updatedFields.likes &&
