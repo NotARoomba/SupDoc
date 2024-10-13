@@ -146,7 +146,7 @@ export async function connectToDatabase(io: Server) {
         io.to([
           ...(await getUsers(change.updateDescription.updatedFields.comments))
             .concat(change.fullDocument.patient.toString())
-            .filter((id) => id in usersConnected),
+            .filter((id) => id in usersConnected).map((id) => (usersConnected[id].sockets)).flat(),
         ]).emit(SupDocEvents.UPDATE_COMMENTS, {post: change.fullDocument._id, comments: change.updateDescription.updatedFields.comments});
         // check if the likes have changed and if si, send a notification to the user using a socket
         // if (
