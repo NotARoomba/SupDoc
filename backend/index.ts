@@ -2,9 +2,11 @@ import cors from "cors";
 import { Expo } from "expo-server-sdk";
 import express, { Request, Response } from "express";
 import { createServer } from "http";
+import { ObjectId } from "mongodb";
 import { Server, Socket } from "socket.io";
 import SupDocEvents from "./models/events";
 import STATUS_CODES from "./models/status";
+import { User } from "./models/user";
 import { UserType } from "./models/util";
 import { doctorsRouter } from "./routers/doctors.router";
 import { factsRouter } from "./routers/facts.router";
@@ -21,8 +23,6 @@ import {
 } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
-import { ObjectId } from "mongodb";
-import { User } from "./models/user";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -70,12 +70,9 @@ connectToDatabase(io)
         _id: new ObjectId(socket.handshake.query.id as string),
       });
       // await encryption.decrypt(doctorExists?.publicKey)
-      if (!(doctorExists || patientExists))
-        return socket.disconnect(true);
+      if (!(doctorExists || patientExists)) return socket.disconnect(true);
       const user = (doctorExists ?? patientExists) as User;
-      if (
-        socket.handshake.query.id
-      ) {
+      if (socket.handshake.query.id) {
         if (!usersConnected[socket.handshake.query.id as string])
           usersConnected[socket.handshake.query.id as string] = {
             sockets: [],
@@ -89,21 +86,25 @@ connectToDatabase(io)
       socket.on(
         SupDocEvents.LIKE_COMMENT,
         async (post: ObjectId, commentID: ObjectId, callback) => {
-          const res = await likeComment(new ObjectId(post), new ObjectId(commentID), user._id as ObjectId);
+          const res = await likeComment(
+            new ObjectId(post),
+            new ObjectId(commentID),
+            user._id as ObjectId,
+          );
           if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
             return callback(res);
           callback(res);
-          io.to([
-            ...(await getUsers(res.comments))
-              .filter(
-                (id) => id in usersConnected && id !== user._id?.toString(),
-              )
-              .map((id) => usersConnected[id].sockets)
-              .flat(),
-          ]).emit(SupDocEvents.UPDATE_COMMENTS, {
-            post,
-            comments: res.comments,
-          });
+          for (const conn in (await getUsers(res.comments))
+            .filter((id) => id in usersConnected && id !== user._id?.toString())
+            .map((id) => usersConnected[id].sockets)
+            .flat()) {
+            io.sockets.sockets
+              .get(conn)
+              ?.emit(SupDocEvents.UPDATE_COMMENTS, {
+                post,
+                comments: res.comments,
+              });
+          }
         },
       );
     });
