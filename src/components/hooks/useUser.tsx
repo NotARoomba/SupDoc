@@ -66,6 +66,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       number: parsePhoneNumber(res.user.number)?.nationalNumber,
     });
     if (ut == UserType.DOCTOR) await Image.prefetch(res.user.picture);
+    console.log(res.user.picture);
     // setLoading(false);
   };
 
