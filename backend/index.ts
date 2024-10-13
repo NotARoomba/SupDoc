@@ -102,11 +102,11 @@ connectToDatabase(io)
             return callback(res);
           const connections = (await getUsers(res.comments))
           .concat(post.patient.toString())
-          .filter((id) => id in usersConnected && id !== user._id?.toString())
+          .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
           .map((id) => usersConnected[id].sockets)
           .flat()
           console.log(connections, (await getUsers(res.comments))
-          .concat(post.patient.toString()), usersConnected)
+          .concat(post.patient.toString()).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
           for (const conn in connections) {
             io.sockets.sockets.get(conn)?.emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,

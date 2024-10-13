@@ -70,7 +70,6 @@ export async function likeComment(
       { _id: post._id },
       { $set: { comments: post.comments } },
     );
-    console.log("POST COMMENTS THE SAME?: ", oldpostcomments == JSON.stringify(post.comments))
     if (updated.acknowledged)
       return { status: STATUS_CODES.SUCCESS, comments: post.comments, like };
     else return { status: STATUS_CODES.GENERIC_ERROR };
