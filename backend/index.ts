@@ -77,7 +77,7 @@ connectToDatabase(io)
       if (socket.handshake.query.id) {
         if (!usersConnected[socket.handshake.query.id as string])
           usersConnected[socket.handshake.query.id as string] = {
-            sockets: [],
+            sockets: [socket.id],
             userType: socket.handshake.query.userType as UserType,
           };
         else
