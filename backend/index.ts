@@ -44,7 +44,7 @@ let expo = new Expo({
 });
 
 export let usersConnected: {
-  [key: string]: { sockets: string[]; userType: UserType };
+  [key: string]: string[];
 } = {};
 
 connectToDatabase(io)
@@ -78,12 +78,9 @@ connectToDatabase(io)
       const user = (doctorExists ?? patientExists) as User;
       if (socket.handshake.query.id) {
         if (!usersConnected[socket.handshake.query.id as string])
-          usersConnected[socket.handshake.query.id as string] = {
-            sockets: [socket.id],
-            userType: socket.handshake.query.userType as UserType,
-          };
+          usersConnected[socket.handshake.query.id as string] = [socket.id]
         else
-          usersConnected[socket.handshake.query.id as string].sockets.push(
+          usersConnected[socket.handshake.query.id as string].push(
             socket.id,
           );
       }
@@ -100,14 +97,14 @@ connectToDatabase(io)
           );
           if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
             return callback(res);
-          const connections = (await getUsers(res.comments))
-          .concat(post.patient.toString())
-          .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
-          .map((id) => usersConnected[id].sockets)
+          let connections = (await getUsers(res.comments))
+          if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
+          connections = connections.filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
+          .map((id) => usersConnected[id])
           .flat()
-          console.log(connections, (await getUsers(res.comments))
-          .concat(post.patient.toString()).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
+          console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
           for (const conn in connections) {
+            console.log(io.sockets.sockets.get(conn)?.id);
             io.sockets.sockets.get(conn)?.emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,
               comments: res.comments,
@@ -154,10 +151,10 @@ connectToDatabase(io)
       );
       socket.on(SupDocEvents.DISCONNECT, () => {
         if (socket.handshake.query.id) {
-          usersConnected[socket.handshake.query.id as string].sockets = usersConnected[
+          usersConnected[socket.handshake.query.id as string] = usersConnected[
             socket.handshake.query.id as string
-          ].sockets.filter((v) => v !== socket.id);
-          if (usersConnected[socket.handshake.query.id as string].sockets.length == 0)
+          ].filter((v) => v !== socket.id);
+          if (usersConnected[socket.handshake.query.id as string].length == 0)
             delete usersConnected[socket.handshake.query.id as string];
         }
       });
