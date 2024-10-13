@@ -8,7 +8,7 @@ import Post from "../models/post";
 import Report from "../models/report";
 import STATUS_CODES from "../models/status";
 import { UserType } from "../models/util";
-import { collections, encryption } from "../services/database.service";
+import { collections, createKey, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl } from "../services/storage.service";
 
@@ -122,17 +122,14 @@ postsRouter.get("/:id/delete", async (req: Request, res: Response) => {
 
 postsRouter.post("/create", async (req: Request, res: Response) => {
   const data: Post = req.body;
-  const patient = (await collections.patients.findOne({
-    publicKey: req.headers.authorization,
-  })) as Patient;
-  if (!patient._id)
+  if (!res.locals.patient._id)
     return res.send(
       encrypt(
         { status: STATUS_CODES.USER_NOT_FOUND },
         req.headers.authorization,
       ),
     );
-  data.patient = patient._id;
+  data.patient = res.locals.patient._id;
 
   const keyAltName = CryptoJS.SHA256(data.patient.toString()).toString();
   try {
@@ -155,7 +152,7 @@ postsRouter.post("/create", async (req: Request, res: Response) => {
           keyAltName,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
         }),
-        info: await encryption.encrypt(patient.info, {
+        info: await encryption.encrypt(res.locals.patient.info, {
           keyAltName,
           algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
         }),
@@ -226,7 +223,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   const comment: Comment = req.body;
   const postID = new ObjectId(req.params.id);
   console.log(comment);
-  const keyAltName = CryptoJS.SHA256(new ObjectId(comment.commenter).toString()).toString();
+  const keyId = await createKey([CryptoJS.SHA256(res.locals.patient._id.toString()).toString()]);
   const user = res.locals.doctor ?? res.locals.patient;
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
   if (!comment.parent && res.locals.patient)
@@ -256,7 +253,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
     name: res.locals.doctor ? res.locals.doctor.name : "Patient",
     commenter: user._id,
     text: await encryption.encrypt(comment.text, {
-      keyAltName,
+      keyId,
       algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
     }),
     parent: comment.parent,
@@ -363,15 +360,7 @@ postsRouter.post(
     const commentID = new ObjectId(req.params.commentID);
 
     // Fetch doctor or patient based on authorization token
-    const doctor = (await collections.doctors.findOne({
-      publicKey: req.headers.authorization,
-    })) as Doctor;
-
-    const patient = (await collections.patients.findOne({
-      publicKey: req.headers.authorization,
-    })) as Patient;
-
-    const user = doctor ? doctor : patient;
+    const user = res.locals.doctor ?? res.locals.patient;
 
     try {
       // Find the post and comment
@@ -453,15 +442,7 @@ postsRouter.post(
     const commentID = new ObjectId(req.params.commentID);
 
     // Fetch doctor or patient based on authorization token
-    const doctor = (await collections.doctors.findOne({
-      publicKey: req.headers.authorization,
-    })) as Doctor;
-
-    const patient = (await collections.patients.findOne({
-      publicKey: req.headers.authorization,
-    })) as Patient;
-
-    const user = doctor ? doctor : patient;
+    const user = res.locals.doctor ?? res.locals.patient;
 
     try {
       // Check if the report already exists for this comment
@@ -470,7 +451,7 @@ postsRouter.post(
         parent: postID,
         reporter: {
           id: user._id,
-          type: doctor ? UserType.DOCTOR : UserType.PATIENT,
+          type: res.locals.doctor ? UserType.DOCTOR : UserType.PATIENT,
         },
       });
 
@@ -491,7 +472,7 @@ postsRouter.post(
         parent: postID,
         reporter: {
           id: user._id as ObjectId,
-          type: doctor ? UserType.DOCTOR : UserType.PATIENT,
+          type: res.locals.doctor ? UserType.DOCTOR : UserType.PATIENT,
         },
         reason: req.body.reason,
         evidence: req.body.evidence,
@@ -533,7 +514,7 @@ postsRouter.post(
       );
 
       const updatedUser = await (
-        doctor ? collections.doctors : collections.patients
+        res.locals.doctor ? collections.doctors : collections.patients
       ).updateOne(
         { publicKey: req.headers.authorization },
         {
@@ -640,13 +621,10 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
   const id = new ObjectId(req?.params?.id);
   try {
     if (collections.posts && collections.doctors && collections.reports) {
-      const doctor = (await collections.doctors.findOne({
-        publicKey: req.headers.authorization,
-      })) as Doctor;
       if (
         await collections.reports.findOne({
           reported: { id, type: "Post" },
-          reporter: { id: doctor._id, type: UserType.DOCTOR },
+          reporter: { id: res.locals.doctor._id, type: UserType.DOCTOR },
         })
       )
         return res.send(
@@ -658,7 +636,7 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
       const created = await collections.reports.insertOne({
         ...report,
         reported: { id, type: "Post" },
-        reporter: { id: doctor._id, type: UserType.DOCTOR },
+        reporter: { id: res.locals.doctor._id, type: UserType.DOCTOR },
       } as Report);
       const updatedUser = await collections.doctors.updateOne(
         { publicKey: req.headers.authorization },
