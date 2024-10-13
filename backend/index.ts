@@ -21,6 +21,7 @@ import {
 } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
+import { ObjectId } from "mongodb";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -94,8 +95,9 @@ connectToDatabase(io)
       }
       socket.on(
         SupDocEvents.LIKE_COMMENT,
-        async (post, commentID, callback) => {
-          const res = await likeComment(post, commentID, user._id);
+        async (post: ObjectId, commentID: ObjectId, callback) => {
+          console.log(post, commentID);
+          const res = await likeComment(new ObjectId(post), new ObjectId(commentID), user._id);
           if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
             return callback(res);
           io.to([

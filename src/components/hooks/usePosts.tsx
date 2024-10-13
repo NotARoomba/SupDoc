@@ -264,33 +264,50 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   };
 
   const likeComment = async (post: ObjectId, commentID: ObjectId) => {
-    let res: { status: STATUS_CODES; comments: Comment[]; };
     if (socket) {
-      socket.emit(SupDocEvents.LIKE_COMMENT, { post, commentID }, (data: { status: STATUS_CODES; comments: Comment[]; }) => res = data);
+      socket.emit(SupDocEvents.LIKE_COMMENT, post, commentID, (res: { status: STATUS_CODES; comments: Comment[]; }) => {
+        console.log(res, post)
+        if (res.status !== STATUS_CODES.SUCCESS) {
+          return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
+        }
+        if (userType == UserType.DOCTOR)
+          setFeed(
+            feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+          );
+    
+        setPosts(
+          posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+        );
+    
+        setSavedPosts(
+          savedPosts.map((p) =>
+            post == p._id ? { ...p, comments: res.comments } : p,
+          ),
+        );
+      });
     } else {
-      res = await callAPI(
+      const res = await callAPI(
         `/posts/${post}/comments/${commentID}/like`,
         "POST",
       );
       if (res.status !== STATUS_CODES.SUCCESS) {
         return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
       }
-  }
-
-    if (userType == UserType.DOCTOR)
-      setFeed(
-        feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+      if (userType == UserType.DOCTOR)
+        setFeed(
+          feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+        );
+  
+      setPosts(
+        posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
       );
-
-    setPosts(
-      posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
-    );
-
-    setSavedPosts(
-      savedPosts.map((p) =>
-        post == p._id ? { ...p, comments: res.comments } : p,
-      ),
-    );
+  
+      setSavedPosts(
+        savedPosts.map((p) =>
+          post == p._id ? { ...p, comments: res.comments } : p,
+        ),
+      );
+  }
   };
 
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
