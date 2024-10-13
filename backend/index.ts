@@ -118,6 +118,7 @@ connectToDatabase(io)
             const patient = (await collections.patients.findOne({
               _id: new ObjectId(comment.commenter),
             })) as Patient;
+            console.log(patient)
             if (!patient) return;
             if (!usersConnected[patient._id?.toString() as string]) {
               const messages: ExpoPushMessage[] = patient.pushTokens.map((v) => ({
@@ -134,6 +135,7 @@ connectToDatabase(io)
             const doctor = (await collections.doctors.findOne({
               _id: new ObjectId(comment.commenter),
             })) as Doctor;
+            console.log(doctor)
             if (!doctor) return;
             if (!usersConnected[doctor._id?.toString() as string]) {
               const messages: ExpoPushMessage[] = doctor.pushTokens.map((v) => ({
