@@ -100,17 +100,22 @@ connectToDatabase(io)
           let connections = (await getUsers(res.comments))
           if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
           connections = connections
-        // .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
+        .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
           .map((id) => usersConnected[id])
           .flat()
           console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
-          for (const conn in connections) {
-            // console.log(io.to(conn));
+          for (const conn of connections) {
+            console.log(`Emitting to ${conn}`);
             io.to(conn).emit(SupDocEvents.UPDATE_COMMENTS, {
-              post: postID,
-              comments: res.comments,
+                post: postID,
+                comments: res.comments,
+            }, (error: any) => {
+                if (error) {
+                    console.error('Error emitting:', error);
+                }
             });
-          }
+        }
+        
           // send notification to the author of the comment if they are not connected
           if (res.like) {
           const comment = (flattenComments(post.comments).find((v) => v._id.toString() == commentID.toString()))
