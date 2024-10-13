@@ -125,6 +125,7 @@ connectToDatabase(io)
                 title: "New Like",
                 body: `${doctorExists ? doctorExists.name : "The patient"}} liked your comment`,
               }));
+              console.log("PATIENT LIKED COMMENT")
               await expo.sendPushNotificationsAsync(messages);
             }
           } else {
@@ -140,12 +141,22 @@ connectToDatabase(io)
                 title: "New Like",
                 body: `${doctorExists ? doctorExists.name : "The patient"}} liked your comment`,
               }));
+              console.log("DOCTOR LIKED COMMENT")
               await expo.sendPushNotificationsAsync(messages);
             }
           }
           callback(res);         
         },
       );
+      socket.on(SupDocEvents.DISCONNECT, () => {
+        if (socket.handshake.query.id) {
+          usersConnected[socket.handshake.query.id as string].sockets = usersConnected[
+            socket.handshake.query.id as string
+          ].sockets.filter((v) => v !== socket.id);
+          if (usersConnected[socket.handshake.query.id as string].sockets.length == 0)
+            delete usersConnected[socket.handshake.query.id as string];
+        }
+      });
     });
 
     refreshFacts();
