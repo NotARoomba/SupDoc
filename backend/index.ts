@@ -14,6 +14,7 @@ import { connectToDatabase, env } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
 import SupDocEvents from "./models/events";
+import { UserType } from "./models/util";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -30,7 +31,7 @@ let expo = new Expo({
   useFcmV1: true,
 });
 
-export let usersConnected: { [key: string]: string[] } = {};
+export let usersConnected: { [key: string]: {sockets: string[], userType: UserType}} = {};
 
 connectToDatabase(io)
   .then(() => {
@@ -53,17 +54,15 @@ connectToDatabase(io)
     io.on(SupDocEvents.CONNECT, (socket: Socket) => {
       console.log(`New client connected: ${socket.id}`);
       // store the id of the socket with the public key of the user using socket.handshake.query.publicKey
-      if (socket.handshake.query.publicKey && socket.handshake.query._id) {
-        if (!usersConnected[socket.handshake.query._id as string]) {
-          usersConnected[socket.handshake.query._id as string] = [];
-        }
-        if (!usersConnected[socket.handshake.query.publicKey as string]) {
-          usersConnected[socket.handshake.query.publicKey as string] = [];
-        }
-        usersConnected[socket.handshake.query.publicKey as string].push(
+      if (socket.handshake.query.publicKey && socket.handshake.query.id && socket.handshake.query.userType) {
+        usersConnected[socket.handshake.query.id as string].sockets = [];
+        usersConnected[socket.handshake.query.publicKey as string].sockets = [];
+        usersConnected[socket.handshake.query.publicKey as string].sockets.push(
           socket.id,
         );
-        usersConnected[socket.handshake.query._id as string].push(socket.id);
+        usersConnected[socket.handshake.query.id as string].sockets.push(socket.id);
+        usersConnected[socket.handshake.query.publicKey as string].userType = socket.handshake.query.userType as UserType;
+        usersConnected[socket.handshake.query.id as string].userType = socket.handshake.query.userType as UserType;
       } 
     });
 

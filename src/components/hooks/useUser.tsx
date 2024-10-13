@@ -108,10 +108,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (user?.publicKey && !socket) {
+    if (user?.publicKey && !socket && userType) {
     const s = io(process.env.EXPO_PUBLIC_API_URL, {
       query: {
+        id: user._id,
         publicKey: user.publicKey,
+        userType,
       },
     });
     s.on(SupDocEvents.CONNECT, () => {
@@ -122,7 +124,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     });
     setSocket(s)
   }
-  }, [user]);
+  }, [user, userType]);
   return (
     <UserContext.Provider
       value={{

@@ -5,6 +5,9 @@ import Fact from "../models/fact";
 import Report from "../models/report";
 import { Server, Socket } from "socket.io";
 import { usersConnected } from "..";
+import { ObjectId } from "mongodb";
+import Comment from "../models/comment";
+import SupDocEvents from "../models/events";
 
 export const env = dotenv.load({
   MONGODB: String,
@@ -117,26 +120,18 @@ export async function connectToDatabase(io: Server) {
   collections.reports = interactionDB.collection(env.REPORT_COLLECTION);
   collections.facts = interactionDB.collection(env.FACT_COLLECTION);
 
-  collections.posts.watch().on("change", (change) => {
-    console.log(change)
-    if (change.operationType === "update" && change.updateDescription.updatedFields && change.fullDocumentBeforeChange) {
+  collections.posts.watch([], {fullDocument: 'required'}).on("change", async (change) => {
+    if (change.operationType === "update" && change.fullDocument && change.updateDescription.updatedFields?.comments) {
+      /// flatten the comments array and get all the unique users, and sub comments
+      console.log(change)
+      io.to([...usersConnected[change.fullDocument.patient.toString()].sockets, ...(await getUsers(change.updateDescription.updatedFields.comments))]).emit(SupDocEvents.UPDATE_COMMENTS,{post: change.fullDocument._id, comments: change.updateDescription.updatedFields.comments});
       // check if the likes have changed and if si, send a notification to the user using a socket
       // if (
       //   change.updateDescription.updatedFields.likes &&
       //   change.updateDescription.updatedFields.likes.length >
       //     change.fullDocumentBeforeChange.likes.length
       // ) {
-
-      //   const findUser = (comments, id) => {
-      //     for (let comment of comments) {
-      //       if (comment._id === id) return comment.author;
-      //       if (comment.comments) {
-      //         const user = findUser(comment.comments, id);
-      //         if (user) return user;
-      //       }
-      //     }
-      //     return null;
-      //   }
+      //   const user = usersConnected[change.fullDocumentBeforeChange.author];c
 
 
       //   const user = usersConnected[change.fullDocumentBeforeChange.author];
@@ -146,3 +141,24 @@ export async function connectToDatabase(io: Server) {
 
   console.log("Successfully connected to database!");
 }
+
+
+const getUsers = (comments: Comment[]): Promise<string[]> => {
+  const users: string[] = [];
+  return new Promise((resolve) => {
+    const processComments = (comments: Comment[]) => {
+      for (let comment of comments) {
+        if (!users.includes(comment.commenter.toString())) {
+          users.push(comment.commenter.toString());
+        }
+        if (comment.replies) {
+          processComments(comment.replies);
+        }
+      }
+    };
+
+    processComments(comments);
+    resolve(users);
+  });
+};
+
