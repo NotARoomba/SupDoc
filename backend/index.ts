@@ -113,7 +113,7 @@ connectToDatabase(io)
             });
           }
           // send notification to the author of the comment if they are not connected
-          const comment = (post.comments.flat().find((v) => v._id.equals(commentID)))
+          const comment = (post.comments.flat().find((v) => v._id.toString() == commentID.toString()))
           console.log(comment)
           if (comment?.name == "Patient") {
             const patient = (await collections.patients.findOne({
