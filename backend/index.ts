@@ -114,6 +114,7 @@ connectToDatabase(io)
             });
           }
           // send notification to the author of the comment if they are not connected
+          if (res.like) {
           const comment = (flattenComments(post.comments).find((v) => v._id.toString() == commentID.toString()))
           if (comment?.name == "Patient") {
             const patient = (await collections.patients.findOne({
@@ -143,10 +144,11 @@ connectToDatabase(io)
                 title: "New Like",
                 body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
               }));
-              console.log("DOCTOR LIKED COMMENT")
               await expo.sendPushNotificationsAsync(messages);
             // }
           }
+          
+        }
           callback(res);         
         },
       );

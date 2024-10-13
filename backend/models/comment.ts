@@ -42,14 +42,16 @@ export async function likeComment(
   post: Post,
   commentID: ObjectId,
   userID: ObjectId,
-): Promise<{ status: STATUS_CODES; comments?: Comment[] }> {
+): Promise<{ status: STATUS_CODES; comments?: Comment[], like?: boolean }> {
   // Find the post and comment
   try {
+    let like = false;
     if (!post) {
       return { status: STATUS_CODES.POST_NOT_FOUND };
     }
 
     // Find the specific comment within the post's comments
+    const oldpostcomments = JSON.stringify(post.comments)
     const comment = findCommentById(post.comments, commentID);
     if (!comment) {
       return { status: STATUS_CODES.COMMENT_NOT_FOUND };
@@ -59,6 +61,7 @@ export async function likeComment(
     if (comment.likes.some((like) => like.equals(userID))) {
       comment.likes = comment.likes.filter((like) => !like.equals(userID));
     } else {
+      like = true;
       comment.likes.push(userID as ObjectId);
     }
 
@@ -67,9 +70,9 @@ export async function likeComment(
       { _id: post._id },
       { $set: { comments: post.comments } },
     );
-
+    console.log("POST COMMENTS THE SAME?: ", oldpostcomments == JSON.stringify(post.comments))
     if (updated.acknowledged)
-      return { status: STATUS_CODES.SUCCESS, comments: post.comments };
+      return { status: STATUS_CODES.SUCCESS, comments: post.comments, like };
     else return { status: STATUS_CODES.GENERIC_ERROR };
   } catch (error) {
     console.error(error);
