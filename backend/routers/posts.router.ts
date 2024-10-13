@@ -223,8 +223,8 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   const comment: Comment = req.body;
   const postID = new ObjectId(req.params.id);
   console.log(comment);
-  const keyId = await createKey([CryptoJS.SHA256(res.locals.patient._id.toString()).toString()]);
   const user = res.locals.doctor ?? res.locals.patient;
+  const keyId = await createKey([CryptoJS.SHA256(user._id.toString()).toString()]);
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
   if (!comment.parent && res.locals.patient)
     return res.send(
