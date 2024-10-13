@@ -120,7 +120,7 @@ connectToDatabase(io)
               _id: new ObjectId(comment.commenter),
             })) as Patient;
             if (!patient) return;
-            if (!usersConnected[patient._id?.toString() as string]) {
+            // if (!usersConnected[patient._id?.toString() as string]) {
               const messages: ExpoPushMessage[] = patient.pushTokens.map((v) => ({
                 to: v,
                 sound: "default",
@@ -129,14 +129,14 @@ connectToDatabase(io)
               }));
               console.log("PATIENT LIKED COMMENT")
               await expo.sendPushNotificationsAsync(messages);
-            }
+            // }
           } else {
             if (!comment) return;
             const doctor = (await collections.doctors.findOne({
               _id: new ObjectId(comment.commenter),
             })) as Doctor;
             if (!doctor) return;
-            if (!usersConnected[doctor._id?.toString() as string]) {
+            // if (!usersConnected[doctor._id?.toString() as string]) {
               const messages: ExpoPushMessage[] = doctor.pushTokens.map((v) => ({
                 to: v,
                 sound: "default",
@@ -145,7 +145,7 @@ connectToDatabase(io)
               }));
               console.log("DOCTOR LIKED COMMENT")
               await expo.sendPushNotificationsAsync(messages);
-            }
+            // }
           }
           callback(res);         
         },
