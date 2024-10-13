@@ -1,5 +1,5 @@
 import cors from "cors";
-import { Expo } from "expo-server-sdk";
+import { Expo, ExpoPushMessage } from "expo-server-sdk";
 import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { ObjectId } from "mongodb";
@@ -24,6 +24,7 @@ import {
 } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
+import Patient from "./models/patient";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -98,6 +99,7 @@ connectToDatabase(io)
           if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
             return callback(res);
           callback(res);
+          // Send to all users connected to the post
           for (const conn in (await getUsers(res.comments))
             .concat(post.patient.toString())
             .filter((id) => id in usersConnected && id !== user._id?.toString())
@@ -108,6 +110,39 @@ connectToDatabase(io)
               comments: res.comments,
             });
           }
+          // send notification to the author of the comment if they are not connected
+          const comment = (post.comments.flat().find((v) => v._id.equals(commentID)))
+          if (comment?.name == "Patient") {
+            const patient = (await collections.patients?.findOne({
+              _id: comment.commenter,
+            })) as Patient;
+            if (!patient) return;
+            if (!usersConnected[patient._id?.toString() as string]) {
+              const messages: ExpoPushMessage[] = patient.pushTokens.map((v) => ({
+                to: v,
+                sound: "default",
+                title: "New Like",
+                body: `${doctorExists ? doctorExists.name : "The patient"}} liked your comment`,
+              }));
+              await expo.sendPushNotificationsAsync(messages);
+            }
+          } else {
+            if (!comment) return;
+            const doctor = (await collections.doctors?.findOne({
+              _id: comment.commenter,
+            })) as User;
+            if (!doctor) return;
+            if (!usersConnected[doctor._id?.toString() as string]) {
+              const messages: ExpoPushMessage[] = doctor.pushTokens.map((v) => ({
+                to: v,
+                sound: "default",
+                title: "New Like",
+                body: `${doctorExists ? doctorExists.name : "The patient"}} liked your comment`,
+              }));
+              await expo.sendPushNotificationsAsync(messages);
+            }
+          }
+                       
         },
       );
     });
