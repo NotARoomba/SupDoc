@@ -22,6 +22,7 @@ import {
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
 import { ObjectId } from "mongodb";
+import { User } from "./models/user";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -62,17 +63,18 @@ connectToDatabase(io)
     // WEBSICKET INITIALIZATION
     io.on(SupDocEvents.CONNECT, async (socket: Socket) => {
       console.log(`New client connected: ${socket.id}`);
-      // store the id of the socket with the public key of the user using socket.handshake.query.publicKey
-      const user = await (
-        socket.handshake.query.userType == UserType.DOCTOR
-          ? collections.doctors
-          : collections.patients
-      ).findOne({ publicKey: socket.handshake.query.publicKey });
-      if (!user) return socket.disconnect(true);
+      const doctorExists = await collections.doctors?.findOne({
+        _id: new ObjectId(socket.handshake.query.id as string),
+      });
+      const patientExists = await collections.patients?.findOne({
+        _id: new ObjectId(socket.handshake.query.id as string),
+      });
+      // await encryption.decrypt(doctorExists?.publicKey)
+      if (!(doctorExists || patientExists))
+        return socket.disconnect(true);
+      const user = (doctorExists ?? patientExists) as User;
       if (
-        socket.handshake.query.publicKey &&
-        socket.handshake.query.id &&
-        socket.handshake.query.userType
+        socket.handshake.query.id
       ) {
         if (!usersConnected[socket.handshake.query.id as string])
           usersConnected[socket.handshake.query.id as string] = {
@@ -83,28 +85,18 @@ connectToDatabase(io)
           usersConnected[socket.handshake.query.id as string].sockets.push(
             socket.id,
           );
-        if (!usersConnected[socket.handshake.query.publicKey as string])
-          usersConnected[socket.handshake.query.publicKey as string] = {
-            sockets: [],
-            userType: socket.handshake.query.userType as UserType,
-          };
-        else
-          usersConnected[
-            socket.handshake.query.publicKey as string
-          ].sockets.push(socket.id);
       }
       socket.on(
         SupDocEvents.LIKE_COMMENT,
         async (post: ObjectId, commentID: ObjectId, callback) => {
-          console.log(post, commentID);
-          const res = await likeComment(new ObjectId(post), new ObjectId(commentID), user._id);
+          const res = await likeComment(new ObjectId(post), new ObjectId(commentID), user._id as ObjectId);
           if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
             return callback(res);
           callback(res);
           io.to([
             ...(await getUsers(res.comments))
               .filter(
-                (id) => id in usersConnected && id !== user._id.toString(),
+                (id) => id in usersConnected && id !== user._id?.toString(),
               )
               .map((id) => usersConnected[id].sockets)
               .flat(),

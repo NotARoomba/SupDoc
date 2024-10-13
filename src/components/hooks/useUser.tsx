@@ -112,8 +112,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const s = io(process.env.EXPO_PUBLIC_API_URL, {
       query: {
         id: user._id,
-        publicKey: user.publicKey,
-        userType,
       },
     });
     s.on(SupDocEvents.CONNECT, () => {

@@ -266,7 +266,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   const likeComment = async (post: ObjectId, commentID: ObjectId) => {
     if (socket) {
       socket.emit(SupDocEvents.LIKE_COMMENT, post, commentID, (res: { status: STATUS_CODES; comments: Comment[]; }) => {
-        console.log(res, post)
         if (res.status !== STATUS_CODES.SUCCESS) {
           return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
         }
