@@ -15,6 +15,8 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
 import { useLoading } from "./useLoading";
+import { io, Socket } from "socket.io-client";
+import SupDocEvents from "@/backend/models/events";
 
 interface UserContextType {
   user: User | null;
@@ -37,6 +39,7 @@ interface UserProviderProps {
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const { t } = useTranslation();
   const { setLoading } = useLoading();
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [userEdit, setUserEdit] = useState<User | null>(null);
   const [userType, setUserType] = useState<UserType | null>(null);
@@ -103,8 +106,23 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchUser();
-  }, []);
+    if (user?.publicKey && !socket) {
+    const s = io(process.env.EXPO_PUBLIC_API_URL, {
+      query: {
+        publicKey: user.publicKey,
+      },
+    });
+    s.on(SupDocEvents.CONNECT, () => {
+      setSocket(s);
+      setLoading(false);
+    });
+    s.on(SupDocEvents.DISCONNECT, () => {
+      setSocket(null);
+      setLoading(false);
+    });
+    setSocket(s)
+  }
+  }, [user]);
   return (
     <UserContext.Provider
       value={{

@@ -1,7 +1,6 @@
 import { LoadingProvider } from "components/hooks/useLoading";
 import { PostsProvider } from "components/hooks/usePosts";
 import { SettingsProvider } from "components/hooks/useSettings";
-import SocketProvider from "components/hooks/useSocket";
 import { UserProvider } from "components/hooks/useUser";
 import Loading from "components/loading/Loading";
 import "expo-dev-client";
@@ -40,7 +39,6 @@ export default function RootLayout() {
         <UserProvider>
           <PostsProvider>
             <SettingsProvider>
-              <SocketProvider>
                 <SafeAreaView className="bg-richer_black" />
 
                 {isLogged ? (
@@ -81,7 +79,6 @@ export default function RootLayout() {
                   <Index setIsLogged={setIsLogged} />
                 )}
                 <Loading />
-              </SocketProvider>
             </SettingsProvider>
           </PostsProvider>
         </UserProvider>
