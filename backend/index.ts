@@ -99,7 +99,8 @@ connectToDatabase(io)
             return callback(res);
           let connections = (await getUsers(res.comments))
           if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
-          connections = connections.filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
+          connections = connections
+        // .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
           .map((id) => usersConnected[id])
           .flat()
           console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
