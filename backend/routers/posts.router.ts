@@ -225,16 +225,11 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   // FIX ALL TO OBJECTID
   const comment: Comment = req.body;
   const postID = new ObjectId(req.params.id);
-  const keyAltName = CryptoJS.SHA256(comment.commenter.toString()).toString();
-  const doctor = (await collections.doctors.findOne({
-    publicKey: req.headers.authorization,
-  })) as Doctor;
-  const patient = (await collections.patients.findOne({
-    publicKey: req.headers.authorization,
-  })) as Patient;
-  const user = doctor ? doctor : patient;
+  console.log(comment);
+  const keyAltName = CryptoJS.SHA256(new ObjectId(comment.commenter).toString()).toString();
+  const user = res.locals.doctor ?? res.locals.patient;
   comment.parent = comment.parent ? new ObjectId(comment.parent) : null;
-  if (!comment.parent && patient)
+  if (!comment.parent && res.locals.patient)
     return res.send(
       encrypt(
         { status: STATUS_CODES.COMMENT_NOT_ALLOWED },
@@ -258,7 +253,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   }
   const commentDocument = {
     _id: new ObjectId(),
-    name: doctor ? doctor.name : "Patient",
+    name: res.locals.doctor ? res.locals.doctor.name : "Patient",
     commenter: user._id,
     text: await encryption.encrypt(comment.text, {
       keyAltName,
@@ -302,7 +297,7 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
         );
     }
 
-    if (patient) {
+    if (res.locals.patient) {
       return res
         .status(200)
         .send(

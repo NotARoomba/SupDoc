@@ -66,8 +66,8 @@ export default function Profile() {
   const { t } = useTranslation();
   useEffect(() => {
     if (!user) {
-      Alert.alert(t("error"), t("errors.fetchData"));
-      return router.navigate("/");
+      // Alert.alert(t("error"), t("errors.fetchData"));
+      return
     }
     const fetchData = async () => {
       // setLoading(true);
