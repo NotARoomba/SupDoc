@@ -355,7 +355,7 @@ usersRouter.post("/token", async (req: Request, res: Response) => {
       const updatedUser = await (
         res.locals.doctor ? collections.doctors : collections.patients
       ).updateOne({ _id: user._id }, {
-        $addToSet: { pushToken },
+        $addToSet: { pushTokens: pushToken },
       } as PushOperator<Document>);
       if (updatedUser.acknowledged) {
         return res
