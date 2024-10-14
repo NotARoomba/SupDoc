@@ -7,7 +7,7 @@ import LoaderView from "components/loading/LoaderView";
 import FunFact from "components/misc/FunFact";
 import PostBlock from "components/misc/PostBlock";
 // import SkeletonContent from 'react-native-reanimated-skeleton'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Animated,
@@ -17,12 +17,13 @@ import {
   Text,
   View,
 } from "react-native";
+import Skeleton from "react-native-reanimated-skeleton";
 export default function Index() {
   const { posts, listRef, fetchPosts, refreshPosts, facts, feed } = usePosts();
   // const listRef = useRef<FlashList<Post> | null>(null);
   const { userType, user } = useUser();
   const [refreshing, setRefreshing] = useState(false);
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const fadeAnim = useFade();
   const { t } = useTranslation();
   // const fetchData = async () => {
@@ -31,6 +32,9 @@ export default function Index() {
   //   LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   //   await SplashScreen.hideAsync();
   // };
+  useEffect(() => {
+    if (feed.length !== 0 || posts.length !== 0) setLoading(false)
+  }, [feed, posts])
   return (
     <Animated.View
       style={{ opacity: fadeAnim }}
@@ -60,7 +64,7 @@ export default function Index() {
             {t("titles.userPosts")}
           </Text>
           {posts.length == 0 ? (
-            !userType ? (
+            loading ? (
               <View>
                 <LoaderView />
               </View>
@@ -97,9 +101,16 @@ export default function Index() {
             {t("titles.feed")}
           </Text>
           {feed.length == 0 ? (
-            !userType ? (
+            loading ? (
               // <View>
-              <LoaderView />
+              <Skeleton
+              isLoading={loading}
+                    boneColor="#023c4d"
+                    highlightColor="#b4c5e4"
+                    layout={[
+                      { width: `90%`, height: 150, padding: 4, borderRadius: 16 },
+                    ]}
+                  />
             ) : (
               // </View>
               <Text className=" text-center text-powder_blue/80">

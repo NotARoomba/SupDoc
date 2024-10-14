@@ -29,15 +29,7 @@ export const getStartAndEndOfDay = () => {
 factsRouter.get("/", async (req: Request, res: Response) => {
   try {
     // Fetch doctor or patient based on authorization token
-    const doctor = (await collections.doctors.findOne({
-      publicKey: req.headers.authorization,
-    })) as Doctor;
-
-    const patient = (await collections.patients.findOne({
-      publicKey: req.headers.authorization,
-    })) as Patient;
-
-    const user = doctor ? doctor : patient;
+    const user = res.locals.doctor ?? res.locals.patient;
 
     if (!user) {
       return res
@@ -54,7 +46,7 @@ factsRouter.get("/", async (req: Request, res: Response) => {
       let facts: Fact[] | null = null;
 
       // If the user is a doctor, fetch all random facts within the day
-      if (doctor) {
+      if (res.locals.doctor) {
         const { startOfDay, endOfDay } = getStartAndEndOfDay();
         const randomFacts = (await collections.facts
           .find({
@@ -64,12 +56,12 @@ factsRouter.get("/", async (req: Request, res: Response) => {
             },
           })
           .toArray()) as Fact[];
-
+  
         facts = randomFacts.length > 0 ? randomFacts : null;
       }
 
       // If the user is a patient, get a random fact from the top 3 most liked facts
-      if (patient) {
+      if (res.locals.patient) {
         const topLikedFacts = (await collections.facts
           .aggregate([
             {

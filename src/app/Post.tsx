@@ -42,7 +42,7 @@ export default function PostPage() {
   const fadeAnim = useFade();
   const { userType } = useUser();
   const { loading, setLoading } = useLoading();
-  const { deletePost, reportPost, addComment, likeComment, posts } = usePosts();
+  const { deletePost, reportPost, addComment, posts } = usePosts();
   const [post, setPost] = useState<Post>();
   const [commentText, setCommentText] = useState("");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -53,7 +53,6 @@ export default function PostPage() {
   const [comments, setComments] = useState<Comment[]>([]);
   useEffect(() => {
     const currentPost = posts.find((v) => v._id?.toString() === routes.id);
-    
     // Only update if the current post or its comments change
     if (currentPost) {
       const newComments = currentPost.comments || comments; // Assuming comments is an array
@@ -81,6 +80,9 @@ export default function PostPage() {
   const handleStopReply = () => {
     setReplyingTo(null);
   };
+  useEffect(() => {
+    console.log(posts)
+  }, [])
 
   return (
     <KeyboardAvoidingView
@@ -119,7 +121,7 @@ export default function PostPage() {
             {/* <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
           Post
         </Text> */}
-            <TouchableOpacity
+            {post && <TouchableOpacity
               className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
               onPress={() =>
                 Alert.alert(
@@ -153,7 +155,7 @@ export default function PostPage() {
                   ? t("buttons.report")
                   : t("buttons.delete")}
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity>}
           </View>
           {post ? (
             <Reanimated.ScrollView
@@ -392,7 +394,7 @@ export default function PostPage() {
         </Animated.View>
       </ScrollView>
       {((post?.comments.length !== 0 && userType == UserType.PATIENT) ||
-        userType == UserType.DOCTOR) && (
+        userType == UserType.DOCTOR) && post && (
         <View className="absolute flex w-full bottom-6">
           <Reanimated.View
             entering={FadeInUp.delay(500)}

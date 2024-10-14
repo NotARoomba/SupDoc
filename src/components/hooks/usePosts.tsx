@@ -135,12 +135,12 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     }
   };
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (refresh = false) => {
     // setLoading(true);
     if (!userType) return
     const f = await fetchFacts();
     const res = await callAPI(
-      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
+      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (refresh ? Date.now() : posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
       "GET",
     );
     if (res.status !== STATUS_CODES.SUCCESS) {
@@ -156,7 +156,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     }
     if (userType == UserType.DOCTOR) fetchSavedPosts();
     //   // After removing the item, we can start the animation.
-    setPosts(posts.length == 0 ? res.posts : [...posts, ...res.posts]);
+    setPosts(old => refresh ? res.posts : old.length == 0 ? res.posts : [...old, ...res.posts]);
     Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
     // After fetching posts, combine with facts into feed
     if (res.posts.length !== 0) {
@@ -190,10 +190,9 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       return false;
     }
 
-    const updatedSavedPosts = savedPosts.find((v) => v._id === post._id)
-      ? savedPosts.filter((v) => v._id !== post._id)
-      : [...savedPosts, post];
-    setSavedPosts(updatedSavedPosts);
+    setSavedPosts(old => old.find((v) => v._id === post._id)
+    ? old.filter((v) => v._id !== post._id)
+    : [...old, post]);
     return true;
   };
 
@@ -204,7 +203,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     );
     if (userType == UserType.DOCTOR)
       setFeed(shuffleFactsIntoFeed([...posts, ...finalPosts], facts));
-    setPosts([...posts, ...finalPosts]);
+    setPosts(old => [...old, ...finalPosts]);
   };
 
   const deletePost = async (id: string) => {
@@ -217,8 +216,8 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       Alert.alert(t("success"), t("successes.deletePost"));
       listRef.current?.prepareForLayoutAnimationRender();
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setPosts(posts.filter((v) => v._id?.toString() !== id));
-      setSavedPosts(savedPosts.filter((v) => v._id?.toString() !== id));
+      setPosts(old => old.filter((v) => v._id?.toString() !== id));
+      setSavedPosts(old => old.filter((v) => v._id?.toString() !== id));
       router.navigate("/(tabs)/");
     }
   };
@@ -247,17 +246,17 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
     }
 
-    setPosts(
-      posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+    setPosts((old) =>
+      old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
     );
 
     if (userType == UserType.DOCTOR)
-      setFeed(
-        feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+      setFeed((old) =>
+        old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
       );
 
-    setSavedPosts(
-      savedPosts.map((p) =>
+    setSavedPosts((old) =>
+      old.map((p) =>
         post == p._id ? { ...p, comments: res.comments } : p,
       ),
     );
@@ -270,16 +269,16 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
           return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
         }
         if (userType == UserType.DOCTOR)
-          setFeed(
-            feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+          setFeed((old) =>
+            old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
           );
     
-        setPosts(
-          posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+        setPosts((old) =>
+          old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
         );
     
-        setSavedPosts(
-          savedPosts.map((p) =>
+        setSavedPosts((old) =>
+          old.map((p) =>
             post == p._id ? { ...p, comments: res.comments } : p,
           ),
         );
@@ -293,16 +292,16 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
       }
       if (userType == UserType.DOCTOR)
-        setFeed(
-          feed.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+        setFeed((old) =>
+          old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
         );
   
-      setPosts(
-        posts.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+      setPosts((old) =>
+        old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
       );
   
-      setSavedPosts(
-        savedPosts.map((p) =>
+      setSavedPosts((old) =>
+        old.map((p) =>
           post == p._id ? { ...p, comments: res.comments } : p,
         ),
       );
@@ -363,7 +362,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     } else {
       setPosts([]);
       // setFeed([]);
-      await fetchPosts();
+      await fetchPosts(true);
     }
   };
   const createPost = async () => {
@@ -400,21 +399,21 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (socket) {
       socket.on(SupDocEvents.UPDATE_COMMENTS, (data: { post: ObjectId; comments: Comment[] }) => {
         console.log(data)
-        setPosts(
-          posts.map((p) =>
+        setPosts((old) =>
+          old.map((p) =>
             data.post == p._id ? { ...p, comments: data.comments } : p,
           ),
         );
 
         if (userType == UserType.DOCTOR) {
-          setFeed(
-            feed.map((p) =>
+          setFeed((old) =>
+            old.map((p) =>
               data.post == p._id ? { ...p, comments: data.comments } : p,
             ),
           );
 
-          setSavedPosts(
-            savedPosts.map((p) =>
+          setSavedPosts((old) =>
+            old.map((p) =>
               data.post == p._id ? { ...p, comments: data.comments } : p,
             ),
           );
@@ -422,14 +421,14 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       });
       
       if (userType == UserType.DOCTOR) socket.on(SupDocEvents.UPDATE_FACT, (data: { fact: ObjectId; likes: string[]}) => {
-        setFacts(
-          facts.map((f) =>
+        setFacts((old) =>
+          old.map((f) =>
             data.fact == f._id ? { ...f, likes: data.likes} : f,
           ),
         );
 
-        setFeed(
-          feed.map((p) =>
+        setFeed((old) =>
+          old.map((p) =>
             data.fact == p._id ? { ...p, likes: data.likes} : p,
           ),
         );

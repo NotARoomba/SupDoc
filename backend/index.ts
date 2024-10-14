@@ -109,10 +109,6 @@ connectToDatabase(io)
             io.to(conn).emit(SupDocEvents.UPDATE_COMMENTS, {
                 post: postID,
                 comments: res.comments,
-            }, (error: any) => {
-                if (error) {
-                    console.error('Error emitting:', error);
-                }
             });
         }
         
