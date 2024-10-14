@@ -98,21 +98,6 @@ connectToDatabase(io)
           );
           if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
             return callback(res);
-          callback(res);
-          // Send to all users connected to the post
-          const messages: ExpoPushMessage[] = [];
-          if ("name" in user) {
-            // console.log(user)
-            const messages: ExpoPushMessage[] = user.pushTokens.map((v) => ({
-              to: v,
-              sound: "default",
-              title: "Notification",
-              body: `TEST NOTIFICATION`,
-            }));
-           const push =  await expo.sendPushNotificationsAsync(messages);
-           console.log(push)
-          }
-
           for (const conn in (await getUsers(res.comments))
             .concat(post.patient.toString())
             .filter((id) => id in usersConnected && id !== user._id?.toString())
@@ -155,7 +140,7 @@ connectToDatabase(io)
               await expo.sendPushNotificationsAsync(messages);
             }
           }
-                       
+          callback(res);         
         },
       );
     });

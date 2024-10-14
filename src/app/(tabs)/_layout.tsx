@@ -17,7 +17,7 @@ export default function TabLayout() {
       .then(fetchPosts)
       .then(fetchSettings)
       .then(registerForPushNotificationsAsync)
-      .then((token) => updateToken(token));
+      .then((token) => updateToken(token)).catch((e) => console.log(e));
     SplashScreen.hideAsync();
   }, [userType]);
   return (
