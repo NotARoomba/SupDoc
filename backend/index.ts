@@ -103,7 +103,8 @@ connectToDatabase(io)
           .filter((id) => id in usersConnected && id !== user._id?.toString())
           .map((id) => usersConnected[id].sockets)
           .flat()
-          console.log(connections)
+          console.log(connections, (await getUsers(res.comments))
+          .concat(post.patient.toString()))
           for (const conn in connections) {
             io.sockets.sockets.get(conn)?.emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,
