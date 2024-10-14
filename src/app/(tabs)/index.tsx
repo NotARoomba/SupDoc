@@ -65,9 +65,21 @@ export default function Index() {
           </Text>
           {posts.length == 0 ? (
             loading ? (
-              <View>
-                <LoaderView />
-              </View>
+              // <View>
+              //   <LoaderView />
+              // </View>
+              Array(2).fill(0).map((_, i) => <Skeleton
+              isLoading={loading}
+              key={i}
+                    boneColor="#023c4d"
+                    highlightColor="#b4c5e4"
+                    containerStyle={{height:300, padding: 16, rowGap: 16, marginTop: 16, marginHorizontal: 'auto', width:'92%', backgroundColor: 'rgba(2, 60, 77, 0.6)', borderRadius: 16}}
+                    layout={[
+                      { width: `80%`, height: 32, borderRadius: 8 },
+                      { display: 'flex', width: '95%', height: 164},
+                      { width: `100%`, height: 32, borderRadius: 8, marginHorizontal: 'auto' },
+                    ]}
+                  />)
             ) : (
               <Text className=" text-center text-powder_blue/80">
                 {t("posts.none")}
@@ -103,14 +115,19 @@ export default function Index() {
           {feed.length == 0 ? (
             loading ? (
               // <View>
-              <Skeleton
+                Array(2).fill(0).map((_, i) => <Skeleton
               isLoading={loading}
+              key={i}
                     boneColor="#023c4d"
                     highlightColor="#b4c5e4"
+                    containerStyle={{height:300, padding: 16, rowGap: 16, marginTop: 16, marginHorizontal: 'auto', width:'92%', backgroundColor: 'rgba(2, 60, 77, 0.6)', borderRadius: 16}}
                     layout={[
-                      { width: `90%`, height: 150, padding: 4, borderRadius: 16 },
+                      { width: `80%`, height: 32, borderRadius: 8 },
+                      { display: 'flex', width: '95%', height: 164},
+                      { width: `100%`, height: 32, borderRadius: 8, marginHorizontal: 'auto' },
                     ]}
-                  />
+                  />)
+              
             ) : (
               // </View>
               <Text className=" text-center text-powder_blue/80">

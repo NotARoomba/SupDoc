@@ -26,7 +26,7 @@ import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
 import Patient from "./models/patient";
 import { Doctor } from "./models/doctor";
-import { flattenComments, likeComment } from "./models/comment";
+import Comment, { addCommentToPost, flattenComments, likeComment } from "./models/comment";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -84,6 +84,31 @@ connectToDatabase(io)
             socket.id,
           );
       }
+      socket.on(SupDocEvents.POST_COMMENT, async (postID: ObjectId, comment: Comment, callback) => {
+        const post = (await collections.posts.findOne({ _id: new ObjectId(postID) })) as Post;
+        const res = await addCommentToPost(
+          post,
+          comment,
+          user,
+        );
+        if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
+          return callback(res);
+        let connections = (await getUsers(res.comments))
+          if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
+          connections = connections
+        .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
+          .map((id) => usersConnected[id])
+          .flat()
+          console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
+          for (const conn of connections) {
+            io.to(conn).emit(SupDocEvents.UPDATE_COMMENTS, {
+                post: postID,
+                comments: res.comments,
+            });
+        }
+        //check if has a parent and if not then send a notification to the user, else send a notification the the parent comment
+        
+      });
       socket.on(
         SupDocEvents.LIKE_COMMENT,
         async (postID: ObjectId, commentID: ObjectId, callback) => {
@@ -105,7 +130,6 @@ connectToDatabase(io)
           .flat()
           console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
           for (const conn of connections) {
-            console.log(`Emitting to ${conn}`);
             io.to(conn).emit(SupDocEvents.UPDATE_COMMENTS, {
                 post: postID,
                 comments: res.comments,
