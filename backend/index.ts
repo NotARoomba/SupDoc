@@ -98,11 +98,13 @@ connectToDatabase(io)
           );
           if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
             return callback(res);
-          for (const conn in (await getUsers(res.comments))
-            .concat(post.patient.toString())
-            .filter((id) => id in usersConnected && id !== user._id?.toString())
-            .map((id) => usersConnected[id].sockets)
-            .flat()) {
+          const connections = (await getUsers(res.comments))
+          .concat(post.patient.toString())
+          .filter((id) => id in usersConnected && id !== user._id?.toString())
+          .map((id) => usersConnected[id].sockets)
+          .flat()
+          console.log(connections)
+          for (const conn in connections) {
             io.sockets.sockets.get(conn)?.emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,
               comments: res.comments,
