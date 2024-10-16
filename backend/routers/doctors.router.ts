@@ -2,6 +2,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
+import { io } from "..";
 import { Doctor } from "../models/doctor";
 import Post from "../models/post";
 import STATUS_CODES from "../models/status";
@@ -220,6 +221,10 @@ doctorsRouter.get("/posts/:timestamp", async (req: Request, res: Response) => {
         .sort({ timestamp: -1 })
         .limit(8)
         .toArray()) as unknown as Post[];
+      for (let post of posts)
+        io.sockets.sockets
+          .get(res.locals.doctor._id)
+          ?.join(post._id?.toString() as string);
       // this is hell
       res.send(
         encrypt(

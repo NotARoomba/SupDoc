@@ -398,7 +398,8 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
   useEffect(() => {
     if (socket) {
       socket.on(SupDocEvents.UPDATE_COMMENTS, (data: { post: ObjectId; comments: Comment[] }) => {
-        console.log(data)
+        // console.log(data)
+        console.log("UPDATE COMMENTS")
         setPosts((old) =>
           old.map((p) =>
             data.post == p._id ? { ...p, comments: data.comments } : p,

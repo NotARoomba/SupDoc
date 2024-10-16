@@ -1,8 +1,6 @@
 import express, { Request, Response } from "express";
 import { ObjectId } from "mongodb";
-import { Doctor } from "../models/doctor";
 import Fact from "../models/fact";
-import Patient from "../models/patient";
 import STATUS_CODES from "../models/status";
 import { collections } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
@@ -56,15 +54,17 @@ factsRouter.get("/", async (req: Request, res: Response) => {
             },
           })
           .toArray()) as Fact[];
-          //get last 5 facts using the timestamp and lookup from the database
-          if (randomFacts.length > 0) randomFacts = (await collections.facts
+        //get last 5 facts using the timestamp and lookup from the database
+        if (randomFacts.length > 0)
+          randomFacts = (await collections.facts
             .find({
               timestamp: {
                 $lte: startOfDay.getTime(),
               },
-            }).limit(5)
+            })
+            .limit(5)
             .toArray()) as Fact[];
-          
+
         facts = randomFacts.length > 0 ? randomFacts : null;
       }
 

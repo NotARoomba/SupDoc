@@ -1,5 +1,9 @@
 import { ObjectId } from "mongodb";
-import { collections, createKey, encryption } from "../services/database.service";
+import {
+  collections,
+  createKey,
+  encryption,
+} from "../services/database.service";
 import Post from "./post";
 import STATUS_CODES from "./status";
 import { User } from "./user";
@@ -17,9 +21,9 @@ export default interface Comment {
 }
 
 export function flattenComments(comments: Comment[]): Comment[] {
-  return comments.flatMap(comment => [
-    comment, 
-    ...flattenComments(comment.replies)
+  return comments.flatMap((comment) => [
+    comment,
+    ...flattenComments(comment.replies),
   ]);
 }
 
@@ -43,7 +47,7 @@ export async function likeComment(
   post: Post,
   commentID: ObjectId,
   userID: ObjectId,
-): Promise<{ status: STATUS_CODES; comments?: Comment[], like?: boolean }> {
+): Promise<{ status: STATUS_CODES; comments?: Comment[]; like?: boolean }> {
   // Find the post and comment
   try {
     let like = false;
@@ -82,7 +86,7 @@ export async function likeComment(
 export async function addCommentToPost(
   post: Post,
   comment: Comment,
-  user: User
+  user: User,
 ): Promise<{ status: STATUS_CODES; comments?: Comment[] }> {
   const keyId = await createKey([
     CryptoJS.SHA256(user._id?.toString() as string).toString(),
@@ -96,7 +100,7 @@ export async function addCommentToPost(
 
   const commentDocument = {
     _id: new ObjectId(),
-    name:("name" in user) ? user.name : "Patient",
+    name: "name" in user ? user.name : "Patient",
     commenter: user._id,
     text: await encryption.encrypt(comment.text, {
       keyId,
@@ -118,12 +122,16 @@ export async function addCommentToPost(
     parentComment.replies.push(commentDocument);
   } else {
     // Check for top-level comments
-    if (post.comments.length > 2) 
+    if (post.comments.length > 2)
       return { status: STATUS_CODES.COMMENT_LIMIT_REACHED };
-    if (!("name" in user)) return {status: STATUS_CODES.COMMENT_NOT_ALLOWED}
-    if (post.comments.some(c => c.commenter.equals(new ObjectId(comment.commenter)))) 
+    if (!("name" in user)) return { status: STATUS_CODES.COMMENT_NOT_ALLOWED };
+    if (
+      post.comments.some((c) =>
+        c.commenter.equals(new ObjectId(comment.commenter)),
+      )
+    )
       return { status: STATUS_CODES.ALREADY_COMMENTED };
-    
+
     post.comments.push(commentDocument);
   }
 
@@ -131,7 +139,7 @@ export async function addCommentToPost(
   const updatedPost = await collections.posts.findOneAndUpdate(
     { _id: post._id },
     { $set: { comments: post.comments } },
-    { returnDocument: "after" }
+    { returnDocument: "after" },
   );
 
   if (updatedPost) {
@@ -140,4 +148,3 @@ export async function addCommentToPost(
     return { status: STATUS_CODES.GENERIC_ERROR };
   }
 }
-

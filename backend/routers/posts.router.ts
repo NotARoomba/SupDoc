@@ -1,19 +1,19 @@
 import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
 import { DeleteResult, ObjectId, PushOperator } from "mongodb";
-import Comment, { addCommentToPost, findCommentById, likeComment } from "../models/comment";
+import Comment, {
+  addCommentToPost,
+  findCommentById,
+  likeComment,
+} from "../models/comment";
 import Post from "../models/post";
 import Report from "../models/report";
 import STATUS_CODES from "../models/status";
+import { User } from "../models/user";
 import { UserType } from "../models/util";
-import {
-  collections,
-  createKey,
-  encryption,
-} from "../services/database.service";
+import { collections, encryption } from "../services/database.service";
 import { encrypt } from "../services/encryption.service";
 import { generateSignedUrl } from "../services/storage.service";
-import { User } from "../models/user";
 
 export const postsRouter = express.Router();
 
@@ -210,7 +210,9 @@ postsRouter.post("/:id/comment", async (req: Request, res: Response) => {
   const comment: Comment = req.body;
   console.log(comment);
   const user = (res.locals.doctor ?? res.locals.patient) as User;
-  const post = (await collections.posts.findOne({ _id: new ObjectId(req.params.id) })) as Post;
+  const post = (await collections.posts.findOne({
+    _id: new ObjectId(req.params.id),
+  })) as Post;
   const result = await addCommentToPost(post, comment, user);
   return res.status(200).send(encrypt(result, req.headers.authorization));
 });

@@ -1,6 +1,7 @@
 import CryptoJS from "crypto-js";
 import express, { Request, Response } from "express";
 import { ObjectId } from "mongodb";
+import { io } from "..";
 import Patient from "../models/patient";
 import Post from "../models/post";
 import STATUS_CODES from "../models/status";
@@ -265,6 +266,10 @@ patientsRouter.get("/posts", async (req: Request, res: Response) => {
         })
         .sort({ _id: -1 })
         .toArray()) as unknown as Post[];
+      for (let post of posts)
+        io.sockets.sockets
+          .get(res.locals.doctor._id)
+          ?.join(post._id?.toString() as string);
       res.send(
         encrypt(
           {

@@ -4,11 +4,17 @@ import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { ObjectId } from "mongodb";
 import { Server, Socket } from "socket.io";
+import Comment, {
+  addCommentToPost,
+  flattenComments,
+  likeComment,
+} from "./models/comment";
+import { Doctor } from "./models/doctor";
 import SupDocEvents from "./models/events";
+import Patient from "./models/patient";
 import Post from "./models/post";
 import STATUS_CODES from "./models/status";
 import { User } from "./models/user";
-import { UserType } from "./models/util";
 import { doctorsRouter } from "./routers/doctors.router";
 import { factsRouter } from "./routers/facts.router";
 import { imagesRouter } from "./routers/images.router";
@@ -20,13 +26,9 @@ import {
   collections,
   connectToDatabase,
   env,
-  getUsers,
 } from "./services/database.service";
 import { decryptionMiddleware } from "./services/encryption.service";
 import { refreshFacts } from "./services/facts.service";
-import Patient from "./models/patient";
-import { Doctor } from "./models/doctor";
-import Comment, { addCommentToPost, flattenComments, likeComment } from "./models/comment";
 
 export const app = express();
 const httpServer = createServer(app);
@@ -78,37 +80,71 @@ connectToDatabase(io)
       const user = (doctorExists ?? patientExists) as User;
       if (socket.handshake.query.id) {
         if (!usersConnected[socket.handshake.query.id as string])
-          usersConnected[socket.handshake.query.id as string] = [socket.id]
+          usersConnected[socket.handshake.query.id as string] = [socket.id];
         else
-          usersConnected[socket.handshake.query.id as string].push(
-            socket.id,
-          );
+          usersConnected[socket.handshake.query.id as string].push(socket.id);
       }
-      socket.on(SupDocEvents.POST_COMMENT, async (postID: ObjectId, comment: Comment, callback) => {
-        const post = (await collections.posts.findOne({ _id: new ObjectId(postID) })) as Post;
-        const res = await addCommentToPost(
-          post,
-          comment,
-          user,
-        );
-        if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
-          return callback(res);
-        let connections = (await getUsers(res.comments))
-          if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
-          connections = connections
-        .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
-          .map((id) => usersConnected[id])
-          .flat()
-          console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
-          for (const conn of connections) {
-            io.to(conn).emit(SupDocEvents.UPDATE_COMMENTS, {
-                post: postID,
-                comments: res.comments,
+      socket.on(
+        SupDocEvents.POST_COMMENT,
+        async (postID: ObjectId, comment: Comment, callback) => {
+          const post = (await collections.posts.findOne({
+            _id: new ObjectId(postID),
+          })) as Post;
+          const res = await addCommentToPost(post, comment, user);
+          callback(res);
+          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return;
+          // let connections = (await getUsers(res.comments))
+          //   if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
+          //   connections = connections
+          // .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
+          //   .map((id) => usersConnected[id])
+          //   .flat()
+          //   console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
+          //   for (const conn of connections) {
+          //     io.to(conn).emit(SupDocEvents.UPDATE_COMMENTS, {
+          //         post: postID,
+          //         comments: res.comments,
+          //     });
+          // }
+          socket.broadcast
+            .to(post._id?.toString() as string)
+            .emit(SupDocEvents.UPDATE_COMMENTS, {
+              post: postID,
+              comments: res.comments,
             });
-        }
-        //check if has a parent and if not then send a notification to the user, else send a notification the the parent comment
-        
-      });
+          //check if has a parent and if not then send a notification to the user, else send a notification the the parent comment
+          let messages: ExpoPushMessage[] = [];
+          if (!comment.parent) {
+            const pushTokens = (
+              (await collections.patients.findOne({
+                _id: new ObjectId(post.patient),
+              })) as Patient
+            ).pushTokens;
+            messages = pushTokens.map((v) => ({
+              to: v,
+              sound: "default",
+              title: "New Comment",
+              body: `${doctorExists?.name as string} commented on your post`,
+            }));
+          } else {
+            const parentComment = flattenComments(post.comments).find(
+              (v) => v._id.toString() == comment.parent?.toString(),
+            ) as Comment;
+            const parentUser = (await collections.doctors.findOne({
+              _id: new ObjectId(parentComment.commenter),
+            })) as Doctor;
+            if (!parentUser) return callback(res);
+            const pushTokens = parentUser.pushTokens;
+            messages = pushTokens.map((v) => ({
+              to: v,
+              sound: "default",
+              title: "New Reply",
+              body: `${doctorExists ? doctorExists.name : "The Patient"} replied to your comment`,
+            }));
+          }
+          await expo.sendPushNotificationsAsync(messages);
+        },
+      );
       socket.on(
         SupDocEvents.LIKE_COMMENT,
         async (postID: ObjectId, commentID: ObjectId, callback) => {
@@ -120,59 +156,69 @@ connectToDatabase(io)
             new ObjectId(commentID),
             user._id as ObjectId,
           );
-          if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
-            return callback(res);
-          let connections = (await getUsers(res.comments))
-          if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
-          connections = connections
-        .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
-          .map((id) => usersConnected[id])
-          .flat()
-          console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
-          for (const conn of connections) {
-            io.to(conn).emit(SupDocEvents.UPDATE_COMMENTS, {
-                post: postID,
-                comments: res.comments,
+          callback(res);
+          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return;
+          //   let connections = (await getUsers(res.comments))
+          //   if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
+          //   connections = connections
+          // .filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString())
+          //   .map((id) => usersConnected[id])
+          //   .flat()
+          //   console.log(connections, (await getUsers(res.comments)).filter((id) => usersConnected.hasOwnProperty(id) && id !== user._id?.toString()), usersConnected)
+          //   for (const conn of connections) {
+          //     io.to(conn).emit(SupDocEvents.UPDATE_COMMENTS, {
+          //         post: postID,
+          //         comments: res.comments,
+          //     });
+          // }
+          socket.broadcast
+            .to(post._id?.toString() as string)
+            .emit(SupDocEvents.UPDATE_COMMENTS, {
+              post: postID,
+              comments: res.comments,
             });
-        }
-        
+
           // send notification to the author of the comment if they are not connected
           if (res.like) {
-          const comment = (flattenComments(post.comments).find((v) => v._id.toString() == commentID.toString()))
-          if (comment?.name == "Patient") {
-            const patient = (await collections.patients.findOne({
-              _id: new ObjectId(comment.commenter),
-            })) as Patient;
-            if (!patient) return;
-            // if (!usersConnected[patient._id?.toString() as string]) {
-              const messages: ExpoPushMessage[] = patient.pushTokens.map((v) => ({
-                to: v,
-                sound: "default",
-                title: "New Like",
-                body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
-              }));
-              console.log("PATIENT LIKED COMMENT")
+            const comment = flattenComments(post.comments).find(
+              (v) => v._id.toString() == commentID.toString(),
+            );
+            if (comment?.name == "Patient") {
+              const patient = (await collections.patients.findOne({
+                _id: new ObjectId(comment.commenter),
+              })) as Patient;
+              if (!patient) return;
+              // if (!usersConnected[patient._id?.toString() as string]) {
+              const messages: ExpoPushMessage[] = patient.pushTokens.map(
+                (v) => ({
+                  to: v,
+                  sound: "default",
+                  title: "New Like",
+                  body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
+                }),
+              );
+              console.log("PATIENT LIKED COMMENT");
               await expo.sendPushNotificationsAsync(messages);
-            // }
-          } else {
-            if (!comment) return;
-            const doctor = (await collections.doctors.findOne({
-              _id: new ObjectId(comment.commenter),
-            })) as Doctor;
-            if (!doctor) return;
-            // if (!usersConnected[doctor._id?.toString() as string]) {
-              const messages: ExpoPushMessage[] = doctor.pushTokens.map((v) => ({
-                to: v,
-                sound: "default",
-                title: "New Like",
-                body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
-              }));
+              // }
+            } else {
+              if (!comment) return;
+              const doctor = (await collections.doctors.findOne({
+                _id: new ObjectId(comment.commenter),
+              })) as Doctor;
+              if (!doctor) return;
+              // if (!usersConnected[doctor._id?.toString() as string]) {
+              const messages: ExpoPushMessage[] = doctor.pushTokens.map(
+                (v) => ({
+                  to: v,
+                  sound: "default",
+                  title: "New Like",
+                  body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
+                }),
+              );
               await expo.sendPushNotificationsAsync(messages);
-            // }
+              // }
+            }
           }
-          
-        }
-          callback(res);         
         },
       );
       socket.on(SupDocEvents.DISCONNECT, () => {

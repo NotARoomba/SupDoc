@@ -80,9 +80,9 @@ export default function PostPage() {
   const handleStopReply = () => {
     setReplyingTo(null);
   };
-  useEffect(() => {
-    console.log(posts)
-  }, [])
+  // useEffect(() => {
+  //   console.log(posts)
+  // }, [])
 
   return (
     <KeyboardAvoidingView
