@@ -223,7 +223,7 @@ doctorsRouter.get("/posts/:timestamp", async (req: Request, res: Response) => {
         .toArray()) as unknown as Post[];
       for (let post of posts)
         io.sockets.sockets
-          .get(res.locals.doctor._id)
+          .get(res.locals.doctor._id.toString())
           ?.join(post._id?.toString() as string);
       // this is hell
       res.send(

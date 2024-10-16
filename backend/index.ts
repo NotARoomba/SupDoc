@@ -170,6 +170,8 @@ connectToDatabase(io)
           //         comments: res.comments,
           //     });
           // }
+          console.log(socket.rooms);
+          console.log(io.in(post._id?.toString() as string));
           socket.to(post._id?.toString() as string)
             .emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,

@@ -268,7 +268,7 @@ patientsRouter.get("/posts", async (req: Request, res: Response) => {
         .toArray()) as unknown as Post[];
       for (let post of posts)
         io.sockets.sockets
-          .get(res.locals.patient._id)
+          .get(res.locals.patient._id.toString())
           ?.join(post._id?.toString() as string);
       res.send(
         encrypt(
