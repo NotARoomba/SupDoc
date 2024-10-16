@@ -456,7 +456,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
         SupDocEvents.UPDATE_COMMENTS,
         (data: { post: ObjectId; comments: Comment[] }) => {
           // console.log(data)
-          console.log("UPDATE COMMENTS");
+          // console.log("UPDATE COMMENTS"6);
           setPosts((old) =>
             old.map((p) =>
               data.post == p._id ? { ...p, comments: data.comments } : p,
