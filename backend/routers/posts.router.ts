@@ -493,10 +493,6 @@ postsRouter.get("/get/:timestamp", async (req: Request, res: Response) => {
   const timestamp = parseInt(req?.params?.timestamp);
   const user = res.locals.doctor ?? res.locals.patient;
   const userType = res.locals.doctor ? UserType.DOCTOR : UserType.PATIENT;
-  const result = await getPosts(
-    userType,
-    user,
-    timestamp,
-  );
+  const result = await getPosts(userType, user, timestamp);
   return res.status(200).send(encrypt(result, req.headers.authorization));
 });

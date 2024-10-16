@@ -1,6 +1,5 @@
 import { UserType } from "@/backend/models/util";
 import Icons from "@expo/vector-icons/Octicons";
-import { usePosts } from "components/hooks/usePosts";
 import { useSettings } from "components/hooks/useSettings";
 import { useUser } from "components/hooks/useUser";
 import { registerForPushNotificationsAsync } from "components/utils/Functions";
@@ -10,11 +9,9 @@ import { Platform } from "react-native";
 
 export default function TabLayout() {
   const { userType, fetchUser, updateToken } = useUser();
-  const { fetchPosts } = usePosts();
   const { fetchSettings } = useSettings();
   useEffect(() => {
     fetchUser()
-      .then(fetchPosts)
       .then(fetchSettings)
       .then(registerForPushNotificationsAsync)
       .then((token) => updateToken(token))

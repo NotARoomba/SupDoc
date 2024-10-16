@@ -173,8 +173,6 @@ connectToDatabase(io)
           //         comments: res.comments,
           //     });
           // }
-          console.log(socket.rooms);
-          console.log(await io.in(post._id?.toString() as string).fetchSockets());
           socket
             .to(post._id?.toString() as string)
             .emit(SupDocEvents.UPDATE_COMMENTS, {
@@ -200,7 +198,6 @@ connectToDatabase(io)
                 title: "New Like",
                 body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
               }));
-              console.log("PATIENT LIKED COMMENT");
               // }
             } else {
               if (!comment) return;
@@ -230,7 +227,6 @@ connectToDatabase(io)
           const res = await getPosts(userType, user as User, timestamp);
           if (res.status !== STATUS_CODES.SUCCESS || !res.posts)
             return callback(res);
-          console.log(res.posts)
           for (const post of res.posts)
             await socket.join(post._id?.toString() as string);
           callback(res);
