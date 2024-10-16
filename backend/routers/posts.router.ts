@@ -489,14 +489,14 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
   }
 });
 
-postsRouter.get("/get/:timestamp?", async (req: Request, res: Response) => {
-  const timestamp = req?.params?.timestamp;
+postsRouter.get("/get/:timestamp", async (req: Request, res: Response) => {
+  const timestamp = parseInt(req?.params?.timestamp);
   const user = res.locals.doctor ?? res.locals.patient;
   const userType = res.locals.doctor ? UserType.DOCTOR : UserType.PATIENT;
   const result = await getPosts(
     userType,
     user,
-    timestamp ? parseInt(timestamp) : undefined,
+    timestamp,
   );
   return res.status(200).send(encrypt(result, req.headers.authorization));
 });

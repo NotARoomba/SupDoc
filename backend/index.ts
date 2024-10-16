@@ -224,7 +224,7 @@ connectToDatabase(io)
       );
       socket.on(
         SupDocEvents.FETCH_POSTS,
-        async (callback, timestamp?: number) => {
+        async (timestamp: number, callback) => {
           const userType = doctorExists ? UserType.DOCTOR : UserType.PATIENT;
           const user = doctorExists ?? patientExists;
           const res = await getPosts(userType, user as User, timestamp);

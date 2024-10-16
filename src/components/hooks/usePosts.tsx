@@ -142,6 +142,11 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     if (socket) {
       socket.emit(
         SupDocEvents.FETCH_POSTS,
+        refresh
+          ? Date.now()
+          : posts.length == 0
+            ? Date.now()
+            : posts[posts.length - 1].timestamp,
         async (res: { status: STATUS_CODES; posts: Post[] }) => {
           if (res.status !== STATUS_CODES.SUCCESS) {
             if (res.status == STATUS_CODES.UNAUTHORIZED) return logout();
@@ -178,11 +183,6 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
           // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
           // setLoading(false);
         },
-        refresh
-          ? Date.now()
-          : posts.length == 0
-            ? Date.now()
-            : posts[posts.length - 1].timestamp,
       );
     } else {
       const res = await callAPI(

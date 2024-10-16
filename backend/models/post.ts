@@ -23,7 +23,7 @@ export default interface Post {
 export async function getPosts(
   userType: UserType,
   user: User,
-  timestamp?: number,
+  timestamp: number,
 ): Promise<{
   status: STATUS_CODES;
   posts?: Post[];
