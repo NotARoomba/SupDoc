@@ -104,8 +104,8 @@ export default function CommentBlock({
               </TouchableOpacity>
               <Text className="text-ivory text-md">{comment.text}</Text>
 
-              <View className="flex flex-row mt-2 justify-between">
-                <View className="flex flex-row space-x-6 align-middle">
+              <View className="flex flex-row mt-2 justify-end gap-x-8">
+                <View className="flex flex-row">
                   {/* Grouped Like and Reply */}
                   <TouchableOpacity
                     className="flex flex-row gap-x-1"
