@@ -7,6 +7,7 @@ import {
 import Post from "./post";
 import STATUS_CODES from "./status";
 import { User } from "./user";
+import CryptoJS from "crypto-js";
 
 export default interface Comment {
   _id: ObjectId;
