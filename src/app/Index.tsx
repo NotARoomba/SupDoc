@@ -49,7 +49,7 @@ export default function Index({ setIsLogged }: IndexProps) {
   const [pageIndex, setIndex] = useState(0);
   const { setLoading } = useLoading();
   const { fetchSettings } = useSettings();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   useEffect(() => {
     fetchSettings();
     SplashScreen.hideAsync();
@@ -169,6 +169,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     if (!isLogin) {
       if (userType === UserType.DOCTOR) {
         setSignUpInfo({
+          locale: i18n.language,
           password: "",
           firstName: "",
           lastName: "",
@@ -185,6 +186,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       } else if (userType === UserType.PATIENT) {
         setSignUpInfo({
           password: "",
+          locale: i18n.language,
           passwordchk: "",
           countryCode: "+57",
           identification: "",

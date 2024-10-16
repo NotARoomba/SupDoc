@@ -9,6 +9,7 @@ export interface UserBase {
   publicKey: string; // R
   privateKey: string; // R
   pushTokens: string[];
+  locale: string;
 }
 
 export type User = Patient | Doctor;

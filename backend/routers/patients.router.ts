@@ -119,6 +119,7 @@ patientsRouter.post("/create", async (req: Request, res: Response) => {
           //   algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
           // }),
         },
+        locale: data.locale ?? "es",
 
         // Metrics (info) fields
         info: {

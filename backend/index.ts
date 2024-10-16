@@ -90,8 +90,11 @@ connectToDatabase(io)
         else
           usersConnected[socket.handshake.query.id as string].push(socket.id);
       }
-      socket.on(SupDocEvents.UPDATE_LANGUAGE, language => {
+      socket.on(SupDocEvents.UPDATE_LANGUAGE, async language => {
         languageCodes[socket.handshake.query.id as string] = language;
+        await (doctorExists ? collections.doctors : collections.patients).updateOne({_id: new ObjectId(socket.handshake.query.id as string)}, {$set: {locale: language}})
+        user.locale = language;
+        console.log(language, user.locale)
       })
       socket.on(
         SupDocEvents.POST_COMMENT,

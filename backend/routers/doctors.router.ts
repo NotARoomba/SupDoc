@@ -118,6 +118,7 @@ doctorsRouter.post(
         const inserted = await collections.doctors.insertOne({
           ...data,
           // picture: pictureURL,
+          locale: data.locale ?? "es",
           identification: {
             ...data.identification,
             // license: licenseURLS as string[],

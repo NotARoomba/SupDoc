@@ -57,6 +57,7 @@ interface BaseSignupInfo {
   password: string;
   passwordchk: string;
   number: string;
+  locale: string;
   countryCode: string;
   identification: string;
 }
