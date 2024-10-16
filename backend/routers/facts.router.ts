@@ -48,7 +48,7 @@ factsRouter.get("/", async (req: Request, res: Response) => {
       // If the user is a doctor, fetch all random facts within the day
       if (res.locals.doctor) {
         const { startOfDay, endOfDay } = getStartAndEndOfDay();
-        const randomFacts = (await collections.facts
+        let randomFacts = (await collections.facts
           .find({
             timestamp: {
               $gte: startOfDay.getTime(),
@@ -56,7 +56,15 @@ factsRouter.get("/", async (req: Request, res: Response) => {
             },
           })
           .toArray()) as Fact[];
-  
+          //get last 5 facts using the timestamp and lookup from the database
+          if (randomFacts.length > 0) randomFacts = (await collections.facts
+            .find({
+              timestamp: {
+                $lte: startOfDay.getTime(),
+              },
+            }).limit(5)
+            .toArray()) as Fact[];
+          
         facts = randomFacts.length > 0 ? randomFacts : null;
       }
 

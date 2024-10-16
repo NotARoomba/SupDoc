@@ -5,6 +5,7 @@ import { getStartAndEndOfDay } from "../routers/facts.router";
 import { collections, env } from "./database.service";
 
 export async function refreshFacts() {
+  console.log("Refreshing facts!")
   const { startOfDay, endOfDay } = getStartAndEndOfDay();
   const randomFacts = (await collections.facts
     .find({
