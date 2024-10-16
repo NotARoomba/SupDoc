@@ -1,0 +1,12 @@
+{
+    "titles": {
+        "like": "New like",
+        "comment": "New comment",
+        "reply": "New reply"
+    },
+    "body": {
+        "like": "{{name}} liked your post",
+        "comment": "{{name}} commented on your post",
+        "reply": "{{name}} replied to your comment"
+    }
+}

@@ -10,6 +10,8 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { Alert, StatusBar, useColorScheme } from "react-native";
 import { useLoading } from "./useLoading";
+import { useUser } from "./useUser";
+import SupDocEvents from "@/backend/models/events";
 
 interface SettingsContextType {
   language: string | null;
@@ -34,6 +36,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const { setLoading } = useLoading();
   const [language, setLanguageState] = useState<string | null>(null);
   const [theme, setThemeState] = useState<"light" | "dark" | null>(null);
+  const {socket} = useUser();
   let colorScheme = useColorScheme();
   const fetchSettings = async () => {
     // setLoading(true);
@@ -44,6 +47,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       if (savedLanguage) {
         setLanguageState(savedLanguage);
         i18n.changeLanguage(savedLanguage);
+        if (socket) socket.emit(SupDocEvents.UPDATE_LANGUAGE, savedLanguage);
       }
 
       if (savedTheme === "light" || savedTheme === "dark") {
@@ -69,6 +73,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       await SecureStore.setItemAsync("language", language);
       setLanguageState(language);
       await i18n.changeLanguage(language);
+      if (socket) socket.emit(SupDocEvents.UPDATE_LANGUAGE, language);
     } catch (error) {
       Alert.alert(t("error"), t("errors.saveSettings"));
     }
@@ -91,7 +96,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 
   useEffect(() => {
     fetchSettings();
-  }, []);
+  }, [socket]);
 
   return (
     <SettingsContext.Provider

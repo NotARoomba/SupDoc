@@ -50,6 +50,10 @@ export let usersConnected: {
   [key: string]: string[];
 } = {};
 
+export let languageCodes: {
+  [key: string]: string;
+} = {};
+
 connectToDatabase(io)
   .then(() => {
     app.use(cors());
@@ -79,12 +83,16 @@ connectToDatabase(io)
       // await encryption.decrypt(doctorExists?.publicKey)
       if (!(doctorExists || patientExists)) return socket.disconnect(true);
       const user = (doctorExists ?? patientExists) as User;
+      languageCodes[socket.handshake.query.id as string] = socket.handshake.query.language as string;
       if (socket.handshake.query.id) {
         if (!usersConnected[socket.handshake.query.id as string])
           usersConnected[socket.handshake.query.id as string] = [socket.id];
         else
           usersConnected[socket.handshake.query.id as string].push(socket.id);
       }
+      socket.on(SupDocEvents.UPDATE_LANGUAGE, language => {
+        languageCodes[socket.handshake.query.id as string] = language;
+      })
       socket.on(
         SupDocEvents.POST_COMMENT,
         async (postID: ObjectId, comment: Comment, callback) => {
@@ -140,7 +148,7 @@ connectToDatabase(io)
               to: v,
               sound: "default",
               title: "New Reply",
-              body: `${doctorExists ? doctorExists.name : "The Patient"} replied to your comment`,
+              body: `${doctorExists ? doctorExists.name : "A patient"} replied to your comment`,
             }));
           }
           await expo.sendPushNotificationsAsync(messages);
@@ -196,7 +204,7 @@ connectToDatabase(io)
                 to: v,
                 sound: "default",
                 title: "New Like",
-                body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
+                body: `${doctorExists ? doctorExists.name : "A patient"} liked your comment`,
               }));
               // }
             } else {
@@ -210,7 +218,7 @@ connectToDatabase(io)
                 to: v,
                 sound: "default",
                 title: "New Like",
-                body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
+                body: `${doctorExists ? doctorExists.name : "A patient"} liked your comment`,
               }));
               // }
             }
