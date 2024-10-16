@@ -91,8 +91,8 @@ connectToDatabase(io)
             _id: new ObjectId(postID),
           })) as Post;
           const res = await addCommentToPost(post, comment, user);
+          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return 
           callback(res);
-          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return;
           // let connections = (await getUsers(res.comments))
           //   if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
           //   connections = connections
@@ -142,6 +142,7 @@ connectToDatabase(io)
             }));
           }
           await expo.sendPushNotificationsAsync(messages);
+          callback(res);
         },
       );
       socket.on(
@@ -155,8 +156,7 @@ connectToDatabase(io)
             new ObjectId(commentID),
             user._id as ObjectId,
           );
-          callback(res);
-          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return;
+          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return callback(res);
           //   let connections = (await getUsers(res.comments))
           //   if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
           //   connections = connections
@@ -178,6 +178,7 @@ connectToDatabase(io)
 
           // send notification to the author of the comment if they are not connected
           if (res.like) {
+            let messages: ExpoPushMessage[] = [];
             const comment = flattenComments(post.comments).find(
               (v) => v._id.toString() == commentID.toString(),
             );
@@ -187,7 +188,7 @@ connectToDatabase(io)
               })) as Patient;
               if (!patient) return;
               // if (!usersConnected[patient._id?.toString() as string]) {
-              const messages: ExpoPushMessage[] = patient.pushTokens.map(
+              messages = patient.pushTokens.map(
                 (v) => ({
                   to: v,
                   sound: "default",
@@ -196,7 +197,6 @@ connectToDatabase(io)
                 }),
               );
               console.log("PATIENT LIKED COMMENT");
-              await expo.sendPushNotificationsAsync(messages);
               // }
             } else {
               if (!comment) return;
@@ -205,7 +205,7 @@ connectToDatabase(io)
               })) as Doctor;
               if (!doctor) return;
               // if (!usersConnected[doctor._id?.toString() as string]) {
-              const messages: ExpoPushMessage[] = doctor.pushTokens.map(
+              messages = doctor.pushTokens.map(
                 (v) => ({
                   to: v,
                   sound: "default",
@@ -213,10 +213,11 @@ connectToDatabase(io)
                   body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
                 }),
               );
-              await expo.sendPushNotificationsAsync(messages);
               // }
             }
+            await expo.sendPushNotificationsAsync(messages);
           }
+          callback(res);
         },
       );
       socket.on(SupDocEvents.DISCONNECT, () => {
