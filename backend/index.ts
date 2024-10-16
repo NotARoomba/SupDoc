@@ -174,7 +174,7 @@ connectToDatabase(io)
           //     });
           // }
           console.log(socket.rooms);
-          console.log(io.in(post._id?.toString() as string).fetchSockets());
+          console.log(await io.in(post._id?.toString() as string).fetchSockets());
           socket
             .to(post._id?.toString() as string)
             .emit(SupDocEvents.UPDATE_COMMENTS, {
@@ -230,9 +230,9 @@ connectToDatabase(io)
           const res = await getPosts(userType, user as User, timestamp);
           if (res.status !== STATUS_CODES.SUCCESS || !res.posts)
             return callback(res);
-
+          console.log(res.posts)
           for (const post of res.posts)
-            socket.join(post._id?.toString() as string);
+            await socket.join(post._id?.toString() as string);
           callback(res);
         },
       );
