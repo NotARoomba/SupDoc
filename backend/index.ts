@@ -106,8 +106,7 @@ connectToDatabase(io)
           //         comments: res.comments,
           //     });
           // }
-          socket.broadcast
-            .to(post._id?.toString() as string)
+          socket.to(post._id?.toString() as string)
             .emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,
               comments: res.comments,
@@ -171,8 +170,7 @@ connectToDatabase(io)
           //         comments: res.comments,
           //     });
           // }
-          socket.broadcast
-            .to(post._id?.toString() as string)
+          socket.to(post._id?.toString() as string)
             .emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,
               comments: res.comments,
