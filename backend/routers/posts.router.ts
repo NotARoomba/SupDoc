@@ -6,7 +6,7 @@ import Comment, {
   findCommentById,
   likeComment,
 } from "../models/comment";
-import Post from "../models/post";
+import Post, { getPosts } from "../models/post";
 import Report from "../models/report";
 import STATUS_CODES from "../models/status";
 import { User } from "../models/user";
@@ -487,4 +487,16 @@ postsRouter.post("/:id/report", async (req: Request, res: Response) => {
         ),
       );
   }
+});
+
+postsRouter.get("/get/:timestamp?", async (req: Request, res: Response) => {
+  const timestamp = req?.params?.timestamp;
+  const user = res.locals.doctor ?? res.locals.patient;
+  const userType = res.locals.doctor ? UserType.DOCTOR : UserType.PATIENT;
+  const result = await getPosts(
+    userType,
+    user,
+    timestamp ? parseInt(timestamp) : undefined,
+  );
+  return res.status(200).send(encrypt(result, req.headers.authorization));
 });

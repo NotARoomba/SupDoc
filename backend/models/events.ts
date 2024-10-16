@@ -1,6 +1,7 @@
 enum SupDocEvents {
   CONNECT = "connect",
   DISCONNECT = "disconnect",
+  FETCH_POSTS = "fetch_posts",
   UPDATE_COMMENTS = "update_comments",
   UPDATE_FACT = "update_fact",
   POST_COMMENT = "post_comment",

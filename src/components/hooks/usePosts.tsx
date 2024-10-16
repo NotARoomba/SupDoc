@@ -1,4 +1,5 @@
 import Comment from "@/backend/models/comment";
+import SupDocEvents from "@/backend/models/events";
 import Fact from "@/backend/models/fact";
 import { PatientMetrics } from "@/backend/models/metrics";
 import Post from "@/backend/models/post";
@@ -28,7 +29,6 @@ import { useTranslation } from "react-i18next";
 import { Alert, LayoutAnimation } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
-import SupDocEvents from "@/backend/models/events";
 
 interface PostsContextType {
   posts: Post[];
@@ -137,35 +137,88 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   const fetchPosts = async (refresh = false) => {
     // setLoading(true);
-    if (!userType) return
+    if (!userType) return;
     const f = await fetchFacts();
-    const res = await callAPI(
-      `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (refresh ? Date.now() : posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
-      "GET",
-    );
-    if (res.status !== STATUS_CODES.SUCCESS) {
-      if (res.status == STATUS_CODES.UNAUTHORIZED) await logout();
-      else {
-        setTimeout(
-          () =>
-            Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`)),
-          300,
-        );
-        return;
+    if (socket) {
+      socket.emit(
+        SupDocEvents.FETCH_POSTS,
+        async (res: { status: STATUS_CODES; posts: Post[] }) => {
+          if (res.status !== STATUS_CODES.SUCCESS) {
+            if (res.status == STATUS_CODES.UNAUTHORIZED) return logout();
+            else {
+              setTimeout(
+                () =>
+                  Alert.alert(
+                    t("error"),
+                    t(`errors.${STATUS_CODES[res.status]}`),
+                  ),
+                300,
+              );
+              return;
+            }
+          }
+          if (userType == UserType.DOCTOR) await fetchSavedPosts();
+          //   // After removing the item, we can start the animation.
+          setPosts((old) =>
+            refresh
+              ? res.posts
+              : old.length == 0
+                ? res.posts
+                : [...old, ...res.posts],
+          );
+          Image.prefetch(
+            (res.posts as Post[]).map((v: Post) => v.images).flat(),
+          );
+          // After fetching posts, combine with facts into feed
+          if (res.posts.length !== 0) {
+            const newFeed = shuffleFactsIntoFeed(res.posts, f);
+            setFeed(newFeed);
+          }
+          // listRef.current?.prepareForLayoutAnimationRender();
+          // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          // setLoading(false);
+        },
+        refresh
+          ? Date.now()
+          : posts.length == 0
+            ? Date.now()
+            : posts[posts.length - 1].timestamp,
+      );
+    } else {
+      const res = await callAPI(
+        `/${userType == UserType.DOCTOR ? "doctors" : "patients"}/posts/${userType == UserType.DOCTOR ? (refresh ? Date.now() : posts.length == 0 ? Date.now() : posts[posts.length - 1].timestamp) : ""}`,
+        "GET",
+      );
+      if (res.status !== STATUS_CODES.SUCCESS) {
+        if (res.status == STATUS_CODES.UNAUTHORIZED) await logout();
+        else {
+          setTimeout(
+            () =>
+              Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`)),
+            300,
+          );
+          return;
+        }
       }
+      if (userType == UserType.DOCTOR) await fetchSavedPosts();
+      //   // After removing the item, we can start the animation.
+      setPosts((old) =>
+        refresh
+          ? res.posts
+          : old.length == 0
+            ? res.posts
+            : [...old, ...res.posts],
+      );
+      Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
+      // After fetching posts, combine with facts into feed
+      if (res.posts.length !== 0) {
+        const newFeed = shuffleFactsIntoFeed(res.posts, f);
+        setFeed(newFeed);
+      }
+      // listRef.current?.prepareForLayoutAnimationRender();
+      // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      // setLoading(false);
     }
-    if (userType == UserType.DOCTOR) fetchSavedPosts();
-    //   // After removing the item, we can start the animation.
-    setPosts(old => refresh ? res.posts : old.length == 0 ? res.posts : [...old, ...res.posts]);
-    Image.prefetch((res.posts as Post[]).map((v: Post) => v.images).flat());
-    // After fetching posts, combine with facts into feed
-    if (res.posts.length !== 0) {
-      const newFeed = shuffleFactsIntoFeed(res.posts, f);
-      setFeed(newFeed);
-    }
-    // listRef.current?.prepareForLayoutAnimationRender();
-    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    // setLoading(false);
   };
   const fetchSavedPosts = async () => {
     // setLoading(true);
@@ -190,9 +243,11 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       return false;
     }
 
-    setSavedPosts(old => old.find((v) => v._id === post._id)
-    ? old.filter((v) => v._id !== post._id)
-    : [...old, post]);
+    setSavedPosts((old) =>
+      old.find((v) => v._id === post._id)
+        ? old.filter((v) => v._id !== post._id)
+        : [...old, post],
+    );
     return true;
   };
 
@@ -203,7 +258,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
     );
     if (userType == UserType.DOCTOR)
       setFeed(shuffleFactsIntoFeed([...posts, ...finalPosts], facts));
-    setPosts(old => [...old, ...finalPosts]);
+    setPosts((old) => [...old, ...finalPosts]);
   };
 
   const deletePost = async (id: string) => {
@@ -216,8 +271,8 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       Alert.alert(t("success"), t("successes.deletePost"));
       listRef.current?.prepareForLayoutAnimationRender();
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setPosts(old => old.filter((v) => v._id?.toString() !== id));
-      setSavedPosts(old => old.filter((v) => v._id?.toString() !== id));
+      setPosts((old) => old.filter((v) => v._id?.toString() !== id));
+      setSavedPosts((old) => old.filter((v) => v._id?.toString() !== id));
       router.navigate("/(tabs)/");
     }
   };
@@ -256,33 +311,43 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       );
 
     setSavedPosts((old) =>
-      old.map((p) =>
-        post == p._id ? { ...p, comments: res.comments } : p,
-      ),
+      old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
     );
   };
 
   const likeComment = async (post: ObjectId, commentID: ObjectId) => {
     if (socket) {
-      socket.emit(SupDocEvents.LIKE_COMMENT, post, commentID, (res: { status: STATUS_CODES; comments: Comment[]; }) => {
-        if (res.status !== STATUS_CODES.SUCCESS) {
-          return Alert.alert(t("error"), t(`errors.${STATUS_CODES[res.status]}`));
-        }
-        if (userType == UserType.DOCTOR)
-          setFeed((old) =>
-            old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+      socket.emit(
+        SupDocEvents.LIKE_COMMENT,
+        post,
+        commentID,
+        (res: { status: STATUS_CODES; comments: Comment[] }) => {
+          if (res.status !== STATUS_CODES.SUCCESS) {
+            return Alert.alert(
+              t("error"),
+              t(`errors.${STATUS_CODES[res.status]}`),
+            );
+          }
+          if (userType == UserType.DOCTOR)
+            setFeed((old) =>
+              old.map((p) =>
+                post == p._id ? { ...p, comments: res.comments } : p,
+              ),
+            );
+
+          setPosts((old) =>
+            old.map((p) =>
+              post == p._id ? { ...p, comments: res.comments } : p,
+            ),
           );
-    
-        setPosts((old) =>
-          old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
-        );
-    
-        setSavedPosts((old) =>
-          old.map((p) =>
-            post == p._id ? { ...p, comments: res.comments } : p,
-          ),
-        );
-      });
+
+          setSavedPosts((old) =>
+            old.map((p) =>
+              post == p._id ? { ...p, comments: res.comments } : p,
+            ),
+          );
+        },
+      );
     } else {
       const res = await callAPI(
         `/posts/${post}/comments/${commentID}/like`,
@@ -293,19 +358,19 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       }
       if (userType == UserType.DOCTOR)
         setFeed((old) =>
-          old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
+          old.map((p) =>
+            post == p._id ? { ...p, comments: res.comments } : p,
+          ),
         );
-  
+
       setPosts((old) =>
         old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
       );
-  
+
       setSavedPosts((old) =>
-        old.map((p) =>
-          post == p._id ? { ...p, comments: res.comments } : p,
-        ),
+        old.map((p) => (post == p._id ? { ...p, comments: res.comments } : p)),
       );
-  }
+    }
   };
 
   const reportComment = async (post: ObjectId, commentID: ObjectId) => {
@@ -397,47 +462,52 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (socket) {
-      socket.on(SupDocEvents.UPDATE_COMMENTS, (data: { post: ObjectId; comments: Comment[] }) => {
-        // console.log(data)
-        console.log("UPDATE COMMENTS")
-        setPosts((old) =>
-          old.map((p) =>
-            data.post == p._id ? { ...p, comments: data.comments } : p,
-          ),
-        );
-
-        if (userType == UserType.DOCTOR) {
-          setFeed((old) =>
+      socket.on(
+        SupDocEvents.UPDATE_COMMENTS,
+        (data: { post: ObjectId; comments: Comment[] }) => {
+          // console.log(data)
+          console.log("UPDATE COMMENTS");
+          setPosts((old) =>
             old.map((p) =>
               data.post == p._id ? { ...p, comments: data.comments } : p,
             ),
           );
 
-          setSavedPosts((old) =>
-            old.map((p) =>
-              data.post == p._id ? { ...p, comments: data.comments } : p,
-            ),
-          );
-        }
-      });
-      
-      if (userType == UserType.DOCTOR) socket.on(SupDocEvents.UPDATE_FACT, (data: { fact: ObjectId; likes: string[]}) => {
-        setFacts((old) =>
-          old.map((f) =>
-            data.fact == f._id ? { ...f, likes: data.likes} : f,
-          ),
-        );
+          if (userType == UserType.DOCTOR) {
+            setFeed((old) =>
+              old.map((p) =>
+                data.post == p._id ? { ...p, comments: data.comments } : p,
+              ),
+            );
 
-        setFeed((old) =>
-          old.map((p) =>
-            data.fact == p._id ? { ...p, likes: data.likes} : p,
-          ),
-        );
-      })
+            setSavedPosts((old) =>
+              old.map((p) =>
+                data.post == p._id ? { ...p, comments: data.comments } : p,
+              ),
+            );
+          }
+        },
+      );
 
-      
+      if (userType == UserType.DOCTOR)
+        socket.on(
+          SupDocEvents.UPDATE_FACT,
+          (data: { fact: ObjectId; likes: string[] }) => {
+            setFacts((old) =>
+              old.map((f) =>
+                data.fact == f._id ? { ...f, likes: data.likes } : f,
+              ),
+            );
+
+            setFeed((old) =>
+              old.map((p) =>
+                data.fact == p._id ? { ...p, likes: data.likes } : p,
+              ),
+            );
+          },
+        );
     }
-  }, [socket])
+  }, [socket]);
 
   const postsContextValue = useMemo(
     () => ({

@@ -67,7 +67,7 @@ export default function Profile() {
   useEffect(() => {
     if (!user) {
       // Alert.alert(t("error"), t("errors.fetchData"));
-      return
+      return;
     }
     const fetchData = async () => {
       // setLoading(true);
@@ -285,7 +285,10 @@ export default function Profile() {
                             <View className="m-auto">
                               <Image
                                 onLoadStart={() => setPictureLoading(true)}
-                                onLoad={() => {setPictureLoading(false); setPictureLoaded(true)}}
+                                onLoad={() => {
+                                  setPictureLoading(false);
+                                  setPictureLoaded(true);
+                                }}
                                 onLoadEnd={() => setPictureLoading(false)}
                                 className={
                                   "rounded-xl border-dashed border border-ivory/80 h-full aspect-square"
@@ -318,16 +321,17 @@ export default function Profile() {
                                   </Skeleton>
                                 </View>
                               )}
-                              {!pictureLoaded && !pictureLoading &&  <View className="absolute rounded-xl w-48 h-48  z-50  flex">
-                                    <View className="m-auto ">
-                                      <Icons
-                                        name="person"
-                                        size={150}
-                                        color={"#fbfff1"}
-                                      />
-                                    </View>
+                              {!pictureLoaded && !pictureLoading && (
+                                <View className="absolute rounded-xl w-48 h-48  z-50  flex">
+                                  <View className="m-auto ">
+                                    <Icons
+                                      name="person"
+                                      size={150}
+                                      color={"#fbfff1"}
+                                    />
+                                  </View>
                                 </View>
-                                }
+                              )}
                               <Pressable
                                 disabled={pictureLoading}
                                 onPress={() => setActiveChange(!activeChange)}

@@ -39,46 +39,46 @@ export default function RootLayout() {
         <UserProvider>
           <PostsProvider>
             <SettingsProvider>
-                <SafeAreaView className="bg-richer_black" />
+              <SafeAreaView className="bg-richer_black" />
 
-                {isLogged ? (
-                  // <Animated.View entering={FadeIn.duration(500)}>
-                  <Stack
-                    screenOptions={{
-                      contentStyle: { backgroundColor: "#020912" },
+              {isLogged ? (
+                // <Animated.View entering={FadeIn.duration(500)}>
+                <Stack
+                  screenOptions={{
+                    contentStyle: { backgroundColor: "#020912" },
+                  }}
+                >
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="Post"
+                    options={{
+                      headerShown: false,
+                      presentation: "fullScreenModal",
                     }}
-                  >
-                    <Stack.Screen
-                      name="(tabs)"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="Post"
-                      options={{
-                        headerShown: false,
-                        presentation: "fullScreenModal",
-                      }}
-                    />
-                    <Stack.Screen
-                      name="User"
-                      options={{
-                        headerShown: false,
-                        presentation: "fullScreenModal",
-                      }}
-                    />
-                    <Stack.Screen
-                      name="Settings"
-                      options={{
-                        headerShown: false,
-                        presentation: "fullScreenModal",
-                      }}
-                    />
-                  </Stack>
-                ) : (
-                  // </Animated.View>
-                  <Index setIsLogged={setIsLogged} />
-                )}
-                <Loading />
+                  />
+                  <Stack.Screen
+                    name="User"
+                    options={{
+                      headerShown: false,
+                      presentation: "fullScreenModal",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="Settings"
+                    options={{
+                      headerShown: false,
+                      presentation: "fullScreenModal",
+                    }}
+                  />
+                </Stack>
+              ) : (
+                // </Animated.View>
+                <Index setIsLogged={setIsLogged} />
+              )}
+              <Loading />
             </SettingsProvider>
           </PostsProvider>
         </UserProvider>

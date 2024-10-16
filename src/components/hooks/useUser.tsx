@@ -1,3 +1,4 @@
+import SupDocEvents from "@/backend/models/events";
 import STATUS_CODES from "@/backend/models/status";
 import { User } from "@/backend/models/user";
 import { UserType } from "@/backend/models/util";
@@ -14,9 +15,8 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
+import { Socket, io } from "socket.io-client";
 import { useLoading } from "./useLoading";
-import { io, Socket } from "socket.io-client";
-import SupDocEvents from "@/backend/models/events";
 
 interface UserContextType {
   user: User | null;
@@ -109,19 +109,19 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (user?.publicKey && !socket && userType) {
-    const s = io(process.env.EXPO_PUBLIC_API_URL, {
-      query: {
-        id: user._id,
-      },
-    });
-    s.on(SupDocEvents.CONNECT, () => {
+      const s = io(process.env.EXPO_PUBLIC_API_URL, {
+        query: {
+          id: user._id,
+        },
+      });
+      s.on(SupDocEvents.CONNECT, () => {
+        setSocket(s);
+      });
+      s.on(SupDocEvents.DISCONNECT, () => {
+        setSocket(null);
+      });
       setSocket(s);
-    });
-    s.on(SupDocEvents.DISCONNECT, () => {
-      setSocket(null);
-    });
-    setSocket(s)
-  }
+    }
   }, [user, userType]);
   return (
     <UserContext.Provider

@@ -1,5 +1,6 @@
 import { Doctor } from "@/backend/models/doctor";
 import STATUS_CODES from "@/backend/models/status";
+import { UserType } from "@/backend/models/util";
 import prompt from "@powerdesigninc/react-native-prompt";
 import { useLoading } from "components/hooks/useLoading";
 import { usePosts } from "components/hooks/usePosts";
@@ -29,14 +30,9 @@ import {
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { RSA } from "react-native-rsa-native";
 import Slider from "../components/buttons/Slider";
-import {
-  IndexProps,
-  LoginInfo,
-  SignupInfo,
-} from "../components/utils/Types";
+import { IndexProps, LoginInfo, SignupInfo } from "../components/utils/Types";
 import Login from "./Login";
 import Signup from "./Signup";
-import { UserType } from "@/backend/models/util";
 
 export default function Index({ setIsLogged }: IndexProps) {
   // const [bgCoords, setBGCoords] = useState<Array<number>>([550, 200]);

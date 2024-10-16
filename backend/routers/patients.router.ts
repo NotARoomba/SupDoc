@@ -253,6 +253,7 @@ patientsRouter.post("/update", async (req: Request, res: Response) => {
   }
 });
 
+// DECAPRICATED AND WILL BE REMOVED
 patientsRouter.get("/posts", async (req: Request, res: Response) => {
   try {
     if (collections.posts) {

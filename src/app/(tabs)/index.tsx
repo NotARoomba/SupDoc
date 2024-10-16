@@ -3,7 +3,6 @@ import { FlashList } from "@shopify/flash-list";
 import useFade from "components/hooks/useFade";
 import { usePosts } from "components/hooks/usePosts";
 import { useUser } from "components/hooks/useUser";
-import LoaderView from "components/loading/LoaderView";
 import FunFact from "components/misc/FunFact";
 import PostBlock from "components/misc/PostBlock";
 // import SkeletonContent from 'react-native-reanimated-skeleton'
@@ -33,8 +32,8 @@ export default function Index() {
   //   await SplashScreen.hideAsync();
   // };
   useEffect(() => {
-    if (feed.length !== 0 || posts.length !== 0) setLoading(false)
-  }, [feed, posts])
+    if (feed.length !== 0 || posts.length !== 0) setLoading(false);
+  }, [feed, posts]);
   return (
     <Animated.View
       style={{ opacity: fadeAnim }}
@@ -68,18 +67,36 @@ export default function Index() {
               // <View>
               //   <LoaderView />
               // </View>
-              Array(2).fill(0).map((_, i) => <Skeleton
-              isLoading={loading}
-              key={i}
+              Array(2)
+                .fill(0)
+                .map((_, i) => (
+                  <Skeleton
+                    isLoading={loading}
+                    key={i}
                     boneColor="#023c4d"
                     highlightColor="#b4c5e4"
-                    containerStyle={{height:300, padding: 16, rowGap: 16, marginTop: 16, marginHorizontal: 'auto', width:'92%', backgroundColor: 'rgba(2, 60, 77, 0.6)', borderRadius: 16}}
+                    containerStyle={{
+                      height: 300,
+                      padding: 16,
+                      rowGap: 16,
+                      marginTop: 16,
+                      marginHorizontal: "auto",
+                      width: "92%",
+                      backgroundColor: "rgba(2, 60, 77, 0.6)",
+                      borderRadius: 16,
+                    }}
                     layout={[
                       { width: `80%`, height: 32, borderRadius: 8 },
-                      { display: 'flex', width: '95%', height: 164},
-                      { width: `100%`, height: 32, borderRadius: 8, marginHorizontal: 'auto' },
+                      { display: "flex", width: "95%", height: 164 },
+                      {
+                        width: `100%`,
+                        height: 32,
+                        borderRadius: 8,
+                        marginHorizontal: "auto",
+                      },
                     ]}
-                  />)
+                  />
+                ))
             ) : (
               <Text className=" text-center text-powder_blue/80">
                 {t("posts.none")}
@@ -115,19 +132,36 @@ export default function Index() {
           {feed.length == 0 ? (
             loading ? (
               // <View>
-                Array(2).fill(0).map((_, i) => <Skeleton
-              isLoading={loading}
-              key={i}
+              Array(2)
+                .fill(0)
+                .map((_, i) => (
+                  <Skeleton
+                    isLoading={loading}
+                    key={i}
                     boneColor="#023c4d"
                     highlightColor="#b4c5e4"
-                    containerStyle={{height:300, padding: 16, rowGap: 16, marginTop: 16, marginHorizontal: 'auto', width:'92%', backgroundColor: 'rgba(2, 60, 77, 0.6)', borderRadius: 16}}
+                    containerStyle={{
+                      height: 300,
+                      padding: 16,
+                      rowGap: 16,
+                      marginTop: 16,
+                      marginHorizontal: "auto",
+                      width: "92%",
+                      backgroundColor: "rgba(2, 60, 77, 0.6)",
+                      borderRadius: 16,
+                    }}
                     layout={[
                       { width: `80%`, height: 32, borderRadius: 8 },
-                      { display: 'flex', width: '95%', height: 164},
-                      { width: `100%`, height: 32, borderRadius: 8, marginHorizontal: 'auto' },
+                      { display: "flex", width: "95%", height: 164 },
+                      {
+                        width: `100%`,
+                        height: 32,
+                        borderRadius: 8,
+                        marginHorizontal: "auto",
+                      },
                     ]}
-                  />)
-              
+                  />
+                ))
             ) : (
               // </View>
               <Text className=" text-center text-powder_blue/80">
@@ -140,7 +174,7 @@ export default function Index() {
               keyExtractor={(p, i) => `${i}-${p._id?.toString()}`}
               ListFooterComponentStyle={{ height: 125 }}
               estimatedItemSize={281}
-              onEndReached={() =>fetchPosts()}
+              onEndReached={() => fetchPosts()}
               data={feed}
               renderItem={({ item }) =>
                 "likes" in item ? (

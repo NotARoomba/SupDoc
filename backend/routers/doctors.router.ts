@@ -212,6 +212,7 @@ doctorsRouter.post("/update", async (req: Request, res: Response) => {
   }
 });
 
+// DECAPRICATED AND WILL BE REMOVED
 doctorsRouter.get("/posts/:timestamp", async (req: Request, res: Response) => {
   const timestamp: number = parseInt(req.params.timestamp);
   try {

@@ -12,9 +12,10 @@ import Comment, {
 import { Doctor } from "./models/doctor";
 import SupDocEvents from "./models/events";
 import Patient from "./models/patient";
-import Post from "./models/post";
+import Post, { getPosts } from "./models/post";
 import STATUS_CODES from "./models/status";
 import { User } from "./models/user";
+import { UserType } from "./models/util";
 import { doctorsRouter } from "./routers/doctors.router";
 import { factsRouter } from "./routers/facts.router";
 import { imagesRouter } from "./routers/images.router";
@@ -91,7 +92,7 @@ connectToDatabase(io)
             _id: new ObjectId(postID),
           })) as Post;
           const res = await addCommentToPost(post, comment, user);
-          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return 
+          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return;
           callback(res);
           // let connections = (await getUsers(res.comments))
           //   if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
@@ -106,7 +107,8 @@ connectToDatabase(io)
           //         comments: res.comments,
           //     });
           // }
-          socket.to(post._id?.toString() as string)
+          socket
+            .to(post._id?.toString() as string)
             .emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,
               comments: res.comments,
@@ -156,7 +158,8 @@ connectToDatabase(io)
             new ObjectId(commentID),
             user._id as ObjectId,
           );
-          if (res.status !== STATUS_CODES.SUCCESS || !res.comments) return callback(res);
+          if (res.status !== STATUS_CODES.SUCCESS || !res.comments)
+            return callback(res);
           //   let connections = (await getUsers(res.comments))
           //   if (!connections.includes(post.patient.toString())) connections = connections.concat(post.patient.toString())
           //   connections = connections
@@ -172,7 +175,8 @@ connectToDatabase(io)
           // }
           console.log(socket.rooms);
           console.log(io.in(post._id?.toString() as string).fetchSockets());
-          socket.to(post._id?.toString() as string)
+          socket
+            .to(post._id?.toString() as string)
             .emit(SupDocEvents.UPDATE_COMMENTS, {
               post: postID,
               comments: res.comments,
@@ -190,14 +194,12 @@ connectToDatabase(io)
               })) as Patient;
               if (!patient) return;
               // if (!usersConnected[patient._id?.toString() as string]) {
-              messages = patient.pushTokens.map(
-                (v) => ({
-                  to: v,
-                  sound: "default",
-                  title: "New Like",
-                  body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
-                }),
-              );
+              messages = patient.pushTokens.map((v) => ({
+                to: v,
+                sound: "default",
+                title: "New Like",
+                body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
+              }));
               console.log("PATIENT LIKED COMMENT");
               // }
             } else {
@@ -207,18 +209,30 @@ connectToDatabase(io)
               })) as Doctor;
               if (!doctor) return;
               // if (!usersConnected[doctor._id?.toString() as string]) {
-              messages = doctor.pushTokens.map(
-                (v) => ({
-                  to: v,
-                  sound: "default",
-                  title: "New Like",
-                  body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
-                }),
-              );
+              messages = doctor.pushTokens.map((v) => ({
+                to: v,
+                sound: "default",
+                title: "New Like",
+                body: `${doctorExists ? doctorExists.name : "The patient"} liked your comment`,
+              }));
               // }
             }
             await expo.sendPushNotificationsAsync(messages);
           }
+          callback(res);
+        },
+      );
+      socket.on(
+        SupDocEvents.FETCH_POSTS,
+        async (callback, timestamp?: number) => {
+          const userType = doctorExists ? UserType.DOCTOR : UserType.PATIENT;
+          const user = doctorExists ?? patientExists;
+          const res = await getPosts(userType, user as User, timestamp);
+          if (res.status !== STATUS_CODES.SUCCESS || !res.posts)
+            return callback(res);
+
+          for (const post of res.posts)
+            socket.join(post._id?.toString() as string);
           callback(res);
         },
       );
