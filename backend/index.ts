@@ -50,10 +50,6 @@ export let usersConnected: {
   [key: string]: string[];
 } = {};
 
-export let languageCodes: {
-  [key: string]: string;
-} = {};
-
 connectToDatabase(io)
   .then(() => {
     app.use(cors());
@@ -83,7 +79,6 @@ connectToDatabase(io)
       // await encryption.decrypt(doctorExists?.publicKey)
       if (!(doctorExists || patientExists)) return socket.disconnect(true);
       const user = (doctorExists ?? patientExists) as User;
-      languageCodes[socket.handshake.query.id as string] = socket.handshake.query.language as string;
       if (socket.handshake.query.id) {
         if (!usersConnected[socket.handshake.query.id as string])
           usersConnected[socket.handshake.query.id as string] = [socket.id];
@@ -91,10 +86,8 @@ connectToDatabase(io)
           usersConnected[socket.handshake.query.id as string].push(socket.id);
       }
       socket.on(SupDocEvents.UPDATE_LANGUAGE, async language => {
-        languageCodes[socket.handshake.query.id as string] = language;
         await (doctorExists ? collections.doctors : collections.patients).updateOne({_id: new ObjectId(socket.handshake.query.id as string)}, {$set: {locale: language}})
         user.locale = language;
-        console.log(language, user.locale)
       })
       socket.on(
         SupDocEvents.POST_COMMENT,
