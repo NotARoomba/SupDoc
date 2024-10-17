@@ -1,5 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-import { NativeWindStyleSheet } from "nativewind";
+// import { NativeWindStyleSheet } from "nativewind";
 import React, {
   createContext,
   ReactNode,
@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, StatusBar, useColorScheme } from "react-native";
+import { Alert, Appearance, StatusBar, useColorScheme } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
 import SupDocEvents from "@/backend/models/events";
@@ -52,7 +52,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 
       if (savedTheme === "light" || savedTheme === "dark") {
         setThemeState(savedTheme);
-        NativeWindStyleSheet.setColorScheme(savedTheme);
+        Appearance.setColorScheme(savedTheme);
+        // NativeWindStyleSheet.setColorScheme(savedTheme);
         StatusBar.setBarStyle(
           savedTheme !== "light" ? "light-content" : "dark-content",
           true,
@@ -79,16 +80,17 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
     }
   };
 
-  const setTheme = async (theme: "light" | "dark") => {
+  const setTheme = async (newTheme: "light" | "dark") => {
     try {
-      await SecureStore.setItemAsync("theme", theme);
-      // console.log(theme);
-      NativeWindStyleSheet.setColorScheme(theme);
+      await SecureStore.setItemAsync("theme", newTheme);
+      console.log(newTheme);
+      // NativeWindStyleSheet.setColorScheme(newTheme);
+      Appearance.setColorScheme(newTheme);
       StatusBar.setBarStyle(
-        theme !== "light" ? "light-content" : "dark-content",
+        newTheme !== "light" ? "light-content" : "dark-content",
         true,
       );
-      setThemeState(theme);
+      setThemeState(newTheme);
     } catch (error) {
       Alert.alert(t("error"), t("errors.saveSettings"));
     }

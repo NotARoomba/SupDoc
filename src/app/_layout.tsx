@@ -7,7 +7,7 @@ import "expo-dev-client";
 import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import { Platform, SafeAreaView, StatusBar, View } from "react-native";
+import { Appearance, Platform, SafeAreaView, StatusBar, useColorScheme, View } from "react-native";
 import "react-native-reanimated";
 import { useLanguageUpdater } from "../components/utils/i18n";
 import Index from "./Index";
@@ -15,6 +15,10 @@ import Index from "./Index";
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
+  Appearance.addChangeListener((e) => {
+    console.log(e)
+    console.log("Appearance changed");
+  })
   if (Platform.OS == "android") useLanguageUpdater();
   const [isLogged, setIsLogged] = useState(false);
   useEffect(() => {
@@ -39,37 +43,35 @@ export default function RootLayout() {
         <UserProvider>
           <PostsProvider>
             <SettingsProvider>
-              <SafeAreaView className="bg-richer_black" />
+              <SafeAreaView className="dark:text-ivory  text-richer_black dark:bg-richer_black bg-ivory" />
 
               {isLogged ? (
                 // <Animated.View entering={FadeIn.duration(500)}>
                 <Stack
                   screenOptions={{
+                    headerTransparent: true,
+                    headerShown: false,
                     contentStyle: { backgroundColor: "#020912" },
                   }}
                 >
                   <Stack.Screen
                     name="(tabs)"
-                    options={{ headerShown: false }}
                   />
                   <Stack.Screen
                     name="Post"
                     options={{
-                      headerShown: false,
                       presentation: "fullScreenModal",
                     }}
                   />
                   <Stack.Screen
                     name="User"
                     options={{
-                      headerShown: false,
                       presentation: "fullScreenModal",
                     }}
                   />
                   <Stack.Screen
                     name="Settings"
                     options={{
-                      headerShown: false,
                       presentation: "fullScreenModal",
                     }}
                   />

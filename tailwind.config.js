@@ -4,6 +4,7 @@ module.exports = {
     "./src/app/**/*.{js,tsx,ts,jsx}",
     "./src/components/**/*.{js,tsx,ts,jsx}",
   ],
+  presets: [require("nativewind/preset")],
   theme: {
     extend: {
       fontSize: {

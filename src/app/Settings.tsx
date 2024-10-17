@@ -1,3 +1,4 @@
+import Slider from "components/buttons/Slider";
 import useFade from "components/hooks/useFade";
 import { useSettings } from "components/hooks/useSettings";
 import { useUser } from "components/hooks/useUser";
@@ -82,11 +83,11 @@ export default function Settings() {
 
   return (
     <View className="h-full">
-      <SafeAreaView className="bg-richer_black" />
+      <SafeAreaView className="dark:bg-richer_black bg-ivory" />
       <Animated.View
         style={{ opacity: fadeAnim }}
         className={
-          "h-full bg-richer_black red relative " +
+          "h-full dark:bg-richer_black bg-ivory red relative " +
           (Platform.OS === "ios" ? "pt-16" : "pt-24")
         }
       >
@@ -133,7 +134,7 @@ export default function Settings() {
             (Platform.OS === "ios" ? "-translate-y-16" : "-translate-y-24")
           }
         >
-          {/* <Text className="text-ivory text-3xl font-bold text-center mb-2">
+          <Text className="text-ivory text-3xl font-bold text-center mb-2">
             {t("buttons.theme")}
           </Text>
           <Slider
@@ -146,7 +147,7 @@ export default function Settings() {
                 ? t("buttons.themes.dark")
                 : t("buttons.themes.light")
             }
-          /> */}
+          />
           <Text className="text-ivory text-3xl font-bold text-center mt-8 mb-2">
             {t("settings.languages")}
           </Text>
