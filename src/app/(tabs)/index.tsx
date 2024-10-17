@@ -5,6 +5,7 @@ import { usePosts } from "components/hooks/usePosts";
 import { useUser } from "components/hooks/useUser";
 import FunFact from "components/misc/FunFact";
 import PostBlock from "components/misc/PostBlock";
+import { useColorScheme } from "nativewind";
 // import SkeletonContent from 'react-native-reanimated-skeleton'
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,6 +25,7 @@ export default function Index() {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const fadeAnim = useFade();
+  const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   // const fetchData = async () => {
   //   listRef.current?.prepareForLayoutAnimationRender();
@@ -37,7 +39,10 @@ export default function Index() {
   return (
     <Animated.View
       style={{ opacity: fadeAnim }}
-      className={"h-full " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}
+      className={
+        "h-full dark:bg-richer_black bg-ivory " +
+        (Platform.OS == "ios" ? "pt-6" : "pt-16")
+      }
     >
       {/* <SkeletonContent
       containerStyle={{ flex: 1 }}
@@ -59,7 +64,7 @@ export default function Index() {
           />
           <FunFact fact={facts[0]} />
           <View className="h-0.5 rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
-          <Text className="text-4xl font-bold text-center text-ivory">
+          <Text className="text-4xl font-bold text-center dark:text-ivory text-richer_black">
             {t("titles.userPosts")}
           </Text>
           {posts.length == 0 ? (
@@ -73,7 +78,11 @@ export default function Index() {
                   <Skeleton
                     isLoading={loading}
                     key={i}
-                    boneColor="#023c4d"
+                    boneColor={
+                      colorScheme == "dark"
+                        ? "#023c4d"
+                        : "rgba(180, 197, 228, 0.2)"
+                    }
                     highlightColor="#b4c5e4"
                     containerStyle={{
                       height: 300,
@@ -126,7 +135,7 @@ export default function Index() {
               refreshPosts().then(() => setRefreshing(false));
             }}
           />
-          <Text className="text-6xl font-bold text-center text-ivory">
+          <Text className="text-6xl font-bold text-center dark:text-ivory text-richer_black">
             {t("titles.feed")}
           </Text>
           {feed.length == 0 ? (
@@ -138,8 +147,14 @@ export default function Index() {
                   <Skeleton
                     isLoading={loading}
                     key={i}
-                    boneColor="#023c4d"
-                    highlightColor="#b4c5e4"
+                    boneColor={
+                      colorScheme == "dark"
+                        ? "#023c4d"
+                        : "rgba(180, 197, 228, 0.2)"
+                    }
+                    highlightColor={
+                      colorScheme == "dark" ? "#b4c5e4" : "#fbfff1"
+                    }
                     containerStyle={{
                       height: 300,
                       padding: 16,

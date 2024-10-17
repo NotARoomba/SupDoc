@@ -34,7 +34,10 @@ export default function Pins() {
   return (
     <Animated.ScrollView
       style={{ opacity: fadeAnim }}
-      className={"h-full " + (Platform.OS == "ios" ? "pt-6" : "pt-16")}
+      className={
+        "h-full dark:bg-richer_black bg-ivory " +
+        (Platform.OS == "ios" ? "pt-6" : "pt-16")
+      }
     >
       <RefreshControl
         enabled
@@ -44,18 +47,18 @@ export default function Pins() {
           refreshPosts().then(() => setRefreshing(false));
         }}
       />
-      <Text className="text-6xl font-bold text-center text-ivory">
+      <Text className="text-6xl font-bold text-center dark:text-ivory text-richer_black">
         {t("titles.pins")}
       </Text>
       {savedPosts.length == 0 ? (
         loading && !refreshing ? (
-          <View className="h-fit">
+          <View className="h-fit bg-transparent">
             <LoaderView />
           </View>
         ) : (
           <Reanimated.Text
             entering={FadeIn.duration(500).delay(250)}
-            className=" text-center text-powder_blue/80"
+            className=" text-center dark:text-powder_blue/80 text-oxford_blue/80"
           >
             {t("posts.savedNone")}
           </Reanimated.Text>

@@ -7,6 +7,7 @@ import { usePosts } from "components/hooks/usePosts";
 import Loader from "components/loading/Loader";
 import ImageUpload from "components/misc/ImageUpload";
 import * as ImagePicker from "expo-image-picker";
+import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -34,6 +35,7 @@ export default function Upload() {
   const [activeChange, setActiveChange] = useState(false);
   const [activeDelete, setActiveDelete] = useState("");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const { colorScheme } = useColorScheme();
 
   const selectImage = async (pickerType: "camera" | "gallery") => {
     try {
@@ -73,7 +75,10 @@ export default function Upload() {
     };
   }, []);
   return (
-    <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback
+      className="h-full dark:bg-richer_black bg-ivory"
+      onPress={Keyboard.dismiss}
+    >
       {postEdit ? (
         <Animated.View
           style={{ opacity: fadeAnim }}
@@ -91,22 +96,22 @@ export default function Upload() {
               onPress={() =>
                 keyboardOpen ? Keyboard.dismiss() : resetPostEdit()
               }
-              className="z-50 w-24  px-5 h-8 py-0 bg-ivory/20 rounded-full"
+              className="z-50 w-24  px-5 h-8 py-0 dark:bg-ivory/20 bg-blue_munsell rounded-full"
             >
               <Reanimated.Text
                 key={keyboardOpen ? "a" : "b"}
                 entering={FadeIn.duration(250)}
                 exiting={FadeOut.duration(250)}
-                className="text-ivory h-fit  text font-bold text-center m-auto"
+                className="text-ivory  h-fit  text font-bold text-center m-auto"
               >
                 {keyboardOpen ? t("buttons.cancel") : t("buttons.clear")}
               </Reanimated.Text>
             </TouchableOpacity>
-            <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
+            <Text className="text-4xl dark:text-ivory text-richer_black -mt-1 mx-auto font-bold">
               {t("buttons.post")}
             </Text>
             <TouchableOpacity
-              className="z-50 w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
+              className="z-50 w-24 px-5  h-8 py-0 dark:bg-midnight_green bg-prussian_blue rounded-full"
               onPress={() =>
                 postEdit.title && postEdit.description
                   ? Alert.alert(
@@ -123,13 +128,13 @@ export default function Upload() {
                   : Alert.alert(t("error"), t("errors.fillmissing"))
               }
             >
-              {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
+              {/* <Icons name="sign-out" size={38} color={colorScheme == 'dark' ? "#fbfff1" : "#023c4d"}  /> */}
               <Text className="text-ivory h-fit font-bold text-center  m-auto">
                 {t("titles.upload")}
               </Text>
             </TouchableOpacity>
           </View>
-          <Text className="text-center text-lg text-ivory mt-4 font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black mt-4 font-semibold">
             {t("upload.title")}
           </Text>
           <TextInput
@@ -143,9 +148,9 @@ export default function Upload() {
             keyboardType="default"
             maxLength={50}
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mb-4 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mb-4 w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border dark:border-powder_blue/20 border-oxforder_blue/25 font-semibold"
           />
-          <Text className="text-center flex text-lg text-ivory font-semibold">
+          <Text className="text-center flex text-lg dark:text-ivory text-richer_black font-semibold">
             {t("upload.description")} ({postEdit.description.length}/1000)
           </Text>
           <TextInput
@@ -160,7 +165,7 @@ export default function Upload() {
             value={postEdit.description}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center   m-auto  h-52 p-1 py-2.5 pl-3 text-lg  w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center   m-auto  h-52 p-1 py-2.5 pl-3 text-lg  w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border dark:border-powder_blue/20 border-oxforder_blue/25 font-semibold"
           />
           <Reanimated.ScrollView
             centerContent
@@ -213,10 +218,14 @@ export default function Upload() {
                   { text: t("buttons.cancel"), style: "cancel" },
                 ])
               }
-              className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
+              className=" w-64 h-64 mx-2  aspect-square flex border-dashed border dark:border-ivory/80 border-midnight_green rounded-xl"
             >
               <View className="m-auto">
-                <Icons name="plus-circle" color={"#fbfff1"} size={50} />
+                <Icons
+                  name="plus-circle"
+                  color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
+                  size={50}
+                />
               </View>
             </TouchableOpacity>
           </Reanimated.ScrollView>

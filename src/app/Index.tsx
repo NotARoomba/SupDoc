@@ -341,9 +341,9 @@ export default function Index({ setIsLogged }: IndexProps) {
   };
   return (
     <TouchableWithoutFeedback className="h-full" onPress={Keyboard.dismiss}>
-      <View className="flex flex-col h-full bg-richer_black ">
+      <View className="flex flex-col h-full dark:bg-richer_black bg-ivory ">
         <Image
-          source={require("assets/images/icon.png")}
+          source={require("@/assets/images/icon.png")}
           className="h-32 my-4 mx-auto aspect-square rounded-xl"
         />
         {pageIndex == 0 ? (
@@ -424,10 +424,10 @@ export default function Index({ setIsLogged }: IndexProps) {
               <TouchableOpacity
                 onPress={() => setIndex(Math.max(pageIndex - 1, 0))}
                 className={
-                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
+                  "  dark:bg-oxforder_blue bg-blue_munsell mx-auto py-2.5 px-32 transition-all duration-300 rounded-lg "
                 }
               >
-                <Text className="text-xl  text-ivory font-medium text-center">
+                <Text className="text-xl  text-ivory  font-medium text-center">
                   {t("buttons.back")}
                 </Text>
               </TouchableOpacity>
@@ -470,10 +470,10 @@ export default function Index({ setIsLogged }: IndexProps) {
                       : 0
                 }
                 className={
-                  "  bg-oxforder_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
+                  "  dark:bg-oxforder_blue bg-blue_munsell mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
                 }
               >
-                <Text className="text-xl  text-ivory font-medium text-center">
+                <Text className="text-xl  text-ivory  font-medium text-center">
                   {t("buttons.finish")}
                 </Text>
               </TouchableOpacity>
@@ -522,7 +522,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                   ? Alert.alert(t("errors.missing"), t("errors.missingInfo"))
                   : setIndex(pageIndex + 1)
               }
-              className="   bg-oxforder_blue mx-auto px-32   py-2.5 rounded-lg"
+              className="   dark:bg-oxforder_blue bg-blue_munsell mx-auto px-32   py-2.5 rounded-lg"
             >
               <Text className="text-xl text-ivory font-medium text-center">
                 {t("buttons.next")}

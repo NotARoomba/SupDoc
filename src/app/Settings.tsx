@@ -6,7 +6,7 @@ import { useUser } from "components/hooks/useUser";
 import { logout } from "components/utils/Functions";
 import { LANGUAGES } from "components/utils/Types";
 import { router } from "expo-router";
-import React, { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -21,7 +21,6 @@ import {
 } from "react-native";
 import Reanimated, {
   useAnimatedStyle,
-  useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 
@@ -38,13 +37,14 @@ export default function Settings() {
     const index = Math.round(contentOffsetX / itemWidth);
     setLanguage(LANGUAGES[index].locale);
   };
-  
 
   useEffect(() => {
     const languageIndex = LANGUAGES.findIndex((v) => v.locale === language);
     if (languageIndex !== -1 && scrollRef.current) {
+      const scrollPosition = itemWidth * languageIndex;
+      setTimeout(() => scrollRef.current?.scrollTo({ x: scrollPosition }), 100);
     }
-  }, [language, scrollRef.current]);
+  }, [scrollRef.current, fadeAnim]);
 
   const handleButtonPress = () => {
     if (!isConfirmDelete) {
@@ -90,15 +90,15 @@ export default function Settings() {
         >
           <TouchableOpacity
             onPress={router.back}
-            className="z-50 w-24 px-5 h-8 py-0 bg-ivory/20 rounded-full"
+            className="z-50 w-24 px-5 h-8 py-0 dark:bg-ivory/20 bg-blue_munsell rounded-full"
           >
-            <Reanimated.Text className="text-ivory h-fit text font-bold text-center m-auto">
+            <Reanimated.Text className="text-ivory  h-fit text font-bold text-center m-auto">
               {t("buttons.back")}
             </Reanimated.Text>
           </TouchableOpacity>
           <TouchableOpacity
             disabled
-            className="z-50 opacity-0 w-24 px-5 h-8 py-0 bg-midnight_green rounded-full"
+            className="z-50 opacity-0 w-24 px-5 h-8 py-0 dark:bg-midnight_green bg-prussian_blue rounded-full"
             onPress={() =>
               Alert.alert(t("buttons.logout"), t("buttons.logoutDesc"), [
                 { text: t("buttons.cancel"), style: "cancel" },
@@ -110,12 +110,12 @@ export default function Settings() {
               ])
             }
           >
-            <Text className="text-ivory h-fit font-bold text-center m-auto">
+            <Text className="dark:text-ivory text-richer_black h-fit font-bold text-center m-auto">
               {"titles.logout"}
             </Text>
           </TouchableOpacity>
         </View>
-        <Text className="text-5xl text-ivory -mt-1 mx-auto font-bold">
+        <Text className="text-5xl dark:text-ivory text-richer_black -mt-1 mx-auto font-bold">
           {t("titles.settings")}
         </Text>
 
@@ -125,7 +125,7 @@ export default function Settings() {
             (Platform.OS === "ios" ? "-translate-y-16" : "-translate-y-24")
           }
         >
-          <Text className="text-ivory text-3xl font-bold text-center mb-2">
+          <Text className="dark:text-ivory text-richer_black text-3xl font-bold text-center mb-2">
             {t("buttons.theme")}
           </Text>
           <Slider
@@ -139,7 +139,7 @@ export default function Settings() {
                 : t("buttons.themes.light")
             }
           />
-          <Text className="text-ivory text-3xl font-bold text-center mt-8 mb-2">
+          <Text className="dark:text-ivory text-richer_black text-3xl font-bold text-center mt-8 mb-2">
             {t("settings.languages")}
           </Text>
 
@@ -148,17 +148,26 @@ export default function Settings() {
             horizontal
             ref={scrollRef}
             snapToAlignment="start"
-            decelerationRate={'fast'}
+            decelerationRate={"fast"}
             snapToInterval={224}
-            contentContainerStyle={{ paddingHorizontal: (Dimensions.get('window').width / 2) - ( 224 / 2) }}
+            contentContainerStyle={{
+              paddingHorizontal: Dimensions.get("window").width / 2 - 224 / 2,
+            }}
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={handleScrollEnd}
             // scrollEventThrottle={16}
             className="flex flex-row h-12 overflow-scroll"
           >
-            {LANGUAGES.map((v, i) => <LanguageButton key={i} index={i} language={v} currentIndex={-1} />)}
+            {LANGUAGES.map((v, i) => (
+              <LanguageButton
+                key={i}
+                index={i}
+                language={v}
+                currentIndex={-1}
+              />
+            ))}
           </ScrollView>
-          <Text className="text-ivory text-3xl font-bold text-center mt-8 mb-2">
+          <Text className="dark:text-ivory text-richer_black text-3xl font-bold text-center mt-8 mb-2">
             {t("settings.danger")}
           </Text>
 
@@ -168,7 +177,7 @@ export default function Settings() {
             className="mx-auto leading-10 flex rounded-xl justify-center h-12 align-middle w-56"
           >
             <TouchableOpacity onPress={handleButtonPress}>
-              <Text className="text-center text-2xl font-medium text-ivory">
+              <Text className="text-center text-2xl font-medium dark:text-ivory text-richer_black">
                 {isConfirmDelete
                   ? t("settings.confirmDelete")
                   : t("settings.deleteAccount")}
@@ -178,7 +187,7 @@ export default function Settings() {
         </View>
       </Animated.View>
       <Reanimated.View className="w-full absolute bottom-6">
-        <Text className=" text-powder_blue/50 font-bold text-center text-xs w-11/12 mx-auto">
+        <Text className=" dark:text-powder_blue/50 text-oxford_blue/50 font-bold text-center text-xs w-11/12 mx-auto">
           {t("settings.credits")}
         </Text>
       </Reanimated.View>

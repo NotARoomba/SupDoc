@@ -14,6 +14,7 @@ import PostBlock from "components/misc/PostBlock";
 import { callAPI, isDoctorInfo } from "components/utils/Functions";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -39,6 +40,7 @@ export default function UserPage() {
   const { addPosts } = usePosts();
   const [pictureLoading, setPictureLoading] = useState(false);
   const [ut, setUserType] = useState<UserType>();
+  const { colorScheme } = useColorScheme();
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
@@ -62,13 +64,13 @@ export default function UserPage() {
     fetchData();
   }, []);
   return (
-    <ScrollView className="flex h-full">
+    <ScrollView className="flex h-full dark:bg-richer_black bg-ivory">
       <Loading />
-      <SafeAreaView className="bg-richer_black" />
+      <SafeAreaView className="dark:bg-richer_black bg-ivory" />
       <Animated.View
         style={{ opacity: fadeAnim }}
         className={
-          "h-full bg-richer_black relative pb-44 " +
+          "h-full dark:bg-richer_black bg-ivory relative pb-44 " +
           (Platform.OS == "ios" ? "pt-16" : "pt-24")
         }
       >
@@ -80,7 +82,7 @@ export default function UserPage() {
         >
           <TouchableOpacity
             onPress={router.back}
-            className="z-50 w-24  px-5 h-8 py-0 bg-ivory/20 rounded-full"
+            className="z-50 w-24  px-5 h-8 py-0 dark:bg-ivory/20 bg-blue_munsell rounded-full"
           >
             <Reanimated.Text
               entering={FadeIn.duration(250)}
@@ -90,13 +92,13 @@ export default function UserPage() {
               {t("buttons.back")}
             </Reanimated.Text>
           </TouchableOpacity>
-          {/* <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
+          {/* <Text className="text-4xl dark:text-ivory text-richer_black -mt-1 mx-auto font-bold">
 Post
 </Text> */}
           <TouchableOpacity
             disabled={user?._id?.toString() == routes.id}
             style={{ opacity: user?._id?.toString() == routes.id ? 0 : 1 }}
-            className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
+            className="z-50  w-24 px-5  h-8 py-0 dark:bg-midnight_green bg-prussian_blue rounded-full"
             onPress={() =>
               Alert.alert(
                 t("Confirm"),
@@ -119,7 +121,7 @@ Post
             }
           >
             {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
-            <Text className="text-ivory h-fit font-bold text-center m-auto">
+            <Text className="text-ivory  h-fit font-bold text-center m-auto">
               {t("buttons.report")}
             </Text>
           </TouchableOpacity>
@@ -147,7 +149,11 @@ Post
                           <View className="absolute rounded-xl w-48 h-48  z-50  flex">
                             <Skeleton
                               animationType="shiver"
-                              boneColor="#041225"
+                              boneColor={
+                                colorScheme == "dark"
+                                  ? "#041225"
+                                  : "rgba(91, 149, 165, 0.2)"
+                              }
                               highlightColor="#b4c5e4"
                               layout={[
                                 {
@@ -162,7 +168,11 @@ Post
                                 <Icons
                                   name="person"
                                   size={150}
-                                  color={"#fbfff1"}
+                                  color={
+                                    colorScheme == "dark"
+                                      ? "#fbfff1"
+                                      : "#020912"
+                                  }
                                 />
                               </View>
                             </Skeleton>
@@ -173,24 +183,25 @@ Post
                   )}
                 </View>
               </View>
-              <Text className="text-3xl mt-2 -mb-2 text-ivory font-semibold text-center">
+              <Text className="text-3xl mt-2 -mb-2 dark:text-ivory text-richer_black font-semibold text-center">
                 {(u as Doctor).name ?? "Patient"}
               </Text>
+              <View className="h-0.5 rounded-full w-72 mx-auto bg-powder_blue/50 my-4" />
               {isDoctorInfo(ut as UserType, u) ? (
                 <View>
-                  <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                  <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                     {u.info.specialty}
                   </Text>
-                  <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                  <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                     {t("inputs.experience")}
                   </Text>
-                  <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                  <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                     {u.info.experience}
                   </Text>
-                  <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                  <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                     {t("inputs.bio")}
                   </Text>
-                  <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                  <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                     {u.info.about}
                   </Text>
                 </View>
@@ -198,76 +209,76 @@ Post
                 <View>
                   <View className="w-full justify-around flex flex-row">
                     <View className="w-1/2 flex">
-                      <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                      <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                         {t("inputs.sex")}
                       </Text>
-                      <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                      <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                         {u.info.sex}
                       </Text>
                       {u.info.altSex !== u.info.sex ? (
                         <View>
-                          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                             {t("user.altSex")}
                           </Text>
-                          <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                             {u.info.altSex}
                           </Text>
-                          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                             {t("user.hormones")}
                           </Text>
-                          <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                             {u.info.hormones ? t("yes") : t("no")}
                           </Text>
-                          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                             {t("user.surgery")}
                           </Text>
-                          <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                             {u.info.surgery ? t("yes") : t("no")}
                           </Text>
                         </View>
                       ) : (
                         <View>
-                          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                             {t("inputs.blood")}
                           </Text>
-                          <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                             {u.info.blood}
                           </Text>
-                          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                             {t("user.age")}
                           </Text>
-                          <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                             {t("user.ageValue", { years: u.info.age })}
                           </Text>
                         </View>
                       )}
                     </View>
                     <View className="w-1/2 flex">
-                      <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                      <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                         {t("inputs.height")}
                       </Text>
-                      <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                      <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                         {u.info.height}
                       </Text>
-                      <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                      <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                         {t("inputs.weight")}
                       </Text>
-                      <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                      <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                         {u.info.weight}
                       </Text>
 
                       {u.info.altSex !== u.info.sex && (
                         <View>
-                          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                             {t("inputs.blood")}
                           </Text>
-                          <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                             {u.info.blood}
                           </Text>
-                          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                             {t("user.age")}
                           </Text>
-                          <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                          <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                             {t("user.ageValue", { years: u.info.age })}
                           </Text>
                         </View>
@@ -275,7 +286,7 @@ Post
                     </View>
                   </View>
                   <View className="h-0.5 rounded-full w-72 mx-auto bg-powder_blue/50 my-4 mt-6" />
-                  <Text className="text-3xl  text-ivory font-semibold text-center">
+                  <Text className="text-3xl  dark:text-ivory text-richer_black font-semibold text-center">
                     {t("titles.posts")}
                   </Text>
                   <FlashList

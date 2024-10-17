@@ -33,10 +33,10 @@ export default function Slider({ options, setOption, selected }: SliderProps) {
   return (
     <View
       collapsable={false}
-      className="flex flex-row mx-auto relative h-12 bg-rich_black rounded-xl py-2"
+      className="flex flex-row mx-auto relative h-12 dark:bg-rich_black bg-paynes_gray/80 rounded-xl py-2"
     >
       <Animated.View
-        className="-z-10 bg-midnight_green h-12 rounded-xl absolute left-0 "
+        className="-z-10 dark:bg-midnight_green bg-prussian_blue h-12 rounded-xl absolute left-0 "
         style={{ width: width, transform: [{ translateX: pos }] }}
       />
       <View

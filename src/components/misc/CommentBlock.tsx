@@ -78,7 +78,7 @@ export default function CommentBlock({
             entering={FadeInUp.delay(100 * (comments.indexOf(comment) + 1))}
             exiting={FadeOutDown.duration(300)}
             className={`mb-4  rounded-xl py-2 
-            ${isReplyingToThisComment ? " bg-oxford_blue transition-all duration-500" : "bg-transparent transition-all duration-500"}
+            ${isReplyingToThisComment ? " dark:bg-oxford_blue bg-blue_munsell/50 transition-all duration-500" : "bg-transparent transition-all duration-500"}
             `}
           >
             <TouchableOpacity
@@ -89,7 +89,7 @@ export default function CommentBlock({
               className="flex flex-col"
             >
               <TouchableOpacity
-              className="w-fit flex"
+                className="w-fit flex"
                 onPress={() =>
                   router.navigate({
                     pathname:
@@ -100,15 +100,16 @@ export default function CommentBlock({
                   })
                 }
               >
-                <View className="w-fit">
-                  
-                <Text className="text-powder_blue text-lg min-w-fit max-w-fit font-bold">
-                  {comment.name}{" "}
-                  {comment.commenter == user?._id ? t("posts.you") : ""}
-                </Text>
+                <View className="w-fit mx-2">
+                  <Text className="dark:text-powder_blue text-midnight_green text-lg min-w-fit max-w-fit font-bold">
+                    {comment.name}{" "}
+                    {comment.commenter == user?._id ? t("posts.you") : ""}
+                  </Text>
                 </View>
               </TouchableOpacity>
-              <Text className="text-ivory text-md">{comment.text}</Text>
+              <Text className="dark:text-ivory mx-2 text-oxford_blue text-md">
+                {comment.text}
+              </Text>
 
               <View className="flex flex-row mt-2 justify-end gap-x-8">
                 <View className="flex flex-row">
@@ -124,7 +125,7 @@ export default function CommentBlock({
                       size={24}
                       color={liked ? "red" : "gray"}
                     />
-                    <Text className="text-ivory text-center my-auto">
+                    <Text className="dark:text-ivory text-midnight_green text-center my-auto">
                       {likes}
                     </Text>
                   </TouchableOpacity>
@@ -152,7 +153,7 @@ export default function CommentBlock({
                   exiting={FadeOutUp.duration(200)}
                   className={`pl-4 border-l border-gray-500 mt-2 rounded-xl rounded-l-none ${
                     isReplyingToThisComment
-                      ? " bg-oxford_blue-500"
+                      ? " dark:bg-oxford_blue "
                       : "bg-transparent"
                   }`}
                 >

@@ -2,6 +2,7 @@ import * as SecureStore from "expo-secure-store";
 // import { NativeWindStyleSheet } from "nativewind";
 import * as Nativewind from "nativewind";
 
+import SupDocEvents from "@/backend/models/events";
 import React, {
   createContext,
   ReactNode,
@@ -13,7 +14,6 @@ import { useTranslation } from "react-i18next";
 import { Alert, Appearance, StatusBar, useColorScheme } from "react-native";
 import { useLoading } from "./useLoading";
 import { useUser } from "./useUser";
-import SupDocEvents from "@/backend/models/events";
 
 interface SettingsContextType {
   language: string | null;
@@ -38,7 +38,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const { setLoading } = useLoading();
   const [language, setLanguageState] = useState<string | null>(null);
   const [theme, setThemeState] = useState<"light" | "dark" | null>(null);
-  const {socket} = useUser();
+  const { socket } = useUser();
   let colorScheme = useColorScheme();
   // const { setColorScheme } = Nativewind.useColorScheme();
 
@@ -94,7 +94,6 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const setTheme = async (newTheme: "light" | "dark") => {
     try {
       await SecureStore.setItemAsync("theme", newTheme);
-      console.log(newTheme);
       // NativeWindStyleSheet.setColorScheme(newTheme);
       // setColorScheme(newTheme);
       Nativewind.colorScheme.set(newTheme);
@@ -112,7 +111,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   useEffect(() => {
     fetchSettings();
     // DOES NOT WORK
-    const listener = Appearance.addChangeListener(e => { 
+    const listener = Appearance.addChangeListener((e) => {
       setThemeState(e.colorScheme as "dark" | "light");
       // setColorScheme(savedTheme);
       Nativewind.colorScheme.set(e.colorScheme as "dark" | "light");
@@ -123,7 +122,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
         true,
       );
     });
-    return () => listener.remove()
+    return () => listener.remove();
   }, [socket]);
 
   return (

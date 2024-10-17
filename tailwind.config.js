@@ -85,6 +85,7 @@ module.exports = {
           800: "#bdd4db",
           900: "#deeaed",
         },
+        paynes_gray: { DEFAULT: '#4a5c70', 100: '#0f1216', 200: '#1d242c', 300: '#2c3642', 400: '#3b4858', 500: '#4a5c70', 600: '#647b95', 700: '#899cb1', 800: '#b1bdcb', 900: '#d8dee5' }, 
         prussian_blue: {
           DEFAULT: "#1e3350",
           100: "#060a10",

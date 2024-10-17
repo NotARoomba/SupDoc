@@ -14,6 +14,7 @@ import { useLoading } from "components/hooks/useLoading";
 import ImageUpload from "components/misc/ImageUpload";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
+import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -61,6 +62,7 @@ export default function Signup({
   const [activeChange, setActiveChange] = useState(false);
   const [activeDelete, setActiveDelete] = useState("");
   const { t } = useTranslation();
+  const { colorScheme } = useColorScheme();
   const [gsItems, setGSItems] = useState(
     Object.values(GS).map((s) => ({ label: s, value: s })),
   );
@@ -255,20 +257,20 @@ export default function Signup({
       <Animated.Text
         entering={FadeIn.duration(500)}
         key={index}
-        className="text-5xl text-ivory font-bold text-center mb-4"
+        className="text-5xl dark:text-ivory text-richer_black font-bold text-center mb-4"
       >
         {index == 2 ? t("titles.register") : t("titles.personal")}
       </Animated.Text>
       {index == 2 ? (
         <Animated.View entering={FadeIn.duration(500)}>
           {/* needs to show a text box to input a phone number and identificatio number */}
-          <Text className="text-center text-lg text-ivory -mb-3 font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 font-semibold">
             {t("inputs.number")}
           </Text>
           <View className="flex flex-row justify-center m-auto align-middle  ">
             <TouchableOpacity
               onPress={() => setShow(!show)}
-              className=" bg-rich_black border border-powder_blue/20 border-r-0 text-center align-middle p-1 h-12 mt-3 w-3/12 rounded-l-xl"
+              className=" dark:bg-rich_black bg-prussian_blue border border-powder_blue/20 border-r-0 text-center align-middle p-1 h-12 mt-3 w-3/12 rounded-l-xl"
             >
               <Text className="align-middle m-auto text-lg text-ivory font-semibold">
                 {countryCode}
@@ -282,10 +284,10 @@ export default function Signup({
               value={info.number}
               keyboardType="phone-pad"
               placeholderTextColor={"#ffffff"}
-              className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-7/12   rounded-xl rounded-l-none bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+              className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-7/12   rounded-xl rounded-l-none dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
             />
           </View>
-          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
             {userType == UserType.DOCTOR
               ? t("inputs.identification")
               : t("inputs.identification") + t("inputs.TI")}
@@ -300,7 +302,7 @@ export default function Signup({
             value={info.identification}
             keyboardType="phone-pad"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
           />
         </Animated.View>
       ) : isPatientSignupInfo(userType, info) ? (
@@ -309,7 +311,7 @@ export default function Signup({
             entering={FadeIn.duration(500)}
             className={"h-full flex flex-col"}
           >
-            <Text className="text-center text-lg text-ivory mb-2 mt-0 font-semibold">
+            <Text className="text-center text-lg dark:text-ivory text-richer_black mb-2 mt-0 font-semibold">
               {t("inputs.dob")}
             </Text>
             <View className="flex w-full justify-center">
@@ -338,7 +340,7 @@ export default function Signup({
                   }
                   className="bg-neutral-800/80 rounded-lg py-0.5 px-3 w-fit mx-auto"
                 >
-                  <Text className="text-ivory text-lg">
+                  <Text className="dark:text-ivory text-richer_black text-lg">
                     {new Intl.DateTimeFormat("en-US", {
                       month: "short",
                       day: "numeric",
@@ -350,7 +352,7 @@ export default function Signup({
             </View>
             <View className="flex w-full flex-row">
               <View className="w-1/2 flex flex-col">
-                <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+                <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
                   {t("inputs.height")}
                 </Text>
 
@@ -365,16 +367,16 @@ export default function Signup({
                   maxLength={3}
                   keyboardType="phone-pad"
                   placeholderTextColor={"#ffffff"}
-                  className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                  className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
                 />
-                <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+                <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
                   {t("inputs.blood")}
                 </Text>
                 <View className="flex flex-row justify-center mx-auto -mt-6">
                   {Platform.OS == "ios" ? (
                     <>
                       <Picker
-                        className="h-12 text-ivory flex justify-center text-center mx-auto rounded-lg"
+                        className="h-12 dark:text-ivory text-richer_black flex justify-center text-center mx-auto rounded-lg"
                         selectedValue={info.gs}
                         style={{
                           width: 100,
@@ -386,25 +388,25 @@ export default function Signup({
                       >
                         <Picker.Item
                           style={{ backgroundColor: "#041225" }}
-                          color="#fbfff1"
+                          color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
                           label="O"
                           value="O"
                         />
                         <Picker.Item
                           style={{ backgroundColor: "#041225" }}
-                          color="#fbfff1"
+                          color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
                           label="A"
                           value="A"
                         />
                         <Picker.Item
                           style={{ backgroundColor: "#041225" }}
-                          color="#fbfff1"
+                          color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
                           label="B"
                           value="B"
                         />
                         <Picker.Item
                           style={{ backgroundColor: "#041225" }}
-                          color="#fbfff1"
+                          color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
                           label="AB"
                           value="AB"
                         />
@@ -417,13 +419,13 @@ export default function Signup({
                       >
                         <Picker.Item
                           style={{ backgroundColor: "#041225" }}
-                          color="#fbfff1"
+                          color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
                           label="-"
                           value="-"
                         />
                         <Picker.Item
                           style={{ backgroundColor: "#041225" }}
-                          color="#fbfff1"
+                          color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
                           label="+"
                           value="+"
                         />
@@ -478,7 +480,7 @@ export default function Signup({
                 </View>
               </View>
               <View className="w-1/2 flex flex-col">
-                <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+                <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
                   {t("inputs.weight")}
                 </Text>
 
@@ -493,11 +495,11 @@ export default function Signup({
                   maxLength={3}
                   keyboardType="phone-pad"
                   placeholderTextColor={"#ffffff"}
-                  className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                  className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
                 />
                 <View className="justify-around flex flex-row">
                   <View className="flex justify-center">
-                    <Text className="text-center w-24 text-lg text-ivory  font-semibold">
+                    <Text className="text-center w-24 text-lg dark:text-ivory text-richer_black  font-semibold">
                       {t("inputs.sex")}
                     </Text>
                     <View className="flex flex-row justify-center -mt-6">
@@ -510,19 +512,25 @@ export default function Signup({
                         >
                           <Picker.Item
                             style={{ backgroundColor: "#041225" }}
-                            color="#fbfff1"
+                            color={
+                              colorScheme == "dark" ? "#fbfff1" : "#023c4d"
+                            }
                             label="M"
                             value="M"
                           />
                           <Picker.Item
                             style={{ backgroundColor: "#041225" }}
-                            color="#fbfff1"
+                            color={
+                              colorScheme == "dark" ? "#fbfff1" : "#023c4d"
+                            }
                             label="F"
                             value="F"
                           />
                           <Picker.Item
                             style={{ backgroundColor: "#041225" }}
-                            color="#fbfff1"
+                            color={
+                              colorScheme == "dark" ? "#fbfff1" : "#023c4d"
+                            }
                             label="IS"
                             value="IS"
                           />
@@ -558,7 +566,7 @@ export default function Signup({
                       exiting={FadeOutLeft.duration(500)}
                       className="flex justify-center"
                     >
-                      <Text className="text-center w-28 mr-2 text-lg text-ivory   font-semibold">
+                      <Text className="text-center w-28 mr-2 text-lg dark:text-ivory text-richer_black   font-semibold">
                         {t("inputs.pregnant")}
                       </Text>
                       <View className="flex flex-row justify-center -mt-6">
@@ -572,13 +580,17 @@ export default function Signup({
                             }
                           >
                             <Picker.Item
-                              color="#fbfff1"
+                              color={
+                                colorScheme == "dark" ? "#fbfff1" : "#023c4d"
+                              }
                               style={{ backgroundColor: "#041225" }}
                               label={t("yes")}
                               value={true}
                             />
                             <Picker.Item
-                              color="#fbfff1"
+                              color={
+                                colorScheme == "dark" ? "#fbfff1" : "#023c4d"
+                              }
                               style={{ backgroundColor: "#041225" }}
                               label={t("no")}
                               value={false}
@@ -616,7 +628,7 @@ export default function Signup({
           </Animated.View>
         ) : index == 4 ? (
           <Animated.View entering={FadeIn.duration(500)}>
-            <Text className="text-center w-10/12 mx-auto text-lg mb-4 text-ivory font-semibold">
+            <Text className="text-center w-10/12 mx-auto text-lg mb-4 dark:text-ivory text-richer_black font-semibold">
               {t("inputs.trans")}
             </Text>
             <Slider
@@ -639,7 +651,7 @@ export default function Signup({
             />
             {info.trans && (
               <Animated.View entering={FadeIn.duration(500)}>
-                <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
+                <Text className="text-center w-10/12 mx-auto text-lg my-4 dark:text-ivory text-richer_black font-semibold">
                   {t("inputs.hormones")}
                 </Text>
                 <Slider
@@ -655,7 +667,7 @@ export default function Signup({
                         : undefined
                   }
                 />
-                <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
+                <Text className="text-center w-10/12 mx-auto text-lg my-4 dark:text-ivory text-richer_black font-semibold">
                   {t("inputs.surgery")}
                 </Text>
                 <Slider
@@ -676,7 +688,7 @@ export default function Signup({
           </Animated.View>
         ) : index == 5 && info.trans ? (
           <Animated.View entering={FadeIn.duration(500)}>
-            <Text className="text-center w-10/12 mx-auto text-lg mb-4 text-ivory font-semibold">
+            <Text className="text-center w-10/12 mx-auto text-lg mb-4 dark:text-ivory text-richer_black font-semibold">
               {t("inputs.altSex")}
             </Text>
             <View className="flex flex-row justify-center -mt-6">
@@ -688,17 +700,25 @@ export default function Signup({
                 >
                   <Picker.Item
                     style={{ backgroundColor: "#041225" }}
-                    color="#fbfff1"
+                    color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
                     label="M"
                     value={Sex.MALE}
                   />
-                  <Picker.Item color="#fbfff1" label="F" value={Sex.FEMALE} />
                   <Picker.Item
-                    color="#fbfff1"
+                    color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
+                    label="F"
+                    value={Sex.FEMALE}
+                  />
+                  <Picker.Item
+                    color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
                     label="NB"
                     value={Sex.NONBINARY}
                   />
-                  <Picker.Item color="#fbfff1" label="O" value={Sex.OTHER} />
+                  <Picker.Item
+                    color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
+                    label="O"
+                    value={Sex.OTHER}
+                  />
                 </Picker>
               ) : (
                 <DropDownPicker
@@ -723,7 +743,7 @@ export default function Signup({
           </Animated.View>
         ) : (
           <Animated.View entering={FadeIn.duration(500)}>
-            <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+            <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
               {t("inputs.password")}
             </Text>
             <TextInput
@@ -733,9 +753,9 @@ export default function Signup({
               secureTextEntry
               keyboardType="default"
               placeholderTextColor={"#ffffff"}
-              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
             />
-            <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+            <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
               {t("inputs.passwordChk")}
             </Text>
             <TextInput
@@ -745,7 +765,7 @@ export default function Signup({
               secureTextEntry
               keyboardType="default"
               placeholderTextColor={"#ffffff"}
-              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+              className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
             />
           </Animated.View>
         )
@@ -754,7 +774,7 @@ export default function Signup({
           className="flex flex-col"
           entering={FadeIn.duration(500)}
         >
-          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
             {t("inputs.first")}
           </Text>
           <TextInput
@@ -767,9 +787,9 @@ export default function Signup({
             value={info.firstName}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
           />
-          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
             {t("inputs.last")}
           </Text>
           <TextInput
@@ -782,9 +802,9 @@ export default function Signup({
             value={info.lastName}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
           />
-          {/* <Text className="text-center w-10/12 mx-auto text-lg mt-4 text-ivory font-semibold">
+          {/* <Text className="text-center w-10/12 mx-auto text-lg mt-4 dark:text-ivory text-richer_black font-semibold">
             What is your specialty?
           </Text>
           <View className="flex flex-row justify-center">
@@ -798,7 +818,7 @@ export default function Signup({
                 onValueChange={(v) => setInfo({ ...info, specialty: v })}
               >
                 {Object.values(Specialty).map((v, i) => (
-                  <Picker.Item color="#fbfff1" key={i} label={v} value={v} />
+                  <Picker.Item color={colorScheme == 'dark' ? "#fbfff1" : "#023c4d"} key={i} label={v} value={v} />
                 ))}
               </Picker>
             ) : (
@@ -832,7 +852,7 @@ export default function Signup({
           className="flex flex-col w-full"
           entering={FadeIn.duration(500)}
         >
-          <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
             {t("inputs.experience")}
           </Text>
           <TextInput
@@ -845,9 +865,9 @@ export default function Signup({
             value={info.experience}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
           />
-          <Text className="text-center flex text-lg text-ivory -mb-3 mt-4 font-semibold">
+          <Text className="text-center flex text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
             {t("inputs.bio")} ({info.about.length}/300)
           </Text>
           <TextInput
@@ -862,7 +882,7 @@ export default function Signup({
             value={info.about}
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
           />
         </Animated.View>
       ) : index == 5 ? (
@@ -870,11 +890,11 @@ export default function Signup({
           className="flex flex-col w-full"
           entering={FadeIn.duration(500)}
         >
-          <Text className="text-center text-lg text-ivory  font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black  font-semibold">
             {t("inputs.license")}
           </Text>
           {/* <TouchableOpacity
-            className="mx-auto px-8 bg-midnight_green flex py-1 rounded-xl mt-4 "
+            className="mx-auto px-8 dark:bg-midnight_green bg-prussian_blue flex py-1 rounded-xl mt-4 "
             onPress={() =>
               hasPermission
                 ? setCameraOpen(true)
@@ -892,7 +912,7 @@ export default function Signup({
                   )
             }
           >
-            <Text className="text-lg text-center w-full my-auto text-ivory font-semibold">
+            <Text className="text-lg text-center w-full my-auto dark:text-ivory text-richer_black font-semibold">
               Take Photo
             </Text>
           </TouchableOpacity> */}
@@ -936,17 +956,21 @@ export default function Signup({
                   { text: t("buttons.cancel"), style: "cancel" },
                 ])
               }
-              className=" w-64 h-64 mx-2  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
+              className=" w-64 h-64 mx-2  aspect-square flex border-dashed border dark:border-ivory/80 border-midnight_green rounded-xl"
             >
               <View className="m-auto">
-                <Icons name="plus-circle" color={"#fbfff1"} size={50} />
+                <Icons
+                  name="plus-circle"
+                  color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
+                  size={50}
+                />
               </View>
             </TouchableOpacity>
           </Animated.ScrollView>
         </Animated.View>
       ) : index == 6 ? (
         <Animated.View entering={FadeIn.duration(500)}>
-          <Text className="text-center text-lg text-ivory mb-3  font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black mb-3  font-semibold">
             {t("inputs.picture")}
           </Text>
           {info.picture.length == 0 ? (
@@ -972,10 +996,14 @@ export default function Signup({
                   { text: t("buttons.cancel"), style: "cancel" },
                 ])
               }
-              className=" w-64 h-64 mx-auto  aspect-square flex border-dashed border border-ivory/80 rounded-xl"
+              className=" w-64 h-64 mx-auto  aspect-square flex border-dashed border dark:border-ivory/80 border-midnight_green rounded-xl"
             >
               <View className="m-auto">
-                <Icons name="plus-circle" color={"#fbfff1"} size={50} />
+                <Icons
+                  name="plus-circle"
+                  color={colorScheme == "dark" ? "#fbfff1" : "#023c4d"}
+                  size={50}
+                />
               </View>
             </TouchableOpacity>
           ) : (
@@ -986,7 +1014,7 @@ export default function Signup({
             >
               <Image
                 source={info.picture}
-                className=" aspect-square rounded-xl"
+                className=" aspect-square w-64 h-64 rounded-xl"
               />
               <Pressable
                 onPress={() => setActiveChange(!activeChange)}
@@ -1035,7 +1063,7 @@ export default function Signup({
         </Animated.View>
       ) : (
         <Animated.View entering={FadeIn.duration(500)}>
-          <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
             {t("inputs.password")}
           </Text>
           <TextInput
@@ -1045,9 +1073,9 @@ export default function Signup({
             secureTextEntry
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl  w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl  w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
           />
-          <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+          <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
             {t("inputs.passwordChk")}
           </Text>
           <TextInput
@@ -1057,7 +1085,7 @@ export default function Signup({
             secureTextEntry
             keyboardType="default"
             placeholderTextColor={"#ffffff"}
-            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl  w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+            className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl  w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
           />
         </Animated.View>
       )}

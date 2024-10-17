@@ -6,6 +6,7 @@ import { PostBlockProps } from "components/utils/Types";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -31,6 +32,7 @@ export default function PostBlock({
   const { savePost, savedPosts } = usePosts();
   const ReanimatedBlurView = Reanimated.createAnimatedComponent(BlurView);
   const blurIntensity = useSharedValue(50);
+  const { colorScheme } = useColorScheme();
   const animatedBlurProps = useAnimatedProps(() => ({
     intensity: withSpring(blurIntensity.value, { damping: 15, stiffness: 90 }),
   }));
@@ -42,11 +44,13 @@ export default function PostBlock({
       entering={FadeIn.duration(250)}
       exiting={FadeOut.duration(250)}
       className={
-        "h-fit flex w-11/12 bg-midnight_green-500/60 mt-4 p-4 rounded-2xl mx-auto "
+        "h-fit flex w-11/12 bg-midnight_green/60 mt-4 p-4 rounded-2xl mx-auto "
       }
     >
       <View className="justify-between flex flex-row">
-        <Text className="text-ivory text-2xl font-bold mb-4">{post.title}</Text>
+        <Text className="text-ivory  text-2xl font-bold mb-4">
+          {post.title}
+        </Text>
         {userType === UserType.DOCTOR && (
           <TouchableOpacity
             onPress={() => {
@@ -93,7 +97,9 @@ export default function PostBlock({
             />
             <View className="h-full w-full absolute top-0-z-10">
               <Skeleton
-                boneColor="#023c4d"
+                boneColor={
+                  colorScheme == "dark" ? "#041225" : "rgba(91, 149, 165, 0.1)"
+                }
                 highlightColor="#b4c5e4"
                 layout={[
                   {
@@ -111,13 +117,13 @@ export default function PostBlock({
           </TouchableOpacity>
         </View>
         <View className={post.images.length > 0 ? "w-5/12" : "w-full"}>
-          <Text className="text-ivory font-medium overflow-ellipsis">
+          <Text className="text-ivory  font-medium overflow-ellipsis">
             {post.description}
           </Text>
         </View>
       </View>
       <TouchableOpacity
-      className="mt-6"
+        className="mt-6"
         onPress={() =>
           router.navigate({
             pathname: "/Post",

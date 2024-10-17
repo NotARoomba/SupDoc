@@ -4,12 +4,14 @@ import { useSettings } from "components/hooks/useSettings";
 import { useUser } from "components/hooks/useUser";
 import { registerForPushNotificationsAsync } from "components/utils/Functions";
 import { SplashScreen, Tabs } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 
 export default function TabLayout() {
   const { userType, fetchUser, updateToken } = useUser();
   const { fetchSettings } = useSettings();
+  const { colorScheme } = useColorScheme();
   useEffect(() => {
     fetchUser()
       .then(fetchSettings)
@@ -24,7 +26,7 @@ export default function TabLayout() {
         tabBarLabel: () => null,
         tabBarStyle: {
           display: "flex",
-          backgroundColor: "#071932",
+          backgroundColor: colorScheme == "dark" ? "#071932" : "#5B95A5",
           position: "absolute",
           bottom: Platform.OS == "ios" ? 40 : 20,
           borderRadius: 12,
@@ -34,7 +36,7 @@ export default function TabLayout() {
           height: 60,
           paddingBottom: 0,
           alignItems: "center",
-          shadowColor: "#000000",
+          shadowColor: colorScheme == "dark" ? "#000000" : "#ffffff",
           elevation: 0,
           shadowOffset: {
             width: 0,
@@ -46,12 +48,12 @@ export default function TabLayout() {
         },
         headerTransparent: true,
         headerShown: false,
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: colorScheme == "dark" ? "gray" : "#023c4d",
         tabBarActiveTintColor: "#fbfff1",
       })}
       sceneContainerStyle={{
         zIndex: -900,
-        backgroundColor: "#020912",
+        backgroundColor: colorScheme == "dark" ? "#020912" : "#fbfff1",
       }}
     >
       <Tabs.Screen

@@ -12,6 +12,7 @@ import CommentBlock from "components/misc/CommentBlock";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { ObjectId } from "mongodb";
+import { useColorScheme } from "nativewind";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -50,6 +51,7 @@ export default function PostPage() {
   const [index, setIndex] = useState(0);
   const [replyingTo, setReplyingTo] = useState<ObjectId | null>(null);
   const { t } = useTranslation();
+  const { colorScheme } = useColorScheme();
   const [comments, setComments] = useState<Comment[]>([]);
   useEffect(() => {
     const currentPost = posts.find((v) => v._id?.toString() === routes.id);
@@ -91,11 +93,11 @@ export default function PostPage() {
     >
       <Loading />
       <ScrollView className="flex h-full">
-        <SafeAreaView className="bg-richer_black" />
+        <SafeAreaView className="dark:bg-richer_black bg-ivory" />
         <Animated.View
           style={{ opacity: fadeAnim }}
           className={
-            "h-full bg-richer_black relative pb-44 " +
+            "h-full dark:bg-richer_black bg-ivory relative pb-44 " +
             (Platform.OS == "ios" ? "pt-16" : "pt-24")
           }
         >
@@ -107,23 +109,23 @@ export default function PostPage() {
           >
             <TouchableOpacity
               onPress={keyboardOpen ? Keyboard.dismiss : router.back}
-              className="z-50 w-24  px-5 h-8 py-0 bg-ivory/20 rounded-full"
+              className="z-50 w-24  px-5 h-8 py-0 dark:bg-ivory/20 bg-blue_munsell rounded-full"
             >
               <Reanimated.Text
                 key={keyboardOpen ? "a" : "b"}
                 entering={FadeIn.duration(250)}
                 exiting={FadeOut.duration(250)}
-                className="text-ivory h-fit  text font-bold text-center m-auto"
+                className="text-ivory  h-fit  text font-bold text-center m-auto"
               >
                 {keyboardOpen ? t("buttons.cancel") : t("buttons.back")}
               </Reanimated.Text>
             </TouchableOpacity>
-            {/* <Text className="text-4xl text-ivory -mt-1 mx-auto font-bold">
+            {/* <Text className="text-4xl dark:text-ivory text-richer_black -mt-1 mx-auto font-bold">
           Post
         </Text> */}
             {post && (
               <TouchableOpacity
-                className="z-50  w-24 px-5  h-8 py-0 bg-midnight_green rounded-full"
+                className="z-50  w-24 px-5  h-8 py-0 dark:bg-midnight_green bg-prussian_blue rounded-full"
                 onPress={() =>
                   Alert.alert(
                     t("confirmTitle"),
@@ -151,7 +153,7 @@ export default function PostPage() {
                 }
               >
                 {/* <Icons name="sign-out" size={38} color={"#fbfff1"} /> */}
-                <Text className="text-ivory h-fit font-bold text-center m-auto">
+                <Text className="text-ivory  h-fit font-bold text-center m-auto">
                   {userType == UserType.DOCTOR
                     ? t("buttons.report")
                     : t("buttons.delete")}
@@ -165,7 +167,7 @@ export default function PostPage() {
               exiting={FadeOut.duration(500)}
               className="h-full z-10 w-full"
             >
-              <Text className="text-ivory w-11/12 text-left text-4xl mx-auto font-bold ">
+              <Text className="dark:text-ivory text-richer_black w-11/12 text-left text-4xl mx-auto font-bold ">
                 {post.title}
               </Text>
               {post.images.length > 0 && (
@@ -267,76 +269,76 @@ export default function PostPage() {
                     )}
                     <View className="w-full justify-around flex flex-row">
                       <View className="w-1/2 flex">
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                        <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                           {t("inputs.sex")}
                         </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                        <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                           {post.info.sex}
                         </Text>
                         {post.info.altSex !== post.info.sex ? (
                           <View>
-                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                               {t("user.altSex")}
                             </Text>
-                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                            <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                               {post.info.altSex}
                             </Text>
-                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                               {t("user.hormones")}
                             </Text>
-                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                            <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                               {post.info.hormones ? t("yes") : t("no")}
                             </Text>
-                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                               {t("user.surgery")}
                             </Text>
-                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                            <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                               {post.info.surgery ? t("yes") : t("no")}
                             </Text>
                           </View>
                         ) : (
                           <View>
-                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                               {t("inputs.blood")}
                             </Text>
-                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                            <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                               {post.info.blood}
                             </Text>
-                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                               {t("user.age")}
                             </Text>
-                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                            <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                               {t("user.ageValue", { years: post.info.age })}
                             </Text>
                           </View>
                         )}
                       </View>
                       <View className="w-1/2 flex">
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                        <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                           {t("inputs.height")}
                         </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                        <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                           {post.info.height}
                         </Text>
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                        <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                           {t("inputs.weight")}
                         </Text>
-                        <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                        <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                           {post.info.weight}
                         </Text>
 
                         {post.info.altSex !== post.info.sex && (
                           <View>
-                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                               {t("inputs.blood")}
                             </Text>
-                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                            <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                               {post.info.blood}
                             </Text>
-                            <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                               {t("user.age")}
                             </Text>
-                            <Text className="text-xl mt-2 -mb-2 text-ivory/70 font-semibold text-center">
+                            <Text className="text-xl mt-2 -mb-2 dark:text-ivory text-richer_black/70 font-semibold text-center">
                               {t("user.ageValue", { years: post.info.age })}
                             </Text>
                           </View>
@@ -350,9 +352,9 @@ export default function PostPage() {
                           params: { id: post.patient.toString() },
                         })
                       }
-                      className="bg-oxford_blue w-11/12 mx-auto mt-4 px-5 py-2 rounded-xl"
+                      className="dark:bg-oxford_blue bg-blue_munsell w-11/12 mx-auto mt-4 px-5 py-2 rounded-xl"
                     >
-                      <Text className="text-ivory text-center font-semibold text-lg  ">
+                      <Text className="text-ivory  text-center font-semibold text-lg  ">
                         {t("posts.patientProfile")}
                       </Text>
                     </TouchableOpacity>
@@ -363,14 +365,14 @@ export default function PostPage() {
                   <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4 " />
                 )}
 
-                <Text className="text-4xl mb-1 font-bold text-center text-ivory">
+                <Text className="text-4xl mb-1 font-bold text-center dark:text-ivory text-richer_black">
                   {t("posts.description")}
                 </Text>
-                <Text className="text-ivory w-11/12 text-left text-xl mx-auto font-bold ">
+                <Text className="dark:text-ivory text-richer_black w-11/12 text-left text-xl mx-auto font-bold ">
                   {post.description}
                 </Text>
                 <View className="h-0.5  rounded-full w-11/12 mx-auto bg-powder_blue/50 my-4" />
-                <Text className="text-4xl font-bold text-center text-ivory">
+                <Text className="text-4xl font-bold text-center dark:text-ivory text-richer_black">
                   {t("posts.comments")}
                 </Text>
                 {post.comments.length == 0 ? (
@@ -380,13 +382,15 @@ export default function PostPage() {
                       : t("posts.commentsDoctor")}
                   </Text>
                 ) : (
-                  <CommentBlock
-                    post={post._id as ObjectId}
-                    parent={null}
-                    replyingTo={replyingTo}
-                    setReplyingTo={setReplyingTo}
-                    comments={comments}
-                  />
+                  <View className="pl-4">
+                    <CommentBlock
+                      post={post._id as ObjectId}
+                      parent={null}
+                      replyingTo={replyingTo}
+                      setReplyingTo={setReplyingTo}
+                      comments={comments}
+                    />
+                  </View>
                 )}
               </View>
             </Reanimated.ScrollView>
@@ -409,17 +413,22 @@ export default function PostPage() {
                   replyingTo ? t("posts.replyComment") : t("posts.addComment")
                 }
                 value={commentText}
+                placeholderTextColor={
+                  colorScheme == "dark"
+                    ? "rgba(251, 255, 241, 0.5)"
+                    : "rgba(251, 255, 241, 0.5)"
+                }
                 onChangeText={setCommentText}
-                className="bg-gray-700 text-ivory p-3 rounded-lg"
+                className="dark:bg-ivory/50 bg-blue_munsell text-ivory  p-3 rounded-lg"
               />
               <TouchableOpacity
                 onPress={handleAddComment}
-                className="mt-2 bg-midnight_green p-3 rounded-lg"
+                className="mt-2 dark:bg-midnight_green bg-prussian_blue p-3 rounded-lg"
               >
                 <Reanimated.Text
                   entering={FadeIn.duration(500)}
                   exiting={FadeOut.duration(500)}
-                  className="text-ivory text-center font-bold"
+                  className="text-ivory  text-center font-bold"
                 >
                   {replyingTo ? t("posts.postReply") : t("posts.postComment")}
                 </Reanimated.Text>
@@ -435,7 +444,7 @@ export default function PostPage() {
                     onPress={handleStopReply}
                     className="mt-2 bg-red-500 p-3 rounded-lg"
                   >
-                    <Text className="text-ivory text-center font-bold">
+                    <Text className="text-ivory  text-center font-bold">
                       {t("posts.cancelReply")}
                     </Text>
                   </TouchableOpacity>

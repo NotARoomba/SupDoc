@@ -11,13 +11,13 @@ export default function Login({ info, setInfo, index, userType }: LoginProps) {
       <Animated.Text
         entering={FadeIn.duration(500)}
         key={index}
-        className="text-5xl text-ivory font-bold text-center mb-8"
+        className="text-5xl dark:text-ivory text-richer_black font-bold text-center mb-8"
       >
         {t("titles.login")}
       </Animated.Text>
       {/* needs to show a text box to input a phone number and identificatio number */}
       <View>
-        <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+        <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
           {t("inputs.identification")}
           {userType == UserType.PATIENT && t("inputs.TI")}
         </Text>
@@ -31,9 +31,9 @@ export default function Login({ info, setInfo, index, userType }: LoginProps) {
           value={info.identification}
           keyboardType="phone-pad"
           placeholderTextColor={"#ffffff"}
-          className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl  w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+          className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl  w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
         />
-        <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+        <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
           {t("inputs.password")}
         </Text>
         <TextInput
@@ -43,7 +43,7 @@ export default function Login({ info, setInfo, index, userType }: LoginProps) {
           secureTextEntry
           keyboardType="default"
           placeholderTextColor={"#ffffff"}
-          className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+          className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border border-powder_blue/20 font-semibold"
         />
       </View>
     </Animated.View>

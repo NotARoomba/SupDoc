@@ -23,6 +23,7 @@ import { BirthSex, Sex } from "components/utils/Types";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import parsePhoneNumber from "libphonenumber-js";
+import { useColorScheme } from "nativewind";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -58,6 +59,7 @@ export default function Profile() {
   const [altSexValue, setAltSexValue] = useState(Sex.MALE);
   const [altSexOpen, setAltSexOpen] = useState(false);
   const scrollRef = useRef<ScrollView | null>(null);
+  const { colorScheme } = useColorScheme();
   const [altSexItems, setAltSexItems] = useState(
     Object.values(Sex).map((s) => ({ label: s, value: s })),
   );
@@ -227,7 +229,10 @@ export default function Profile() {
       style={{ flex: 1 }}
       // keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
     >
-      <Animated.View style={{ opacity: fadeAnim }} className="h-full w-full">
+      <Animated.View
+        style={{ opacity: fadeAnim }}
+        className="h-full w-full dark:bg-richer_black bg-ivory"
+      >
         <View
           className={
             "absolute w-full p-4 flex justify-between z-50 flex-row " +
@@ -238,7 +243,11 @@ export default function Profile() {
             onPress={() => router.navigate("/Settings")}
             className="z-50 p-1"
           >
-            <Icons name="gear" size={38} color={"#fbfff1"} />
+            <Icons
+              name="gear"
+              size={38}
+              color={colorScheme == "light" ? "#020912" : "#fbfff1"}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             className="z-50 p-1"
@@ -257,7 +266,11 @@ export default function Profile() {
               )
             }
           >
-            <Icons name="sign-out" size={38} color={"#fbfff1"} />
+            <Icons
+              name="sign-out"
+              size={38}
+              color={colorScheme == "light" ? "#020912" : "#fbfff1"}
+            />
           </TouchableOpacity>
         </View>
         {userType && user ? (
@@ -282,7 +295,7 @@ export default function Profile() {
                         isDoctorInfo(userType, user) &&
                         isDoctorInfo(userType, userEdit) && (
                           <TouchableOpacity className=" w-48 h-48  aspect-square flex  rounded-xl">
-                            <View className="m-auto mb-4">
+                            <View className="m-auto">
                               <Image
                                 onLoadStart={() => setPictureLoading(true)}
                                 onLoad={() => {
@@ -300,7 +313,11 @@ export default function Profile() {
                                 <View className=" rounded-xl w-48 h-48  z-50  flex">
                                   <Skeleton
                                     animationType="shiver"
-                                    boneColor="#041225"
+                                    boneColor={
+                                      colorScheme == "dark"
+                                        ? "#041225"
+                                        : "rgba(91, 149, 165, 0.2)"
+                                    }
                                     highlightColor="#b4c5e4"
                                     layout={[
                                       {
@@ -398,13 +415,13 @@ export default function Profile() {
                   {userEdit && (
                     <>
                       {isDoctorInfo(userType, userEdit) && (
-                        <Text className="text-2xl mt-2 -mb-2 text-ivory font-semibold text-center">
+                        <Text className="text-2xl mt-4 -mb-2 dark:text-ivory text-richer_black font-semibold text-center">
                           {userEdit.name}
                         </Text>
                       )}
                       <Text
                         className={
-                          " mt-2 text-ivory  text-center " +
+                          " mt-2 dark:text-ivory text-richer_black  text-center " +
                           (isDoctorInfo(userType, userEdit)
                             ? "text-xl font-medium"
                             : "text-2xl font-semibold")
@@ -413,13 +430,13 @@ export default function Profile() {
                         {user?.identification.number}
                       </Text>
                       <View className="h-0.5 rounded-full w-72 mx-auto bg-powder_blue/50 my-4" />
-                      <Text className="text-center text-lg text-ivory  font-semibold">
+                      <Text className="text-center text-lg dark:text-ivory text-richer_black  font-semibold">
                         {t("inputs.number")}
                       </Text>
                       <View className="flex flex-row justify-center align-middle -mt-3  ">
                         <TouchableOpacity
                           onPress={() => setCountryShow(!countryShow)}
-                          className=" bg-rich_black border border-powder_blue/20 border-r-0 text-center align-middle p-1 h-12 mt-3 w-3/12 rounded-l-xl"
+                          className=" dark:bg-rich_black/80 bg-prussian_blue border dark:border-powder_blue/20 border-oxforder_blue/25 border-r-0 text-center align-middle p-1 h-12 mt-3 w-3/12 rounded-l-xl"
                         >
                           <Text className="align-middle m-auto text-lg text-ivory font-semibold">
                             {countryCode}
@@ -432,7 +449,7 @@ export default function Profile() {
                           value={userEdit.number}
                           keyboardType="phone-pad"
                           placeholderTextColor={"#ffffff"}
-                          className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-7/12   rounded-xl rounded-l-none bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                          className="flex justify-center align-middle  my-auto ml-0 h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-7/12   rounded-xl rounded-l-none dark:bg-rich_black/80 bg-prussian_blue text-ivory border dark:border-powder_blue/20 border-oxforder_blue/25 font-semibold"
                         />
                       </View>
                     </>
@@ -448,7 +465,7 @@ export default function Profile() {
                       <View>
                         <View className="flex w-full flex-row h-fit ">
                           <View className="w-1/2 flex flex-col">
-                            <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
                               {t("inputs.height")}
                             </Text>
 
@@ -472,11 +489,11 @@ export default function Profile() {
                               maxLength={3}
                               keyboardType="phone-pad"
                               placeholderTextColor={"#ffffff"}
-                              className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                              className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border dark:border-powder_blue/20 border-oxforder_blue/25 font-semibold"
                             />
                           </View>
                           <View className="w-1/2 flex flex-col">
-                            <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
                               {t("inputs.weight")}
                             </Text>
 
@@ -500,7 +517,7 @@ export default function Profile() {
                               maxLength={3}
                               keyboardType="phone-pad"
                               placeholderTextColor={"#ffffff"}
-                              className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                              className="flex justify-center align-middle text-center  m-auto h-12 py-2.5 text-xl mt-2 w-6/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border dark:border-powder_blue/20 border-oxforder_blue/25 font-semibold"
                             />
                           </View>
                         </View>
@@ -508,7 +525,7 @@ export default function Profile() {
                           (userEdit.info.surgery &&
                             userEdit.info.altSex == BirthSex.FEMALE)) && (
                           <View className="flex flex-col">
-                            <Text className="text-center text-lg text-ivory  mt-4 font-semibold">
+                            <Text className="text-center text-lg dark:text-ivory text-richer_black  mt-4 font-semibold">
                               {t("inputs.pregnant")}
                             </Text>
                             <Slider
@@ -530,7 +547,7 @@ export default function Profile() {
                         )}
                       </View>
                       <View className="mx-auto flex mt-4 ">
-                        <Text className=" w-96 text-center mx-auto flex-shrink text-lg mb-4  text-ivory font-semibold">
+                        <Text className=" w-96 text-center mx-auto flex-shrink text-lg mb-4  dark:text-ivory text-richer_black font-semibold">
                           {t("inputs.trans")}
                         </Text>
                         <Slider
@@ -572,22 +589,38 @@ export default function Profile() {
                                 >
                                   <Picker.Item
                                     style={{ backgroundColor: "#041225" }}
-                                    color="#fbfff1"
+                                    color={
+                                      colorScheme == "dark"
+                                        ? "#fbfff1"
+                                        : "#023c4d"
+                                    }
                                     label="M"
                                     value={Sex.MALE}
                                   />
                                   <Picker.Item
-                                    color="#fbfff1"
+                                    color={
+                                      colorScheme == "dark"
+                                        ? "#fbfff1"
+                                        : "#023c4d"
+                                    }
                                     label="F"
                                     value={Sex.FEMALE}
                                   />
                                   <Picker.Item
-                                    color="#fbfff1"
+                                    color={
+                                      colorScheme == "dark"
+                                        ? "#fbfff1"
+                                        : "#023c4d"
+                                    }
                                     label="NB"
                                     value={Sex.NONBINARY}
                                   />
                                   <Picker.Item
-                                    color="#fbfff1"
+                                    color={
+                                      colorScheme == "dark"
+                                        ? "#fbfff1"
+                                        : "#023c4d"
+                                    }
                                     label="O"
                                     value={Sex.OTHER}
                                   />
@@ -624,7 +657,7 @@ export default function Profile() {
                                 />
                               )}
                             </View>
-                            <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
+                            <Text className="text-center w-10/12 mx-auto text-lg my-4 dark:text-ivory text-richer_black font-semibold">
                               {t("inputs.hormones")}
                             </Text>
                             <Slider
@@ -642,7 +675,7 @@ export default function Profile() {
                                 userEdit.info.hormones ? t("yes") : t("no")
                               }
                             />
-                            <Text className="text-center w-10/12 mx-auto text-lg my-4 text-ivory font-semibold">
+                            <Text className="text-center w-10/12 mx-auto text-lg my-4 dark:text-ivory text-richer_black font-semibold">
                               {t("inputs.surgery")}
                             </Text>
                             <Slider
@@ -669,7 +702,7 @@ export default function Profile() {
                     userEdit &&
                     isDoctorInfo(userType, userEdit) && (
                       <View className="flex">
-                        <Text className="text-center text-lg text-ivory -mb-3 mt-4 font-semibold">
+                        <Text className="text-center text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                           {t("inputs.experience")}
                         </Text>
                         <TextInput
@@ -682,9 +715,9 @@ export default function Profile() {
                           value={userEdit.info.experience}
                           keyboardType="default"
                           placeholderTextColor={"#ffffff"}
-                          className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                          className="flex justify-center align-middle  m-auto h-12 p-1 py-2.5 pl-3 text-xl mt-3 w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border dark:border-powder_blue/20 border-oxforder_blue/25 font-semibold"
                         />
-                        <Text className="text-center flex text-lg text-ivory -mb-3 mt-4 font-semibold">
+                        <Text className="text-center flex text-lg dark:text-ivory text-richer_black -mb-3 mt-4 font-semibold">
                           {t("inputs.bio")} ({userEdit.info.about.length}/300)
                         </Text>
                         <TextInput
@@ -699,7 +732,7 @@ export default function Profile() {
                           value={userEdit.info.about}
                           keyboardType="default"
                           placeholderTextColor={"#ffffff"}
-                          className="flex justify-center align-middle  m-auto mb-52 h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl bg-rich_black text-ivory border border-powder_blue/20 font-semibold"
+                          className="flex justify-center align-middle  m-auto mb-52 h-52 p-1 py-2.5 pl-3 text-lg mt-3 w-10/12   rounded-xl dark:bg-rich_black/80 bg-prussian_blue text-ivory border dark:border-powder_blue/20 border-oxforder_blue/25 font-semibold"
                         />
                       </View>
                     )
@@ -752,7 +785,7 @@ export default function Profile() {
           } as User) != JSON.stringify(user) && (
             <View
               className={
-                "flex flex-col absolute gap-y-4 w-full z-10 left-0 bottom-28"
+                "flex flex-col absolute gap-y-4 w-full z-10 left-0 bottom-32"
               }
             >
               <Reanimated.View
@@ -766,7 +799,7 @@ export default function Profile() {
                     "  bg-oxford_blue mx-auto px-32 py-2.5 transition-all duration-300 rounded-lg "
                   }
                 >
-                  <Text className="text-xl  text-ivory font-medium text-center">
+                  <Text className="text-xl  text-ivory  font-medium text-center">
                     {t("buttons.update")}
                   </Text>
                 </TouchableOpacity>
