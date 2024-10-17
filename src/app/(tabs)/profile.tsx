@@ -273,7 +273,7 @@ export default function Profile() {
               <View className="w-full">
                 <View className="flex mx-auto pt-8  h-full w-full">
                   <View className="mx-auto bg-transparent w-48 h-48 rounded-full">
-                    <View className=" m-auto">
+                    <View className=" m-auto relative">
                       {userType == UserType.PATIENT ? (
                         <Icons name="person" size={150} color={"#fbfff1"} />
                       ) : (
@@ -282,7 +282,7 @@ export default function Profile() {
                         isDoctorInfo(userType, user) &&
                         isDoctorInfo(userType, userEdit) && (
                           <TouchableOpacity className=" w-48 h-48  aspect-square flex  rounded-xl">
-                            <View className="m-auto">
+                            <View className="m-auto mb-4">
                               <Image
                                 onLoadStart={() => setPictureLoading(true)}
                                 onLoad={() => {
@@ -297,7 +297,7 @@ export default function Profile() {
                               />
 
                               {pictureLoading && (
-                                <View className="absolute rounded-xl w-48 h-48  z-50  flex">
+                                <View className=" rounded-xl w-48 h-48  z-50  flex">
                                   <Skeleton
                                     animationType="shiver"
                                     boneColor="#041225"
@@ -322,7 +322,7 @@ export default function Profile() {
                                 </View>
                               )}
                               {!pictureLoaded && !pictureLoading && (
-                                <View className="absolute rounded-xl w-48 h-48  z-50  flex">
+                                <View className="absolute rounded-xl w-48 h-48 top-0 left-0  z-50  flex">
                                   <View className="m-auto ">
                                     <Icons
                                       name="person"

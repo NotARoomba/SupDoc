@@ -39,8 +39,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const [language, setLanguageState] = useState<string | null>(null);
   const [theme, setThemeState] = useState<"light" | "dark" | null>(null);
   const {socket} = useUser();
-  //let colorScheme = useColorScheme();
-  const { setColorScheme, colorScheme } = Nativewind.useColorScheme();
+  let colorScheme = useColorScheme();
+  // const { setColorScheme } = Nativewind.useColorScheme();
 
   const fetchSettings = async () => {
     // setLoading(true);
@@ -56,7 +56,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 
       if (savedTheme === "light" || savedTheme === "dark") {
         setThemeState(savedTheme);
-        //setColorScheme(savedTheme);
+        // setColorScheme(savedTheme);
+        Nativewind.colorScheme.set(savedTheme);
         Appearance.setColorScheme(savedTheme);
         // NativeWindStyleSheet.setColorScheme(savedTheme);
         StatusBar.setBarStyle(
@@ -65,6 +66,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
         );
       } else {
         setThemeState(colorScheme as "dark" | "light");
+        Nativewind.colorScheme.set(colorScheme as "dark" | "light");
+        StatusBar.setBarStyle(
+          colorScheme !== "light" ? "light-content" : "dark-content",
+          true,
+        );
         setTheme(colorScheme as "dark" | "light");
       }
       //setLoading(false);
@@ -90,7 +96,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       await SecureStore.setItemAsync("theme", newTheme);
       console.log(newTheme);
       // NativeWindStyleSheet.setColorScheme(newTheme);
-      //setColorScheme(newTheme);
+      // setColorScheme(newTheme);
+      Nativewind.colorScheme.set(newTheme);
       Appearance.setColorScheme(newTheme);
       StatusBar.setBarStyle(
         newTheme !== "light" ? "light-content" : "dark-content",
@@ -104,6 +111,19 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 
   useEffect(() => {
     fetchSettings();
+    // DOES NOT WORK
+    const listener = Appearance.addChangeListener(e => { 
+      setThemeState(e.colorScheme as "dark" | "light");
+      // setColorScheme(savedTheme);
+      Nativewind.colorScheme.set(e.colorScheme as "dark" | "light");
+      Appearance.setColorScheme(e.colorScheme as "dark" | "light");
+      // NativeWindStyleSheet.setColorScheme(savedTheme);
+      StatusBar.setBarStyle(
+        e.colorScheme !== "light" ? "light-content" : "dark-content",
+        true,
+      );
+    });
+    return () => listener.remove()
   }, [socket]);
 
   return (

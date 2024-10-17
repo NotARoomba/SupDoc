@@ -117,6 +117,7 @@ export default function PostBlock({
         </View>
       </View>
       <TouchableOpacity
+      className="mt-6"
         onPress={() =>
           router.navigate({
             pathname: "/Post",

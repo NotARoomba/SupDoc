@@ -165,7 +165,7 @@ export interface CommentBlockProps {
   setReplyingTo: (reply: ObjectId | null) => void;
 }
 
-type Language = {
+export type Language = {
   locale: LanguageCodes;
   name: string;
 };
@@ -203,4 +203,10 @@ export const LANGUAGE_COLORS: Record<LanguageCodes, string> = {
 
 export interface FunFactProps {
   fact: Fact;
+}
+
+export interface LanguageButtonProps {
+  language: Language;
+  index: number;
+  currentIndex: number;
 }

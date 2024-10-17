@@ -1,3 +1,4 @@
+import LanguageButton from "components/buttons/LanguageButton";
 import Slider from "components/buttons/Slider";
 import useFade from "components/hooks/useFade";
 import { useSettings } from "components/hooks/useSettings";
@@ -5,11 +6,12 @@ import { useUser } from "components/hooks/useUser";
 import { logout } from "components/utils/Functions";
 import { LANGUAGES } from "components/utils/Types";
 import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
   Animated,
+  Dimensions,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -28,29 +30,19 @@ export default function Settings() {
   const { setLanguage, setTheme, theme, language } = useSettings();
   const { deleteUser } = useUser();
   const { t } = useTranslation();
-  const scrollX = useSharedValue(0);
   const scrollRef = useRef<ScrollView>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
-  const itemWidth = 256;
+  const itemWidth = 224;
   const handleScrollEnd = (event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(contentOffsetX / itemWidth);
-    setCurrentIndex(index);
     setLanguage(LANGUAGES[index].locale);
   };
-
-  const handleScroll = (event: any) => {
-    scrollX.value = event.nativeEvent.contentOffset.x;
-  };
+  
 
   useEffect(() => {
     const languageIndex = LANGUAGES.findIndex((v) => v.locale === language);
     if (languageIndex !== -1 && scrollRef.current) {
-      const scrollPosition = itemWidth * languageIndex;
-      scrollX.value = scrollPosition;
-      scrollRef.current?.scrollTo({ x: scrollPosition });
-      setCurrentIndex(languageIndex);
     }
   }, [language, scrollRef.current]);
 
@@ -80,7 +72,6 @@ export default function Settings() {
       backgroundColor: isConfirmDelete ? "#f87171" : "#808080",
     };
   });
-
   return (
     <View className="h-full">
       <SafeAreaView className="dark:bg-richer_black bg-ivory" />
@@ -156,48 +147,16 @@ export default function Settings() {
           <ScrollView
             horizontal
             ref={scrollRef}
-            snapToOffsets={LANGUAGES.map((_, i) =>
-              i == 0
-                ? 0
-                : i == LANGUAGES.length - 1
-                  ? i * LANGUAGES.length - 1 - 80
-                  : i * itemWidth,
-            )}
-            snapToAlignment="center"
-            decelerationRate="fast"
-            contentContainerStyle={{ paddingHorizontal: 80 }}
+            snapToAlignment="start"
+            decelerationRate={'fast'}
+            snapToInterval={224}
+            contentContainerStyle={{ paddingHorizontal: (Dimensions.get('window').width / 2) - ( 224 / 2) }}
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={handleScrollEnd}
-            onScroll={handleScroll}
             // scrollEventThrottle={16}
             className="flex flex-row h-12 overflow-scroll"
           >
-            {LANGUAGES.map((v, i) => {
-              const animatedStyle = useAnimatedStyle(() => {
-                const scale = withTiming(i === currentIndex ? 1.1 : 1, {
-                  duration: 300,
-                });
-                const color = withTiming(
-                  i === currentIndex ? "#023c4d" : "#082540",
-                  {
-                    duration: 300,
-                  },
-                );
-                return { transform: [{ scale }], backgroundColor: color };
-              });
-
-              return (
-                <Reanimated.View
-                  key={i}
-                  style={animatedStyle}
-                  className={`snap-center mx-4 leading-10 transition-all duration-300 flex rounded-xl justify-center h-12 py-auto max-w-56 w-56 `}
-                >
-                  <Reanimated.Text className="text-center bg-transparent text-ivory text-2xl font-medium">
-                    {v.name}
-                  </Reanimated.Text>
-                </Reanimated.View>
-              );
-            })}
+            {LANGUAGES.map((v, i) => <LanguageButton key={i} index={i} language={v} currentIndex={-1} />)}
           </ScrollView>
           <Text className="text-ivory text-3xl font-bold text-center mt-8 mb-2">
             {t("settings.danger")}

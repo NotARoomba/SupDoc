@@ -16,10 +16,6 @@ import "@/global.css"
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
-  Appearance.addChangeListener((e) => {
-    console.log(e)
-    console.log("Appearance changed");
-  })
   if (Platform.OS == "android") useLanguageUpdater();
   const [isLogged, setIsLogged] = useState(false);
   useEffect(() => {
