@@ -57,11 +57,7 @@ factsRouter.get("/", async (req: Request, res: Response) => {
         //get last 5 facts using the timestamp and lookup from the database
         if (randomFacts.length > 0)
           randomFacts = (await collections.facts
-            .find({
-              timestamp: {
-                $lte: startOfDay.getTime(),
-              },
-            })
+            .find()
             .limit(5)
             .toArray()) as Fact[];
 

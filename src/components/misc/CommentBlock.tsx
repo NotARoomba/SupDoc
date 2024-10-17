@@ -77,7 +77,7 @@ export default function CommentBlock({
             key={comment._id?.toString()}
             entering={FadeInUp.delay(100 * (comments.indexOf(comment) + 1))}
             exiting={FadeOutDown.duration(300)}
-            className={`mb-4  rounded-xl px-4 py-2 
+            className={`mb-4  rounded-xl py-2 
             ${isReplyingToThisComment ? " bg-oxford_blue transition-all duration-500" : "bg-transparent transition-all duration-500"}
             `}
           >
@@ -85,8 +85,11 @@ export default function CommentBlock({
               onPress={() => {
                 setReplyingTo(comment._id == replyingTo ? null : comment._id);
               }}
+              delayPressIn={150}
+              className="flex flex-col"
             >
               <TouchableOpacity
+              className="w-fit flex"
                 onPress={() =>
                   router.navigate({
                     pathname:
@@ -97,10 +100,13 @@ export default function CommentBlock({
                   })
                 }
               >
-                <Text className="text-powder_blue text-lg font-bold">
+                <View className="w-fit">
+                  
+                <Text className="text-powder_blue text-lg min-w-fit max-w-fit font-bold">
                   {comment.name}{" "}
                   {comment.commenter == user?._id ? t("posts.you") : ""}
                 </Text>
+                </View>
               </TouchableOpacity>
               <Text className="text-ivory text-md">{comment.text}</Text>
 
