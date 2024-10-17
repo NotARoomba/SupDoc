@@ -1,5 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 // import { NativeWindStyleSheet } from "nativewind";
+import * as Nativewind from "nativewind";
+
 import React, {
   createContext,
   ReactNode,
@@ -37,7 +39,9 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const [language, setLanguageState] = useState<string | null>(null);
   const [theme, setThemeState] = useState<"light" | "dark" | null>(null);
   const {socket} = useUser();
-  let colorScheme = useColorScheme();
+  //let colorScheme = useColorScheme();
+  const { setColorScheme, colorScheme } = Nativewind.useColorScheme();
+
   const fetchSettings = async () => {
     // setLoading(true);
     try {
@@ -52,6 +56,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 
       if (savedTheme === "light" || savedTheme === "dark") {
         setThemeState(savedTheme);
+        //setColorScheme(savedTheme);
         Appearance.setColorScheme(savedTheme);
         // NativeWindStyleSheet.setColorScheme(savedTheme);
         StatusBar.setBarStyle(
@@ -85,6 +90,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       await SecureStore.setItemAsync("theme", newTheme);
       console.log(newTheme);
       // NativeWindStyleSheet.setColorScheme(newTheme);
+      //setColorScheme(newTheme);
       Appearance.setColorScheme(newTheme);
       StatusBar.setBarStyle(
         newTheme !== "light" ? "light-content" : "dark-content",

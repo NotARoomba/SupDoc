@@ -190,7 +190,7 @@ export default function Settings() {
                 <Reanimated.View
                   key={i}
                   style={animatedStyle}
-                  className={`snap-center mx-4 leading-10 transition-all duration-300 flex rounded-xl justify-center h-12 py-auto align-middle max-w-56 w-56 `}
+                  className={`snap-center mx-4 leading-10 transition-all duration-300 flex rounded-xl justify-center h-12 py-auto max-w-56 w-56 `}
                 >
                   <Reanimated.Text className="text-center bg-transparent text-ivory text-2xl font-medium">
                     {v.name}

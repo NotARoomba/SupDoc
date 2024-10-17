@@ -11,6 +11,7 @@ import { Appearance, Platform, SafeAreaView, StatusBar, useColorScheme, View } f
 import "react-native-reanimated";
 import { useLanguageUpdater } from "../components/utils/i18n";
 import Index from "./Index";
+import "@/global.css"
 // import { logout } from "components/utils/Functions";
 
 SplashScreen.preventAutoHideAsync();

@@ -25,3 +25,4 @@ expo-env.d.ts
 *.ipa
 
 google-services.json
+nativewind-env.d.ts

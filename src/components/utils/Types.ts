@@ -1,5 +1,3 @@
-/// <reference types="nativewind/types" />
-
 import Comment from "@/backend/models/comment";
 import Fact from "@/backend/models/fact";
 import Post from "@/backend/models/post";
