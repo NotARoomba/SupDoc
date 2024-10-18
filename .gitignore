@@ -26,6 +26,3 @@ expo-env.d.ts
 
 google-services.json
 nativewind-env.d.ts
-
-/web
-/docs
