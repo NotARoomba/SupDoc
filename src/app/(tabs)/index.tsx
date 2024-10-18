@@ -34,7 +34,8 @@ export default function Index() {
   //   await SplashScreen.hideAsync();
   // };
   useEffect(() => {
-    if (feed.length !== 0 || posts.length !== 0) setLoading(false);
+    if ((feed.length !== 0 || posts.length !== 0) || facts.length !== 0) setLoading(false);
+    
   }, [feed, posts]);
   return (
     <Animated.View

@@ -57,11 +57,12 @@ export default function PostPage() {
     const currentPost = posts.find((v) => v._id?.toString() === routes.id);
     // Only update if the current post or its comments change
     if (currentPost) {
+      // setPost(currentPost);
       const newComments = currentPost.comments || comments; // Assuming comments is an array
       if (JSON.stringify(newComments) !== JSON.stringify(comments)) {
         setPost(currentPost);
         setComments(newComments);
-      }
+      } else if (!post) setPost(currentPost)
     }
   }, [posts, routes]);
 
@@ -90,6 +91,7 @@ export default function PostPage() {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "position" : "position"}
       style={{ flex: 1 }}
+      className="dark:bg-richer_black bg-ivory"
     >
       <Loading />
       <ScrollView className="flex h-full">
@@ -190,6 +192,7 @@ export default function PostPage() {
                       width: Dimensions.get("window").width * (11 / 12),
                       height: Dimensions.get("window").width * (11 / 12),
                     }}
+                    style={{backgroundColor: 'transparent'}}
                     renderItem={(v) => {
                       const [pictureLoading, setPictureLoading] =
                         useState(false);

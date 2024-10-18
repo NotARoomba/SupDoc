@@ -167,7 +167,7 @@ export const PostsProvider: React.FC<PostsProviderProps> = ({ children }) => {
       }
       // listRef.current?.prepareForLayoutAnimationRender();
       // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      // setLoading(false);
+      setLoading(false);
     };
     if (socket) {
       socket.emit(

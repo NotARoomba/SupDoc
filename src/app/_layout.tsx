@@ -8,7 +8,7 @@ import "expo-dev-client";
 import { SplashScreen, Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import { Platform, SafeAreaView, StatusBar, View } from "react-native";
+import { Appearance, Platform, SafeAreaView, StatusBar, View } from "react-native";
 import "react-native-reanimated";
 import { useLanguageUpdater } from "../components/utils/i18n";
 import Index from "./Index";
