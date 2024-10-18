@@ -14,6 +14,11 @@ import { useLanguageUpdater } from "../components/utils/i18n";
 import Index from "./Index";
 // import { logout } from "components/utils/Functions";
 
+import {cssInterop} from 'nativewind'
+import { Image } from 'expo-image';
+
+cssInterop(Image, { className: "style" });
+
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   if (Platform.OS == "android") useLanguageUpdater();

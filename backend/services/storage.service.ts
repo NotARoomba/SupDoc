@@ -107,6 +107,7 @@ export async function removeImageFromStorage(
 }
 
 export async function generateSignedUrl(fileUrl: string) {
+  if (!fileUrl) return ""
   const options: GetSignedUrlConfig = {
     version: "v4",
     action: "read",
