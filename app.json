@@ -76,6 +76,11 @@
       "router": {
         "origin": false
       },
+      "updates": {
+        "assetPatternsToBeBundled": [
+          "assets/**/*"
+        ]
+      },
       "eas": {
         "projectId": "a6219396-5a11-49f4-8118-8d2692a4d80b"
       }
