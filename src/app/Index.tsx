@@ -86,7 +86,7 @@ export default function Index({ setIsLogged }: IndexProps) {
     //   console.log(signUpInfo.license[0].length / 1000);
     if (isDoctorSignupInfo(userType, signUpInfo)) {
       const res = await uploadImages(
-        signUpInfo.license.concat(signUpInfo.picture),
+        signUpInfo.license.concat(signUpInfo.picture)
       );
       if (res.status !== STATUS_CODES.SUCCESS) {
         setLoading(false);
@@ -132,26 +132,26 @@ export default function Index({ setIsLogged }: IndexProps) {
               license: signUpInfo.license,
               number: parseInt(signUpInfo.identification),
             },
-          } as Doctor),
+          } as Doctor)
     );
     if (create.status === STATUS_CODES.SUCCESS) {
       setLoading(false);
       setTimeout(() => Alert.alert(t("success"), t("successes.signup")), 250);
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
-        keys.private,
+        keys.private
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
-        keys.public,
+        keys.public
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
-        userType,
+        userType
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
-        signUpInfo.password,
+        signUpInfo.password
       );
       // await fetchUser();
       // await fetchPosts();
@@ -160,7 +160,7 @@ export default function Index({ setIsLogged }: IndexProps) {
       setLoading(false);
       return Alert.alert(
         t("error"),
-        t(`errors.${STATUS_CODES[create.status]}`),
+        t(`errors.${STATUS_CODES[create.status]}`)
       );
     }
   };
@@ -232,7 +232,7 @@ export default function Index({ setIsLogged }: IndexProps) {
           async (input) => await checkLogin(input, res.number),
           "plain-text",
           "",
-          "number-pad",
+          "number-pad"
         );
       }, 250);
     }
@@ -260,7 +260,7 @@ export default function Index({ setIsLogged }: IndexProps) {
         t("error"),
         t("errors.loginNotFound", {
           userType: userType == UserType.DOCTOR ? t("doctor") : t("patient"),
-        }),
+        })
       );
     } else if (res.status !== STATUS_CODES.SUCCESS) {
       setLoading(false);
@@ -269,13 +269,13 @@ export default function Index({ setIsLogged }: IndexProps) {
     }
     const test = await RSA.encrypt(
       process.env.EXPO_PUBLIC_LIMITED_AUTH,
-      res.public,
+      res.public
     );
     try {
       setLoading(false);
       const decrypted = CryptoJS.AES.decrypt(
         res.private,
-        loginInfo.password,
+        loginInfo.password
       ).toString(CryptoJS.enc.Utf8);
       const isValid =
         (await RSA.decrypt(test, decrypted)) ==
@@ -283,19 +283,19 @@ export default function Index({ setIsLogged }: IndexProps) {
       if (!isValid) return Alert.alert(t("error"), t("errors.password.wrong"));
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PRIVATE,
-        decrypted,
+        decrypted
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PUBLIC,
-        res.public,
+        res.public
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_TYPE,
-        userType,
+        userType
       );
       await SecureStore.setItemAsync(
         process.env.EXPO_PUBLIC_KEY_NAME_PASS,
-        loginInfo.password,
+        loginInfo.password
       );
       // await fetchUser();
       // return setTimeout(() => {Alert.alert(t("success"), t("successes.login"));;}, 250);
@@ -322,7 +322,7 @@ export default function Index({ setIsLogged }: IndexProps) {
 
     // Check for at least one special character
     const hasSpecialChar = /[!@#$%^&*()_\-+=~`{}[\]:;"'<>,.?/\\|]/.test(
-      password,
+      password
     );
     if (!hasSpecialChar) {
       Alert.alert(t("error"), t("errors.password.special"));
@@ -461,7 +461,7 @@ export default function Index({ setIsLogged }: IndexProps) {
                         t("error"),
                         !isLogin
                           ? t("errors.password.mismatch")
-                          : t("errors.missingInfo"),
+                          : t("errors.missingInfo")
                       )
                     : (!isLogin ? verifyPassword(signUpInfo.password) : true)
                       ? !isLogin

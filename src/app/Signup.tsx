@@ -64,7 +64,7 @@ export default function Signup({
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const [gsItems, setGSItems] = useState(
-    Object.values(GS).map((s) => ({ label: s, value: s })),
+    Object.values(GS).map((s) => ({ label: s, value: s }))
   );
   const [rhValue, setRhValue] = useState("+");
   const [rhOpen, setRhOpen] = useState(false);
@@ -77,13 +77,13 @@ export default function Signup({
   const [sexValue, setSexValue] = useState(BirthSex.MALE);
   const [sexOpen, setSexOpen] = useState(false);
   const [sexItems, setSexItems] = useState(
-    Object.values(BirthSex).map((s) => ({ label: s, value: s })),
+    Object.values(BirthSex).map((s) => ({ label: s, value: s }))
   );
 
   const [altSexValue, setAltSexValue] = useState(Sex.MALE);
   const [altSexOpen, setAltSexOpen] = useState(false);
   const [altSexItems, setAltSexItems] = useState(
-    Object.values(Sex).map((s) => ({ label: s, value: s })),
+    Object.values(Sex).map((s) => ({ label: s, value: s }))
   );
 
   // Pregnancy Status States
@@ -95,11 +95,11 @@ export default function Signup({
   ]);
 
   const [specialtyValue, setSpecialtyValue] = useState(
-    Specialty.GeneralPractitioner,
+    Specialty.GeneralPractitioner
   ); // Default value
   const [specialtyOpen, setSpecialtyOpen] = useState(false);
   const [specialtyItems, setSpecialtyItems] = useState(
-    Object.values(Specialty).map((s) => ({ label: s, value: s })),
+    Object.values(Specialty).map((s) => ({ label: s, value: s }))
   );
 
   useEffect(() => {
@@ -115,13 +115,13 @@ export default function Signup({
           setLoading(false);
           return Alert.alert(
             t("error"),
-            t(`errors.${STATUS_CODES[res.status]}`),
+            t(`errors.${STATUS_CODES[res.status]}`)
           );
         }
         if (!verified) {
           const isValid =
             /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/.test(
-              info.number,
+              info.number
             );
           if (!isValid) {
             setIndex(index - 1);
@@ -136,28 +136,28 @@ export default function Signup({
             setLoading(false);
             return Alert.alert(
               t("error"),
-              t(`errors.${STATUS_CODES[verify.status]}`),
+              t(`errors.${STATUS_CODES[verify.status]}`)
             );
           } else if (verify.status === STATUS_CODES.NUMBER_NOT_EXIST) {
             setIndex(index - 1);
             setLoading(false);
             return Alert.alert(
               t("error"),
-              t(`errors.${STATUS_CODES[verify.status]}`),
+              t(`errors.${STATUS_CODES[verify.status]}`)
             );
           } else if (verify.status === STATUS_CODES.ERROR_SENDING_CODE) {
             setIndex(index - 1);
             setLoading(false);
             return Alert.alert(
               t("error"),
-              t(`errors.${STATUS_CODES[verify.status]}`),
+              t(`errors.${STATUS_CODES[verify.status]}`)
             );
           } else if (verify.status !== STATUS_CODES.SUCCESS) {
             setIndex(index - 1);
             setLoading(false);
             return Alert.alert(
               t("error"),
-              t(`errors.${STATUS_CODES[verify.status]}`),
+              t(`errors.${STATUS_CODES[verify.status]}`)
             );
           } else {
             setTimeout(() => {
@@ -186,7 +186,7 @@ export default function Signup({
                       if (v.status !== STATUS_CODES.SUCCESS) {
                         setIndex(index - 1);
                         return Alert.alert(
-                          (t("error"), t(`errors.${STATUS_CODES[v.status]}`)),
+                          (t("error"), t(`errors.${STATUS_CODES[v.status]}`))
                         );
                       }
                       setIsVerified(true);
@@ -195,7 +195,7 @@ export default function Signup({
                 ],
                 "plain-text",
                 "",
-                "number-pad",
+                "number-pad"
               );
             }, 250);
           }
@@ -217,7 +217,7 @@ export default function Signup({
           setIndex(3);
           return Alert.alert(
             t("error"),
-            t(`errors.${STATUS_CODES[res.status]}`),
+            t(`errors.${STATUS_CODES[res.status]}`)
           );
         }
         setInfo({ ...info, specialty: res.specialty });
