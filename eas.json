@@ -16,6 +16,9 @@
       "autoIncrement": true,
       "android": {
         "image": "latest"
+      },
+      "ios": {
+        "image": "latest"
       }
     }
   },
