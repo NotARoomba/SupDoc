@@ -13,6 +13,7 @@
       "resizeMode": "cover",
       "backgroundColor": "#020912"
     },
+    "newArchEnabled": true,
     "locales": {
       "en": "./assets/locales/en.json",
       "es": "./assets/locales/es.json",
